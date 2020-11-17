@@ -1,17 +1,25 @@
 import * as React from 'react';
-import { Button, PageSection, Title } from '@patternfly/react-core';
+import {
+  Button,
+  Title
+} from '@patternfly/react-core';
+import { KafkaInstance } from '../../models/models';
 
-const Modal: React.FunctionComponent = () => {
+type ModalProps = {
+
+}
+
+const Modal = ({}: ModalProps) => {
 
   const onCreateInstance = () => {
-    
+    // POST REQUEST WILL GO HERE
   }
 
   return (
-  <PageSection>
+    <>
     <Title headingLevel="h1" size="lg">Modal goes here</Title>
     <Button variant="primary" onClick={() => onCreateInstance()}>Create instance</Button>
-  </PageSection>
+    </>
   );
 }
 

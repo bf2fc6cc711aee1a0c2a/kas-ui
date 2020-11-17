@@ -1,12 +1,20 @@
 import * as React from 'react';
-import { PageSection, Title, Button } from '@patternfly/react-core';
+import { 
+  Title,
+  Button
+} from '@patternfly/react-core';
 
-const EmptyState: React.FunctionComponent = ({setCreateStreamsInstanceTrue}) => {
+type EmptyStateProps = {
+  createStreamsInstance: boolean,
+  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
+};
+
+const EmptyState = ({createStreamsInstance, setCreateStreamsInstance}: EmptyStateProps) => {
 
   return (
     <>
       <Title headingLevel="h1" size="lg">Empty state goes here</Title>
-      <Button variant="primary" onClick={() => setCreateStreamsInstanceTrue(true)}>
+      <Button variant="primary" onClick={() => setCreateStreamsInstance(createStreamsInstance)}>
         Create a Streams Instance
       </Button>
     </>

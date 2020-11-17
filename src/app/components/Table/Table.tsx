@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Title } from '@patternfly/react-core';
+import { KafkaInstance } from '../../models/models';
 
-const Table: React.FunctionComponent = ({kafkaInstances}) => {
+type TableProps = {
+  kafkaInstanceItems: KafkaInstance;
+}
+
+const Table = ({kafkaInstanceItems}: TableProps) => {
   return (
     <>
       <Title headingLevel="h1" size="lg">Table goes here</Title>

@@ -12,30 +12,33 @@ import { EmptyState } from '../components/EmptyState/EmptyState';
 import { Table } from '../components/Table/Table';
 import { Modal } from '../components/Modal/Modal';
 import { GlobalContext, GlobalContextObj } from '../../context/GlobalContext';
+import { string } from 'prop-types';
+import { KafkaInstanceRequest, KafkaInstance } from '../models/models';
 
-const OpenshiftStreams: React.FunctionComponent = () => {
+const OpenshiftStreams = () => {
 
+  // Context
   const globalContext: GlobalContextObj = useContext(GlobalContext);
-
   const { mainToggle } = {... useContext(GlobalContext).store};
-  const [ createStreamsInstanceTrue,  setCreateStreamsInstanceTrue ] = useState(false);
 
-  const [ kafkaInstances, setKafkaInstances ] =  useState([]); // Change this to 0 if you are working on the empty state
-
-  const handleSwitchChange = (isSwitchChecked: boolean) => {
-    globalContext.setMainToggle(!isSwitchChecked);
-  }
+  // States
+  const [ createStreamsInstance,  setCreateStreamsInstance ] = useState(false);
+  const [ kafkaInstancesList, setKafkaInstancesList ] = useState<KafkaInstanceRequest>({});
+  const [ kafkaInstanceItems, setKafkaInstanceItems ] =  useState<KafkaInstance[]>([]); // Change this to 0 if you are working on the empty state
 
   useEffect(() => {
     axios.get(`http://localhost:8000/api/managed-services-api/v1/kafkas/`)
     .then(res => {
-      const kafkas = res.data;
-      setKafkaInstances(kafkas.items);
-      console.log('what is the kafka' + JSON.stringify(kafkas));
-      console.log('what are the items' + JSON.stringify(kafkas.items.length));
+      const kafkaInstances = res.data;
+      setKafkaInstancesList(kafkaInstances)
+      setKafkaInstanceItems(kafkaInstances.items);
     })
   }, []);
 
+  // Functions
+  const handleSwitchChange = (isSwitchChecked: boolean) => {
+    globalContext.setMainToggle(!isSwitchChecked);
+  }
 
   return (
     <>
@@ -56,14 +59,15 @@ const OpenshiftStreams: React.FunctionComponent = () => {
       </Level>
     </PageSection>
     <PageSection>
-      { kafkaInstances.length > 0 ? (
-        <Table kafkaInstances={kafkaInstances} />
+      { kafkaInstanceItems.length > 0 ? (
+        <Table kafkaInstanceItems={kafkaInstanceItems} />
       ) : (
         <EmptyState
-          setCreateStreamsInstanceTrue={setCreateStreamsInstanceTrue}
+          createStreamsInstance={createStreamsInstance}
+          setCreateStreamsInstance={setCreateStreamsInstance}
         />
       )}
-      { createStreamsInstanceTrue &&
+      { createStreamsInstance &&
         <Modal/>
       }
     </PageSection>
