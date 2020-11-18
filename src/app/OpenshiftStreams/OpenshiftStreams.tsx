@@ -11,20 +11,16 @@ import axios from 'axios';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { Table } from '../components/Table/Table';
 import { Modal } from '../components/Modal/Modal';
-import { GlobalContext, GlobalContextObj } from '../../context/GlobalContext';
 import { string } from 'prop-types';
 import { KafkaInstanceRequest, KafkaInstance } from '../models/models';
 
 const OpenshiftStreams = () => {
 
-  // Context
-  const globalContext: GlobalContextObj = useContext(GlobalContext);
-  const { mainToggle } = {... useContext(GlobalContext).store};
-
   // States
   const [ createStreamsInstance,  setCreateStreamsInstance ] = useState(false);
   const [ kafkaInstancesList, setKafkaInstancesList ] = useState<KafkaInstanceRequest>({});
   const [ kafkaInstanceItems, setKafkaInstanceItems ] =  useState<KafkaInstance[]>([]); // Change this to 0 if you are working on the empty state
+  const [ mainToggle, setMainToggle ] = useState(false);
 
   useEffect(() => {
     axios.get(`http://localhost:8000/api/managed-services-api/v1/kafkas/`)
@@ -35,9 +31,8 @@ const OpenshiftStreams = () => {
     })
   }, []);
 
-  // Functions
-  const handleSwitchChange = (isSwitchChecked: boolean) => {
-    globalContext.setMainToggle(!isSwitchChecked);
+  const handleSwitchChange = () => {
+    setMainToggle(!mainToggle);
   }
 
   return (
@@ -53,22 +48,28 @@ const OpenshiftStreams = () => {
             label="Mock UI"
             labelOff="Currently supported UI"
             isChecked={mainToggle}
-            onChange={handleSwitchChange}
+            onChange={() => handleSwitchChange()}
           />
         </LevelItem>
       </Level>
     </PageSection>
     <PageSection>
       { kafkaInstanceItems.length > 0 ? (
-        <Table kafkaInstanceItems={kafkaInstanceItems} />
+        <Table
+          kafkaInstanceItems={kafkaInstanceItems}
+          mainToggle={mainToggle}
+        />
       ) : (
         <EmptyState
           createStreamsInstance={createStreamsInstance}
           setCreateStreamsInstance={setCreateStreamsInstance}
+          mainToggle={mainToggle}
         />
       )}
       { createStreamsInstance &&
-        <Modal/>
+        <Modal
+          mainToggle={mainToggle}
+        />
       }
     </PageSection>
   </>
