@@ -11,7 +11,7 @@
     "prebuild": "npm run clean",
     "dr:surge": "node dr-surge.js",
     "build": "webpack --config webpack.prod.js && npm run dr:surge",
-    "api:generate": "openapi-generator-cli generate -i mas-mock/openapi.yaml -g typescript-angular -o generated-sources/openapi --additional-properties=ngVersion=6.1.7,npmName=restClient,supportsES6=true,npmVersion=6.9.0,withInterfaces=true",
+    "api:generate": "openapi-generator-cli generate -i mas-mock/managed-services-api.yaml -g typescript-axios -o src/openapi --additional-properties=ngVersion=6.1.7,npmName=restClient,supportsES6=true,npmVersion=6.9.0,withInterfaces=true",
     "start": "node server.js",
     "start:dev": "webpack serve --hot --color --progress --config webpack.dev.js",
     "test": "jest",
