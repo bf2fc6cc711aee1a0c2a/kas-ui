@@ -7,14 +7,17 @@ import {
   PageSectionVariants,
   Title
 } from '@patternfly/react-core';
-import axios from 'axios';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { Table } from '../components/Table/Table';
 import { Modal } from '../components/Modal/Modal';
-import { string } from 'prop-types';
 import { KafkaRequestList, KafkaRequestAllOf } from '../../openapi/api';
+import { Services } from '../common/app-config';
+
 
 const OpenshiftStreams = () => {
+
+  // Api Service
+  const apisService = Services.getInstance().apiService;
 
   // States
   const [ createStreamsInstance,  setCreateStreamsInstance ] = useState(false);
@@ -23,13 +26,19 @@ const OpenshiftStreams = () => {
   const [ mainToggle, setMainToggle ] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/managed-services-api/v1/kafkas/`)
+    fetchKafkas();
+  }, []);
+
+  // Functions
+  const fetchKafkas = async () => {
+    await apisService.listKafkas()
     .then(res => {
       const kafkaInstances = res.data;
-      setKafkaInstancesList(kafkaInstances)
+      console.log('what is res' + JSON.stringify(kafkaInstances));
+      setKafkaInstancesList(kafkaInstances);
       setKafkaInstanceItems(kafkaInstances.items);
     })
-  }, []);
+  }
 
   const handleSwitchChange = () => {
     setMainToggle(!mainToggle);

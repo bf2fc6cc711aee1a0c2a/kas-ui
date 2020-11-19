@@ -15,7 +15,7 @@ const EmptyState = ({createStreamsInstance, setCreateStreamsInstance, mainToggle
   return (
     <>
       <Title headingLevel="h1" size="lg">Empty state goes here</Title>
-      <Button variant="primary" onClick={() => setCreateStreamsInstance(createStreamsInstance)}>
+      <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
         Create a Streams Instance
       </Button>
     </>
