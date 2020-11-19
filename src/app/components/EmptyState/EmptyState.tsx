@@ -6,10 +6,11 @@ import {
 
 type EmptyStateProps = {
   createStreamsInstance: boolean,
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
+  setCreateStreamsInstance: (createStreamsInstance: boolean) => void,
+  mainToggle: boolean
 };
 
-const EmptyState = ({createStreamsInstance, setCreateStreamsInstance}: EmptyStateProps) => {
+const EmptyState = ({createStreamsInstance, setCreateStreamsInstance, mainToggle}: EmptyStateProps) => {
 
   return (
     <>

@@ -12,14 +12,14 @@ import { EmptyState } from '../components/EmptyState/EmptyState';
 import { Table } from '../components/Table/Table';
 import { Modal } from '../components/Modal/Modal';
 import { string } from 'prop-types';
-import { KafkaInstanceRequest, KafkaInstance } from '../models/models';
+import { KafkaRequestList, KafkaRequestAllOf } from '../../openapi/api';
 
 const OpenshiftStreams = () => {
 
   // States
   const [ createStreamsInstance,  setCreateStreamsInstance ] = useState(false);
-  const [ kafkaInstancesList, setKafkaInstancesList ] = useState<KafkaInstanceRequest>({});
-  const [ kafkaInstanceItems, setKafkaInstanceItems ] =  useState<KafkaInstance[]>([]); // Change this to 0 if you are working on the empty state
+  const [ kafkaInstancesList, setKafkaInstancesList ] = useState<KafkaRequestList>({});
+  const [ kafkaInstanceItems, setKafkaInstanceItems ] =  useState<KafkaRequestAllOf[]>([]); // Change this to 0 if you are working on the empty state
   const [ mainToggle, setMainToggle ] = useState(false);
 
   useEffect(() => {

@@ -3,16 +3,32 @@ import {
   Button,
   Title
 } from '@patternfly/react-core';
-import { KafkaInstance } from '../../models/models';
+import { KafkaRequestAllOf } from '../../../openapi/api';
+import axios from 'axios';
 
 type ModalProps = {
-
+  mainToggle: boolean
 }
 
-const Modal = ({}: ModalProps) => {
+const Modal = ({mainToggle}: ModalProps) => {
 
   const onCreateInstance = () => {
     // POST REQUEST WILL GO HERE
+    axios({
+      method: 'post',
+      url: '/login',
+      data: {
+        status: '',
+        cloud_provider: '',
+        multi_az: '',
+        region: '',
+        owner: '',
+        name: '',
+        bootstrapServerHost: '',
+        created_at: '',
+        updated_at: ''
+      }
+    });
   }
 
   return (

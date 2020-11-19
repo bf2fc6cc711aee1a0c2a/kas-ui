@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Title } from '@patternfly/react-core';
-import { KafkaInstance } from '../../models/models';
+import { KafkaRequestAllOf } from '../../../openapi/api';
 
 type TableProps = {
-  kafkaInstanceItems: KafkaInstance;
+  kafkaInstanceItems: KafkaRequestAllOf,
+  mainToggle: boolean
 }
 
-const Table = ({kafkaInstanceItems}: TableProps) => {
+const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
   return (
     <>
       <Title headingLevel="h1" size="lg">Table goes here</Title>
