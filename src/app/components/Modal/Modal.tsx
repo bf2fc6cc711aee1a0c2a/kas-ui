@@ -11,12 +11,14 @@ import {
   FormSelect,
   FormSelectOption,
   Switch,
+  SplitItem,
+  Split,
 } from '@patternfly/react-core';
 import { KafkaRequestAllOf } from '../../../openapi/api';
 import axios from 'axios';
 import { Services } from '../../common/app-config';
 import { NewKafka } from '../../models/models';
-import { AwsIcon } from '@patternfly/react-icons';
+import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 
 type ModalProps = {
   createStreamsInstance: boolean;
@@ -24,7 +26,7 @@ type ModalProps = {
   mainToggle: boolean;
 };
 
-type FormState = {
+type InstanceFormData = {
   instanceName?: string;
   cloudProvider: string;
   cloudRegion: string;
@@ -33,8 +35,8 @@ type FormState = {
 // const fetchKafkas = async () => {
 //   await apisService.listKafkas()
 const cloudRegionOptions = [
-  { value: 'please choose', label: 'Please Choose', disabled: false },
-  { value: 'mr', label: 'Mr', disabled: false },
+  { value: '', label: 'Please Choose', disabled: false },
+  { value: 'us-east', label: 'US East, N. Virginia', disabled: false },
 ];
 
 const Modal: React.FunctionComponent<ModalProps> = ({
@@ -42,11 +44,18 @@ const Modal: React.FunctionComponent<ModalProps> = ({
   setCreateStreamsInstance,
   mainToggle,
 }: ModalProps) => {
-  const [formState, setFormState] = useState<FormState>({
+  const [instanceFormData, setInstanceFormData] = useState<InstanceFormData>({
     cloudProvider: 'aws',
     cloudRegion: 'us-east',
     isMultipleZonesAvailable: false,
   });
+  const [nameValidated, setNameValidated] = useState<'success' | 'warning' | 'error' | 'default' | undefined>(
+    'default'
+  );
+  const [cloudRegionValidated, setCloudRegionValidated] = useState<
+    'success' | 'warning' | 'error' | 'default' | undefined
+  >('default');
+
   const apisService = Services.getInstance().apiService;
 
   const onCreateInstance = async (event) => {
@@ -78,14 +87,26 @@ const Modal: React.FunctionComponent<ModalProps> = ({
   };
 
   const handleInstanceNameChange = (name?: string) => {
-    setFormState({ ...formState, instanceName: name });
+    setInstanceFormData({ ...instanceFormData, instanceName: name });
+    setNameValidated(
+      name === undefined || name === '' ? 'error' : /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(name) ? 'success' : 'error'
+    );
   };
   const handleCloudRegionChange = (region: string, _event: any) => {
-    setFormState({ ...formState, cloudRegion: region });
+    setCloudRegionValidated(region === undefined || region === '' ? 'error' : 'success');
+    setInstanceFormData({ ...instanceFormData, cloudRegion: region });
   };
   const handleMultipleZoneSwitch = () => {
-    setFormState({ ...formState, isMultipleZonesAvailable: !formState.isMultipleZonesAvailable });
+    setInstanceFormData({ ...instanceFormData, isMultipleZonesAvailable: !instanceFormData.isMultipleZonesAvailable });
   };
+
+  const isFormValid =
+    instanceFormData &&
+    instanceFormData.instanceName &&
+    nameValidated !== 'error' &&
+    instanceFormData.cloudProvider &&
+    instanceFormData.cloudRegion &&
+    instanceFormData.cloudRegion !== '';
   return (
     <>
       <PFModal
@@ -94,7 +115,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
         actions={[
-          <Button key="create" variant="primary" onClick={onCreateInstance}>
+          <Button key="create" variant="primary" onClick={onCreateInstance} isDisabled={!isFormValid}>
             Create instance
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle}>
@@ -103,27 +124,50 @@ const Modal: React.FunctionComponent<ModalProps> = ({
         ]}
       >
         <Form>
-          <FormGroup label="Instance name" isRequired fieldId="form-instance-name">
+          <FormGroup
+            label="Instance name"
+            helperTextInvalid="This is required field"
+            helperTextInvalidIcon={<ExclamationCircleIcon />}
+            isRequired
+            validated={nameValidated}
+            fieldId="form-instance-name"
+          >
             <TextInput
               isRequired
               type="text"
               id="form-instance-name"
               name="form-instance-name"
-              value={formState?.instanceName}
+              value={instanceFormData?.instanceName}
               onChange={handleInstanceNameChange}
             />
           </FormGroup>
           <FormGroup label="Cloud Provider" fieldId="form-cloud-provider-name">
             <Tile
-              isSelected={formState.cloudProvider === 'aws'}
-              icon={<AwsIcon size="xl" />}
-              title="Amazon Web Services"
-              onClick={() => setFormState({ ...formState, cloudProvider: 'aws' })}
-            />
+              title=""
+              isSelected={instanceFormData.cloudProvider === 'aws'}
+              onClick={() => setInstanceFormData({ ...instanceFormData, cloudProvider: 'aws' })}
+            >
+              <Split hasGutter>
+                <SplitItem>
+                  <AwsIcon size="xl" />
+                </SplitItem>
+                <SplitItem>
+                  <Title headingLevel="h3" size="lg">
+                    Amazon Web Services
+                  </Title>
+                </SplitItem>
+              </Split>
+            </Tile>
           </FormGroup>
-          <FormGroup label="Cloud Region" fieldId="form-cloud-region-option">
+          <FormGroup
+            label="Cloud Region"
+            helperTextInvalid="This is required field"
+            helperTextInvalidIcon={<ExclamationCircleIcon />}
+            validated={cloudRegionValidated}
+            fieldId="form-cloud-region-option"
+          >
             <FormSelect
-              value={formState.cloudRegion}
+              value={instanceFormData.cloudRegion}
               onChange={handleCloudRegionChange}
               id="cloud-region-select"
               name="cloud-region"
@@ -138,7 +182,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({
             <Switch
               id="multiple-zone-avail-switch"
               aria-label="multiple avialabilty zones"
-              isChecked={formState.isMultipleZonesAvailable}
+              isChecked={instanceFormData.isMultipleZonesAvailable}
               onClick={handleMultipleZoneSwitch}
             />
           </FormGroup>
