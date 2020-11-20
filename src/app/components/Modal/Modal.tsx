@@ -22,7 +22,7 @@ import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 
 type ModalProps = {
   createStreamsInstance: boolean;
-  setCreateStreamsInstance: z(createStreamsInstance: boolean) => void;
+  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
 };
 
