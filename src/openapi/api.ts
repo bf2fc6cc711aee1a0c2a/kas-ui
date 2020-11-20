@@ -412,7 +412,7 @@ export interface TokenResponse {
      * @type {string}
      * @memberof TokenResponse
      */
-    clientToken?: string;
+    clientID?: string;
     /**
      * 
      * @type {string}
@@ -431,7 +431,7 @@ export interface TokenResponseAllOf {
      * @type {string}
      * @memberof TokenResponseAllOf
      */
-    clientToken?: string;
+    clientID?: string;
     /**
      * 
      * @type {string}
@@ -510,7 +510,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @throws {RequiredError}
          */
         createServiceAccount: async (options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/managed-services-api/v1/kafkas/serviceAccount`;
+            const localVarPath = `/api/managed-services-api/v1/serviceAccount`;
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
             let baseOptions;
             if (configuration) {
