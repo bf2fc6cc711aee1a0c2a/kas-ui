@@ -169,7 +169,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             </Tile>
           </FormGroup>
           <FormGroup
-            label="Cloud Region"
+            label="Cloud region"
             helperTextInvalid={cloudRegionValidated.message}
             helperTextInvalidIcon={<ExclamationCircleIcon />}
             validated={cloudRegionValidated.fieldState}
