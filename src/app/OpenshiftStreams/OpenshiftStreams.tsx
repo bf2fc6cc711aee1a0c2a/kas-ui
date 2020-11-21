@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Switch, Level, LevelItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { Table } from '../components/Table/Table';
-import { Modal } from '../components/Modal/Modal';
+import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { KafkaRequestList, KafkaRequestAllOf } from '../../openapi/api';
 import { Services } from '../common/app-config';
 
@@ -65,7 +65,7 @@ const OpenshiftStreams = () => {
           />
         )}
         {createStreamsInstance && (
-          <Modal
+          <CreateInstanceModal
             createStreamsInstance={createStreamsInstance}
             setCreateStreamsInstance={setCreateStreamsInstance}
             mainToggle={mainToggle}

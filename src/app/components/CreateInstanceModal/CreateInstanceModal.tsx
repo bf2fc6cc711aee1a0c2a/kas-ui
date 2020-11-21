@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Button,
   Title,
-  Modal as PFModal,
+  Modal,
   ModalVariant,
   Form,
   FormGroup,
@@ -13,14 +13,16 @@ import {
   Switch,
   SplitItem,
   Split,
+  FormAlert,
+  Alert,
 } from '@patternfly/react-core';
 import { KafkaRequestAllOf } from '../../../openapi/api';
 import axios from 'axios';
 import { Services } from '../../common/app-config';
 import { NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
-
-type ModalProps = {
+import './modal.css';
+type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
@@ -36,17 +38,17 @@ type InstanceFormData = {
 //   await apisService.listKafkas()
 const cloudRegionOptions = [
   { value: '', label: 'Please Choose', disabled: false },
-  { value: 'us-east', label: 'US East, N. Virginia', disabled: false },
+  { value: 'us-east-1', label: 'US East, N. Virginia', disabled: false },
 ];
 
-const Modal: React.FunctionComponent<ModalProps> = ({
+const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
   mainToggle,
-}: ModalProps) => {
+}: CreateInstanceModalProps) => {
   const [instanceFormData, setInstanceFormData] = useState<InstanceFormData>({
     cloudProvider: 'aws',
-    cloudRegion: 'us-east',
+    cloudRegion: 'us-east-1',
     isMultipleZonesAvailable: false,
   });
   const [nameValidated, setNameValidated] = useState<'success' | 'warning' | 'error' | 'default' | undefined>(
@@ -54,32 +56,47 @@ const Modal: React.FunctionComponent<ModalProps> = ({
   );
   const [cloudRegionValidated, setCloudRegionValidated] = useState<
     'success' | 'warning' | 'error' | 'default' | undefined
-  >('default');
+  >('success');
 
   const apisService = Services.getInstance().apiService;
 
   const onCreateInstance = async (event) => {
-    // Check if the event is not empty
+    let isValid = true;
+    if (
+      instanceFormData.instanceName === undefined ||
+      instanceFormData.instanceName.trim() === '' ||
+      !/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(instanceFormData.instanceName.trim())
+    ) {
+      isValid = false;
+      setNameValidated('error');
+    }
+    if (instanceFormData.cloudRegion === undefined || instanceFormData.cloudRegion.trim() === '') {
+      isValid = false;
+      setCloudRegionValidated('error');
+    }
+    if (isValid) {
+      // Check if the event is not empty
 
-    // Update this to use the values from the event
-    const newKafka: NewKafka = new NewKafka();
-    newKafka.name = 'test';
-    newKafka.multi_az = false;
-    newKafka.owner = 'test';
-    newKafka.region = 'test';
-    newKafka.cloud_provider = 'test';
+      // Update this to use the values from the event
+      const newKafka: NewKafka = new NewKafka();
+      newKafka.name = 'test';
+      newKafka.multi_az = false;
+      newKafka.owner = 'test';
+      newKafka.region = 'test';
+      newKafka.cloud_provider = 'test';
 
-    await apisService
-      .createKafka(true, newKafka)
-      .then((res) => {
-        console.info('Kafka was successfully created');
-        handleModalToggle();
-        // TO DO: User needs to know what Kafka was successfully created
-      })
-      .catch((error) => {
-        console.error('Error creating Kafka');
-        // TO DO: Set up error handling
-      });
+      await apisService
+        .createKafka(true, newKafka)
+        .then((res) => {
+          console.info('Kafka was successfully created');
+          handleModalToggle();
+          // TO DO: User needs to know what Kafka was successfully created
+        })
+        .catch((error) => {
+          console.error('Error creating Kafka');
+          // TO DO: Set up error handling
+        });
+    }
   };
 
   const handleModalToggle = () => {
@@ -89,7 +106,11 @@ const Modal: React.FunctionComponent<ModalProps> = ({
   const handleInstanceNameChange = (name?: string) => {
     setInstanceFormData({ ...instanceFormData, instanceName: name });
     setNameValidated(
-      name === undefined || name === '' ? 'error' : /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(name) ? 'success' : 'error'
+      name === undefined || name.trim() === ''
+        ? 'error'
+        : /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(name.trim())
+        ? 'success'
+        : 'error'
     );
   };
   const handleCloudRegionChange = (region: string, _event: any) => {
@@ -100,17 +121,11 @@ const Modal: React.FunctionComponent<ModalProps> = ({
     setInstanceFormData({ ...instanceFormData, isMultipleZonesAvailable: !instanceFormData.isMultipleZonesAvailable });
   };
 
-  const isFormValid =
-    instanceFormData &&
-    instanceFormData.instanceName &&
-    nameValidated !== 'error' &&
-    instanceFormData.cloudProvider &&
-    instanceFormData.cloudRegion &&
-    instanceFormData.cloudRegion !== '';
+  const isFormValid = nameValidated !== 'error' && cloudRegionValidated !== 'error';
   return (
     <>
-      <PFModal
-        variant={ModalVariant.large}
+      <Modal
+        variant={ModalVariant.medium}
         title="Create a Streams Instance"
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
@@ -124,6 +139,16 @@ const Modal: React.FunctionComponent<ModalProps> = ({
         ]}
       >
         <Form>
+          {(nameValidated === 'error' || cloudRegionValidated === 'error') && (
+            <FormAlert>
+              <Alert
+                variant="danger"
+                title="You must fill out all required fields before you can proceed."
+                aria-live="polite"
+                isInline
+              />
+            </FormAlert>
+          )}
           <FormGroup
             label="Instance name"
             helperTextInvalid="This is required field"
@@ -134,6 +159,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({
           >
             <TextInput
               isRequired
+              validated={nameValidated}
               type="text"
               id="form-instance-name"
               name="form-instance-name"
@@ -151,11 +177,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({
                 <SplitItem>
                   <AwsIcon size="xl" />
                 </SplitItem>
-                <SplitItem>
-                  <Title headingLevel="h3" size="lg">
-                    Amazon Web Services
-                  </Title>
-                </SplitItem>
+                <SplitItem className="pf-tile-split-title">Amazon Web Services</SplitItem>
               </Split>
             </Tile>
           </FormGroup>
@@ -167,6 +189,7 @@ const Modal: React.FunctionComponent<ModalProps> = ({
             fieldId="form-cloud-region-option"
           >
             <FormSelect
+              validated={cloudRegionValidated}
               value={instanceFormData.cloudRegion}
               onChange={handleCloudRegionChange}
               id="cloud-region-select"
@@ -180,6 +203,9 @@ const Modal: React.FunctionComponent<ModalProps> = ({
           </FormGroup>
           <FormGroup label="Multiple availabilty zones" fieldId="form-cloud-provider-name">
             <Switch
+              // TODO: API doesn't return anything about whether this option is enabled
+              // making this as disbaled for now
+              isDisabled={true}
               id="multiple-zone-avail-switch"
               aria-label="multiple avialabilty zones"
               isChecked={instanceFormData.isMultipleZonesAvailable}
@@ -189,9 +215,9 @@ const Modal: React.FunctionComponent<ModalProps> = ({
         </Form>
         <br />
         <br />
-      </PFModal>
+      </Modal>
     </>
   );
 };
 
-export { Modal };
+export { CreateInstanceModal };
