@@ -19,7 +19,7 @@ import {
 import { KafkaRequestAllOf } from '../../../openapi/api';
 import axios from 'axios';
 import { Services } from '../../common/app-config';
-import { NewKafka } from '../../models/models';
+import { NewKafka, FormDataValidationState } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import './modal.css';
 type CreateInstanceModalProps = {
@@ -28,16 +28,10 @@ type CreateInstanceModalProps = {
   mainToggle: boolean;
 };
 
-type InstanceFormData = {
-  instanceName?: string;
-  cloudProvider: string;
-  cloudRegion: string;
-  isMultipleZonesAvailable: boolean;
-};
 // const fetchKafkas = async () => {
 //   await apisService.listKafkas()
 const cloudRegionOptions = [
-  { value: '', label: 'Please Choose', disabled: false },
+  { value: '', label: 'Please select ', disabled: false },
   { value: 'us-east-1', label: 'US East, N. Virginia', disabled: false },
 ];
 
@@ -46,47 +40,36 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   setCreateStreamsInstance,
   mainToggle,
 }: CreateInstanceModalProps) => {
-  const [instanceFormData, setInstanceFormData] = useState<InstanceFormData>({
-    cloudProvider: 'aws',
-    cloudRegion: 'us-east-1',
-    isMultipleZonesAvailable: false,
-  });
-  const [nameValidated, setNameValidated] = useState<'success' | 'warning' | 'error' | 'default' | undefined>(
-    'default'
-  );
-  const [cloudRegionValidated, setCloudRegionValidated] = useState<
-    'success' | 'warning' | 'error' | 'default' | undefined
-  >('success');
+  const newKafka: NewKafka = new NewKafka();
+  newKafka.name = '';
+  newKafka.cloud_provider = 'aws';
+  newKafka.region = 'us-east-1';
+  newKafka.multi_az = false;
+  const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
+  const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
+  const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'success' });
 
   const apisService = Services.getInstance().apiService;
 
   const onCreateInstance = async (event) => {
     let isValid = true;
-    if (
-      instanceFormData.instanceName === undefined ||
-      instanceFormData.instanceName.trim() === '' ||
-      !/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(instanceFormData.instanceName.trim())
-    ) {
+    if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
       isValid = false;
-      setNameValidated('error');
+      setNameValidated({ fieldState: 'error', message: 'This is a required field' });
+    } else if (!/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(kafkaFormData.name.trim())) {
+      isValid = false;
+      setNameValidated({ fieldState: 'error', message: 'Valid characters for instance name are letters from a to z and numbers from 0 to 9.' });
     }
-    if (instanceFormData.cloudRegion === undefined || instanceFormData.cloudRegion.trim() === '') {
+    if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
       isValid = false;
-      setCloudRegionValidated('error');
+      setCloudRegionValidated({ fieldState: 'error', message: 'This is a required field' });
     }
     if (isValid) {
       // Check if the event is not empty
 
       // Update this to use the values from the event
-      const newKafka: NewKafka = new NewKafka();
-      newKafka.name = 'test';
-      newKafka.multi_az = false;
-      newKafka.owner = 'test';
-      newKafka.region = 'test';
-      newKafka.cloud_provider = 'test';
-
       await apisService
-        .createKafka(true, newKafka)
+        .createKafka(true, kafkaFormData)
         .then((res) => {
           console.info('Kafka was successfully created');
           handleModalToggle();
@@ -104,29 +87,33 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   };
 
   const handleInstanceNameChange = (name?: string) => {
-    setInstanceFormData({ ...instanceFormData, instanceName: name });
+    setKafkaFormData({ ...kafkaFormData, name: name || '' });
     setNameValidated(
       name === undefined || name.trim() === ''
-        ? 'error'
+        ? { fieldState: 'error', message: 'This is a required field' }
         : /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(name.trim())
-        ? 'success'
-        : 'error'
+        ? { fieldState: 'success', message: '' }
+        : { fieldState: 'error', message: 'Valid characters for instance name are letters from a to z and numbers from 0 to 9.' }
     );
   };
   const handleCloudRegionChange = (region: string, _event: any) => {
-    setCloudRegionValidated(region === undefined || region === '' ? 'error' : 'success');
-    setInstanceFormData({ ...instanceFormData, cloudRegion: region });
+    setCloudRegionValidated(
+      region === undefined || region === ''
+        ? { fieldState: 'error', message: 'This is a required field' }
+        : { fieldState: 'success', message: '' }
+    );
+    setKafkaFormData({ ...kafkaFormData, region: region });
   };
   const handleMultipleZoneSwitch = () => {
-    setInstanceFormData({ ...instanceFormData, isMultipleZonesAvailable: !instanceFormData.isMultipleZonesAvailable });
+    setKafkaFormData({ ...kafkaFormData, multi_az: !kafkaFormData.multi_az });
   };
 
-  const isFormValid = nameValidated !== 'error' && cloudRegionValidated !== 'error';
+  const isFormValid = nameValidated.fieldState !== 'error' && cloudRegionValidated.fieldState !== 'error';
   return (
     <>
       <Modal
         variant={ModalVariant.medium}
-        title="Create a Streams Instance"
+        title="Create a Streams instance"
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
         actions={[
@@ -139,7 +126,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         ]}
       >
         <Form>
-          {(nameValidated === 'error' || cloudRegionValidated === 'error') && (
+          {(nameValidated.fieldState === 'error' || cloudRegionValidated.fieldState === 'error') && (
             <FormAlert>
               <Alert
                 variant="danger"
@@ -151,27 +138,27 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           )}
           <FormGroup
             label="Instance name"
-            helperTextInvalid="This is required field"
+            helperTextInvalid={nameValidated.message}
             helperTextInvalidIcon={<ExclamationCircleIcon />}
             isRequired
-            validated={nameValidated}
+            validated={nameValidated.fieldState}
             fieldId="form-instance-name"
           >
             <TextInput
               isRequired
-              validated={nameValidated}
+              validated={nameValidated.fieldState}
               type="text"
               id="form-instance-name"
               name="form-instance-name"
-              value={instanceFormData?.instanceName}
+              value={kafkaFormData?.name}
               onChange={handleInstanceNameChange}
             />
           </FormGroup>
-          <FormGroup label="Cloud Provider" fieldId="form-cloud-provider-name">
+          <FormGroup label="Cloud provider" fieldId="form-cloud-provider-name">
             <Tile
               title=""
-              isSelected={instanceFormData.cloudProvider === 'aws'}
-              onClick={() => setInstanceFormData({ ...instanceFormData, cloudProvider: 'aws' })}
+              isSelected={kafkaFormData.cloud_provider === 'aws'}
+              onClick={() => setKafkaFormData({ ...kafkaFormData, cloud_provider: 'aws' })}
             >
               <Split hasGutter>
                 <SplitItem>
@@ -183,14 +170,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           </FormGroup>
           <FormGroup
             label="Cloud Region"
-            helperTextInvalid="This is required field"
+            helperTextInvalid={cloudRegionValidated.message}
             helperTextInvalidIcon={<ExclamationCircleIcon />}
-            validated={cloudRegionValidated}
+            validated={cloudRegionValidated.fieldState}
             fieldId="form-cloud-region-option"
           >
             <FormSelect
-              validated={cloudRegionValidated}
-              value={instanceFormData.cloudRegion}
+              validated={cloudRegionValidated.fieldState}
+              value={kafkaFormData.region}
               onChange={handleCloudRegionChange}
               id="cloud-region-select"
               name="cloud-region"
@@ -208,7 +195,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               isDisabled={true}
               id="multiple-zone-avail-switch"
               aria-label="multiple avialabilty zones"
-              isChecked={instanceFormData.isMultipleZonesAvailable}
+              isChecked={kafkaFormData.multi_az}
               onClick={handleMultipleZoneSwitch}
             />
           </FormGroup>
