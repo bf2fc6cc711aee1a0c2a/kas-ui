@@ -1,8 +1,10 @@
 {
-  "name": "patternfly-seed",
+  "name": "mk-ui-frontend",
+  "federatedModuleName": "mkUiFrontend",
   "version": "0.0.2",
   "description": "An open source build scaffolding utility for web apps.",
   "main": "server.js",
+  "port": "9000",
   "repository": "https://github.com/patternfly/patternfly-react-seed.git",
   "homepage": "https://patternfly-react-seed.surge.sh",
   "license": "MIT",

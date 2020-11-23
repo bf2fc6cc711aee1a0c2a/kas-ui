@@ -5,7 +5,11 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const BG_IMAGES_DIRNAME = 'bgimages';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
-module.exports = env => {
+const { dependencies, port, federatedModuleName} = require("./package.json");
+delete dependencies.serve; // Needed for nodeshift bug
+const webpack = require('webpack');
+const camelCase = require('lodash.camelcase');
+module.exports = (env, argv) => {
 
   return {
     entry: {
@@ -112,8 +116,7 @@ module.exports = env => {
     },
     output: {
       filename: '[name].bundle.js',
-      path: path.resolve(__dirname, 'dist'),
-      publicPath: ASSET_PATH
+      path: path.resolve(__dirname, 'dist')
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -127,6 +130,26 @@ module.exports = env => {
         patterns: [
           { from: './src/favicon.png', to: 'images' },
         ]
+      }),
+      new webpack.container.ModuleFederationPlugin({
+        name: federatedModuleName,
+        filename: "remoteEntry.js",
+        exposes: {
+          "./OpenshiftStreams": "./src/app/OpenshiftStreams",
+        },
+        shared: {
+          ...dependencies,
+          react: {
+            eager: true,
+            singleton: true,
+            requiredVersion: dependencies["react"],
+          },
+          "react-dom": {
+            eager: true,
+            singleton: true,
+            requiredVersion: dependencies["react-dom"],
+          },
+        },
       })
     ],
     resolve: {
