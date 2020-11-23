@@ -254,7 +254,8 @@ file for public client. Make sure that client config supports redirect uris:
 
 `localhost*` or `localhost:8080`
 
-2. Rename `keycloak.example.json` to keycloak.json and copy the content of the files
+2. Put `keycloak.json` info dist folder. 
+See`keycloak.example.json` for example content.
 
 3. Run the application.
 
