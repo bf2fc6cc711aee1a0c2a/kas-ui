@@ -246,3 +246,30 @@ body {
 * To keep our code logic and test coverage in check, we use [jest](https://github.com/facebook/jest)
 * To ensure code styles remain consistent, we use [eslint](https://eslint.org/)
 * To provide a place to showcase custom components, we integrate with [storybook](https://storybook.js.org/)
+
+## Keycloak integration
+
+1. To integrate with keycloak go to your keycloak instance and retrieve keycloak.json config 
+file for public client. Make sure that client config supports redirect uris:
+
+`localhost*` or `localhost:8080`
+
+2. Put `keycloak.json` info dist folder. 
+See`keycloak.example.json` for example content.
+
+3. Run the application.
+
+### Using Keycloak Profile in the application
+
+```js
+  const { keycloak, profile } = useContext(AuthContext);
+  console.log(user.profile)
+```
+
+### Using Keycloak Token for backend requests
+
+```js
+  const { keycloak } = useContext(AuthContext);
+  const header = keycloak.getAuthHeader()
+```
+
