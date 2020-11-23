@@ -14,7 +14,7 @@ const EmptyState = ({ createStreamsInstance, setCreateStreamsInstance, mainToggl
       <PFEmptyState>
         <EmptyStateIcon icon={PlusCircleIcon} />
         <Title headingLevel="h4" size="lg">
-          You don't have any Streams instances yet
+          You don&apos;t have any Streams instances yet
         </Title>
         <EmptyStateBody>Create a Streams instance to get started</EmptyStateBody>
         <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
