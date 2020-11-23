@@ -15,7 +15,7 @@ export interface GlobalContextObj {
 
 export const GlobalContext = createContext({} as GlobalContextObj);
 
-export class GlobalContextProvider extends React.Component<{}, GlobalState> {
+export class GlobalContextProvider extends React.Component<unknown, GlobalState> {
   state: GlobalState = initialState;
 
   render() {
