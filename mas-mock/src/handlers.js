@@ -65,7 +65,7 @@ module.exports = {
     res.status(200).json({
       page: 1,
       size: 1,
-      total: 1,
+      total: 5,
       items: [
         {
           id: "1iSY6RQ3JKI8Q0OTmjQFd3ocFRg",
@@ -95,6 +95,48 @@ module.exports = {
           bootstrapServerHost:
             "serviceapi-v5Sg6faQ3JKGas4hFd3og45fd31.apps.ms-dfasf3gsds.23ds.s1.devshift.org",
         },
+        {
+          id: "v5Sg6faQ3JKGas4hFd3og45fd32",
+          kind: "kafka",
+          href:
+            "/api/managed-services-api/v1/kafkas/v5Sg6faQ3JKGas4hFd3og45fd32",
+          status: "failed",
+          cloud_provider: "aws",
+          multi_az: false,
+          region: "us-east-1",
+          owner: "api_kafka_service",
+          name: "serviceapi3",
+          bootstrapServerHost:
+            "serviceapi-v5Sg6faQ3JKGas4hFd3og45fd32.apps.ms-dfasf3gsds.23ds.s1.devshift.org",
+        },
+        {
+          id: "v5Sg6faQ3JKGas4hFd3og45fd33",
+          kind: "kafka",
+          href:
+            "/api/managed-services-api/v1/kafkas/v5Sg6faQ3JKGas4hFd3og45fd33",
+          status: "accepted",
+          cloud_provider: "aws",
+          multi_az: false,
+          region: "us-east-1",
+          owner: "api_kafka_service",
+          name: "serviceapi4",
+          bootstrapServerHost:
+            "serviceapi-v5Sg6faQ3JKGas4hFd3og45fd33.apps.ms-dfasf3gsds.23ds.s1.devshift.org",
+        },
+        {
+          id: "v5Sg6faQ3JKGas4hFd3og45fd35",
+          kind: "kafka",
+          href:
+            "/api/managed-services-api/v1/kafkas/v5Sg6faQ3JKGas4hFd3og45fd35",
+          status: "provisioning",
+          cloud_provider: "aws",
+          multi_az: false,
+          region: "us-east-1",
+          owner: "api_kafka_service",
+          name: "serviceapi5",
+          bootstrapServerHost:
+            "serviceapi-v5Sg6faQ3JKGas4hFd3og45fd35.apps.ms-dfasf3gsds.23ds.s1.devshift.org",
+        }
       ],
     });
   },

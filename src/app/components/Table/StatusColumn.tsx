@@ -20,7 +20,7 @@ const StatusColumn=({status}:StatusColumnProps)=>{
         icon = <ExclamationCircleIcon color="var(--pf-global--danger-color--100)" />;
         break;
     case "provisioning":
-      icon = <Spinner />;
+      icon = <Spinner size="sm"/>;
       break;
     case "accepted":
       icon = <PendingIcon />;
