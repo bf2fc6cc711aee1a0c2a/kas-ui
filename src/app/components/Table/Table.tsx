@@ -9,6 +9,7 @@ import {
 import { KafkaRequestAllOf } from '../../../openapi/api';
 import {StatusColumn} from './StatusColumn';
 import {InstanceStatus} from '@app/constants';
+import { Services } from '../../common/app-config';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequestAllOf[],
@@ -56,18 +57,24 @@ const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
 
   const tableRows = kafkaInstanceItems.map(preparedTableCells);
 
-  const onDeleteInstance=()=>{
-    /**
-     * Todo: delete instance functionality
-     */
-  }
-
   const actionResolver = (rowData: IRowData) => {
     return getActionResolver(
       rowData,
       onDeleteInstance
       );
   };
+
+
+  const apisService = Services.getInstance().apiService;
+
+  const onDeleteInstance = async (event) => {
+    await apisService.deleteKafkaById("").then(res => {
+      console.info("Kafka successfully deleted")
+    })
+    .catch(error => {
+      console.log("Error deleting Kafka")
+    })
+  }
 
   return (
       <>
