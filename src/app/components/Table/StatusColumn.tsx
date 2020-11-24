@@ -2,9 +2,13 @@ import React from "react";
 import {
     CheckCircleIcon,
     PendingIcon,
-    ExclamationCircleIcon
+    ExclamationCircleIcon,
+    IconSize
   } from "@patternfly/react-icons";
+  import { Flex, FlexItem } from '@patternfly/react-core';
   import { Spinner } from '@patternfly/react-core';
+  import {InstanceStatus} from '@app/constants';
+  import "./StatusColumn.css";
 
 type StatusColumnProps={
   status:string
@@ -12,28 +16,35 @@ type StatusColumnProps={
 
 const StatusColumn=({status}:StatusColumnProps)=>{
   let icon:React.ReactNode;
+  const statusDisplayName=status===InstanceStatus.ACCEPTED?"pending":status;
+  
   switch (status?.toLowerCase()) {
-    case "complete":
-        icon = <CheckCircleIcon color="var(--pf-global--success-color--100)" />;
+    case InstanceStatus.COMPLETED:
+        icon = <CheckCircleIcon className="check-circle-icon-color" />;
       break;
-      case "failed":
-        icon = <ExclamationCircleIcon color="var(--pf-global--danger-color--100)" />;
+      case InstanceStatus.FAILED:
+        icon = <ExclamationCircleIcon className="exclamation-circle-icon-clolor" />;
         break;
-    case "provisioning":
-      icon = <Spinner size="sm"/>;
+    case InstanceStatus.PROVISIONING:
+      icon = <Spinner size={IconSize.md}/>;
       break;
-    case "accepted":
+    case InstanceStatus.ACCEPTED:
       icon = <PendingIcon />;
       break;     
     default:
       icon = <PendingIcon />;
       break;
   }
-  
-  return (
-    <>
-      {icon}&nbsp;{status?.trim() !== "" ? status : "Pending"}
-    </>
+ 
+  return (  
+    <Flex>
+      <FlexItem spacer={{ default: 'spacerSm' }}>
+        {icon}
+      </FlexItem>
+      <FlexItem className="status-label-format">
+       {statusDisplayName}
+      </FlexItem>
+    </Flex>
   );
 }
 

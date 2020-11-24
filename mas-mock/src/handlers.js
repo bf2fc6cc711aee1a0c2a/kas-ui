@@ -101,9 +101,9 @@ module.exports = {
           href:
             "/api/managed-services-api/v1/kafkas/v5Sg6faQ3JKGas4hFd3og45fd32",
           status: "failed",
-          cloud_provider: "aws",
+          cloud_provider: "azure",
           multi_az: false,
-          region: "us-east-1",
+          region: "ap-southeast-2",
           owner: "api_kafka_service",
           name: "serviceapi3",
           bootstrapServerHost:
@@ -115,9 +115,9 @@ module.exports = {
           href:
             "/api/managed-services-api/v1/kafkas/v5Sg6faQ3JKGas4hFd3og45fd33",
           status: "accepted",
-          cloud_provider: "aws",
+          cloud_provider: "gcp",
           multi_az: false,
-          region: "us-east-1",
+          region: "ap-northeast-2",
           owner: "api_kafka_service",
           name: "serviceapi4",
           bootstrapServerHost:
@@ -129,9 +129,9 @@ module.exports = {
           href:
             "/api/managed-services-api/v1/kafkas/v5Sg6faQ3JKGas4hFd3og45fd35",
           status: "provisioning",
-          cloud_provider: "aws",
+          cloud_provider: "openstack",
           multi_az: false,
-          region: "us-east-1",
+          region: "ap-south-1",
           owner: "api_kafka_service",
           name: "serviceapi5",
           bootstrapServerHost:

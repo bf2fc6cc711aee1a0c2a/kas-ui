@@ -10,6 +10,7 @@ import { KafkaRequestAllOf } from '../../../openapi/api';
 import {StatusColumn} from './StatusColumn';
 import {InstanceStatus} from '@app/constants';
 import { Services } from '../../common/app-config';
+import {getCloudProviderDisplayName,getCloudRegionDisplayName} from "@app/utils";
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequestAllOf[],
@@ -41,11 +42,13 @@ const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
 
   const preparedTableCells = (row:any) => {
     const {name,cloud_provider,region,status}=row;
+    const cloud_provider_display_name=getCloudProviderDisplayName(cloud_provider);
+    const region_display_name=getCloudRegionDisplayName(region);
     const tableRow= {
       cells: [
         name,
-        cloud_provider,
-        region,
+        cloud_provider_display_name,
+        region_display_name,
         {
           title:<StatusColumn status={status}/>
         } 
