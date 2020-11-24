@@ -6,13 +6,14 @@ import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateIns
 import { DefaultApi, KafkaRequestAllOf, KafkaRequestList } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
+import { InstanceListToolbar } from '../components/InstanceListToolbar';
 
 const OpenshiftStreams = () => {
   const { token } = useContext(AuthContext);
 
   // Api Service
   const apisService = new DefaultApi({
-    accessToken: token
+    accessToken: token,
   });
 
   // States
@@ -66,7 +67,14 @@ const OpenshiftStreams = () => {
         </PageSection>
         <PageSection>
           {kafkaInstanceItems.length > 0 ? (
-            <StreamsTableView kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle} />
+            <>
+              <InstanceListToolbar
+                mainToggle={mainToggle}
+                createStreamsInstance={createStreamsInstance}
+                setCreateStreamsInstance={setCreateStreamsInstance}
+              />
+              <StreamsTableView mainToggle={mainToggle} kafkaInstanceItems={kafkaInstanceItems} />
+            </>
           ) : (
             <EmptyState
               createStreamsInstance={createStreamsInstance}
