@@ -20,6 +20,9 @@ module.exports = merge(common('production'), {
       chunkFilename: '[name].bundle.css'
     })
   ],
+  output: {
+    publicPath: `http://TODO`
+  },
   module: {
     rules: [
       {

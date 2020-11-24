@@ -2,6 +2,10 @@
 
 Welcome to the repository for the Control Plane UI. The lead developer is [Christie Molloy](https://github.com/christiemolloy) and lead designer is [Jenn Giardino](https://github.com/jgiardino), please feel free to contact us!
 
+## Contributing
+
+If you are contributing please check out the [Contributing Guidelines.](https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/blob/master/CONTRIBUTING.md)
+
 
 ## Quick-start
 
@@ -35,6 +39,15 @@ npm run bundle-profile:analyze
 
 # Start the express server (run a production build first)
 npm run start
+```
+
+## Starting the Mock Server
+
+```
+cd mas-mock
+yarn
+yarn start # API running at http://localhost:9000
+
 ```
 
 ## Generating OpenAPI docs

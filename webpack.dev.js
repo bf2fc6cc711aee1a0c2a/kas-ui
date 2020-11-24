@@ -1,12 +1,16 @@
 const path = require('path');
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
-const HOST = process.env.HOST || "0.0.0.0";
+const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || "9000";
 
 module.exports = merge(common('development'), {
   mode: "development",
   devtool: "eval-source-map",
+  output: {
+    // This must be set explicitly for module federation
+    publicPath: `http://${HOST}:${PORT}/`
+  },
   devServer: {
     contentBase: "./dist",
     host: HOST,
