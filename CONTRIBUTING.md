@@ -249,6 +249,10 @@ body {
 
 ## Keycloak integration
 
+In our dev environment we use keycloak to obtain the token to authenticate requests. The `KeycloakAuthProvider` is responsible for setting this up.
+
+In stage and prod we use the insights chrome to do this. The `InsightsAuthProvider` (which lives in the `mk-ui-host` project) is responsible for setting this up.
+
 1. To integrate with keycloak go to your keycloak instance and retrieve keycloak.json config 
 file for public client. Make sure that client config supports redirect uris:
 

@@ -4,9 +4,10 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { AppLayout } from '@app/AppLayout/AppLayout';
 import { AppRoutes } from '@app/routes';
 import '@app/app.css';
-import { getKeycloakInstance } from './auth/keycloakAuth';
+import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { Loading } from './components/Loading';
 import { AuthContext } from './auth/AuthContext';
+import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 
 let keycloak: any;
 
@@ -31,13 +32,15 @@ const App: React.FunctionComponent = () => {
   // TODO - index doing router is not desired.
   // Split to App.tsx etc.
   return (
-    <AuthContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
-      <Router>
-        <AppLayout>
-          <AppRoutes />
-        </AppLayout>
-      </Router>
-    </AuthContext.Provider>
+    <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
+      <KeycloakAuthProvider>
+        <Router>
+          <AppLayout>
+            <AppRoutes />
+          </AppLayout>
+        </Router>
+      </KeycloakAuthProvider>
+    </KeycloakContext.Provider>
   );
 }
 export { App };

@@ -4,10 +4,10 @@ export let keycloak: KeycloakInstance | undefined;
 
 /**
  * Get keycloak instance
- * 
+ *
  * @return an initiated keycloak instance or `undefined`
  * if keycloak isn't configured
- * 
+ *
  */
 export const getKeycloakInstance = async () => {
   if (!keycloak) await init();
@@ -16,10 +16,10 @@ export const getKeycloakInstance = async () => {
 
 /**
  * Initiate keycloak instance.
- * 
- * Set keycloak to undefined if 
+ *
+ * Set keycloak to undefined if
  * keycloak isn't configured
- * 
+ *
  */
 export const init = async () => {
   try {
@@ -38,12 +38,12 @@ export const init = async () => {
 
 /**
  * This function keeps getting called by wslink
- * connection param function, so carry out 
+ * connection param function, so carry out
  * an early return if keycloak is not initialized
  * otherwise get the auth token
- * 
+ *
  * @return authorization header or empty string
- * 
+ *
  */
 export const getAuthHeader = async () => {
   if (!keycloak) return '';
@@ -56,25 +56,25 @@ export const getAuthHeader = async () => {
 /**
  * Use keycloak update token function to retrieve
  * keycloak token
- * 
+ *
  * @return keycloak token or empty string if keycloak
  * isn't configured
- * 
+ *
  */
-const getKeyCloakToken = async () => {
+export const getKeyCloakToken = async (): Promise<string> => {
   await keycloak?.updateToken(50);
   if (keycloak?.token) return keycloak.token;
   console.error('No keycloak token available');
-  return '';
+  return 'foo';
 }
 
 /**
- * logout of keycloak, clear cache and offline store then redirect to 
+ * logout of keycloak, clear cache and offline store then redirect to
  * keycloak login page
- * 
+ *
  * @param keycloak the keycloak instance
  * @param client offix client
- *  
+ *
  */
 export const logout = async (keycloak: Keycloak.KeycloakInstance | undefined) => {
   if (keycloak) {
