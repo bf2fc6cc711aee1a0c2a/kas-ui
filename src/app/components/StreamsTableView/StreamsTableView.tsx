@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
+import { Table, TableHeader, TableBody, IRow, IRowData } from '@patternfly/react-table';
 import { Card, AlertVariant } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -13,11 +13,12 @@ import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
 
 type TableProps = {
-  kafkaInstanceItems: KafkaRequest[];
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
+  kafkaInstanceItems: KafkaRequest[];
+  onViewInstance: (instance: KafkaRequest) => void;
+  onConnectInstance: (instance: KafkaRequest) => void;
   mainToggle: boolean;
-  onConnectToInstance: (data: KafkaRequest) => void;
   refresh: () => void;
 };
 
@@ -56,7 +57,8 @@ export const getDeleteInstanceModalConfig = (status: string | undefined, instanc
 const StreamsTableView = ({
   mainToggle,
   kafkaInstanceItems,
-  onConnectToInstance,
+  onViewInstance,
+  onConnectInstance,
   refresh,
   createStreamsInstance,
   setCreateStreamsInstance,
@@ -75,30 +77,36 @@ const StreamsTableView = ({
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
 
-  const getActionResolver = (
-    rowData: IRow,
-    onDelete: (data: KafkaRequest) => void,
-    onConnect: (data: KafkaRequest) => void
-  ) => {
-    const { originalData } = rowData;
-    const title = getDeleteInstanceLabel(originalData?.status);
+  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
+    const originalData: KafkaRequest = rowData.originalData;
+    const deleteActionTitle = originalData?.status === InstanceStatus.ACCEPTED ? 'Cancel instance' : 'Delete instance';
     return [
       {
-        title,
+        title: 'View details',
+        id: 'view-instance',
+        onClick: () => onViewInstance(originalData),
+      },
+      {
+        title: 'Connect to this instance',
+        id: 'connect-instance',
+        onClick: () => onConnectInstance(originalData),
+      },
+      {
+        title: deleteActionTitle,
         id: 'delete-instance',
         onClick: () => onDelete(originalData),
       },
       {
         title: 'Connect to instance',
         id: 'connect-instance',
-        onClick: () => onConnect(originalData),
+        onClick: () => onConnectInstance(originalData),
       },
     ];
   };
 
   const preparedTableCells = () => {
-    const tableRow: IRow[] = [];
-    kafkaInstanceItems.forEach((row: IRow) => {
+    const tableRow: (IRowData | string[])[] | undefined = [];
+    kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, status } = row;
       const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
       const regionDisplayName = getCloudRegionDisplayName(region);
@@ -117,8 +125,8 @@ const StreamsTableView = ({
     return tableRow;
   };
 
-  const actionResolver = (rowData: IRow) => {
-    return getActionResolver(rowData, onSelectDeleteInstanceKebab, onConnectToInstance);
+  const actionResolver = (rowData: IRowData) => {
+    return getActionResolver(rowData, onDeleteInstance);
   };
 
   const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
@@ -182,19 +190,19 @@ const StreamsTableView = ({
       >
         <TableHeader />
         <TableBody />
+        {isDeleteModalOpen && (
+          <DeleteInstanceModal
+            title={title}
+            isModalOpen={isDeleteModalOpen}
+            instanceStatus={selectedInstance?.status}
+            setIsModalOpen={setIsDeleteModalOpen}
+            onConfirm={onDeleteInstance}
+            selectedInstanceName={selectedInstance?.name}
+            description={description}
+            confirmActionLabel={confirmActionLabel}
+          />
+        )}
       </Table>
-      {isDeleteModalOpen && (
-        <DeleteInstanceModal
-          title={title}
-          isModalOpen={isDeleteModalOpen}
-          instanceStatus={selectedInstance?.status}
-          setIsModalOpen={setIsDeleteModalOpen}
-          onConfirm={onDeleteInstance}
-          selectedInstanceName={selectedInstance?.name}
-          description={description}
-          confirmActionLabel={confirmActionLabel}
-        />
-      )}
     </Card>
   );
 };
