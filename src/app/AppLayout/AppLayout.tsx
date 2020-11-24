@@ -24,8 +24,9 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
   const [isMobileView, setIsMobileView] = React.useState(true);
   const [isNavOpenMobile, setIsNavOpenMobile] = React.useState(false);
 
-  const authContext = React.useContext(AuthContext);
   const keycloakContext = React.useContext(KeycloakContext);
+
+  const location = useLocation();
 
   const onNavToggleMobile = () => {
     setIsNavOpenMobile(!isNavOpenMobile);
@@ -51,15 +52,23 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
     console.log("Logging you in...");
   };
 
-  const HeaderTools = keycloakContext.keycloak?.authenticated ?
+  if (!keycloakContext.keycloak) {
+    return (
+      // TODO handle this error properly!
+      <div>403 Unauthorized</div>
+    );
+  }
+
+  if (!keycloakContext.keycloak.authenticated) {
+    // force the user to log in
+    return keycloakContext.keycloak?.login();
+  }
+
+  const email = keycloakContext.keycloak.tokenParsed['email'];
+
+  const HeaderTools =
     (
-      <PageHeaderTools>{keycloakContext.profile?.email}</PageHeaderTools>
-    )
-    :
-    (
-      <PageHeaderTools>
-        <Button variant={'link'} onClick={login}>Login</Button>
-      </PageHeaderTools>
+      <PageHeaderTools>{email}</PageHeaderTools>
     );
 
   const Header = (
@@ -72,7 +81,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
     />
   );
 
-  const location = useLocation();
+
 
   const renderNavItem = (route: IAppRoute, index: number) => (
     <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`}>

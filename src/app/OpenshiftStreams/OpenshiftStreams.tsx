@@ -15,8 +15,6 @@ const OpenshiftStreams = () => {
     accessToken: token
   });
 
-  console.log(`token: ${token}`);
-
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);

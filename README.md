@@ -10,10 +10,14 @@ If you are contributing please check out the [Contributing Guidelines.](https://
 ## Quick-start
 
 ```bash
+sudo echo "prod.foo.redhat.com 127.0.0.1" >> /etc/hosts
 git clone https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend.git 
 cd mk-ui-frontend
 npm install && npm run start:dev
 ```
+
+The dev server runs using self-signed certificates, so you'll need to accept / install them into your system in order to load the UI. In Chrome you can simply accept the warnings and it will allow you in.
+
 ## Development Scripts
 ```sh
 # Install development/build dependencies
