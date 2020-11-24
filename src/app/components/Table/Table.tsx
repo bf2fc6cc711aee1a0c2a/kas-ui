@@ -5,7 +5,7 @@ import {
   TableBody
 } from '@patternfly/react-table';
 import {
-  Card,CardBody
+  Card
 } from "@patternfly/react-core";
 import { KafkaRequestAllOf } from '../../../openapi/api';
 import {StatusColumn} from './StatusColumn';
@@ -83,7 +83,6 @@ const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
 
   return (
       <Card>
-        <CardBody>
         <PFTable       
           cells={tableColumns}
           rows={preparedTableCells()}
@@ -93,7 +92,6 @@ const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
           <TableHeader />
           <TableBody />
         </PFTable>
-      </CardBody>
       </Card>
   )
 }
