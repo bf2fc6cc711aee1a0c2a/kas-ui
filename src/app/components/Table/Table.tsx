@@ -1,11 +1,12 @@
 import  React from 'react';
 import {
   Table as PFTable,
-  TableVariant,
   TableHeader,
-  TableBody,
-  IRowData
+  TableBody
 } from '@patternfly/react-table';
+import {
+  Card,CardBody
+} from "@patternfly/react-core";
 import { KafkaRequestAllOf } from '../../../openapi/api';
 import {StatusColumn} from './StatusColumn';
 import {InstanceStatus} from '@app/constants';
@@ -26,8 +27,8 @@ const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
   ];
 
   const getActionResolver = (
-    rowData: IRowData,
-    onDelete: Function
+    rowData: any,
+    onDelete: (data:any)=>void
   ) => {    
     const {originalData}=rowData;
     const title=originalData?.status===InstanceStatus.ACCEPTED? "Cancel instance":"Delete instance";
@@ -40,27 +41,28 @@ const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
     ];
   };
 
-  const preparedTableCells = (row:any) => {
-    const {name,cloud_provider,region,status}=row;
-    const cloud_provider_display_name=getCloudProviderDisplayName(cloud_provider);
-    const region_display_name=getCloudRegionDisplayName(region);
-    const tableRow= {
-      cells: [
-        name,
-        cloud_provider_display_name,
-        region_display_name,
-        {
-          title:<StatusColumn status={status}/>
-        } 
-      ],
-      originalData: row     
-    };
+  const preparedTableCells = () => {
+    const tableRow:any=[];
+    kafkaInstanceItems.forEach((row:any)=>{
+      const {name,cloud_provider,region,status}=row;
+      const cloud_provider_display_name=getCloudProviderDisplayName(cloud_provider);
+      const region_display_name=getCloudRegionDisplayName(region);
+      tableRow.push({
+        cells: [
+          name,
+          cloud_provider_display_name,
+          region_display_name,
+          {
+            title:<StatusColumn status={status}/>
+          } 
+        ],
+        originalData: row     
+      })
+    });
     return tableRow;
   };
 
-  const tableRows = kafkaInstanceItems.map(preparedTableCells);
-
-  const actionResolver = (rowData: IRowData) => {
+  const actionResolver = (rowData: any) => {
     return getActionResolver(
       rowData,
       onDeleteInstance
@@ -80,18 +82,19 @@ const Table = ({mainToggle, kafkaInstanceItems}: TableProps) => {
   }
 
   return (
-      <>
-      <PFTable
-        variant={TableVariant.compact}
-        cells={tableColumns}
-        rows={tableRows}
-        aria-label="cluster instance list"     
-        actionResolver={actionResolver}        
-      >
-        <TableHeader />
-        <TableBody />
-      </PFTable>
-      </>
+      <Card>
+        <CardBody>
+        <PFTable       
+          cells={tableColumns}
+          rows={preparedTableCells()}
+          aria-label="cluster instance list"     
+          actionResolver={actionResolver}        
+        >
+          <TableHeader />
+          <TableBody />
+        </PFTable>
+      </CardBody>
+      </Card>
   )
 }
 
