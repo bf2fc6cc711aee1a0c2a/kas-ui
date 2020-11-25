@@ -11,7 +11,7 @@ import { AlertVariant } from "@patternfly/react-core";
 type AlertProps = {
   addAlert: (message: string, variant?: AlertVariant) => void;
 };
-  
+
 export const AlertContext = createContext<AlertProps>({
   addAlert: () => {},
 });

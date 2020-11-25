@@ -62,7 +62,7 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems }: TableProps) => {
       })
     } catch(error) {
       console.log(error);
-    };
+    }
   };
 
   return (
