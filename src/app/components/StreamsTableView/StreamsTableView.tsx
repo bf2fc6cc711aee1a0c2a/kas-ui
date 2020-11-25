@@ -55,14 +55,14 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems }: TableProps) => {
   const apisService = Services.getInstance().apiService;
 
   const onDeleteInstance = async (event) => {
-    await apisService
-      .deleteKafkaById('')
+    try {
+      await apisService.deleteKafkaById('')
       .then((res) => {
         console.info('Kafka successfully deleted');
       })
-      .catch((error) => {
-        console.log('Error deleting Kafka');
-      });
+    } catch(error) {
+      console.log(error);
+    };
   };
 
   return (

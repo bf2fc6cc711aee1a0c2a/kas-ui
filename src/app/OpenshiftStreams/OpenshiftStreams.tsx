@@ -5,6 +5,7 @@ import { StreamsTableView } from '../components/StreamsTableView/StreamsTableVie
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { KafkaRequestList, KafkaRequestAllOf } from '../../openapi/api';
 import { Services } from '../common/app-config';
+import { AlertProvider } from '../components/Alerts/Alerts';
 
 const OpenshiftStreams = () => {
   // Api Service
@@ -22,12 +23,16 @@ const OpenshiftStreams = () => {
 
   // Functions
   const fetchKafkas = async () => {
-    await apisService.listKafkas().then((res) => {
-      const kafkaInstances = res.data;
-      console.log('what is res' + JSON.stringify(kafkaInstances));
-      setKafkaInstancesList(kafkaInstances);
-      setKafkaInstanceItems(kafkaInstances.items);
-    });
+    try {
+      await apisService.listKafkas().then((res) => {
+        const kafkaInstances = res.data;
+        console.log('what is res' + JSON.stringify(kafkaInstances));
+        setKafkaInstancesList(kafkaInstances);
+        setKafkaInstanceItems(kafkaInstances.items);
+      })
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   const handleSwitchChange = () => {
@@ -36,6 +41,7 @@ const OpenshiftStreams = () => {
 
   return (
     <>
+      <AlertProvider>
       <PageSection variant={PageSectionVariants.light}>
         <Level>
           <LevelItem>
@@ -72,6 +78,7 @@ const OpenshiftStreams = () => {
           />
         )}
       </PageSection>
+      </AlertProvider>
     </>
   );
 };
