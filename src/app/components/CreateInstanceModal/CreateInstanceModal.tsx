@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  AlertVariant,
   Button,
   Modal,
   ModalVariant,
@@ -18,14 +19,14 @@ import { Services } from '../../common/app-config';
 import { NewKafka, FormDataValidationState } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import './CreateInstanceModal.css';
+import { useAlerts } from '../Alerts/Alerts';
+
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
 };
 
-// const fetchKafkas = async () => {
-//   await apisService.listKafkas()
 const cloudRegionOptions = [
   { value: '', label: 'Please select ', disabled: false },
   { value: 'us-east-1', label: 'US East, N. Virginia', disabled: false },
@@ -35,18 +36,23 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   createStreamsInstance,
   setCreateStreamsInstance,
 }: CreateInstanceModalProps) => {
+
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = 'aws';
   newKafka.region = 'us-east-1';
   newKafka.multi_az = true;
+
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const apisService = Services.getInstance().apiService;
 
+  const { addAlert } = useAlerts();
+
   const onCreateInstance = async (event) => {
     let isValid = true;
+
     if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: 'This is a required field' });
@@ -57,25 +63,22 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         message: 'Valid characters for instance name are letters from a to z and numbers from 0 to 9.',
       });
     }
+
     if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
       isValid = false;
       setCloudRegionValidated({ fieldState: 'error', message: 'This is a required field' });
     }
-    if (isValid) {
-      // Check if the event is not empty
 
-      // Update this to use the values from the event
-      await apisService
-        .createKafka(true, kafkaFormData)
+    if (isValid) {
+      try {
+        await apisService.createKafka(true, kafkaFormData)
         .then((res) => {
-          console.info('Kafka was successfully created');
+          addAlert('Kafka successfully created', AlertVariant.success);
           handleModalToggle();
-          // TO DO: User needs to know what Kafka was successfully created
         })
-        .catch((error) => {
-          console.error('Error creating Kafka');
-          // TO DO: Set up error handling
-        });
+      } catch(error) {
+        addAlert(error, AlertVariant.danger);
+      }
     }
   };
 
