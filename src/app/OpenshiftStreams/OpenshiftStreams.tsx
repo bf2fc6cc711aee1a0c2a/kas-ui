@@ -55,7 +55,7 @@ const OpenshiftStreams = () => {
         </Level>
       </PageSection>
       <PageSection>
-        {kafkaInstanceItems.length === 0 ? (
+        {kafkaInstanceItems.length > 0 ? (
           <StreamsTableView kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle} />
         ) : (
           <EmptyState
