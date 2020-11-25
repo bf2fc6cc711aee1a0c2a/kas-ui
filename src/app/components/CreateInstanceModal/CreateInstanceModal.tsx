@@ -14,12 +14,10 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { KafkaRequestAllOf } from '../../../openapi/api';
-import axios from 'axios';
 import { Services } from '../../common/app-config';
 import { NewKafka, FormDataValidationState } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
-
+import './CreateInstanceModal.css';
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
@@ -36,17 +34,15 @@ const cloudRegionOptions = [
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
-  mainToggle,
 }: CreateInstanceModalProps) => {
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = 'aws';
   newKafka.region = 'us-east-1';
-  newKafka.multi_az = false;
+  newKafka.multi_az = true;
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
-  const [availbalityZone, setAvailbalityZone] = useState('multi');
   const apisService = Services.getInstance().apiService;
 
   const onCreateInstance = async (event) => {
@@ -101,7 +97,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     );
   };
 
-  const handleCloudRegionChange = (region: string, _event: any) => {
+  const handleCloudRegionChange = (region: string) => {
     setCloudRegionValidated(
       region === undefined || region === ''
         ? { fieldState: 'error', message: 'This is a required field' }
@@ -160,7 +156,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           <FormGroup label="Cloud provider" fieldId="form-cloud-provider-name">
             <Tile
               title="Amazon Web Services"
-              icon={<AwsIcon size="lg" />}
+              icon={<AwsIcon size="lg" color="black" className="cloud-region-icon" />}
               isSelected={kafkaFormData.cloud_provider === 'aws'}
               onClick={() => setKafkaFormData({ ...kafkaFormData, cloud_provider: 'aws' })}
             />
@@ -186,14 +182,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             </FormSelect>
           </FormGroup>
           <FormGroup label="Availabilty zones" fieldId="availability-zones">
-            <ToggleGroup aria-label="Default multi for availability zone selection">
+            <ToggleGroup aria-label="Availability zone selection">
               <ToggleGroupItem
                 text="Single"
                 buttonId="single"
                 isDisabled={true}
-                isSelected={availbalityZone === 'single'}
+                isSelected={kafkaFormData.multi_az === false}
               />
-              <ToggleGroupItem text="Multi" buttonId="multi" isSelected={availbalityZone === 'multi'} />
+              <ToggleGroupItem text="Multi" buttonId="multi" isSelected={kafkaFormData.multi_az === true} />
             </ToggleGroup>
           </FormGroup>
         </Form>

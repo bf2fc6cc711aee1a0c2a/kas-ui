@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Switch, Level, LevelItem, PageSection, PageSectionVariants, Title } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
-import { Table } from '../components/Table/Table';
+import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { KafkaRequestList, KafkaRequestAllOf } from '../../openapi/api';
 import { Services } from '../common/app-config';
@@ -55,8 +55,8 @@ const OpenshiftStreams = () => {
         </Level>
       </PageSection>
       <PageSection>
-        {kafkaInstanceItems.length > 0 ? (
-          <Table kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle} />
+        {kafkaInstanceItems.length === 0 ? (
+          <StreamsTableView kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle} />
         ) : (
           <EmptyState
             createStreamsInstance={createStreamsInstance}
