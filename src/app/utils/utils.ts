@@ -51,8 +51,13 @@ const getCloudRegionDisplayName = (key: string) => {
   return key;
 };
 
+const capitalize = (s:string) => { 
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 export{
   accessibleRouteChangeHandler,
   getCloudProviderDisplayName,
-  getCloudRegionDisplayName
+  getCloudRegionDisplayName,
+  capitalize
 };

@@ -8,7 +8,7 @@ import {
   Title
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
-import { Table } from '../components/Table/Table';
+import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { Modal } from '../components/Modal/Modal';
 import { KafkaRequestList, KafkaRequestAllOf } from '../../openapi/api';
 import { Services } from '../common/app-config';
@@ -64,7 +64,7 @@ const OpenshiftStreams = () => {
     </PageSection>
     <PageSection>
       { kafkaInstanceItems.length > 0 ? (
-        <Table
+        <StreamsTableView
           kafkaInstanceItems={kafkaInstanceItems}
           mainToggle={mainToggle}
         />
