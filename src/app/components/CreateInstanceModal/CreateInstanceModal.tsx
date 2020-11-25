@@ -17,7 +17,7 @@ import {
 import { Services } from '../../common/app-config';
 import { NewKafka, FormDataValidationState } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
-
+import './CreateInstanceModal.css';
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
@@ -156,7 +156,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           <FormGroup label="Cloud provider" fieldId="form-cloud-provider-name">
             <Tile
               title="Amazon Web Services"
-              icon={<AwsIcon size="lg" />}
+              icon={<AwsIcon size="lg" color="black" className="cloud-region-icon" />}
               isSelected={kafkaFormData.cloud_provider === 'aws'}
               onClick={() => setKafkaFormData({ ...kafkaFormData, cloud_provider: 'aws' })}
             />
