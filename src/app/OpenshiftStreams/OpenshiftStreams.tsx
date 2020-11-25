@@ -6,7 +6,7 @@ import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateIns
 import { DefaultApi, KafkaRequestAllOf, KafkaRequestList } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
-import { InstanceListToolbar } from '../components/InstanceListToolbar';
+import { InstanceListToolbar } from '../components/StreamsTableView/InstanceListToolbar';
 
 const OpenshiftStreams = () => {
   const { token } = useContext(AuthContext);

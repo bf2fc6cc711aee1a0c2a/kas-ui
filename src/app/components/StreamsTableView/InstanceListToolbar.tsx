@@ -5,7 +5,6 @@ import {
   TextInput,
   Button,
   ButtonVariant,
-  ToolbarGroup,
   Select,
   SelectVariant,
   SelectOption,
@@ -24,26 +23,25 @@ type InstanceListToolbarProps = {
 };
 
 const InstanceListToolbar: React.FunctionComponent<InstanceListToolbarProps> = ({
-  mainToggle,
   createStreamsInstance,
   setCreateStreamsInstance,
   filterSelected = 'Name',
 }) => {
   const [isFilterExpanded, setIsFitlerExpanded] = useState(false);
-	const [inputData, setInputData] = useState<string | undefined>();
-	
+  const [inputValue, setInputValue] = useState<string | undefined>();
+
   const onFilterToggle = () => {
     setIsFitlerExpanded(!isFilterExpanded);
-	};
-	
-	// options for filter dropdown
+  };
+
+  // options for filter dropdown
   const filterOptions = [
     { value: 'Name', disabled: false, isPlaceholder: true },
     { value: 'Status', disabled: true },
   ];
-	
-	const onInputChange = (input?: string) => {
-    setInputData(input);
+
+  const onInputChange = (input?: string) => {
+    setInputValue(input);
   };
 
   const toggleGroupItems = (
@@ -51,7 +49,7 @@ const InstanceListToolbar: React.FunctionComponent<InstanceListToolbarProps> = (
       <ToolbarItem>
         <Select
           variant={SelectVariant.single}
-          aria-label="Select Filter"
+          aria-label="Select filter"
           onToggle={onFilterToggle}
           selections={filterSelected}
           isOpen={isFilterExpanded}
@@ -60,34 +58,38 @@ const InstanceListToolbar: React.FunctionComponent<InstanceListToolbarProps> = (
             <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
           ))}
         </Select>
-        <InputGroup>
+        <InputGroup 
+            className="filter-text-input">
           <TextInput
             name="filter text input"
             id="filterText"
             type="search"
-						aria-label="search filter input"
-						//TODO: manage palceholder based on selected filter
+            aria-label="Search filter input"
+            //TODO: manage palceholder based on selected filter
             placeholder={filterSelected === 'Name' ? 'Filter by name' : ''}
             onChange={onInputChange}
-            value={inputData}
+            value={inputValue}
           />
-          <Button variant={ButtonVariant.control} aria-label="search button for search input">
+          <Button variant={ButtonVariant.control} aria-label="Search instances">
             <SearchIcon />
           </Button>
         </InputGroup>
-      </ToolbarItem>
-      <ToolbarItem>
-        <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
-          Create Streams Instance
-        </Button>
       </ToolbarItem>
     </>
   );
 
   const items = (
-    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
-      {toggleGroupItems}
-    </ToolbarToggleGroup>
+    <>
+      <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="lg">
+        {toggleGroupItems}
+      </ToolbarToggleGroup>
+
+      <ToolbarItem>
+        <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
+          Create Streams instance
+        </Button>
+      </ToolbarItem>
+    </>
   );
 
   return (
