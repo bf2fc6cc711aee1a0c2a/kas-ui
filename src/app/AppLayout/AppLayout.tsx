@@ -8,10 +8,12 @@ import {
   Page,
   PageHeader,
   PageSidebar,
-  SkipToContent
+  SkipToContent, PageHeaderTools, Button
 } from '@patternfly/react-core';
 import { routes, IAppRoute, IAppRouteGroup } from '@app/routes';
 import logo from '@app/bgimages/Patternfly-Logo.svg';
+import { AuthContext } from '@app/auth/AuthContext';
+import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 
 interface IAppLayout {
   children: React.ReactNode;
@@ -21,6 +23,11 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
   const [isNavOpen, setIsNavOpen] = React.useState(true);
   const [isMobileView, setIsMobileView] = React.useState(true);
   const [isNavOpenMobile, setIsNavOpenMobile] = React.useState(false);
+
+  const keycloakContext = React.useContext(KeycloakContext);
+
+  const location = useLocation();
+
   const onNavToggleMobile = () => {
     setIsNavOpenMobile(!isNavOpenMobile);
   };
@@ -41,16 +48,40 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
     );
   }
 
+  const login = () => {
+    console.log("Logging you in...");
+  };
+
+  if (!keycloakContext.keycloak) {
+    return (
+      // TODO handle this error properly!
+      <div>403 Unauthorized</div>
+    );
+  }
+
+  if (!keycloakContext.keycloak.authenticated) {
+    // force the user to log in
+    return keycloakContext.keycloak?.login();
+  }
+
+  const email = keycloakContext.keycloak.tokenParsed['email'];
+
+  const HeaderTools =
+    (
+      <PageHeaderTools>{email}</PageHeaderTools>
+    );
+
   const Header = (
     <PageHeader
       logo={<LogoImg />}
       showNavToggle
       isNavOpen={isNavOpen}
+      headerTools={HeaderTools}
       onNavToggle={isMobileView ? onNavToggleMobile : onNavToggle}
     />
   );
 
-  const location = useLocation();
+
 
   const renderNavItem = (route: IAppRoute, index: number) => (
     <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`}>
