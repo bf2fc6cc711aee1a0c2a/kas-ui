@@ -6,13 +6,21 @@ import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
 import { Services } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
+import { InstanceListToolbar } from './InstanceListToolbar';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequestAllOf[];
+  createStreamsInstance: boolean;
+  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
 };
 
-const StreamsTableView = ({ mainToggle, kafkaInstanceItems }: TableProps) => {
+const StreamsTableView = ({
+  mainToggle,
+  createStreamsInstance,
+  setCreateStreamsInstance,
+  kafkaInstanceItems,
+}: TableProps) => {
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequestAllOf) => void) => {
@@ -56,17 +64,21 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems }: TableProps) => {
 
   const onDeleteInstance = async (event) => {
     try {
-      await apisService.deleteKafkaById('')
-      .then((res) => {
+      await apisService.deleteKafkaById('').then((res) => {
         console.info('Kafka successfully deleted');
-      })
-    } catch(error) {
+      });
+    } catch (error) {
       console.log(error);
     }
   };
 
   return (
     <Card>
+      <InstanceListToolbar
+        mainToggle={mainToggle}
+        createStreamsInstance={createStreamsInstance}
+        setCreateStreamsInstance={setCreateStreamsInstance}
+      />
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}

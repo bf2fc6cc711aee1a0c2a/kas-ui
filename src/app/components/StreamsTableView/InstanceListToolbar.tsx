@@ -27,18 +27,15 @@ const InstanceListToolbar: React.FunctionComponent<InstanceListToolbarProps> = (
   setCreateStreamsInstance,
   filterSelected = 'Name',
 }) => {
-  const [isFilterExpanded, setIsFitlerExpanded] = useState(false);
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
 
   const onFilterToggle = () => {
-    setIsFitlerExpanded(!isFilterExpanded);
+    setIsFilterExpanded(!isFilterExpanded);
   };
 
   // options for filter dropdown
-  const filterOptions = [
-    { value: 'Name', disabled: false, isPlaceholder: true },
-    { value: 'Status', disabled: true },
-  ];
+  const filterOptions = [{ value: 'Name', disabled: false }];
 
   const onInputChange = (input?: string) => {
     setInputValue(input);
@@ -58,15 +55,13 @@ const InstanceListToolbar: React.FunctionComponent<InstanceListToolbarProps> = (
             <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
           ))}
         </Select>
-        <InputGroup 
-            className="filter-text-input">
+        <InputGroup className="filter-text-input">
           <TextInput
             name="filter text input"
             id="filterText"
             type="search"
             aria-label="Search filter input"
-            //TODO: manage palceholder based on selected filter
-            placeholder={filterSelected === 'Name' ? 'Filter by name' : ''}
+            placeholder={`Filter by ${filterSelected?.toLowerCase()}`}
             onChange={onInputChange}
             value={inputValue}
           />

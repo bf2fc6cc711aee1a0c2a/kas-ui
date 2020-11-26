@@ -47,49 +47,47 @@ const OpenshiftStreams = () => {
   return (
     <>
       <AlertProvider>
-        <PageSection variant={PageSectionVariants.light}>
-          <Level>
-            <LevelItem>
-              <Title headingLevel="h1" size="lg">
-                OpenshiftStreams
-              </Title>
-            </LevelItem>
-            <LevelItem>
-              <Switch
-                id="simple-switch"
-                label="Mock UI"
-                labelOff="Currently supported UI"
-                isChecked={mainToggle}
-                onChange={() => handleSwitchChange()}
-              />
-            </LevelItem>
-          </Level>
-        </PageSection>
-        <PageSection>
-          {kafkaInstanceItems.length > 0 ? (
-            <>
-              <InstanceListToolbar
-                mainToggle={mainToggle}
-                createStreamsInstance={createStreamsInstance}
-                setCreateStreamsInstance={setCreateStreamsInstance}
-              />
-              <StreamsTableView mainToggle={mainToggle} kafkaInstanceItems={kafkaInstanceItems} />
-            </>
-          ) : (
-            <EmptyState
+      <PageSection variant={PageSectionVariants.light}>
+        <Level>
+          <LevelItem>
+            <Title headingLevel="h1" size="lg">
+              OpenshiftStreams
+            </Title>
+          </LevelItem>
+          <LevelItem>
+            <Switch
+              id="simple-switch"
+              label="Mock UI"
+              labelOff="Currently supported UI"
+              isChecked={mainToggle}
+              onChange={() => handleSwitchChange()}
+            />
+          </LevelItem>
+        </Level>
+      </PageSection>
+      <PageSection>
+        {kafkaInstanceItems.length > 0 ? (
+            <StreamsTableView
+              mainToggle={mainToggle}
+              kafkaInstanceItems={kafkaInstanceItems}
               createStreamsInstance={createStreamsInstance}
               setCreateStreamsInstance={setCreateStreamsInstance}
-              mainToggle={mainToggle}
             />
-          )}
-          {createStreamsInstance && (
-            <CreateInstanceModal
-              createStreamsInstance={createStreamsInstance}
-              setCreateStreamsInstance={setCreateStreamsInstance}
-              mainToggle={mainToggle}
-            />
-          )}
-        </PageSection>
+        ) : (
+          <EmptyState
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+            mainToggle={mainToggle}
+          />
+        )}
+        {createStreamsInstance && (
+          <CreateInstanceModal
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+            mainToggle={mainToggle}
+          />
+        )}
+      </PageSection>
       </AlertProvider>
     </>
   );
