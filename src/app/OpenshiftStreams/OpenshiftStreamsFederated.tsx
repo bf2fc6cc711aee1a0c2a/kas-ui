@@ -20,4 +20,4 @@ const OpenshiftStreamsFederated = ({ token }: OpenshiftStreamsFederatedProps) =>
   )
 };
 
-export { OpenshiftStreamsFederated };
+export default OpenshiftStreamsFederated;
