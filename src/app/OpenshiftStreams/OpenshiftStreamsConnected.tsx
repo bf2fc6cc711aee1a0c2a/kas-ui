@@ -1,6 +1,7 @@
 import React from 'react';
 import { KafkaRequest } from '../../openapi';
 import { OpenshiftStreams } from '@app/OpenshiftStreams/OpenshiftStreams';
+import { AlertProvider } from '@app/components/Alerts/Alerts';
 
 const onConnectInstance = async(event: KafkaRequest) => {
   if (event.id === undefined) {
@@ -9,4 +10,7 @@ const onConnectInstance = async(event: KafkaRequest) => {
   console.log(event.id);
 };
 
-export const OpenshiftStreamsConnected = <OpenshiftStreams onConnectToInstance={onConnectInstance} />;
+export const OpenshiftStreamsConnected =
+  (<AlertProvider>
+    <OpenshiftStreams onConnectToInstance={onConnectInstance} />
+  </AlertProvider>);

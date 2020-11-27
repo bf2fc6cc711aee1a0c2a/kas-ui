@@ -7,22 +7,22 @@ import React, {
 } from "react";
 import { AlertType, AlertToastGroup } from "./AlertToastGroup";
 import { AlertVariant } from "@patternfly/react-core";
-  
-type AlertProps = {
+
+export type AlertContextProps = {
   addAlert: (message: string, variant?: AlertVariant) => void;
 };
 
-export const AlertContext = createContext<AlertProps>({
+export const AlertContext = createContext<AlertContextProps>({
   addAlert: () => {},
 });
-  
+
 export const useAlerts = () => useContext(AlertContext);
-  
+
 type TimeOut = {
   key: number;
   timeOut: NodeJS.Timeout;
 };
-  
+
 export const AlertProvider = ({ children }: { children: ReactNode }) => {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
   const [timers, setTimers] = useState<TimeOut[]>([]);
