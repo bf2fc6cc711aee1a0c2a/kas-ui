@@ -161,6 +161,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           <FormGroup label="Cloud provider" fieldId="form-cloud-provider-name">
             {cloudProviderOptions.map((provider) => (
               <Tile
+                key={`tile-${provider.value}`}
                 title={provider.label}
                 icon={getTileIcon(provider.value)}
                 isSelected={kafkaFormData.cloud_provider === provider.value}
