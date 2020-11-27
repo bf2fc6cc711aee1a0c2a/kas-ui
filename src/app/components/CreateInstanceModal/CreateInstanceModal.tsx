@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   AlertVariant,
   Button,
@@ -15,11 +15,13 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { Services } from '../../common/app-config';
 import { NewKafka, FormDataValidationState } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import './CreateInstanceModal.css';
 import { useAlerts } from '../Alerts/Alerts';
+import { AuthContext } from '@app/auth/AuthContext';
+import { DefaultApi } from '../../../openapi';
+import { BASE_PATH } from '@app/common/app-config';
 
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
@@ -46,7 +48,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
-  const apisService = Services.getInstance().apiService;
+
+  const { token } = useContext(AuthContext);
+
+  // Api Service
+  const apisService = new DefaultApi({
+    accessToken: token,
+    basePath: BASE_PATH
+  });
 
   const { addAlert } = useAlerts();
 

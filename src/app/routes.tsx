@@ -5,6 +5,7 @@ import { OpenshiftStreams } from '@app/OpenshiftStreams/OpenshiftStreams';
 import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
+import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';
 
 let routeFocusTimer: number;
 
@@ -29,7 +30,7 @@ export type AppRouteConfig = IAppRoute | IAppRouteGroup;
 
 const routes: AppRouteConfig[] = [
   {
-    component: OpenshiftStreams,
+    component: OpenshiftStreamsConnected,
     exact: true,
     label: 'OpenShift Streams',
     path: '/',
