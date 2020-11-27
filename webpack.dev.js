@@ -1,15 +1,16 @@
 const path = require('path');
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
-const HOST = process.env.HOST || "localhost";
-const PORT = process.env.PORT || "9000";
+const CopyPlugin = require('copy-webpack-plugin');
+const HOST = process.env.HOST || "prod.foo.redhat.com";
+const PORT = process.env.PORT || "1337";
 
 module.exports = merge(common('development'), {
   mode: "development",
   devtool: "eval-source-map",
   output: {
     // This must be set explicitly for module federation
-    publicPath: `http://${HOST}:${PORT}/`
+    publicPath: `https://${HOST}:${PORT}/`
   },
   devServer: {
     contentBase: "./dist",
@@ -40,5 +41,12 @@ module.exports = merge(common('development'), {
         use: ["style-loader", "css-loader"]
       }
     ]
-  }
+  },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: './src/keycloak.dev.json', to: 'keycloak.json'}
+      ]
+    }),
+  ]
 });
