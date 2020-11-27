@@ -20,23 +20,19 @@ import { NewKafka, FormDataValidationState } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import './CreateInstanceModal.css';
 import { useAlerts } from '../Alerts/Alerts';
-
+import { cloudProviderOptions, cloudRegionOptions } from '../../utils/utils';
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
 };
 
-const cloudRegionOptions = [
-  { value: '', label: 'Please select ', disabled: false },
-  { value: 'us-east-1', label: 'US East, N. Virginia', disabled: false },
-];
+const cloudRegionsAvailable = [{ value: '', label: 'Please select ', disabled: false }, ...cloudRegionOptions];
 
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
 }: CreateInstanceModalProps) => {
-
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = 'aws';
@@ -71,12 +67,11 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
 
     if (isValid) {
       try {
-        await apisService.createKafka(true, kafkaFormData)
-        .then((res) => {
+        await apisService.createKafka(true, kafkaFormData).then((res) => {
           addAlert('Kafka successfully created', AlertVariant.success);
           handleModalToggle();
-        })
-      } catch(error) {
+        });
+      } catch (error) {
         addAlert(error, AlertVariant.danger);
       }
     }
@@ -110,7 +105,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   };
 
   const isFormValid = nameValidated.fieldState !== 'error' && cloudRegionValidated.fieldState !== 'error';
-
+  const getTileIcon = (provider: string) => {
+    switch (provider.toLowerCase()) {
+      case 'aws':
+        return <AwsIcon size="lg" color="black" className="cloud-region-icon" />;
+      default:
+        return <AwsIcon size="lg" color="black" className="cloud-region-icon" />;
+    }
+  };
   return (
     <>
       <Modal
@@ -157,12 +159,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             />
           </FormGroup>
           <FormGroup label="Cloud provider" fieldId="form-cloud-provider-name">
-            <Tile
-              title="Amazon Web Services"
-              icon={<AwsIcon size="lg" color="black" className="cloud-region-icon" />}
-              isSelected={kafkaFormData.cloud_provider === 'aws'}
-              onClick={() => setKafkaFormData({ ...kafkaFormData, cloud_provider: 'aws' })}
-            />
+            {cloudProviderOptions.map((provider) => (
+              <Tile
+                title={provider.label}
+                icon={getTileIcon(provider.value)}
+                isSelected={kafkaFormData.cloud_provider === provider.value}
+                onClick={() => setKafkaFormData({ ...kafkaFormData, cloud_provider: provider.value })}
+              />
+            ))}
           </FormGroup>
           <FormGroup
             label="Cloud region"
@@ -179,8 +183,8 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               name="cloud-region"
               aria-label="Cloud region"
             >
-              {cloudRegionOptions.map((option, index) => (
-                <FormSelectOption isDisabled={option.disabled} key={index} value={option.value} label={option.label} />
+              {cloudRegionsAvailable.map((option, index) => (
+                <FormSelectOption key={index} value={option.value} label={option.label} />
               ))}
             </FormSelect>
           </FormGroup>
