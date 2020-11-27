@@ -10,7 +10,7 @@ If you are contributing please check out the [Contributing Guidelines.](https://
 ## Quick-start
 
 ```bash
-sudo echo "prod.foo.redhat.com 127.0.0.1" >> /etc/hosts
+sudo echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
 git clone https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend.git 
 cd mk-ui-frontend
 npm install && npm run start:dev
