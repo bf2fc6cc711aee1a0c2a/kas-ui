@@ -2,7 +2,7 @@ import { DefaultApi } from  '../../openapi/api';
 
 // Initialize services.
 
-export const BASE_PATH = 'http://localhost:8000';
+export const BASE_PATH = 'https://api.stage.openshift.com';
 
 export class Services {
   static getInstance() {

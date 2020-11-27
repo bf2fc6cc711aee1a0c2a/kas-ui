@@ -2,15 +2,17 @@ const path = require('path');
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const CopyPlugin = require('copy-webpack-plugin');
+const { port } = require("./package.json");
 const HOST = process.env.HOST || "prod.foo.redhat.com";
-const PORT = process.env.PORT || "1337";
+const PORT = process.env.PORT || port;
+const PROTOCOL = process.env.PROTOCOL || "https";
 
 module.exports = merge(common('development'), {
   mode: "development",
   devtool: "eval-source-map",
   output: {
     // This must be set explicitly for module federation
-    publicPath: `https://${HOST}:${PORT}/`
+    publicPath: `${PROTOCOL}://${HOST}:${PORT}/`
   },
   devServer: {
     contentBase: "./dist",
@@ -21,7 +23,8 @@ module.exports = merge(common('development'), {
     historyApiFallback: true,
     hot: true,
     overlay: true,
-    open: true
+    open: true,
+    https: PROTOCOL === "https"
   },
   module: {
     rules: [

@@ -4,7 +4,6 @@ import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
-import { AlertProvider } from '../components/Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
 import { BASE_PATH } from '@app/common/app-config';
 
@@ -66,45 +65,43 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   return (
     <>
-      <AlertProvider>
-        <PageSection variant={PageSectionVariants.light}>
-          <Level>
-            <LevelItem>
-              <Title headingLevel="h1" size="lg">
-                OpenshiftStreams
-              </Title>
-            </LevelItem>
-            <LevelItem>
-              <Switch
-                id="simple-switch"
-                label="Mock UI"
-                labelOff="Currently supported UI"
-                isChecked={mainToggle}
-                onChange={() => handleSwitchChange()}
-              />
-            </LevelItem>
-          </Level>
-        </PageSection>
-        <PageSection>
-          {kafkaInstanceItems.length > 0 ? (
-            <StreamsTableView kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle}
-                              onConnectToInstance={onConnectToInstance} />
-          ) : (
-            <EmptyState
-              createStreamsInstance={createStreamsInstance}
-              setCreateStreamsInstance={setCreateStreamsInstance}
-              mainToggle={mainToggle}
+      <PageSection variant={PageSectionVariants.light}>
+        <Level>
+          <LevelItem>
+            <Title headingLevel="h1" size="lg">
+              OpenshiftStreams
+            </Title>
+          </LevelItem>
+          <LevelItem>
+            <Switch
+              id="simple-switch"
+              label="Mock UI"
+              labelOff="Currently supported UI"
+              isChecked={mainToggle}
+              onChange={() => handleSwitchChange()}
             />
-          )}
-          {createStreamsInstance && (
-            <CreateInstanceModal
-              createStreamsInstance={createStreamsInstance}
-              setCreateStreamsInstance={setCreateStreamsInstance}
-              mainToggle={mainToggle}
-            />
-          )}
-        </PageSection>
-      </AlertProvider>
+          </LevelItem>
+        </Level>
+      </PageSection>
+      <PageSection>
+        {kafkaInstanceItems.length > 0 ? (
+          <StreamsTableView kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle}
+                            onConnectToInstance={onConnectToInstance} />
+        ) : (
+          <EmptyState
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+            mainToggle={mainToggle}
+          />
+        )}
+        {createStreamsInstance && (
+          <CreateInstanceModal
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+            mainToggle={mainToggle}
+          />
+        )}
+      </PageSection>
     </>
   );
 };

@@ -86,7 +86,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           handleModalToggle();
         })
       } catch(error) {
-        addAlert(error, AlertVariant.danger);
+        addAlert(error.message, AlertVariant.danger);
       }
     }
   };
