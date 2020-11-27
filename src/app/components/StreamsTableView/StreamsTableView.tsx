@@ -1,23 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, IRowData } from '@patternfly/react-table';
 import { Card } from '@patternfly/react-core';
-import { KafkaRequestAllOf } from '../../../openapi/api';
+import { KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
 import { Services } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
+import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 
 type TableProps = {
-  kafkaInstanceItems: KafkaRequestAllOf[];
+  kafkaInstanceItems: KafkaRequest[];
   mainToggle: boolean;
+  refresh: () => void;
 };
 
-const StreamsTableView = ({ mainToggle, kafkaInstanceItems }: TableProps) => {
+const StreamsTableView = ({ mainToggle, kafkaInstanceItems, refresh }: TableProps) => {
+  const apisService = Services.getInstance().apiService;
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>();
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
 
-  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequestAllOf) => void) => {
+  const getDeleteInstanceLabel = (status: InstanceStatus) => {
+    switch (status) {
+      case InstanceStatus.COMPLETED:
+        return 'Delete instance';
+      case InstanceStatus.FAILED:
+        return 'Remove';
+      case InstanceStatus.ACCEPTED:
+      case InstanceStatus.PROVISIONING:
+        return 'Stop instance';
+      default:
+        return;
+    }
+  };
+
+  const getDeleteInstanceModalConfig = (status: string | undefined, instanceName: string | undefined) => {
+    const config = {
+      title: '',
+      confirmActionLabel: '',
+      description: '',
+    };
+    if (status === InstanceStatus.COMPLETED) {
+      config.title = 'Delete instance?';
+      config.confirmActionLabel = 'Delete instance';
+      config.description = `The ${instanceName} will be deleted.`;
+    } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
+      config.title = 'Stop creating instance?';
+      config.confirmActionLabel = 'Stop creating instance';
+      config.description = `The creation of the ${instanceName} instance will be stopped.`;
+    }
+    return config;
+  };
+
+  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const { originalData } = rowData;
-    const title = originalData?.status === InstanceStatus.ACCEPTED ? 'Cancel instance' : 'Delete instance';
+    const title = getDeleteInstanceLabel(originalData?.status);
     return [
       {
         title,
@@ -49,34 +86,67 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems }: TableProps) => {
   };
 
   const actionResolver = (rowData: IRowData) => {
-    return getActionResolver(rowData, onDeleteInstance);
+    return getActionResolver(rowData, onSelectDeleteInstanceKebab);
   };
 
-  const apisService = Services.getInstance().apiService;
+  const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
+    const { status } = instance;
+    setSelectedInstance(instance);
+    /**
+     * Hide confimr modal for status 'failed' and call delete api
+     * Show confirm modal for all status except 'failed' status
+     */
+    if (status === InstanceStatus.FAILED) {
+      onDeleteInstance();
+    } else {
+      setIsDeleteModalOpen(!isDeleteModalOpen);
+    }
+  };
 
-  const onDeleteInstance = async (event) => {
+  const onDeleteInstance = async () => {
+    const { id } = selectedInstance;
     try {
-      await apisService.deleteKafkaById('')
-      .then((res) => {
+      await apisService.deleteKafkaById(id).then((res) => {
+        setIsDeleteModalOpen(false);
+        refresh();
         console.info('Kafka successfully deleted');
-      })
-    } catch(error) {
+      });
+    } catch (error) {
       console.log(error);
     }
   };
 
+  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
+    selectedInstance?.status,
+    selectedInstance?.name
+  );
+
   return (
-    <Card>
-      <Table
-        cells={tableColumns}
-        rows={preparedTableCells()}
-        aria-label="cluster instance list"
-        actionResolver={actionResolver}
-      >
-        <TableHeader />
-        <TableBody />
-      </Table>
-    </Card>
+    <>
+      <Card>
+        <Table
+          cells={tableColumns}
+          rows={preparedTableCells()}
+          aria-label="Cluster instance list"
+          actionResolver={actionResolver}
+        >
+          <TableHeader />
+          <TableBody />
+        </Table>
+      </Card>
+      {isDeleteModalOpen && (
+        <DeleteInstanceModal
+          title={title}
+          isModalOpen={isDeleteModalOpen}
+          instanceStatus={selectedInstance?.status}
+          setIsModalOpen={setIsDeleteModalOpen}
+          onConfirm={onDeleteInstance}
+          selectedInstanceName={selectedInstance?.name}
+          description={description}
+          confirmActionLabel={confirmActionLabel}
+        />
+      )}
+    </>
   );
 };
 
