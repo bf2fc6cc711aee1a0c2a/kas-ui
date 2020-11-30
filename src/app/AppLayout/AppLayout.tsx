@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { NavLink, useLocation, useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Nav,
   NavList,
@@ -37,6 +38,8 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
   const onPageResize = (props: { mobileView: boolean; windowSize: number }) => {
     setIsMobileView(props.mobileView);
   };
+
+  const { t } = useTranslation();
 
   function LogoImg() {
     const history = useHistory();
@@ -78,18 +81,20 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
       isNavOpen={isNavOpen}
       headerTools={HeaderTools}
       onNavToggle={isMobileView ? onNavToggleMobile : onNavToggle}
+      aria-label={t('Global navigation')}
     />
   );
 
 
 
-  const renderNavItem = (route: IAppRoute, index: number) => (
-    <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`}>
+  const renderNavItem = (route: IAppRoute, index: number) => {
+    const { t } = useTranslation();
+    return <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`}>
       <NavLink exact to={route.path} activeClassName="pf-m-current">
-        {route.label}
+        {t(route.label)}
       </NavLink>
-    </NavItem>
-  );
+    </NavItem>;
+  }
 
   const renderNavGroup = (group: IAppRouteGroup, groupIndex: number) => (
     <NavExpandable
@@ -97,13 +102,14 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
       id={`${group.label}-${groupIndex}`}
       title={group.label}
       isActive={group.routes.some((route) => route.path === location.pathname)}
+      aria-label={t()}
     >
       {group.routes.map((route, idx) => route.label && renderNavItem(route, idx))}
     </NavExpandable>
   );
 
   const Navigation = (
-    <Nav id="nav-primary-simple" theme="dark">
+    <Nav id="nav-primary-simple" theme="dark" aria-label={t('Global')}>
       <NavList id="nav-list-simple">
         {routes.map(
           (route, idx) => route.label && (!route.routes ? renderNavItem(route, idx) : renderNavGroup(route, idx))
@@ -119,7 +125,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
   );
   const PageSkipToContent = (
     <SkipToContent href="#primary-app-container">
-      Skip to Content
+      {t('Skip to Content')}
     </SkipToContent>
   );
   return (

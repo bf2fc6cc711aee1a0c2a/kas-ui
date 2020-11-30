@@ -110,6 +110,22 @@ module.exports = (env, argv) => {
               }
             }
           ]
+        },
+        {
+          test: /\.(json)$/i,
+          include: [
+            path.resolve(__dirname, 'src/locales'),
+          ],
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 5000,
+                outputPath: 'locales',
+                name: '[name].[ext]',
+              }
+            }
+          ]
         }
       ]
     },
@@ -128,6 +144,11 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           { from: './src/favicon.png', to: 'images' },
+        ]
+      }),
+      new CopyPlugin({
+        patterns: [
+          { from: './src/locales', to: 'locales' },
         ]
       }),
       new webpack.container.ModuleFederationPlugin({
