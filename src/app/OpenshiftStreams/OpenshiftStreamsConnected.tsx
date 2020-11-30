@@ -10,7 +10,10 @@ const onConnectInstance = async(event: KafkaRequest) => {
   console.log(event.id);
 };
 
-export const OpenshiftStreamsConnected =
-  (<AlertProvider>
-    <OpenshiftStreams onConnectToInstance={onConnectInstance} />
-  </AlertProvider>);
+export const OpenshiftStreamsConnected = () => {
+  return (
+    <AlertProvider>
+      <OpenshiftStreams onConnectToInstance={onConnectInstance} />
+    </AlertProvider>
+  );
+}
