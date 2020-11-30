@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, IRowData } from '@patternfly/react-table';
 import { Card } from '@patternfly/react-core';
 import { KafkaRequestAllOf } from '../../../openapi/api';
@@ -22,7 +22,8 @@ const StreamsTableView = ({
   kafkaInstanceItems,
 }: TableProps) => {
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
-
+  const [filterSelected, setFilterSelected] = useState('Name');
+  const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequestAllOf) => void) => {
     const { originalData } = rowData;
     const title = originalData?.status === InstanceStatus.ACCEPTED ? 'Cancel instance' : 'Delete instance';
@@ -36,7 +37,7 @@ const StreamsTableView = ({
   };
 
   const preparedTableCells = () => {
-    const tableRow: IRowData = [];
+    const tableRow: (string[] | IRowData)[] | undefined = [];
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, status } = row;
       const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
@@ -78,6 +79,9 @@ const StreamsTableView = ({
         mainToggle={mainToggle}
         createStreamsInstance={createStreamsInstance}
         setCreateStreamsInstance={setCreateStreamsInstance}
+        filterSelected={filterSelected}
+        namesSelected={namesSelected}
+        setNamesSelected={setNamesSelected}
       />
       <Table
         cells={tableColumns}

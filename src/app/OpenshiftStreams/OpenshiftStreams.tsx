@@ -6,7 +6,6 @@ import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateIns
 import { DefaultApi, KafkaRequestAllOf, KafkaRequestList } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
-import { InstanceListToolbar } from '../components/StreamsTableView/InstanceListToolbar';
 
 const OpenshiftStreams = () => {
   const { token } = useContext(AuthContext);
@@ -18,7 +17,7 @@ const OpenshiftStreams = () => {
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
-  const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
+  // const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequestAllOf[]>([]); // Change this to 0 if you are working on the empty state
   const [mainToggle, setMainToggle] = useState(false);
 
@@ -32,7 +31,7 @@ const OpenshiftStreams = () => {
       await apisService.listKafkas().then((res) => {
         const kafkaInstances = res.data;
         console.log('what is res' + JSON.stringify(kafkaInstances));
-        setKafkaInstancesList(kafkaInstances);
+        // setKafkaInstancesList(kafkaInstances);
         setKafkaInstanceItems(kafkaInstances.items);
       });
     } catch (error) {
