@@ -88,7 +88,6 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
 
 
   const renderNavItem = (route: IAppRoute, index: number) => {
-    const { t } = useTranslation();
     return <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`}>
       <NavLink exact to={route.path} activeClassName="pf-m-current">
         {t(route.label)}
