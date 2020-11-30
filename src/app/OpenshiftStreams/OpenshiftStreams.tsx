@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Level, LevelItem, PageSection, PageSectionVariants, Spinner, Switch, Title } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
@@ -14,6 +15,7 @@ type OpenShiftStreamsProps = {
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { token } = useContext(AuthContext);
 
+  const { t } = useTranslation();
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
@@ -69,14 +71,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
         <Level>
           <LevelItem>
             <Title headingLevel="h1" size="lg">
-              OpenshiftStreams
+              {t('OpenshiftStreams')}
             </Title>
           </LevelItem>
           <LevelItem>
             <Switch
               id="simple-switch"
-              label="Mock UI"
-              labelOff="Currently supported UI"
+              label={t('Mock UI')}
+              labelOff={t('Currently supported UI')}
               isChecked={mainToggle}
               onChange={() => handleSwitchChange()}
             />

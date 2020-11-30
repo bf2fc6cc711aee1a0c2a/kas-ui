@@ -8,6 +8,7 @@ import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { Loading } from './components/Loading';
 import { AuthContext } from './auth/AuthContext';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
+import '../i18n.js';
 
 let keycloak: any;
 
@@ -32,9 +33,11 @@ const App: React.FunctionComponent = () => {
     <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
       <KeycloakAuthProvider>
         <Router>
-          <AppLayout>
-            <AppRoutes />
-          </AppLayout>
+          <React.Suspense fallback={<Loading />}>
+            <AppLayout>
+              <AppRoutes />
+            </AppLayout>
+          </React.Suspense>
         </Router>
       </KeycloakAuthProvider>
     </KeycloakContext.Provider>
