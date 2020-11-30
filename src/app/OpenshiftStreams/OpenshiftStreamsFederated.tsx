@@ -33,4 +33,4 @@ const OpenshiftStreamsFederated = ({ token, onConnectToInstance, addAlert }: Ope
   )
 };
 
-export { OpenshiftStreamsFederated };
+export default OpenshiftStreamsFederated;
