@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Table, TableHeader, TableBody, IRowData } from '@patternfly/react-table';
 import { Card } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest, KafkaRequestAllOf } from '../../../openapi/api';
@@ -6,17 +6,29 @@ import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
 import { BASE_PATH, Services } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
+import { InstanceListToolbar } from './InstanceListToolbar';
 import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequestAllOf[];
+  createStreamsInstance: boolean;
+  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
   onConnectToInstance: (data: KafkaRequest) => void;
 };
 
-const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance }: TableProps) => {
+const StreamsTableView = ({
+  mainToggle,
+  createStreamsInstance,
+  setCreateStreamsInstance,
+  kafkaInstanceItems,
+  onConnectToInstance
+}: TableProps) => {
+
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
+  const [filterSelected, setFilterSelected] = useState('Name');
+  const [namesSelected, setNamesSelected] = useState<string[]>([]);
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void, onConnect: (data: KafkaRequest) => void) => {
     const { originalData } = rowData;
@@ -36,7 +48,7 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance 
   };
 
   const preparedTableCells = () => {
-    const tableRow: IRowData = [];
+    const tableRow: (string[] | IRowData)[] | undefined = [];
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, status } = row;
       const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
@@ -76,14 +88,22 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance 
       await apisService.deleteKafkaById(event.id)
       .then((res) => {
         console.info('Kafka successfully deleted');
-      })
-    } catch(error) {
+      });
+    } catch (error) {
       console.log(error);
     }
   };
 
   return (
     <Card>
+      <InstanceListToolbar
+        mainToggle={mainToggle}
+        createStreamsInstance={createStreamsInstance}
+        setCreateStreamsInstance={setCreateStreamsInstance}
+        filterSelected={filterSelected}
+        namesSelected={namesSelected}
+        setNamesSelected={setNamesSelected}
+      />
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}

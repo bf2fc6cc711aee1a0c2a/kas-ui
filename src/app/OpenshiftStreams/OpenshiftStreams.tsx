@@ -15,21 +15,20 @@ type OpenShiftStreamsProps = {
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { token } = useContext(AuthContext);
 
-  const { t } = useTranslation();
-
-  // States
-  const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
-  const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
-  const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
-  const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[]>([]); // Change this to 0 if you are working on the empty state
-  const [mainToggle, setMainToggle] = useState(false);
-
-
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
     basePath: BASE_PATH
   });
+
+  const { t } = useTranslation();
+
+  // States
+  const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
+  const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[]>([]);
+  const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
+  const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
+  const [mainToggle, setMainToggle] = useState(false);
 
   // Functions
   const fetchKafkas = async () => {
@@ -37,7 +36,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       await apisService.listKafkas().then((res) => {
         const kafkaInstances = res.data;
         console.log('what is res' + JSON.stringify(kafkaInstances));
-        setKafkaInstancesList(kafkaInstances);
+        // setKafkaInstancesList(kafkaInstances);
         setKafkaInstanceItems(kafkaInstances.items);
       }).then(() => setTimeout(fetchKafkas, 2000));
     } catch (error) {
@@ -87,8 +86,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       </PageSection>
       <PageSection>
         {kafkaInstanceItems.length > 0 ? (
-          <StreamsTableView kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle}
-                            onConnectToInstance={onConnectToInstance} />
+          <StreamsTableView
+            kafkaInstanceItems={kafkaInstanceItems}
+            mainToggle={mainToggle}
+            onConnectToInstance={onConnectToInstance}
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+            />
         ) : (
           <EmptyState
             createStreamsInstance={createStreamsInstance}
