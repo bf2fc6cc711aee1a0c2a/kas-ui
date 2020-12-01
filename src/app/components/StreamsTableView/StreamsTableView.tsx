@@ -1,38 +1,87 @@
 import React, { useState, useContext } from 'react';
-import { Table, TableHeader, TableBody, IRowData } from '@patternfly/react-table';
-import { Card } from '@patternfly/react-core';
-import { DefaultApi, KafkaRequest, KafkaRequestAllOf } from '../../../openapi/api';
+import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
+import { Card, AlertVariant } from '@patternfly/react-core';
+import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { BASE_PATH, Services } from '../../common/app-config';
+import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
-import { InstanceListToolbar } from './InstanceListToolbar';
+import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
+import { useAlerts } from '@app/components/Alerts/Alerts';
+import { StreamsToolbar } from './StreamsToolbar';
 import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
 
 type TableProps = {
-  kafkaInstanceItems: KafkaRequestAllOf[];
+  kafkaInstanceItems: KafkaRequest[];
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
   onConnectToInstance: (data: KafkaRequest) => void;
+  refresh: () => void;
+};
+
+export const getDeleteInstanceLabel = (status: InstanceStatus) => {
+  switch (status) {
+    case InstanceStatus.COMPLETED:
+      return 'Delete instance';
+    case InstanceStatus.FAILED:
+      return 'Remove';
+    case InstanceStatus.ACCEPTED:
+    case InstanceStatus.PROVISIONING:
+      return 'Stop instance';
+    default:
+      return;
+  }
+};
+
+export const getDeleteInstanceModalConfig = (status: string | undefined, instanceName: string | undefined) => {
+  const config = {
+    title: '',
+    confirmActionLabel: '',
+    description: '',
+  };
+  if (status === InstanceStatus.COMPLETED) {
+    config.title = 'Delete instance?';
+    config.confirmActionLabel = 'Delete instance';
+    config.description = `The <b>${instanceName}</b> instance will be deleted.`;
+  } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
+    config.title = 'Stop creating instance?';
+    config.confirmActionLabel = 'Stop creating instance';
+    config.description = `The creation of the <b>${instanceName}</b> instance will be stopped.`;
+  }
+  return config;
 };
 
 const StreamsTableView = ({
   mainToggle,
+  kafkaInstanceItems,
+  onConnectToInstance,
+  refresh,
   createStreamsInstance,
   setCreateStreamsInstance,
-  kafkaInstanceItems,
-  onConnectToInstance
 }: TableProps) => {
+  const { token } = useContext(AuthContext);
+  // Api Service
+  const apisService = new DefaultApi({
+    accessToken: token,
+    basePath: BASE_PATH,
+  });
+  const { addAlert } = useAlerts();
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
 
-  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void, onConnect: (data: KafkaRequest) => void) => {
+  const getActionResolver = (
+    rowData: IRow,
+    onDelete: (data: KafkaRequest) => void,
+    onConnect: (data: KafkaRequest) => void
+  ) => {
     const { originalData } = rowData;
-    const title = originalData?.status === InstanceStatus.ACCEPTED ? 'Cancel instance' : 'Delete instance';
+    const title = getDeleteInstanceLabel(originalData?.status);
     return [
       {
         title,
@@ -42,14 +91,14 @@ const StreamsTableView = ({
       {
         title: 'Connect to instance',
         id: 'connect-instance',
-        onClick: () => onConnect(originalData)
-      }
+        onClick: () => onConnect(originalData),
+      },
     ];
   };
 
   const preparedTableCells = () => {
-    const tableRow: (string[] | IRowData)[] | undefined = [];
-    kafkaInstanceItems.forEach((row: IRowData) => {
+    const tableRow: IRow[] = [];
+    kafkaInstanceItems.forEach((row: IRow) => {
       const { name, cloud_provider, region, status } = row;
       const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
       const regionDisplayName = getCloudRegionDisplayName(region);
@@ -68,35 +117,56 @@ const StreamsTableView = ({
     return tableRow;
   };
 
-  const actionResolver = (rowData: IRowData) => {
-    return getActionResolver(rowData, onDeleteInstance, onConnectToInstance);
+  const actionResolver = (rowData: IRow) => {
+    return getActionResolver(rowData, onSelectDeleteInstanceKebab, onConnectToInstance);
   };
 
-  const { token } = useContext(AuthContext);
-
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH
-  });
-
-  const onDeleteInstance = async (event: KafkaRequest) => {
-    if (event.id === undefined) {
-      throw new Error("kafka id is not set")
+  const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
+    const { status } = instance;
+    setSelectedInstance(instance);
+    /**
+     * Hide confirm modal for status 'failed' and call delete api
+     * Show confirm modal for all status except 'failed' and call delete api
+     */
+    if (status === InstanceStatus.FAILED) {
+      onDeleteInstance(instance);
+    } else {
+      setIsDeleteModalOpen(!isDeleteModalOpen);
     }
+  };
+
+  const onDeleteInstance = async (instance: KafkaRequest) => {
+    const instanceId = selectedInstance?.id || instance?.id;
+    /**
+     * Throw an error if kafka id is not set
+     * and avoid delete instance api call
+     */
+    if (instanceId === undefined) {
+      throw new Error('kafka instance id is not set');
+    }
+
     try {
-      await apisService.deleteKafkaById(event.id)
-      .then((res) => {
+      await apisService.deleteKafkaById(instanceId).then((res) => {
+        setIsDeleteModalOpen(false);
+        addAlert('Instance successfully deleted', AlertVariant.success);
+        refresh();
         console.info('Kafka successfully deleted');
       });
     } catch (error) {
+      setIsDeleteModalOpen(false);
+      addAlert(error, AlertVariant.danger);
       console.log(error);
     }
   };
 
+  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
+    selectedInstance?.status,
+    selectedInstance?.name
+  );
+
   return (
     <Card>
-      <InstanceListToolbar
+      <StreamsToolbar
         mainToggle={mainToggle}
         createStreamsInstance={createStreamsInstance}
         setCreateStreamsInstance={setCreateStreamsInstance}
@@ -107,12 +177,24 @@ const StreamsTableView = ({
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}
-        aria-label="cluster instance list"
+        aria-label="Cluster instance list"
         actionResolver={actionResolver}
       >
         <TableHeader />
         <TableBody />
       </Table>
+      {isDeleteModalOpen && (
+        <DeleteInstanceModal
+          title={title}
+          isModalOpen={isDeleteModalOpen}
+          instanceStatus={selectedInstance?.status}
+          setIsModalOpen={setIsDeleteModalOpen}
+          onConfirm={onDeleteInstance}
+          selectedInstanceName={selectedInstance?.name}
+          description={description}
+          confirmActionLabel={confirmActionLabel}
+        />
+      )}
     </Card>
   );
 };

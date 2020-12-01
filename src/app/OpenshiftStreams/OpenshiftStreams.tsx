@@ -10,7 +10,7 @@ import { BASE_PATH } from '@app/common/app-config';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
-}
+};
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { token } = useContext(AuthContext);
@@ -18,7 +18,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
-    basePath: BASE_PATH
+    basePath: BASE_PATH,
   });
 
   const { t } = useTranslation();
@@ -33,12 +33,15 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   // Functions
   const fetchKafkas = async () => {
     try {
-      await apisService.listKafkas().then((res) => {
-        const kafkaInstances = res.data;
-        console.log('what is res' + JSON.stringify(kafkaInstances));
-        // setKafkaInstancesList(kafkaInstances);
-        setKafkaInstanceItems(kafkaInstances.items);
-      }).then(() => setTimeout(fetchKafkas, 2000));
+      await apisService
+        .listKafkas()
+        .then((res) => {
+          const kafkaInstances = res.data;
+          console.log('what is res' + JSON.stringify(kafkaInstances));
+          // setKafkaInstancesList(kafkaInstances);
+          setKafkaInstanceItems(kafkaInstances.items);
+        })
+        .then(() => setTimeout(fetchKafkas, 2000));
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +51,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     if (token !== '') {
       setKafkaDataLoaded(false);
       fetchKafkas().then(() => setKafkaDataLoaded(true));
-
     }
   }, [token]);
 
@@ -60,8 +62,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return <Spinner />;
   }
 
-  const handleSwitchChange = () => {
-    setMainToggle(!mainToggle);
+  const handleSwitchChange = (checked: boolean) => {
+    setMainToggle(checked);
   };
 
   return (
@@ -79,7 +81,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               label={t('Mock UI')}
               labelOff={t('Currently supported UI')}
               isChecked={mainToggle}
-              onChange={() => handleSwitchChange()}
+              onChange={handleSwitchChange}
             />
           </LevelItem>
         </Level>
@@ -90,9 +92,10 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             kafkaInstanceItems={kafkaInstanceItems}
             mainToggle={mainToggle}
             onConnectToInstance={onConnectToInstance}
+            refresh={fetchKafkas}
             createStreamsInstance={createStreamsInstance}
             setCreateStreamsInstance={setCreateStreamsInstance}
-            />
+          />
         ) : (
           <EmptyState
             createStreamsInstance={createStreamsInstance}
@@ -105,6 +108,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             createStreamsInstance={createStreamsInstance}
             setCreateStreamsInstance={setCreateStreamsInstance}
             mainToggle={mainToggle}
+            refresh={fetchKafkas}
           />
         )}
       </PageSection>

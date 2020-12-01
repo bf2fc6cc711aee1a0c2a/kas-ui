@@ -17,9 +17,9 @@ import {
   ToolbarChip,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
-import './InstanceListToolbar.css';
+import './StreamsToolbarProps.css';
 
-type InstanceListToolbarProps = {
+type StreamsToolbarProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
@@ -28,7 +28,7 @@ type InstanceListToolbarProps = {
   setNamesSelected: (value: string[]) => void;
 };
 
-const InstanceListToolbar: React.FunctionComponent<InstanceListToolbarProps> = ({
+const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
   filterSelected,
@@ -113,25 +113,20 @@ const InstanceListToolbar: React.FunctionComponent<InstanceListToolbarProps> = (
     </>
   );
 
-  const items = (
-    <>
-      <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="lg">
-        {toggleGroupItems}
-      </ToolbarToggleGroup>
-
-      <ToolbarItem>
-        <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
-          Create Streams instance
-        </Button>
-      </ToolbarItem>
-    </>
-  );
-
   return (
     <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="lg" clearAllFilters={onClear}>
-      <ToolbarContent>{items}</ToolbarContent>
+      <ToolbarContent>
+        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="lg">
+          {toggleGroupItems}
+        </ToolbarToggleGroup>
+        <ToolbarItem>
+          <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
+            Create Streams instance
+          </Button>
+        </ToolbarItem>
+      </ToolbarContent>
     </Toolbar>
   );
 };
 
-export { InstanceListToolbar };
+export { StreamsToolbar };
