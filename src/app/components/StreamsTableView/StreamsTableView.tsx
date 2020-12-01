@@ -1,7 +1,7 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
 import { Card, AlertVariant } from '@patternfly/react-core';
-import { DefaultApi,KafkaRequest } from '../../../openapi/api';
+import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
 import { BASE_PATH } from '../../common/app-config';
@@ -50,12 +50,12 @@ export const getDeleteInstanceModalConfig = (status: string | undefined, instanc
   return config;
 };
 
-const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,refresh }: TableProps) => {
+const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance, refresh }: TableProps) => {
   const { token } = useContext(AuthContext);
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
-    basePath: BASE_PATH
+    basePath: BASE_PATH,
   });
   const { addAlert } = useAlerts();
 
@@ -63,7 +63,11 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
 
-  const getActionResolver = (rowData: IRow, onDelete: (data: KafkaRequest) => void,onConnect: (data: KafkaRequest)=>void) => {
+  const getActionResolver = (
+    rowData: IRow,
+    onDelete: (data: KafkaRequest) => void,
+    onConnect: (data: KafkaRequest) => void
+  ) => {
     const { originalData } = rowData;
     const title = getDeleteInstanceLabel(originalData?.status);
     return [
@@ -75,8 +79,8 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
       {
         title: 'Connect to instance',
         id: 'connect-instance',
-        onClick: () => onConnect(originalData)
-      }
+        onClick: () => onConnect(originalData),
+      },
     ];
   };
 
@@ -102,7 +106,7 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
   };
 
   const actionResolver = (rowData: IRow) => {
-    return getActionResolver(rowData, onSelectDeleteInstanceKebab,onConnectToInstance);
+    return getActionResolver(rowData, onSelectDeleteInstanceKebab, onConnectToInstance);
   };
 
   const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
@@ -120,7 +124,7 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
   };
 
   const onDeleteInstance = async (instance: KafkaRequest) => {
-    const instanceId=selectedInstance?.id || instance?.id;
+    const instanceId = selectedInstance?.id || instance?.id;
     /**
      * Throw an error if kafka id is not set
      * and avoid delete instance api call
@@ -133,10 +137,11 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
       await apisService.deleteKafkaById(instanceId).then((res) => {
         setIsDeleteModalOpen(false);
         addAlert('Instance successfully deleted', AlertVariant.success);
-        refresh();       
+        refresh();
         console.info('Kafka successfully deleted');
       });
     } catch (error) {
+      setIsDeleteModalOpen(false);
       addAlert(error, AlertVariant.danger);
       console.log(error);
     }
