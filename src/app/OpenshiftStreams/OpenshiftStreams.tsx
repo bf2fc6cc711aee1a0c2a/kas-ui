@@ -10,36 +10,38 @@ import { BASE_PATH } from '@app/common/app-config';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
-}
+};
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { token } = useContext(AuthContext);
+
+  // Api Service
+  const apisService = new DefaultApi({
+    accessToken: token,
+    basePath: BASE_PATH,
+  });
 
   const { t } = useTranslation();
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
+  const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
-  const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[]>([]); // Change this to 0 if you are working on the empty state
   const [mainToggle, setMainToggle] = useState(false);
-
-
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH
-  });
 
   // Functions
   const fetchKafkas = async () => {
     try {
-      await apisService.listKafkas().then((res) => {
-        const kafkaInstances = res.data;
-        console.log('what is res' + JSON.stringify(kafkaInstances));
-        setKafkaInstancesList(kafkaInstances);
-        setKafkaInstanceItems(kafkaInstances.items);
-      }).then(() => setTimeout(fetchKafkas, 2000));
+      await apisService
+        .listKafkas()
+        .then((res) => {
+          const kafkaInstances = res.data;
+          console.log('what is res' + JSON.stringify(kafkaInstances));
+          // setKafkaInstancesList(kafkaInstances);
+          setKafkaInstanceItems(kafkaInstances.items);
+        })
+        .then(() => setTimeout(fetchKafkas, 2000));
     } catch (error) {
       console.log(error);
     }
@@ -49,7 +51,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     if (token !== '') {
       setKafkaDataLoaded(false);
       fetchKafkas().then(() => setKafkaDataLoaded(true));
-
     }
   }, [token]);
 
@@ -87,8 +88,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       </PageSection>
       <PageSection>
         {kafkaInstanceItems.length > 0 ? (
-          <StreamsTableView kafkaInstanceItems={kafkaInstanceItems} mainToggle={mainToggle}
-                            onConnectToInstance={onConnectToInstance} refresh={fetchKafkas}/>
+          <StreamsTableView
+            kafkaInstanceItems={kafkaInstanceItems}
+            mainToggle={mainToggle}
+            onConnectToInstance={onConnectToInstance}
+            refresh={fetchKafkas}
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+          />
         ) : (
           <EmptyState
             createStreamsInstance={createStreamsInstance}
@@ -101,6 +108,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             createStreamsInstance={createStreamsInstance}
             setCreateStreamsInstance={setCreateStreamsInstance}
             mainToggle={mainToggle}
+            refresh={fetchKafkas}
           />
         )}
       </PageSection>

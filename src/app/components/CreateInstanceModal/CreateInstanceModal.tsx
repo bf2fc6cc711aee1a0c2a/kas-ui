@@ -28,6 +28,7 @@ type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
+  refresh: () => void;
 };
 
 const cloudRegionsAvailable = [{ value: '', label: 'Please select ', disabled: false }, ...cloudRegionOptions];
@@ -35,6 +36,7 @@ const cloudRegionsAvailable = [{ value: '', label: 'Please select ', disabled: f
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
+  refresh,
 }: CreateInstanceModalProps) => {
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
@@ -51,7 +53,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
-    basePath: BASE_PATH
+    basePath: BASE_PATH,
   });
 
   const { addAlert } = useAlerts();
@@ -80,6 +82,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           addAlert('Kafka successfully created', AlertVariant.success);
           handleModalToggle();
+          refresh();
         });
       } catch (error) {
         addAlert(error, AlertVariant.danger);
@@ -120,7 +123,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       case 'aws':
         return <AwsIcon size="lg" color="black" className="cloud-region-icon" />;
       default:
-        return <AwsIcon size="lg" color="black" className="cloud-region-icon" />;
+        return;
     }
   };
   return (

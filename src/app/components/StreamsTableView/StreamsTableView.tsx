@@ -8,11 +8,14 @@ import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { useAlerts } from '@app/components/Alerts/Alerts';
+import { StreamsToolbar } from './StreamsToolbar';
 import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequest[];
+  createStreamsInstance: boolean;
+  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
   onConnectToInstance: (data: KafkaRequest) => void;
   refresh: () => void;
@@ -50,7 +53,14 @@ export const getDeleteInstanceModalConfig = (status: string | undefined, instanc
   return config;
 };
 
-const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance, refresh }: TableProps) => {
+const StreamsTableView = ({
+  mainToggle,
+  kafkaInstanceItems,
+  onConnectToInstance,
+  refresh,
+  createStreamsInstance,
+  setCreateStreamsInstance,
+}: TableProps) => {
   const { token } = useContext(AuthContext);
   // Api Service
   const apisService = new DefaultApi({
@@ -62,6 +72,8 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
+  const [filterSelected, setFilterSelected] = useState('Name');
+  const [namesSelected, setNamesSelected] = useState<string[]>([]);
 
   const getActionResolver = (
     rowData: IRow,
@@ -153,18 +165,24 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
   );
 
   return (
-    <>
-      <Card>
-        <Table
-          cells={tableColumns}
-          rows={preparedTableCells()}
-          aria-label="Cluster instance list"
-          actionResolver={actionResolver}
-        >
-          <TableHeader />
-          <TableBody />
-        </Table>
-      </Card>
+    <Card>
+      <StreamsToolbar
+        mainToggle={mainToggle}
+        createStreamsInstance={createStreamsInstance}
+        setCreateStreamsInstance={setCreateStreamsInstance}
+        filterSelected={filterSelected}
+        namesSelected={namesSelected}
+        setNamesSelected={setNamesSelected}
+      />
+      <Table
+        cells={tableColumns}
+        rows={preparedTableCells()}
+        aria-label="Cluster instance list"
+        actionResolver={actionResolver}
+      >
+        <TableHeader />
+        <TableBody />
+      </Table>
       {isDeleteModalOpen && (
         <DeleteInstanceModal
           title={title}
@@ -177,7 +195,7 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,
           confirmActionLabel={confirmActionLabel}
         />
       )}
-    </>
+    </Card>
   );
 };
 
