@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
 import { Card, AlertVariant } from '@patternfly/react-core';
-import { KafkaRequest } from '../../../openapi/api';
+import { DefaultApi,KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { Services } from '../../common/app-config';
+import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { useAlerts } from '@app/components/Alerts/Alerts';
+import { useHistory } from 'react-router';
+import { AuthContext } from '@app/auth/AuthContext';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequest[];
   mainToggle: boolean;
+  onConnectToInstance: (data: KafkaRequest) => void;
   refresh: () => void;
 };
 
@@ -47,15 +50,20 @@ export const getDeleteInstanceModalConfig = (status: string | undefined, instanc
   return config;
 };
 
-const StreamsTableView = ({ mainToggle, kafkaInstanceItems, refresh }: TableProps) => {
-  const apisService = Services.getInstance().apiService;
+const StreamsTableView = ({ mainToggle, kafkaInstanceItems, onConnectToInstance,refresh }: TableProps) => {
+  const { token } = useContext(AuthContext);
+  // Api Service
+  const apisService = new DefaultApi({
+    accessToken: token,
+    basePath: BASE_PATH
+  });
   const { addAlert } = useAlerts();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
 
-  const getActionResolver = (rowData: IRow, onDelete: (data: KafkaRequest) => void) => {
+  const getActionResolver = (rowData: IRow, onDelete: (data: KafkaRequest) => void,onConnect: (data: KafkaRequest)=>void) => {
     const { originalData } = rowData;
     const title = getDeleteInstanceLabel(originalData?.status);
     return [
@@ -64,6 +72,11 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, refresh }: TableProp
         id: 'delete-instance',
         onClick: () => onDelete(originalData),
       },
+      {
+        title: 'Connect to instance',
+        id: 'connect-instance',
+        onClick: () => onConnect(originalData)
+      }
     ];
   };
 
@@ -89,7 +102,7 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, refresh }: TableProp
   };
 
   const actionResolver = (rowData: IRow) => {
-    return getActionResolver(rowData, onSelectDeleteInstanceKebab);
+    return getActionResolver(rowData, onSelectDeleteInstanceKebab,onConnectToInstance);
   };
 
   const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Title, Button, EmptyState as PFEmptyState, EmptyStateIcon, EmptyStateBody } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 type EmptyStateProps = {
   createStreamsInstance: boolean;
@@ -9,16 +10,17 @@ type EmptyStateProps = {
 };
 
 const EmptyState = ({ createStreamsInstance, setCreateStreamsInstance, mainToggle }: EmptyStateProps) => {
+  const { t } = useTranslation();
   return (
     <>
       <PFEmptyState>
         <EmptyStateIcon icon={PlusCircleIcon} />
         <Title headingLevel="h4" size="lg">
-          You don&apos;t have any Streams instances yet
+          {t("You don't have any Streams instances yet")}
         </Title>
-        <EmptyStateBody>Create a Streams instance to get started</EmptyStateBody>
+        <EmptyStateBody>{t('Create a Streams instance to get started')}</EmptyStateBody>
         <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
-          Create a Streams Instance
+          {t('Create a Streams Instance')}
         </Button>
       </PFEmptyState>
     </>

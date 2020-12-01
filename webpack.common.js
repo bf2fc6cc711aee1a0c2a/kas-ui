@@ -5,7 +5,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const BG_IMAGES_DIRNAME = 'bgimages';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
-const { dependencies, port, federatedModuleName} = require("./package.json");
+const { dependencies, federatedModuleName} = require("./package.json");
 delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
 module.exports = (env, argv) => {
@@ -110,6 +110,22 @@ module.exports = (env, argv) => {
               }
             }
           ]
+        },
+        {
+          test: /\.(json)$/i,
+          include: [
+            path.resolve(__dirname, 'src/locales'),
+          ],
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                limit: 5000,
+                outputPath: 'locales',
+                name: '[name].[ext]',
+              }
+            }
+          ]
         }
       ]
     },
@@ -130,11 +146,16 @@ module.exports = (env, argv) => {
           { from: './src/favicon.png', to: 'images' },
         ]
       }),
+      new CopyPlugin({
+        patterns: [
+          { from: './src/locales', to: 'locales' },
+        ]
+      }),
       new webpack.container.ModuleFederationPlugin({
         name: federatedModuleName,
         filename: "remoteEntry.js",
         exposes: {
-          "./OpenshiftStreams": "./src/app/OpenshiftStreams",
+          "./OpenshiftStreams": "./src/app/OpenshiftStreams/OpenshiftStreamsFederated",
         },
         shared: {
           ...dependencies,
