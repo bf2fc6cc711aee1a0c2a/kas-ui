@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import {
   PageSection,
   Title,
@@ -11,13 +12,15 @@ import {
 import { useHistory } from 'react-router-dom';
 
 const NotFound: React.FunctionComponent = () => {
+  const { t } = useTranslation();
+
   function GoHomeBtn() {
     const history = useHistory();
     function handleClick() {
       history.push('/');
     }
     return (
-      <Button onClick={handleClick}>Take me home</Button>
+      <Button onClick={handleClick}>{t('Take me home')}</Button>
     );
   }
 
@@ -26,10 +29,10 @@ const NotFound: React.FunctionComponent = () => {
     <EmptyState variant="full">
       <EmptyStateIcon icon={ExclamationTriangleIcon} />
       <Title headingLevel="h1" size="lg">
-        404 Page not found
+        {t('404 Page not found')}
       </Title>
       <EmptyStateBody>
-        We didn&apos;t find a page that matches the address you navigated to.
+        {t("We didn't find a page that matches the address you navigated to.")}
       </EmptyStateBody>
       <GoHomeBtn />
     </EmptyState>

@@ -31,5 +31,7 @@ api.init();
 // use as express middleware
 app.use((req, res) => api.handleRequest(req, req, res));
 
+const port = 8000;
+
 // start server
-app.listen(8000, () => console.info("api listening at http://localhost:8000"));
+app.listen(port, () => console.info(`mock api listening at http://localhost:${port}`));

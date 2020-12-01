@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Table, TableHeader, TableBody, IRowData } from '@patternfly/react-table';
 import { Card } from '@patternfly/react-core';
-import { KafkaRequestAllOf } from '../../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestAllOf } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { Services } from '../../common/app-config';
+import { BASE_PATH, Services } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { InstanceListToolbar } from './InstanceListToolbar';
+import { useHistory } from 'react-router';
+import { AuthContext } from '@app/auth/AuthContext';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequestAllOf[];
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
+  onConnectToInstance: (data: KafkaRequest) => void;
 };
 
 const StreamsTableView = ({
@@ -20,11 +23,14 @@ const StreamsTableView = ({
   createStreamsInstance,
   setCreateStreamsInstance,
   kafkaInstanceItems,
+  onConnectToInstance
 }: TableProps) => {
+
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
-  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequestAllOf) => void) => {
+
+  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void, onConnect: (data: KafkaRequest) => void) => {
     const { originalData } = rowData;
     const title = originalData?.status === InstanceStatus.ACCEPTED ? 'Cancel instance' : 'Delete instance';
     return [
@@ -33,6 +39,11 @@ const StreamsTableView = ({
         id: 'delete-instance',
         onClick: () => onDelete(originalData),
       },
+      {
+        title: 'Connect to instance',
+        id: 'connect-instance',
+        onClick: () => onConnect(originalData)
+      }
     ];
   };
 
@@ -58,14 +69,24 @@ const StreamsTableView = ({
   };
 
   const actionResolver = (rowData: IRowData) => {
-    return getActionResolver(rowData, onDeleteInstance);
+    return getActionResolver(rowData, onDeleteInstance, onConnectToInstance);
   };
 
-  const apisService = Services.getInstance().apiService;
+  const { token } = useContext(AuthContext);
 
-  const onDeleteInstance = async (event) => {
+  // Api Service
+  const apisService = new DefaultApi({
+    accessToken: token,
+    basePath: BASE_PATH
+  });
+
+  const onDeleteInstance = async (event: KafkaRequest) => {
+    if (event.id === undefined) {
+      throw new Error("kafka id is not set")
+    }
     try {
-      await apisService.deleteKafkaById('').then((res) => {
+      await apisService.deleteKafkaById(event.id)
+      .then((res) => {
         console.info('Kafka successfully deleted');
       });
     } catch (error) {

@@ -1,2 +1,1 @@
-export * from './OpenshiftStreams';
-export * from './OpenshiftStreamsFederated';
+export * from './OpenshiftStreamsConnected';

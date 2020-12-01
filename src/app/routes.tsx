@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Alert, PageSection } from '@patternfly/react-core';
+import { DynamicImport } from '@app/DynamicImport';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
 import { OpenshiftStreams } from '@app/OpenshiftStreams/OpenshiftStreams';
 import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
+import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';
 
 let routeFocusTimer: number;
 
@@ -29,8 +33,9 @@ export type AppRouteConfig = IAppRoute | IAppRouteGroup;
 
 const routes: AppRouteConfig[] = [
   {
-    component: OpenshiftStreams,
+    component: OpenshiftStreamsConnected,
     exact: true,
+    // t('OpenShift Streams')
     label: 'OpenShift Streams',
     path: '/',
     title: 'OpenShift Streams',
@@ -73,8 +78,9 @@ const flattenedRoutes: IAppRoute[] = routes.reduce(
   [] as IAppRoute[]
 );
 
-const AppRoutes = (): React.ReactElement => (
-  <LastLocationProvider>
+const AppRoutes = (): React.ReactElement => {
+  const { t } = useTranslation();
+  return <LastLocationProvider>
     <Switch>
       {flattenedRoutes.map(({ path, exact, component, title, isAsync }, idx) => (
         <RouteWithTitleUpdates
@@ -86,9 +92,9 @@ const AppRoutes = (): React.ReactElement => (
           isAsync={isAsync}
         />
       ))}
-      <PageNotFound title="404 Page Not Found" />
+      <PageNotFound title={t('404 Page Not Found')} />
     </Switch>
-  </LastLocationProvider>
-);
+  </LastLocationProvider>;
+}
 
 export { AppRoutes, routes };
