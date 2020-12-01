@@ -10,6 +10,7 @@ import {
   Text,
 } from '@patternfly/react-core';
 import { InstanceStatus } from '@app/constants';
+import  './DeleteInstanceModal.css';
 
 interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
   confirmActionLabel?: string;
@@ -35,19 +36,19 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   titleIconVariant = 'warning',
   instanceStatus,
 }: DeleteInstanceModalProps) => {
-  const [instanceName, setInstanceName] = useState<string>();
+  const [instanceNameInput, setInstanceNameInput] = useState<string>();
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
   };
 
   const handleInstanceName = (value: string) => {
-    setInstanceName(value);
+    setInstanceNameInput(value);
   };
 
   const isConfirmButtonDisabled = () => {
     if (instanceStatus === InstanceStatus.COMPLETED) {
-      if (instanceName?.toLocaleLowerCase() === selectedInstanceName?.toLowerCase()) {
+      if (instanceNameInput?.toLocaleLowerCase() === selectedInstanceName?.toLowerCase()) {
         return false;
       }
       return true;
@@ -79,17 +80,15 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
         </Button>,
       ]}
     >
-      {description}
-      <br />
-      <br/>
+      <div dangerouslySetInnerHTML={{__html:description || ''}} />   
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
-          <TextContent>
+          <TextContent className="text-content">
             <Text>
               Please type <b>{selectedInstanceName}</b> to confirm.
             </Text>
           </TextContent>
-          <TextInput id="instance-name" type="text" value={instanceName} onChange={handleInstanceName} />
+          <TextInput id="instance-name" type="text" value={instanceNameInput} onChange={handleInstanceName} />
         </>
       )}
     </Modal>

@@ -38,11 +38,11 @@ export const getDeleteInstanceModalConfig = (status: string | undefined, instanc
   if (status === InstanceStatus.COMPLETED) {
     config.title = 'Delete instance?';
     config.confirmActionLabel = 'Delete instance';
-    config.description = `The ${instanceName} will be deleted.`;
+    config.description = `The <b>${instanceName}</b> instance will be deleted.`;
   } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
     config.title = 'Stop creating instance?';
     config.confirmActionLabel = 'Stop creating instance';
-    config.description = `The creation of the ${instanceName} instance will be stopped.`;
+    config.description = `The creation of the <b>${instanceName}</b> instance will be stopped.`;
   }
   return config;
 };
@@ -52,7 +52,7 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, refresh }: TableProp
   const { addAlert } = useAlerts();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>();
+  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
 
   const getActionResolver = (rowData: IRow, onDelete: (data: KafkaRequest) => void) => {
@@ -100,27 +100,27 @@ const StreamsTableView = ({ mainToggle, kafkaInstanceItems, refresh }: TableProp
      * Show confirm modal for all status except 'failed' and call delete api
      */
     if (status === InstanceStatus.FAILED) {
-      //onDeleteInstance();
+      onDeleteInstance(instance);
     } else {
       setIsDeleteModalOpen(!isDeleteModalOpen);
     }
   };
 
-  const onDeleteInstance = async () => {
+  const onDeleteInstance = async (instance: KafkaRequest) => {
+    const instanceId=selectedInstance?.id || instance?.id;
     /**
-     * Throw an error if kafka id is not set 
+     * Throw an error if kafka id is not set
      * and avoid delete instance api call
      */
-    if (selectedInstance?.id === undefined) {
+    if (instanceId === undefined) {
       throw new Error('kafka instance id is not set');
     }
 
-    const { id } = selectedInstance;
     try {
-      await apisService.deleteKafkaById(id).then((res) => {
+      await apisService.deleteKafkaById(instanceId).then((res) => {
         setIsDeleteModalOpen(false);
-        refresh();
         addAlert('Instance successfully deleted', AlertVariant.success);
+        refresh();       
         console.info('Kafka successfully deleted');
       });
     } catch (error) {
