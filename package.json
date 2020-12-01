@@ -1,6 +1,11 @@
 {
   "name": "mk-ui-frontend",
   "federatedModuleName": "mkUiFrontend",
+  "crc": {
+    "name": "rhosak-control-plane-ui-build",
+    "bundle": "application-services",
+    "beta": true
+  },
   "version": "0.0.2",
   "description": "The Control Plane UI for Red Hat OpenShift Streams for Apache Kafka",
   "main": "server.js",

@@ -5,6 +5,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
 
+const {crc} = require('./package.json');
+
+const publicPath = `${crc.beta ? '/beta': ''}/apps/${crc.name}/`;
+
 module.exports = merge(common('production'), {
   mode: 'production',
   devtool: 'source-map',
@@ -21,7 +25,7 @@ module.exports = merge(common('production'), {
     })
   ],
   output: {
-    publicPath: `http://TODO`
+    publicPath,
   },
   module: {
     rules: [
