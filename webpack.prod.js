@@ -5,7 +5,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
 
-module.exports = merge(common('production'), {
+const {crc} = require('./package.json');
+
+const publicPath = `${crc.beta ? '/beta': ''}/apps/${crc.name}/`;
+
+module.exports = merge(common('production', undefined, true), {
   mode: 'production',
   devtool: 'source-map',
   optimization: {
@@ -16,12 +20,13 @@ module.exports = merge(common('production'), {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[name].bundle.css'
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[name].[contenthash].css'
     })
   ],
   output: {
-    publicPath: `http://TODO`
+    publicPath,
+    filename: '[name].[contenthash].js'
   },
   module: {
     rules: [
