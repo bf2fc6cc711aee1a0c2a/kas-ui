@@ -8,7 +8,7 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 const { dependencies, federatedModuleName} = require("./package.json");
 delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
-module.exports = (env, argv) => {
+module.exports = (env, argv, useContentHash) => {
 
   return {
     entry: {
@@ -45,7 +45,7 @@ module.exports = (env, argv) => {
               // Limit at 50k. larger files emited into separate files
               limit: 5000,
               outputPath: 'fonts',
-              name: '[name].[ext]',
+              name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
             }
           }
         },
@@ -58,7 +58,7 @@ module.exports = (env, argv) => {
               options: {
                 limit: 5000,
                 outputPath: 'svgs',
-                name: '[name].[ext]',
+                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -106,7 +106,7 @@ module.exports = (env, argv) => {
               options: {
                 limit: 5000,
                 outputPath: 'images',
-                name: '[name].[ext]',
+                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -122,7 +122,7 @@ module.exports = (env, argv) => {
               options: {
                 limit: 5000,
                 outputPath: 'locales',
-                name: '[name].[ext]',
+                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
               }
             }
           ]
