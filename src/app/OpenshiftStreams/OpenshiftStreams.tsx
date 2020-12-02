@@ -106,29 +106,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   return (
     <>
       <AlertProvider>
-        <PageSection variant={PageSectionVariants.light}>
-          <Level>
-            <LevelItem>
-            <Title headingLevel="h1" size="lg">
-              {t('OpenshiftStreams')}
-            </Title>
-            </LevelItem>
-            <LevelItem>
-              <Switch
-                id="simple-switch"
-                label={t('Mock UI')}
-                labelOff={t('Currently supported UI')}
-                isChecked={mainToggle}
-                onChange={handleSwitchChange}
-              />
-            </LevelItem>
-          </Level>
-        </PageSection>
-
         <Drawer isExpanded={selectedInstance !== undefined} onExpand={onExpand}>
           <DrawerContent
             panelContent={
               <InstanceDrawer
+                mainToggle={mainToggle}
                 onClose={onCloseClick}
                 isExpanded={selectedInstance !== undefined}
                 drawerRef={drawerRef}
@@ -138,13 +120,34 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             }
           >
             <DrawerContentBody>
+              <PageSection variant={PageSectionVariants.light}>
+                <Level>
+                  <LevelItem>
+                    <Title headingLevel="h1" size="lg">
+                      {t('OpenshiftStreams')}
+                    </Title>
+                  </LevelItem>
+                  <LevelItem>
+                    <Switch
+                      id="simple-switch"
+                      label={t('Mock UI')}
+                      labelOff={t('Currently supported UI')}
+                      isChecked={mainToggle}
+                      onChange={handleSwitchChange}
+                    />
+                  </LevelItem>
+                </Level>
+              </PageSection>
               <PageSection>
                 {kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
                   <StreamsTableView
-                    onConnectInstance={onConnectInstance}
+                    createStreamsInstance={createStreamsInstance}
+                    setCreateStreamsInstance={setCreateStreamsInstance}
+                    onConnectToInstance={onConnectInstance}
                     onViewInstance={onViewInstance}
                     kafkaInstanceItems={kafkaInstanceItems}
                     mainToggle={mainToggle}
+                    refresh={fetchKafkas}
                   />
                 ) : (
                   <EmptyState
@@ -158,6 +161,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                     createStreamsInstance={createStreamsInstance}
                     setCreateStreamsInstance={setCreateStreamsInstance}
                     mainToggle={mainToggle}
+                    refresh={fetchKafkas}
                   />
                 )}
               </PageSection>

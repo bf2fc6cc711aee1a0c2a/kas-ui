@@ -17,12 +17,12 @@ type TableProps = {
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
-  onConnectInstance: (instance: KafkaRequest) => void;
+  onConnectToInstance: (instance: KafkaRequest) => void;
   mainToggle: boolean;
   refresh: () => void;
 };
 
-export const getDeleteInstanceLabel = (status: InstanceStatus) => {
+export const getDeleteInstanceLabel = (status?: InstanceStatus | string) => {
   switch (status) {
     case InstanceStatus.COMPLETED:
       return 'Delete instance';
@@ -58,7 +58,7 @@ const StreamsTableView = ({
   mainToggle,
   kafkaInstanceItems,
   onViewInstance,
-  onConnectInstance,
+  onConnectToInstance,
   refresh,
   createStreamsInstance,
   setCreateStreamsInstance,
@@ -79,27 +79,22 @@ const StreamsTableView = ({
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
-    const deleteActionTitle = originalData?.status === InstanceStatus.ACCEPTED ? 'Cancel instance' : 'Delete instance';
+    const deleteActionTitle = getDeleteInstanceLabel(originalData?.status);
     return [
       {
         title: 'View details',
         id: 'view-instance',
         onClick: () => onViewInstance(originalData),
       },
-      {
+      mainToggle && {
         title: 'Connect to this instance',
         id: 'connect-instance',
-        onClick: () => onConnectInstance(originalData),
+        onClick: () => onConnectToInstance(originalData),
       },
       {
         title: deleteActionTitle,
         id: 'delete-instance',
         onClick: () => onDelete(originalData),
-      },
-      {
-        title: 'Connect to instance',
-        id: 'connect-instance',
-        onClick: () => onConnectInstance(originalData),
       },
     ];
   };
@@ -126,7 +121,7 @@ const StreamsTableView = ({
   };
 
   const actionResolver = (rowData: IRowData) => {
-    return getActionResolver(rowData, onDeleteInstance);
+    return getActionResolver(rowData, onSelectDeleteInstanceKebab);
   };
 
   const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {

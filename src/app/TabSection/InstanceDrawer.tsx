@@ -26,6 +26,10 @@ import {
   Text,
   TextInput,
   TextVariants,
+  TextList,
+  TextListItem,
+  TextListVariants,
+  TextListItemVariants,
 } from '@patternfly/react-core';
 import { CopyIcon } from '@patternfly/react-icons';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
@@ -36,6 +40,7 @@ import { Loading } from '@app/components/Loading';
 import { KafkaRequest } from 'src/openapi';
 
 export type InstanceDrawerProps = {
+  mainToggle: boolean;
   onClose: () => void;
   isExpanded: boolean;
   drawerRef: any;
@@ -43,6 +48,7 @@ export type InstanceDrawerProps = {
   activeTab?: 'Details' | 'Connection';
 };
 const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
+  mainToggle,
   onClose,
   drawerRef,
   activeTab,
@@ -65,7 +71,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const resourcesTab = (
     <>
-      <TextContent className="pf-u-pb-sm">
+      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
         <Text component={TextVariants.small}>
           To connect an application or tool to this Kafka instance, you will need the address of a Kafka listener, a
           certificate to authenticate with, and generated credentials.
@@ -85,14 +91,14 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </FlexItem>
         <GenerateCredential />
       </Flex>
-      <TextContent>
+      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
         <Text component={TextVariants.h5}>Certificates</Text>
         <Text component={TextVariants.small}>
           A certificate is required by your Kafka clients to connect securely to this Kafka instance.
         </Text>
         <Grid hasGutter>
           <GridItem span={6}>
-            <Card isFlat isCompact className="card-certificate">
+            <Card isFlat isCompact>
               <CardHeader>
                 <CardTitle className="pf-u-pt-0">PKCS12 certificate</CardTitle>
               </CardHeader>
@@ -108,7 +114,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             </Card>
           </GridItem>
           <GridItem span={6}>
-            <Card isFlat isCompact className="card-certificate pf-u-h-100">
+            <Card isFlat isCompact className="pf-u-h-100">
               <CardHeader>
                 <CardTitle className="pf-u-pt-0">PEM certificate</CardTitle>
               </CardHeader>
@@ -119,10 +125,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             </Card>
           </GridItem>
         </Grid>
-        <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
-        <Text component={TextVariants.small}>
-          Applications and tools that use the REST producer API will need the REST producer endpoint to connect.
-        </Text>
+        <TextContent className="pf-u-pb-sm pf-u-pt-lg">
+          <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
+          <Text component={TextVariants.small}>
+            Applications and tools that use the REST producer API will need the REST producer endpoint to connect.
+          </Text>
+        </TextContent>
         <ClipboardCopy>https : // : 30123</ClipboardCopy>
       </TextContent>
     </>
@@ -130,7 +138,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const sampleCodeTab = (
     <>
-      <TextContent className="pf-u-pb-sm">
+      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
         <Text component={TextVariants.h5}>Sample connection code</Text>
         <Text component={TextVariants.small}>
           Use this snippet of code to set the properties in your Kafka client to connect securely. Replace the values in
@@ -155,7 +163,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </div>
       </div>
 
-      <TextContent className="pf-u-pb-sm">
+      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
         <Text component={TextVariants.h5}>Sample connection code</Text>
         <Text component={TextVariants.small}>
           Use this snippet of code to set the properties in your Kafka client to connect securely. Replace the values in
@@ -182,16 +190,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     </>
   );
 
-  const renderGridItemDetail = (title: string, value?: string) => (
+  const renderTextListItemDetail = (title: string, value?: string) => (
     <>
       {value && (
         <>
-          <GridItem span={3}>
-            <Text component={TextVariants.h5}>
-              <b>{title}</b>
-            </Text>
-          </GridItem>
-          <GridItem span={9}>{value}</GridItem>
+          <TextListItem component={TextListItemVariants.dt}>{title}</TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>{value}</TextListItem>
         </>
       )}
     </>
@@ -201,39 +205,42 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const detailsTab = (
     <>
-      <Grid className="instance-card-grid">
-        <GridItem span={6} className="instance-detail-first-grid">
-          <Card>
-            <CardBody>
-              <Text component={TextVariants.p}>Topics</Text>
-              <b>10</b>
-            </CardBody>
-          </Card>
-        </GridItem>
-        <GridItem span={6}>
-          <Card>
-            <CardBody>
-              <Text>Consumer groups</Text>
-              <b>8</b>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </Grid>
-      <Grid>
-        {renderGridItemDetail('Cloud Provider', 'Amazon Web Services')}
-        {renderGridItemDetail('Region', 'US East, N. Virginia')}
-        {renderGridItemDetail('ID', id)}
-        {renderGridItemDetail('Owner', owner)}
-        {renderGridItemDetail('Created', created_at)}
-        {renderGridItemDetail('Updated', updated_at)}
-      </Grid>
+      {mainToggle && (
+        <Grid className="instance-card-grid">
+          <GridItem span={6} className="instance-detail-first-grid">
+            <Card>
+              <CardBody>
+                <Text component={TextVariants.small}>Topics</Text>
+                <Text component={TextVariants.h4}>10</Text>
+              </CardBody>
+            </Card>
+          </GridItem>
+          <GridItem span={6}>
+            <Card>
+              <CardBody>
+                <Text component={TextVariants.small}>Consumer groups</Text>
+                <Text component={TextVariants.h4}>8</Text>
+              </CardBody>
+            </Card>
+          </GridItem>
+        </Grid>
+      )}
+      <TextContent className="pf-u-pt-lg">
+        <TextList component={TextListVariants.dl}>
+          {renderTextListItemDetail('Cloud Provider', 'Amazon Web Services')}
+          {renderTextListItemDetail('Region', 'US East, N. Virginia')}
+          {renderTextListItemDetail('ID', id)}
+          {renderTextListItemDetail('Owner', owner)}
+          {renderTextListItemDetail('Created', created_at)}
+          {renderTextListItemDetail('Updated', updated_at)}
+        </TextList>
+      </TextContent>
     </>
   );
 
   const connectionTab = (
     <>
-      <br />
-      <Tabs activeKey={activeTab2Key} onSelect={handleTab2Click}>
+      <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
         <Tab eventKey={0} title={<TabTitleText>Resources</TabTitleText>}>
           {resourcesTab}
         </Tab>
@@ -251,10 +258,10 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       ) : (
         <>
           <DrawerHead>
-            Instance Name
-            <Title size={TitleSizes.lg} headingLevel="h2" tabIndex={isExpanded ? 0 : -1} ref={drawerRef}>
-              {instanceDetail?.name}
-            </Title>
+            <TextContent className="pf-u-pt-lg">
+              <Text component={TextVariants.small}>Instance Name</Text>
+              <b>{instanceDetail?.name}</b>
+            </TextContent>
             <DrawerActions>
               <DrawerCloseButton onClick={onClose} />
             </DrawerActions>
@@ -264,11 +271,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
               <Tab eventKey={0} title={<TabTitleText>Details</TabTitleText>}>
                 {detailsTab}
               </Tab>
-              <Tab eventKey={1} title={<TabTitleText>Connection</TabTitleText>}>
-                {connectionTab}
-              </Tab>
+              {mainToggle && (
+                <Tab eventKey={1} title={<TabTitleText>Connection</TabTitleText>}>
+                  {connectionTab}
+                </Tab>
+              )}
             </Tabs>
-            <br />
           </DrawerPanelBody>
         </>
       )}
