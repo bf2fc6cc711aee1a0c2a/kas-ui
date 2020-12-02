@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
 import { Card, AlertVariant, Grid, GridItem } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
@@ -11,7 +11,6 @@ import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
-import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 
@@ -41,19 +40,23 @@ export const getDeleteInstanceLabel = (status: InstanceStatus) => {
   }
 };
 
-export const getDeleteInstanceModalConfig = (status: string | undefined, instanceName: string | undefined) => {
+export const getDeleteInstanceModalConfig = (
+  t: Function,
+  status: string | undefined,
+  instanceName: string | undefined
+) => {
   const config = {
     title: '',
     confirmActionLabel: '',
     description: '',
   };
   if (status === InstanceStatus.COMPLETED) {
-    config.title = 'Delete instance?';
-    config.confirmActionLabel = 'Delete instance';
+    config.title = `${t('delete_instance')}?`;
+    config.confirmActionLabel = t('delete_instance');
     config.description = `The <b>${instanceName}</b> instance will be deleted.`;
   } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
-    config.title = 'Stop creating instance?';
-    config.confirmActionLabel = 'Stop creating instance';
+    config.title = `${t('stop_creating_instance')}?`;
+    config.confirmActionLabel = t('stop_creating_instance');
     config.description = `The creation of the <b>${instanceName}</b> instance will be stopped.`;
   }
   return config;
@@ -71,6 +74,7 @@ const StreamsTableView = ({
   total,
 }: TableProps) => {
   const { token } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   // Api Service
   const apisService = new DefaultApi({
@@ -81,7 +85,7 @@ const StreamsTableView = ({
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
+  const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('status')];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
 
@@ -103,7 +107,7 @@ const StreamsTableView = ({
         onClick: () => onDelete(originalData),
       },
       {
-        title: 'Connect to instance',
+        title: t('connect_to_instance'),
         id: 'connect-instance',
         onClick: () => onConnect(originalData),
       },
@@ -162,9 +166,9 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId).then((res) => {
         setIsDeleteModalOpen(false);
-        addAlert('Instance successfully deleted', AlertVariant.success);
+        addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
         refresh();
-        console.info('Kafka successfully deleted');
+        console.info(t('kafka_successfully_deleted'));
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
@@ -174,6 +178,7 @@ const StreamsTableView = ({
   };
 
   const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
+    t,
     selectedInstance?.status,
     selectedInstance?.name
   );
@@ -202,7 +207,7 @@ const StreamsTableView = ({
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}
-        aria-label="Cluster instance list"
+        aria-label={t('aria_cluster_instance_list')}
         actionResolver={actionResolver}
       >
         <TableHeader />

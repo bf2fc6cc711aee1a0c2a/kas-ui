@@ -16,4 +16,13 @@
   "Currently supported UI": "Currently supported UI",
   "OpenShift Streams": "OpenShift Streams",
   "404 Page Not Found": "404 Page Not Found",
+  "name":"Name",
+  "cloud_provider":"Cloud provider",
+  "region":"Region",
+  "status":"Status",
+  "connect_to_instance":"Connect to instance",
+  "kafka_successfully_deleted":"Kafka successfully deleted",
+  "aria_cluster_instance_list":"Cluster instance list",
+  "delete_instance":"Delete instance",
+  "stop_creating_instance":"Stop creating instance"
 }
