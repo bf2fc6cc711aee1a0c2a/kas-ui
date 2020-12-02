@@ -1,16 +1,19 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
-import { Card, AlertVariant } from '@patternfly/react-core';
+import { Card, AlertVariant, Grid, GridItem } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
 import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
+import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
 import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
+import './StatusColumn.css';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequest[];
@@ -19,6 +22,9 @@ type TableProps = {
   mainToggle: boolean;
   onConnectToInstance: (data: KafkaRequest) => void;
   refresh: () => void;
+  page: number;
+  perPage: number;
+  total: number;
 };
 
 export const getDeleteInstanceLabel = (status: InstanceStatus) => {
@@ -60,8 +66,12 @@ const StreamsTableView = ({
   refresh,
   createStreamsInstance,
   setCreateStreamsInstance,
+  page,
+  perPage,
+  total,
 }: TableProps) => {
   const { token } = useContext(AuthContext);
+
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
@@ -74,6 +84,10 @@ const StreamsTableView = ({
   const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
+
+  useEffect(() => {
+    refresh();
+  }, [page, perPage]);
 
   const getActionResolver = (
     rowData: IRow,
@@ -164,16 +178,27 @@ const StreamsTableView = ({
     selectedInstance?.name
   );
 
+  const renderPagination = (isCompact?: boolean) => {
+    return <TablePagination itemCount={total} variant={'top'} page={page} perPage={perPage} isCompact={isCompact} />;
+  };
+
   return (
     <Card>
-      <StreamsToolbar
-        mainToggle={mainToggle}
-        createStreamsInstance={createStreamsInstance}
-        setCreateStreamsInstance={setCreateStreamsInstance}
-        filterSelected={filterSelected}
-        namesSelected={namesSelected}
-        setNamesSelected={setNamesSelected}
-      />
+      <Grid>
+        <GridItem span={7}>
+          <StreamsToolbar
+            mainToggle={mainToggle}
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+            filterSelected={filterSelected}
+            namesSelected={namesSelected}
+            setNamesSelected={setNamesSelected}
+          />
+        </GridItem>
+        <GridItem span={5} className="toolbar-pagination-alignment">
+          {renderPagination(true)}
+        </GridItem>
+      </Grid>
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}
@@ -183,6 +208,7 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
+      <div className="pagination-alignment">{renderPagination()}</div>
       {isDeleteModalOpen && (
         <DeleteInstanceModal
           title={title}

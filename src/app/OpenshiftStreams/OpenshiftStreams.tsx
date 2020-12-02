@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import { Level, LevelItem, PageSection, PageSectionVariants, Spinner, Switch, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../components/EmptyState/EmptyState';
@@ -14,6 +15,11 @@ type OpenShiftStreamsProps = {
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { token } = useContext(AuthContext);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const page = parseInt(searchParams.get('page') || '', 10) || 1;
+  const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
 
   // Api Service
   const apisService = new DefaultApi({
@@ -34,11 +40,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const fetchKafkas = async () => {
     try {
       await apisService
-        .listKafkas()
+        .listKafkas(page?.toString(), perPage?.toString())
         .then((res) => {
           const kafkaInstances = res.data;
           console.log('what is res' + JSON.stringify(kafkaInstances));
-          // setKafkaInstancesList(kafkaInstances);
+          setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
         })
         .then(() => setTimeout(fetchKafkas, 2000));
@@ -48,17 +54,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   useEffect(() => {
-    if (token !== '') {
+    if (!!token) {
       setKafkaDataLoaded(false);
       fetchKafkas().then(() => setKafkaDataLoaded(true));
     }
   }, [token]);
 
-  if (token === '') {
-    return <Spinner />;
-  }
-
-  if (!kafkaDataLoaded) {
+  if (!kafkaDataLoaded || token === '') {
     return <Spinner />;
   }
 
@@ -95,6 +97,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             refresh={fetchKafkas}
             createStreamsInstance={createStreamsInstance}
             setCreateStreamsInstance={setCreateStreamsInstance}
+            page={page}
+            perPage={perPage}
+            total={kafkaInstancesList?.total}
           />
         ) : (
           <EmptyState

@@ -1,7 +1,16 @@
-.check-circle-icon-color{
-    color:var(--pf-global--success-color--100);
+.check-circle-icon-color {
+  color: var(--pf-global--success-color--100);
 }
 
-.exclamation-circle-icon-color{
-    color:var(--pf-global--danger-color--100);
+.exclamation-circle-icon-color {
+  color: var(--pf-global--danger-color--100);
+}
+
+.pagination-alignment {
+  margin-top: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.toolbar-pagination-alignment {
+  margin-top: var(--pf-global--spacer--lg);
 }
