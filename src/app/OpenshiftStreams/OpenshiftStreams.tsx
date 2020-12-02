@@ -45,7 +45,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
-  const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[]>([]);
+  const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance>();
@@ -150,11 +150,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                     refresh={fetchKafkas}
                   />
                 ) : (
-                  <EmptyState
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    mainToggle={mainToggle}
-                  />
+                  kafkaInstanceItems !== undefined && (
+                    <EmptyState
+                      createStreamsInstance={createStreamsInstance}
+                      setCreateStreamsInstance={setCreateStreamsInstance}
+                      mainToggle={mainToggle}
+                    />
+                  )
                 )}
                 {createStreamsInstance && (
                   <CreateInstanceModal

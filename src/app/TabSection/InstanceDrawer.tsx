@@ -50,9 +50,7 @@ export type InstanceDrawerProps = {
 const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   mainToggle,
   onClose,
-  drawerRef,
   activeTab,
-  isExpanded,
   instanceDetail,
 }) => {
   const [activeTab1Key, setActiveTab1Key] = useState(0);
@@ -210,16 +208,20 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <GridItem span={6} className="instance-detail-first-grid">
             <Card>
               <CardBody>
-                <Text component={TextVariants.small}>Topics</Text>
-                <Text component={TextVariants.h4}>10</Text>
+                <TextContent>
+                  <Text component={TextVariants.small}>Topics</Text>
+                </TextContent>
+                <Text component={TextVariants.h3}>10</Text>
               </CardBody>
             </Card>
           </GridItem>
           <GridItem span={6}>
             <Card>
               <CardBody>
-                <Text component={TextVariants.small}>Consumer groups</Text>
-                <Text component={TextVariants.h4}>8</Text>
+                <TextContent>
+                  <Text component={TextVariants.small}>Consumer groups</Text>
+                </TextContent>
+                <Text component={TextVariants.h3}>8</Text>
               </CardBody>
             </Card>
           </GridItem>
@@ -252,7 +254,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   );
 
   return (
-    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_50' }}>
+    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_66' }}>
       {instanceDetail === undefined ? (
         <Loading />
       ) : (
@@ -260,8 +262,8 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <DrawerHead>
             <TextContent className="pf-u-pt-lg">
               <Text component={TextVariants.small}>Instance Name</Text>
-              <b>{instanceDetail?.name}</b>
             </TextContent>
+            <Text component={TextVariants.h3}>{instanceDetail?.name}</Text>
             <DrawerActions>
               <DrawerCloseButton onClick={onClose} />
             </DrawerActions>
