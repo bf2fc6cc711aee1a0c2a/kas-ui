@@ -9,6 +9,7 @@ import {
   TextContent,
   Text,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { InstanceStatus } from '@app/constants';
 import  './DeleteInstanceModal.css';
 
@@ -24,8 +25,8 @@ interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
 }
 
 const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
-  confirmActionLabel = 'Confirm',
-  cancelActionLabel = 'Cancel',
+  confirmActionLabel,
+  cancelActionLabel,
   title,
   onConfirm,
   selectedInstanceName,
@@ -36,6 +37,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   titleIconVariant = 'warning',
   instanceStatus,
 }: DeleteInstanceModalProps) => {
+  const {t}=useTranslation();
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
 
   const handleModalToggle = () => {
@@ -61,7 +63,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       id="dialog-prompt-modal"
       variant={variant}
       isOpen={isModalOpen}
-      aria-label="Delete instance modal"
+      aria-label={t('delete_instal_modal')}
       title={title}
       titleIconVariant={titleIconVariant}
       showClose={true}
@@ -73,20 +75,18 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
           onClick={onConfirm}
           isDisabled={isConfirmButtonDisabled()}
         >
-          {confirmActionLabel}
+          {confirmActionLabel || t('confirm')}
         </Button>,
         <Button key="cancel" variant="link" onClick={handleModalToggle}>
-          {cancelActionLabel}
+          {cancelActionLabel || t('cancel')}
         </Button>,
       ]}
     >
-      <div dangerouslySetInnerHTML={{__html:description || ''}} />   
+      <Text dangerouslySetInnerHTML={{__html:description || ''}} />   
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
           <TextContent className="text-content">
-            <Text>
-              Please type <b>{selectedInstanceName}</b> to confirm.
-            </Text>
+            <Text dangerouslySetInnerHTML={{__html:t("instance_name_label",{name:selectedInstanceName})}}/>          
           </TextContent>
           <TextInput id="instance-name" type="text" value={instanceNameInput} onChange={handleInstanceName} />
         </>

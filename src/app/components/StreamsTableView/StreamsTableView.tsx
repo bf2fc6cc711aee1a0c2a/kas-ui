@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
-import { Card, AlertVariant } from '@patternfly/react-core';
+import { Card, AlertVariant, PaginationVariant } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -26,22 +27,22 @@ type TableProps = {
   total: number;
 };
 
-export const getDeleteInstanceLabel = (status: InstanceStatus) => {
+export const getDeleteInstanceLabel = (t: TFunction, status: InstanceStatus) => {
   switch (status) {
     case InstanceStatus.COMPLETED:
-      return 'Delete instance';
+      return t('delete_instance');
     case InstanceStatus.FAILED:
-      return 'Remove';
+      return t('remove');
     case InstanceStatus.ACCEPTED:
     case InstanceStatus.PROVISIONING:
-      return 'Stop instance';
+      return t('stop_instance');
     default:
       return;
   }
 };
 
 export const getDeleteInstanceModalConfig = (
-  t: Function,
+  t: TFunction,
   status: string | undefined,
   instanceName: string | undefined
 ) => {
@@ -53,11 +54,11 @@ export const getDeleteInstanceModalConfig = (
   if (status === InstanceStatus.COMPLETED) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
-    config.description = `The <b>${instanceName}</b> instance will be deleted.`;
+    config.description = t('delete_instance_status_complete', { instanceName });
   } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
     config.title = `${t('stop_creating_instance')}?`;
     config.confirmActionLabel = t('stop_creating_instance');
-    config.description = `The creation of the <b>${instanceName}</b> instance will be stopped.`;
+    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
   return config;
 };
@@ -99,7 +100,7 @@ const StreamsTableView = ({
     onConnect: (data: KafkaRequest) => void
   ) => {
     const { originalData } = rowData;
-    const title = getDeleteInstanceLabel(originalData?.status);
+    const title = getDeleteInstanceLabel(t, originalData?.status);
     return [
       {
         title,
@@ -198,14 +199,14 @@ const StreamsTableView = ({
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}
-        aria-label={t('aria_cluster_instance_list')}
+        aria-label={t('cluster_instance_list')}
         actionResolver={actionResolver}
       >
         <TableHeader />
         <TableBody />
       </Table>
       <div className="pagination-alignment">
-        <TablePagination itemCount={total} variant={'top'} page={page} perPage={perPage} />
+        <TablePagination itemCount={total} variant={PaginationVariant.bottom} page={page} perPage={perPage} />
       </div>
       {isDeleteModalOpen && (
         <DeleteInstanceModal
