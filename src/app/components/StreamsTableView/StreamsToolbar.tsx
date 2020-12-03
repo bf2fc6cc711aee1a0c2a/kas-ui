@@ -114,9 +114,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   );
 
   return (
-    <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="lg" clearAllFilters={onClear}>
+    <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear}>
       <ToolbarContent>
-        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="lg">
+        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
           {toggleGroupItems}
         </ToolbarToggleGroup>
         <ToolbarItem>
