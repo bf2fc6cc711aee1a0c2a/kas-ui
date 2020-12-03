@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
-import { Card, AlertVariant, Grid, GridItem } from '@patternfly/react-core';
+import { Card, AlertVariant } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -182,28 +182,19 @@ const StreamsTableView = ({
     selectedInstance?.status,
     selectedInstance?.name
   );
-
-  const renderPagination = (isCompact?: boolean) => {
-    return <TablePagination itemCount={total} variant={'top'} page={page} perPage={perPage} isCompact={isCompact} />;
-  };
-
   return (
     <Card>
-      <Grid>
-        <GridItem span={7}>
-          <StreamsToolbar
-            mainToggle={mainToggle}
-            createStreamsInstance={createStreamsInstance}
-            setCreateStreamsInstance={setCreateStreamsInstance}
-            filterSelected={filterSelected}
-            namesSelected={namesSelected}
-            setNamesSelected={setNamesSelected}
-          />
-        </GridItem>
-        <GridItem span={5} className="toolbar-pagination-alignment">
-          {renderPagination(true)}
-        </GridItem>
-      </Grid>
+      <StreamsToolbar
+        mainToggle={mainToggle}
+        createStreamsInstance={createStreamsInstance}
+        setCreateStreamsInstance={setCreateStreamsInstance}
+        filterSelected={filterSelected}
+        namesSelected={namesSelected}
+        setNamesSelected={setNamesSelected}
+        total={total}
+        page={page}
+        perPage={perPage}
+      />
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}
@@ -213,7 +204,9 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      <div className="pagination-alignment">{renderPagination()}</div>
+      <div className="pagination-alignment">
+        <TablePagination itemCount={total} variant={'top'} page={page} perPage={perPage} />
+      </div>
       {isDeleteModalOpen && (
         <DeleteInstanceModal
           title={title}

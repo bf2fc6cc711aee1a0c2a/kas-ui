@@ -54,13 +54,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   useEffect(() => {
-    if (!!token) {
+    if (token!==undefined || token!=='') {
       setKafkaDataLoaded(false);
       fetchKafkas().then(() => setKafkaDataLoaded(true));
     }
   }, [token]);
 
-  if (!kafkaDataLoaded || token === '') {
+  if (!kafkaDataLoaded || token === '' || token===undefined) {
     return <Spinner />;
   }
 

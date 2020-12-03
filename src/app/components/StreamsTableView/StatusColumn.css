@@ -9,8 +9,5 @@
 .pagination-alignment {
   margin-top: var(--pf-global--spacer--md);
   margin-bottom: var(--pf-global--spacer--md);
-}
-
-.toolbar-pagination-alignment {
-  margin-top: var(--pf-global--spacer--lg);
+  margin-right: var(--pf-global--spacer--md);
 }
