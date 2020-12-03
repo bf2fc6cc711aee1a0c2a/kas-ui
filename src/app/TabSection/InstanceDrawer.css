@@ -1,6 +1,6 @@
 .cluster-connection-drawer .pf-c-content {
-  padding-top: 24px;
-  padding-bottom: 24px;
+  padding-top: 'pf-global--spacer--lg';
+  padding-bottom: 'pf-global--spacer--lg';
 }
 
 .pf-c-code-editor__main {
@@ -24,12 +24,4 @@
 .instance-card-grid {
   margin-top: 20px;
   margin-bottom: 20px;
-}
-
-.instance-name-header {
-  margin-bottom: 0;
-}
-
-.instance-name-text {
-  margin-top: 0;
 }

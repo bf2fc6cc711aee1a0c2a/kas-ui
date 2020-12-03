@@ -206,10 +206,14 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <GridItem span={6} className="instance-detail-first-grid">
             <Card>
               <CardBody>
-                <TextContent>
-                  <Text component={TextVariants.small}>Topics</Text>
+                <TextContent className="pf-u-pt-lg">
+                  <Text component={TextVariants.small} className="pf-u-mb-0">
+                    Topics
+                  </Text>
+                  <Text component={TextVariants.h3} className="pf-u-mt-0">
+                    10
+                  </Text>
                 </TextContent>
-                <Text component={TextVariants.h3}>10</Text>
               </CardBody>
             </Card>
           </GridItem>
@@ -217,15 +221,19 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             <Card>
               <CardBody>
                 <TextContent>
-                  <Text component={TextVariants.small}>Consumer groups</Text>
+                  <Text component={TextVariants.small} className="pf-u-mb-0">
+                    Consumer groups
+                  </Text>
+                  <Text component={TextVariants.h3} className="pf-u-mt-0">
+                    8
+                  </Text>
                 </TextContent>
-                <Text component={TextVariants.h3}>8</Text>
               </CardBody>
             </Card>
           </GridItem>
         </Grid>
       )}
-      <TextContent className="pf-u-pt-lg">
+      <TextContent>
         <TextList component={TextListVariants.dl}>
           {renderTextListItemDetail('Cloud Provider', 'Amazon Web Services')}
           {renderTextListItemDetail('Region', 'US East, N. Virginia')}
@@ -259,10 +267,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         <>
           <DrawerHead>
             <TextContent className="pf-u-pt-lg">
-              <Text component={TextVariants.small} className="instance-name-header">
+              <Text component={TextVariants.small} className="pf-u-mb-0">
                 Instance Name
               </Text>
-              <Text component={TextVariants.h3} className="instance-name-text">{instanceDetail?.name}</Text>
+              <Text component={TextVariants.h3} className="pf-u-mt-0">
+                {instanceDetail?.name}
+              </Text>
             </TextContent>
             <DrawerActions>
               <DrawerCloseButton onClick={onClose} />

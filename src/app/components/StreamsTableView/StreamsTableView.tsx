@@ -89,19 +89,27 @@ const StreamsTableView = ({
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
     const deleteActionTitle = getDeleteInstanceLabel(originalData?.status);
-    const resolver: (IAction | ISeparator)[] = [
+    const resolver: (IAction | ISeparator)[] = mainToggle ? [
+      {
+        title: 'View details',
+        id: 'view-instance',
+        onClick: () => onViewInstance(originalData),
+      },{
+            title: 'Connect to this instance',
+            id: 'connect-instance',
+            onClick: () => onConnectToInstance(originalData),
+      },
+      {
+        title: deleteActionTitle,
+        id: 'delete-instance',
+        onClick: () => onDelete(originalData),
+      },
+    ]:[
       {
         title: 'View details',
         id: 'view-instance',
         onClick: () => onViewInstance(originalData),
       },
-      mainToggle
-        ? {
-            title: 'Connect to this instance',
-            id: 'connect-instance',
-            onClick: () => onConnectToInstance(originalData),
-          }
-        : {},
       {
         title: deleteActionTitle,
         id: 'delete-instance',
