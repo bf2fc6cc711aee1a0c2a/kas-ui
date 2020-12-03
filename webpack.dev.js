@@ -2,6 +2,7 @@ const path = require('path');
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const CopyPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 const { port } = require("./package.json");
 const HOST = process.env.HOST || "prod.foo.redhat.com";
 const PORT = process.env.PORT || port;
@@ -50,6 +51,9 @@ module.exports = merge(common('development'), {
       patterns: [
         { from: './src/keycloak.dev.json', to: 'keycloak.json'}
       ]
+    }),
+    new webpack.DefinePlugin({
+      "__BASE_PATH__": process.env.BASE_PATH || 'https://api.stage.openshift.com'
     }),
   ]
 });

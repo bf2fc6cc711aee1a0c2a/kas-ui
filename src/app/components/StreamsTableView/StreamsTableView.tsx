@@ -11,6 +11,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
 import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
+import { ApiContext } from '@app/api/ApiContext';
 
 type TableProps = {
   kafkaInstanceItems: KafkaRequest[];
@@ -62,10 +63,11 @@ const StreamsTableView = ({
   setCreateStreamsInstance,
 }: TableProps) => {
   const { token } = useContext(AuthContext);
+  const {basePath} = useContext(ApiContext);
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
-    basePath: BASE_PATH,
+    basePath,
   });
   const { addAlert } = useAlerts();
 

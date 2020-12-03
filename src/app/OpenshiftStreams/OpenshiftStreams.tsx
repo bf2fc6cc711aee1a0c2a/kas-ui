@@ -6,8 +6,8 @@ import { StreamsTableView } from '../components/StreamsTableView/StreamsTableVie
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
-import { BASE_PATH } from '@app/common/app-config';
 import { Loading } from '@app/components/Loading';
+import { ApiContext } from '@app/api/ApiContext';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -16,10 +16,12 @@ type OpenShiftStreamsProps = {
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { token } = useContext(AuthContext);
 
+  const { basePath } = useContext(ApiContext);
+
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
-    basePath: BASE_PATH,
+    basePath,
   });
 
   const { t } = useTranslation();
