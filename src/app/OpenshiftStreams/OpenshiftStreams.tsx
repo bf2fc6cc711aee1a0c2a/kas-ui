@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
-  Switch,
+  Drawer,
+  DrawerContent,
   Level,
   LevelItem,
   PageSection,
   PageSectionVariants,
-  Title,
-  Drawer,
-  DrawerContent,
+  Switch,
+  Title
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
@@ -18,11 +18,10 @@ import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
-import { BASE_PATH } from '@app/common/app-config';
 import { Loading } from '@app/components/Loading/Loading';
 import { useInterval } from '@app/hooks/useInterval';
-import Axios, { AxiosError } from 'axios';
-import { IApiErrorData, isServiceApiError } from '@app/utils/error';
+import { isServiceApiError } from '@app/utils/error';
+import { ApiContext } from '@app/api/ApiContext';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -35,6 +34,7 @@ type SelectedInstance = {
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { getToken } = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -76,7 +76,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       try {
         const apisService = new DefaultApi({
           accessToken,
-          basePath: BASE_PATH,
+          basePath
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
 
@@ -89,7 +89,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
         });
       } catch (error) {
         if (isServiceApiError(error)) {
-          console.log(error.response?.data.reason)
+          console.log(error.response?.data.reason);
         }
       }
     }
