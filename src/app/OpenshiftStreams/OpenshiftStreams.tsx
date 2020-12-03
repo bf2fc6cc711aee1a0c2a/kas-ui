@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Level, LevelItem, PageSection, PageSectionVariants, Spinner, Switch, Title } from '@patternfly/react-core';
+import { Level, LevelItem, PageSection, PageSectionVariants,  Switch, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
@@ -7,6 +7,7 @@ import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateIns
 import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { BASE_PATH } from '@app/common/app-config';
+import { Loading } from '@app/components/Loading';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -55,11 +56,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   }, [token]);
 
   if (token === '') {
-    return <Spinner />;
+    return <Loading />;
   }
 
   if (!kafkaDataLoaded) {
-    return <Spinner />;
+    return <Loading />;
   }
 
   const handleSwitchChange = (checked: boolean) => {
