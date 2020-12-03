@@ -21,8 +21,8 @@ import './CreateInstanceModal.css';
 import { useAlerts } from '../Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
 import { DefaultApi } from '../../../openapi';
-import { BASE_PATH } from '@app/common/app-config';
 import { cloudProviderOptions, cloudRegionOptions } from '../../utils/utils';
+import { ApiContext } from '@app/api/ApiContext';
 
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
@@ -49,11 +49,12 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
 
   const { token } = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
 
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
-    basePath: BASE_PATH,
+    basePath,
   });
 
   const { addAlert } = useAlerts();
