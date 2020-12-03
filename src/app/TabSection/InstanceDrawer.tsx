@@ -206,7 +206,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <GridItem span={6} className="instance-detail-first-grid">
             <Card>
               <CardBody>
-                <TextContent className="pf-u-pt-lg">
+                <TextContent>
                   <Text component={TextVariants.small} className="pf-u-mb-0">
                     Topics
                   </Text>
