@@ -1,6 +1,11 @@
 import React from 'react';
-
-export const Loading: React.FC = () => {
-  // Patternfly has some loading screen?
-  return (<h3>Loading...</h3>)
-};
+import { PageSection, Bullseye } from '@patternfly/react-core';
+import { Spinner } from '@redhat-cloud-services/frontend-components';
+import './Loading.css';
+export const Loading: React.FunctionComponent = () => (
+  <PageSection>
+    <Bullseye>
+      <Spinner />
+    </Bullseye>
+  </PageSection>
+);
