@@ -34,6 +34,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   filterSelected,
   namesSelected,
   setNamesSelected,
+  mainToggle
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
@@ -116,9 +117,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   return (
     <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="lg" clearAllFilters={onClear}>
       <ToolbarContent>
-        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="lg">
+        {mainToggle && <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="lg">
           {toggleGroupItems}
-        </ToolbarToggleGroup>
+        </ToolbarToggleGroup>}
         <ToolbarItem>
           <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
             Create Streams instance
