@@ -17,8 +17,6 @@ import {
   FormGroup,
   Grid,
   GridItem,
-  Title,
-  TitleSizes,
   Tabs,
   Tab,
   TabTitleText,
@@ -261,9 +259,11 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         <>
           <DrawerHead>
             <TextContent className="pf-u-pt-lg">
-              <Text component={TextVariants.small}>Instance Name</Text>
+              <Text component={TextVariants.small} className="instance-name-header">
+                Instance Name
+              </Text>
+              <Text component={TextVariants.h3} className="instance-name-text">{instanceDetail?.name}</Text>
             </TextContent>
-            <Text component={TextVariants.h3}>{instanceDetail?.name}</Text>
             <DrawerActions>
               <DrawerCloseButton onClick={onClose} />
             </DrawerActions>

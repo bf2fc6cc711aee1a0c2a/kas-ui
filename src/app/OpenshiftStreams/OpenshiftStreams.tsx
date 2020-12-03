@@ -119,7 +119,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               />
             }
           >
-            <DrawerContentBody>
               <PageSection variant={PageSectionVariants.light}>
                 <Level>
                   <LevelItem>
@@ -167,7 +166,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   />
                 )}
               </PageSection>
-            </DrawerContentBody>
           </DrawerContent>
         </Drawer>
       </AlertProvider>

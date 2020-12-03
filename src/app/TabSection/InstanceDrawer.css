@@ -16,10 +16,20 @@
   background-color: #f0f0f0;
   border-color: transparent;
 }
+
 .instance-detail-first-grid {
   margin-right: 15px;
 }
+
 .instance-card-grid {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.instance-name-header {
+  margin-bottom: 0;
+}
+
+.instance-name-text {
+  margin-top: 0;
 }
