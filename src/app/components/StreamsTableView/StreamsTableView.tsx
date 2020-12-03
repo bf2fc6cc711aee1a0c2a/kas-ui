@@ -1,16 +1,8 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  IRowData,
-  IExtraData,
-  ISeparator,
-  IAction,
-} from '@patternfly/react-table';
-import { Card, AlertVariant, PaginationVariant, Divider } from '@patternfly/react-core';
+import { IAction, IExtraData, IRowData, ISeparator, Table, TableBody, TableHeader } from '@patternfly/react-table';
+import { AlertVariant, Card, Divider, PaginationVariant } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -22,6 +14,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
+import { ApiContext } from '@app/api/ApiContext';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -64,7 +57,7 @@ export const getDeleteInstanceModalConfig = (
   const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
-    description: '',
+    description: ''
   };
   if (status === InstanceStatus.COMPLETED) {
     config.title = `${t('delete_instance')}?`;
@@ -79,18 +72,19 @@ export const getDeleteInstanceModalConfig = (
 };
 
 const StreamsTableView = ({
-  mainToggle,
-  kafkaInstanceItems,
-  onViewInstance,
-  onConnectToInstance,
-  refresh,
-  createStreamsInstance,
-  setCreateStreamsInstance,
-  page,
-  perPage,
-  total,
-}: TableProps) => {
+                            mainToggle,
+                            kafkaInstanceItems,
+                            onViewInstance,
+                            onConnectToInstance,
+                            refresh,
+                            createStreamsInstance,
+                            setCreateStreamsInstance,
+                            page,
+                            perPage,
+                            total
+                          }: TableProps) => {
   const { getToken } = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
 
   const { addAlert } = useAlerts();
@@ -112,28 +106,28 @@ const StreamsTableView = ({
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: () => onViewInstance(originalData),
-      },{
-            title: t('connect_to_instance'),
-            id: 'connect-instance',
-            onClick: () => onConnectToInstance(originalData),
+        onClick: () => onViewInstance(originalData)
+      }, {
+        title: t('connect_to_instance'),
+        id: 'connect-instance',
+        onClick: () => onConnectToInstance(originalData)
       },
       {
         title: deleteActionTitle,
         id: 'delete-instance',
-        onClick: () => onDelete(originalData),
-      },
-    ]:[
+        onClick: () => onDelete(originalData)
+      }
+    ] : [
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: () => onViewInstance(originalData),
+        onClick: () => onViewInstance(originalData)
       },
       {
         title: deleteActionTitle,
         id: 'delete-instance',
-        onClick: () => onDelete(originalData),
-      },
+        onClick: () => onDelete(originalData)
+      }
     ];
     return resolver;
   };
@@ -150,10 +144,10 @@ const StreamsTableView = ({
           cloudProviderDisplayName,
           regionDisplayName,
           {
-            title: <StatusColumn status={status} />,
-          },
+            title: <StatusColumn status={status} />
+          }
         ],
-        originalData: row,
+        originalData: row
       });
     });
     return tableRow;
@@ -190,7 +184,7 @@ const StreamsTableView = ({
     const accessToken = await getToken();
     const apisService = new DefaultApi({
       accessToken,
-      BASE_PATH,
+      basePath
     });
 
     try {
