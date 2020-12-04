@@ -1,9 +1,10 @@
 import React from 'react';
 
 export interface IAuthContext {
-  token: string | undefined;
+  getToken: () => Promise<string>
 }
 
 export const AuthContext = React.createContext<IAuthContext>({
-  token: undefined
-});
+    getToken: () => Promise.resolve('')
+  }
+);
