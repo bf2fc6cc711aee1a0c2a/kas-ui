@@ -195,6 +195,7 @@ const StreamsTableView = ({
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
+      console.log('IS THERE AN ERROR HERE');
       addAlert(error, AlertVariant.danger);
     }
   };
