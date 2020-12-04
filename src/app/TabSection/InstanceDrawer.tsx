@@ -38,6 +38,8 @@ import './InstanceDrawer.css';
 import { GenerateCredential } from './GenerateCredential';
 import { Loading } from '@app/components/Loading';
 import { KafkaRequest } from 'src/openapi';
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 
 export type InstanceDrawerProps = {
   mainToggle: boolean;
@@ -165,7 +167,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   );
 
   const { id, created_at, updated_at, owner } = instanceDetail || {};
-
+  dayjs.extend(localizedFormat);
   const detailsTab = (
     <>
       {mainToggle && (
@@ -206,8 +208,8 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           {renderTextListItemDetail('Region', 'US East, N. Virginia')}
           {renderTextListItemDetail('ID', id)}
           {renderTextListItemDetail('Owner', owner)}
-          {renderTextListItemDetail('Created', created_at)}
-          {renderTextListItemDetail('Updated', updated_at)}
+          {renderTextListItemDetail('Created', dayjs(created_at).format('LLLL'))}
+          {renderTextListItemDetail('Updated', dayjs(updated_at).format('LLLL'))}
         </TextList>
       </TextContent>
     </>
