@@ -18,9 +18,18 @@
 }
 
 .instance-detail-first-grid {
-  margin-right: var(--pf-global--spacer--md)
+  margin-right: var(--pf-global--spacer--md);
 }
 
 .instance-card-grid {
-  margin-top: var(--pf-global--spacer--lg);
+  margin-bottom: var(--pf-global--spacer--lg);
+}
+
+.tab-content-body {
+  padding-top: var(--pf-global--spacer--lg);
+  padding-bottom: var(--pf-global--spacer--lg);
+}
+
+.tab-content-body.pf-m-secondary {
+  padding-top: 0;
 }

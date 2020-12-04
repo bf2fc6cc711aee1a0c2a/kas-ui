@@ -15,10 +15,10 @@ import { StreamsTableView } from '../components/StreamsTableView/StreamsTableVie
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { DefaultApi, KafkaRequest } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
-import { InstanceDrawer } from '../TabSection/InstanceDrawer';
+import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
 import { BASE_PATH } from '@app/common/app-config';
-import { Loading } from '@app/components/Loading';
+import { Loading } from '@app/components/Loading/Loading';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
