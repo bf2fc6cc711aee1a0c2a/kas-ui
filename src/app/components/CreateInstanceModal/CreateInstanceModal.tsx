@@ -58,7 +58,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
 
   const { addAlert } = useAlerts();
 
-  const onCreateInstance = async (event) => {
+  const onCreateInstance = async () => {
     let isValid = true;
 
     if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {

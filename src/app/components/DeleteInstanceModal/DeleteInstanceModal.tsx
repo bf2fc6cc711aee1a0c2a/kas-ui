@@ -11,17 +11,18 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InstanceStatus } from '@app/constants';
-import  './DeleteInstanceModal.css';
+import './DeleteInstanceModal.css';
+import { KafkaRequest } from 'src/openapi';
 
 interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
   confirmActionLabel?: string;
   cancelActionLabel?: string;
   description?: string;
-  selectedInstanceName: string | undefined;
+  selectedInstance: KafkaRequest;
   isModalOpen: boolean;
   instanceStatus: string | undefined;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  onConfirm: (event: any) => Promise<void>;
+  onConfirm: (instance: KafkaRequest) => Promise<void>;
 }
 
 const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
@@ -29,16 +30,18 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   cancelActionLabel,
   title,
   onConfirm,
-  selectedInstanceName,
   isModalOpen,
   setIsModalOpen,
   description,
   variant = ModalVariant.small,
   titleIconVariant = 'warning',
   instanceStatus,
+  selectedInstance,
 }: DeleteInstanceModalProps) => {
   const {t}=useTranslation();
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
+  
+  const selectedInstanceName = selectedInstance?.name;
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
@@ -57,7 +60,9 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
     }
     return false;
   };
-
+  const onConfirmDelete = () => {
+    onConfirm(selectedInstance);
+  };
   return (
     <Modal
       id="dialog-prompt-modal"
@@ -72,7 +77,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
         <Button
           key={'confirm-button'}
           variant={ButtonVariant.danger}
-          onClick={onConfirm}
+          onClick={onConfirmDelete}
           isDisabled={isConfirmButtonDisabled()}
         >
           {confirmActionLabel || t('confirm')}
