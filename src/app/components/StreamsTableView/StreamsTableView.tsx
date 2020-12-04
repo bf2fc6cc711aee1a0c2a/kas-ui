@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Table, TableHeader, TableBody, IRow } from '@patternfly/react-table';
-import { Card, AlertVariant, PaginationVariant } from '@patternfly/react-core';
+import { Card, AlertVariant, PaginationVariant, Divider } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -169,12 +169,10 @@ const StreamsTableView = ({
         setIsDeleteModalOpen(false);
         addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
         refresh();
-        console.info(t('kafka_successfully_deleted'));
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
       addAlert(error, AlertVariant.danger);
-      console.log(error);
     }
   };
 
@@ -205,9 +203,14 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      <div className="pagination-alignment">
-        <TablePagination itemCount={total} variant={PaginationVariant.bottom} page={page} perPage={perPage} />
-      </div>
+      <Divider />
+      <TablePagination
+        widgetId="pagination-options-menu-bottom"
+        itemCount={total}
+        variant={PaginationVariant.bottom}
+        page={page}
+        perPage={perPage}
+      />
       {isDeleteModalOpen && (
         <DeleteInstanceModal
           title={title}

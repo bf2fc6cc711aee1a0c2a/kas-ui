@@ -2,7 +2,7 @@
   "Global navigation": "Global navigation",
   "Global": "Global",
   "Skip to Content": "Skip to Content",
-  "delete_instal_modal": "Delete instance modal",
+  "delete_instance_modalv": "Delete instance modal",
   "confirm": "Confirm",
   "cancel": "Cancel",
   "instance_name_label": "Please type <b>{{name}}</b> to confirm.",
