@@ -38,6 +38,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   filterSelected,
   namesSelected,
   setNamesSelected,
+  mainToggle,
   total,
   page,
   perPage,
@@ -123,9 +124,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   return (
     <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear}>
       <ToolbarContent>
-        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+        {mainToggle && <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
           {toggleGroupItems}
-        </ToolbarToggleGroup>
+        </ToolbarToggleGroup>}
         <ToolbarItem>
           <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
             Create Streams instance
