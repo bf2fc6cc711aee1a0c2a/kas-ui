@@ -28,6 +28,8 @@ import {
   TextListItem,
   TextListVariants,
   TextListItemVariants,
+  Title,
+  TitleSizes,
 } from '@patternfly/react-core';
 import { CopyIcon } from '@patternfly/react-icons';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
@@ -67,10 +69,10 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const resourcesTab = (
     <>
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
+      <TextContent className="pf-u-pb-lg pf-u-pt-lg">
         <Text component={TextVariants.small}>
-          To connect an application or tool to this Kafka instance, you will need the address of a Kafka listener, a
-          certificate to authenticate with, and generated credentials.
+          To connect an application or tool to this Kafka instance, you will need the address of a Kafka listener, and
+          generated credentials.
         </Text>
         <Text component={TextVariants.h5}>Kafka listener and credentials</Text>
         <Text component={TextVariants.small}>
@@ -87,54 +89,19 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </FlexItem>
         <GenerateCredential />
       </Flex>
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-        <Text component={TextVariants.h5}>Certificates</Text>
+      <TextContent className="pf-u-pb-lg pf-u-pt-lg">
+        <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
         <Text component={TextVariants.small}>
-          A certificate is required by your Kafka clients to connect securely to this Kafka instance.
+          Applications and tools that use the REST producer API will need the REST producer endpoint to connect.
         </Text>
-        <Grid hasGutter>
-          <GridItem span={6}>
-            <Card isFlat isCompact>
-              <CardHeader>
-                <CardTitle className="pf-u-pt-0">PKCS12 certificate</CardTitle>
-              </CardHeader>
-              <CardBody>Use this for a Java client.</CardBody>
-              <CardBody>
-                <FormGroup label="Certificate password" fieldId="cert-password">
-                  <TextInput type="password" id="cert-password" name="cert-password" />
-                </FormGroup>
-              </CardBody>
-              <CardFooter className="pf-u-text-align-right">
-                <Button variant="primary">Download certificate</Button>
-              </CardFooter>
-            </Card>
-          </GridItem>
-          <GridItem span={6}>
-            <Card isFlat isCompact className="pf-u-h-100">
-              <CardHeader>
-                <CardTitle className="pf-u-pt-0">PEM certificate</CardTitle>
-              </CardHeader>
-              <CardBody>Use this for anything else.</CardBody>
-              <CardFooter className="pf-u-text-align-right">
-                <Button variant="primary">Download certificate</Button>
-              </CardFooter>
-            </Card>
-          </GridItem>
-        </Grid>
-        <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-          <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
-          <Text component={TextVariants.small}>
-            Applications and tools that use the REST producer API will need the REST producer endpoint to connect.
-          </Text>
-        </TextContent>
-        <ClipboardCopy>https : // : 30123</ClipboardCopy>
       </TextContent>
+      <ClipboardCopy>https : // : 30123</ClipboardCopy>
     </>
   );
 
   const sampleCodeTab = (
     <>
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
+      <TextContent className="pf-u-pb-lg pf-u-pt-lg">
         <Text component={TextVariants.h5}>Sample connection code</Text>
         <Text component={TextVariants.small}>
           Use this snippet of code to set the properties in your Kafka client to connect securely. Replace the values in
@@ -159,7 +126,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </div>
       </div>
 
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
+      <TextContent className="pf-u-pb-lg pf-u-pt-lg">
         <Text component={TextVariants.h5}>Sample connection code</Text>
         <Text component={TextVariants.small}>
           Use this snippet of code to set the properties in your Kafka client to connect securely. Replace the values in
@@ -233,7 +200,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           </GridItem>
         </Grid>
       )}
-      <TextContent>
+      <TextContent className="pf-u-mt-lg">
         <TextList component={TextListVariants.dl}>
           {renderTextListItemDetail('Cloud Provider', 'Amazon Web Services')}
           {renderTextListItemDetail('Region', 'US East, N. Virginia')}
@@ -266,13 +233,13 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       ) : (
         <>
           <DrawerHead>
-            <TextContent className="pf-u-pt-lg">
+            <TextContent>
               <Text component={TextVariants.small} className="pf-u-mb-0">
                 Instance Name
               </Text>
-              <Text component={TextVariants.h3} className="pf-u-mt-0">
+              <Title headingLevel="h3" size={TitleSizes['2xl']} className="pf-u-mt-0 ">
                 {instanceDetail?.name}
-              </Text>
+              </Title>
             </TextContent>
             <DrawerActions>
               <DrawerCloseButton onClick={onClose} />

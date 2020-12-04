@@ -7,16 +7,13 @@ import {
   PageSection,
   PageSectionVariants,
   Title,
-  Spinner,
   Drawer,
-  DrawerContent,
-  DrawerContentBody,
+  DrawerContent
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequestList, KafkaRequest } from '../../openapi/api';
-import { Services } from '../common/app-config';
+import { DefaultApi, KafkaRequest } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../TabSection/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -32,7 +29,7 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
+const OpenshiftStreams = () => {
   const { token } = useContext(AuthContext);
 
   // Api Service
@@ -48,7 +45,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
-  const [selectedInstance, setSelectedInstance] = useState<SelectedInstance>();
+  const [selectedInstance, setSelectedInstance] = useState<SelectedInstance|null>();
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -56,7 +53,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   const onCloseClick = () => {
-    setSelectedInstance(undefined);
+    setSelectedInstance(null);
   };
 
   const onViewInstance = (instance: KafkaRequest) => {
@@ -106,13 +103,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   return (
     <>
       <AlertProvider>
-        <Drawer isExpanded={selectedInstance !== undefined} onExpand={onExpand}>
+        <Drawer isExpanded={selectedInstance != null} onExpand={onExpand}>
           <DrawerContent
             panelContent={
               <InstanceDrawer
                 mainToggle={mainToggle}
                 onClose={onCloseClick}
-                isExpanded={selectedInstance !== undefined}
+                isExpanded={selectedInstance != null}
                 drawerRef={drawerRef}
                 activeTab={selectedInstance?.activeTab}
                 instanceDetail={selectedInstance?.instanceDetail}
