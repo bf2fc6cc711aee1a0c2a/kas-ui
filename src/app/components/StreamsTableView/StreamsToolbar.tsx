@@ -17,6 +17,7 @@ import {
   ToolbarChip,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
+import { TablePagination } from './TablePagination';
 import './StreamsToolbarProps.css';
 
 type StreamsToolbarProps = {
@@ -26,6 +27,9 @@ type StreamsToolbarProps = {
   filterSelected?: string;
   namesSelected: string[];
   setNamesSelected: (value: string[]) => void;
+  total: number;
+  page: number;
+  perPage: number;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -34,7 +38,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   filterSelected,
   namesSelected,
   setNamesSelected,
-  mainToggle
+  mainToggle,
+  total,
+  page,
+  perPage,
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
@@ -115,15 +122,18 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   );
 
   return (
-    <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="lg" clearAllFilters={onClear}>
+    <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear}>
       <ToolbarContent>
-        {mainToggle && <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="lg">
+        {mainToggle && <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
           {toggleGroupItems}
         </ToolbarToggleGroup>}
         <ToolbarItem>
           <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
             Create Streams instance
           </Button>
+        </ToolbarItem>
+        <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
+          <TablePagination itemCount={total} page={page} perPage={perPage} isCompact={true} />
         </ToolbarItem>
       </ToolbarContent>
     </Toolbar>
