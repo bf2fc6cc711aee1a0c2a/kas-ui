@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import {
   Table,
   TableHeader,
@@ -9,17 +11,18 @@ import {
   ISeparator,
   IAction,
 } from '@patternfly/react-table';
-import { Card, AlertVariant } from '@patternfly/react-core';
+import { Card, AlertVariant, PaginationVariant, Divider } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
 import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
+import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
-import { useHistory } from 'react-router';
 import { AuthContext } from '@app/auth/AuthContext';
+import './StatusColumn.css';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -29,36 +32,43 @@ type TableProps = {
   onConnectToInstance: (instance: KafkaRequest) => void;
   mainToggle: boolean;
   refresh: () => void;
+  page: number;
+  perPage: number;
+  total: number;
 };
 
-export const getDeleteInstanceLabel = (status?: InstanceStatus | string) => {
+export const getDeleteInstanceLabel = (t: TFunction, status: string | undefined) => {
   switch (status) {
     case InstanceStatus.COMPLETED:
-      return 'Delete instance';
+      return t('delete_instance');
     case InstanceStatus.FAILED:
-      return 'Remove';
+      return t('remove');
     case InstanceStatus.ACCEPTED:
     case InstanceStatus.PROVISIONING:
-      return 'Stop instance';
+      return t('stop_instance');
     default:
       return;
   }
 };
 
-export const getDeleteInstanceModalConfig = (status: string | undefined, instanceName: string | undefined) => {
+export const getDeleteInstanceModalConfig = (
+  t: TFunction,
+  status: string | undefined,
+  instanceName: string | undefined
+) => {
   const config = {
     title: '',
     confirmActionLabel: '',
     description: '',
   };
   if (status === InstanceStatus.COMPLETED) {
-    config.title = 'Delete instance?';
-    config.confirmActionLabel = 'Delete instance';
-    config.description = `The <b>${instanceName}</b> instance will be deleted.`;
+    config.title = `${t('delete_instance')}?`;
+    config.confirmActionLabel = t('delete_instance');
+    config.description = t('delete_instance_status_complete', { instanceName });
   } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
-    config.title = 'Stop creating instance?';
-    config.confirmActionLabel = 'Stop creating instance';
-    config.description = `The creation of the <b>${instanceName}</b> instance will be stopped.`;
+    config.title = `${t('stop_creating_instance')}?`;
+    config.confirmActionLabel = t('stop_creating_instance');
+    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
   return config;
 };
@@ -71,8 +81,13 @@ const StreamsTableView = ({
   refresh,
   createStreamsInstance,
   setCreateStreamsInstance,
+  page,
+  perPage,
+  total,
 }: TableProps) => {
   const { token } = useContext(AuthContext);
+  const { t } = useTranslation();
+
   // Api Service
   const apisService = new DefaultApi({
     accessToken: token,
@@ -82,20 +97,24 @@ const StreamsTableView = ({
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const tableColumns = ['Name', 'Cloud provider', 'Region', 'Status'];
+  const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('status')];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
 
+  useEffect(() => {
+    refresh();
+  }, [page, perPage]);
+
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
-    const deleteActionTitle = getDeleteInstanceLabel(originalData?.status);
+    const deleteActionTitle = getDeleteInstanceLabel(t, originalData?.status);
     const resolver: (IAction | ISeparator)[] = mainToggle ? [
       {
         title: 'View details',
         id: 'view-instance',
         onClick: () => onViewInstance(originalData),
       },{
-            title: 'Connect to this instance',
+            title: t('connect_to_instance'),
             id: 'connect-instance',
             onClick: () => onConnectToInstance(originalData),
       },
@@ -171,22 +190,20 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId).then((res) => {
         setIsDeleteModalOpen(false);
-        addAlert('Instance successfully deleted', AlertVariant.success);
+        addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
         refresh();
-        console.info('Kafka successfully deleted');
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
       addAlert(error, AlertVariant.danger);
-      console.log(error);
     }
   };
 
   const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
+    t,
     selectedInstance?.status,
     selectedInstance?.name
   );
-
   return (
     <Card>
       <StreamsToolbar
@@ -196,16 +213,27 @@ const StreamsTableView = ({
         filterSelected={filterSelected}
         namesSelected={namesSelected}
         setNamesSelected={setNamesSelected}
+        total={total}
+        page={page}
+        perPage={perPage}
       />
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}
-        aria-label="Cluster instance list"
+        aria-label={t('cluster_instance_list')}
         actionResolver={actionResolver}
       >
         <TableHeader />
         <TableBody />
       </Table>
+      <Divider />
+      <TablePagination
+        widgetId="pagination-options-menu-bottom"
+        itemCount={total}
+        variant={PaginationVariant.bottom}
+        page={page}
+        perPage={perPage}
+      />
       {isDeleteModalOpen && (
         <DeleteInstanceModal
           title={title}

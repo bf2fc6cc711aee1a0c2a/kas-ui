@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   Switch,
@@ -13,7 +14,7 @@ import {
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest } from '../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -29,8 +30,13 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = () => {
+const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { token } = useContext(AuthContext);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const page = parseInt(searchParams.get('page') || '', 10) || 1;
+  const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
 
   // Api Service
   const apisService = new DefaultApi({
@@ -43,6 +49,7 @@ const OpenshiftStreams = () => {
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
+  const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance|null>();
@@ -68,11 +75,11 @@ const OpenshiftStreams = () => {
   const fetchKafkas = async () => {
     try {
       await apisService
-        .listKafkas()
+        .listKafkas(page?.toString(), perPage?.toString())
         .then((res) => {
           const kafkaInstances = res.data;
           console.log('what is res' + JSON.stringify(kafkaInstances));
-          // setKafkaInstancesList(kafkaInstances);
+          setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
         })
         .then(() => setTimeout(fetchKafkas, 2000));
@@ -82,17 +89,13 @@ const OpenshiftStreams = () => {
   };
 
   useEffect(() => {
-    if (token !== '') {
+    if (token !== undefined || token !== '') {
       setKafkaDataLoaded(false);
       fetchKafkas().then(() => setKafkaDataLoaded(true));
     }
   }, [token]);
 
-  if (token === '') {
-    return <Loading />;
-  }
-
-  if (!kafkaDataLoaded) {
+  if (!kafkaDataLoaded || token === '' || token === undefined) {
     return <Loading />;
   }
 
@@ -137,13 +140,16 @@ const OpenshiftStreams = () => {
               <PageSection>
                 {kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
                   <StreamsTableView
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    onConnectToInstance={onConnectInstance}
-                    onViewInstance={onViewInstance}
                     kafkaInstanceItems={kafkaInstanceItems}
                     mainToggle={mainToggle}
+                    onConnectToInstance={onConnectInstance}
+                    onViewInstance={onViewInstance}
                     refresh={fetchKafkas}
+                    createStreamsInstance={createStreamsInstance}
+                    setCreateStreamsInstance={setCreateStreamsInstance}
+                    page={page}
+                    perPage={perPage}
+                    total={kafkaInstancesList?.total}
                   />
                 ) : (
                   kafkaInstanceItems !== undefined && (
