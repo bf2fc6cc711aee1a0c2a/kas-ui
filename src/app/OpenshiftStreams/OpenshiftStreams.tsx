@@ -30,13 +30,7 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams = () => {
-  const { token } = useContext(AuthContext);
-
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH,
-  });
+  const { getToken } = useContext(AuthContext);
 
   const { t } = useTranslation();
 
@@ -66,6 +60,11 @@ const OpenshiftStreams = () => {
 
   // Functions
   const fetchKafkas = async () => {
+    const accessToken = await getToken();
+    const apisService = new DefaultApi({
+      accessToken,
+      BASE_PATH,
+    });
     try {
       await apisService
         .listKafkas()
@@ -82,15 +81,9 @@ const OpenshiftStreams = () => {
   };
 
   useEffect(() => {
-    if (token !== '') {
-      setKafkaDataLoaded(false);
-      fetchKafkas().then(() => setKafkaDataLoaded(true));
-    }
-  }, [token]);
-
-  if (token === '') {
-    return <Loading />;
-  }
+    setKafkaDataLoaded(false);
+    fetchKafkas().then(() => setKafkaDataLoaded(true));
+  }, []);
 
   if (!kafkaDataLoaded) {
     return <Loading />;

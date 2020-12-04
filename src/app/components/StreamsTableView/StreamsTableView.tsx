@@ -72,12 +72,7 @@ const StreamsTableView = ({
   createStreamsInstance,
   setCreateStreamsInstance,
 }: TableProps) => {
-  const { token } = useContext(AuthContext);
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH,
-  });
+  const { getToken } = useContext(AuthContext);
   const { addAlert } = useAlerts();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -167,6 +162,12 @@ const StreamsTableView = ({
     if (instanceId === undefined) {
       throw new Error('kafka instance id is not set');
     }
+
+    const accessToken = await getToken();
+    const apisService = new DefaultApi({
+      accessToken,
+      BASE_PATH,
+    });
 
     try {
       await apisService.deleteKafkaById(instanceId).then((res) => {

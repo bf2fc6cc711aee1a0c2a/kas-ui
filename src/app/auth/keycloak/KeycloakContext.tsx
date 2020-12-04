@@ -13,20 +13,8 @@ export const KeycloakContext = React.createContext<IKeycloakContext>({ keycloak:
 
 export const KeycloakAuthProvider = (props) => {
 
-  const [token, setToken] = useState<string | undefined>(undefined);
-
-  const fetch = async () => {
-    const token = await getKeyCloakToken();
-    setToken(token);
-    return;
-  }
-
-  React.useEffect(() => {
-    fetch();
-  }, []);
-
   const authTokenContext = {
-    token: token
+    getToken: getKeyCloakToken
   } as IAuthContext;
   return (
     <AuthContext.Provider value={authTokenContext}>

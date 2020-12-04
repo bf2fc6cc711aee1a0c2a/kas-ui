@@ -48,14 +48,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
 
-  const { token } = useContext(AuthContext);
-
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH,
-  });
-
+  const { getToken } = useContext(AuthContext);
   const { addAlert } = useAlerts();
 
   const onCreateInstance = async (event) => {
@@ -76,6 +69,12 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       isValid = false;
       setCloudRegionValidated({ fieldState: 'error', message: 'This is a required field' });
     }
+
+    const accessToken = await getToken();
+    const apisService = new DefaultApi({
+      accessToken,
+      BASE_PATH,
+    });
 
     if (isValid) {
       try {
