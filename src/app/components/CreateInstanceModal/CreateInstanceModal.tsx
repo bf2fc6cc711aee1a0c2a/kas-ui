@@ -43,7 +43,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   newKafka.cloud_provider = 'aws';
   newKafka.region = 'us-east-1';
   newKafka.multi_az = true;
-  const cloudRegionsAvailable = [{ value: '', label: t('please_select'), disabled: false }, ...cloudRegionOptions];
+  const cloudRegionsAvailable = [{ value: '', label: 'please_select', disabled: false }, ...cloudRegionOptions];
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -116,6 +116,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         return;
     }
   };
+  const onChangeAvailabilty = (zone: string) => {
+    setKafkaFormData({ ...kafkaFormData, multi_az: zone === 'multi' });
+  };
   return (
     <>
       <Modal
@@ -183,19 +186,41 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               aria-label={t('cloud_region')}
             >
               {cloudRegionsAvailable.map((option, index) => (
-                <FormSelectOption key={index} value={option.value} label={option.label} />
+                <FormSelectOption key={index} value={option.value} label={t(option.label)} />
               ))}
             </FormSelect>
           </FormGroup>
           <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
             <ToggleGroup aria-label={t('availability_zone_selection')}>
-              <ToggleGroupItem
-                text={t('single')}
-                buttonId="single"
-                isDisabled={true}
-                isSelected={kafkaFormData.multi_az === false}
-              />
-              <ToggleGroupItem text={t('multi')} buttonId="multi" isSelected={kafkaFormData.multi_az === true} />
+              {/*
+                  TODO: Currently using HTML version 
+                  Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
+              */}
+              <div className="pf-c-toggle-group__item">
+                <button
+                  className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === false && 'pf-m-selected'}`}
+                  type="button"
+                  id="single"
+                  disabled
+                  onClick={() => {
+                    onChangeAvailabilty('single');
+                  }}
+                >
+                  <span className="pf-c-toggle-group__text"> {t('single')}</span>
+                </button>
+              </div>
+              <div className="pf-c-toggle-group__item">
+                <button
+                  className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === true && 'pf-m-selected'}`}
+                  type="button"
+                  onClick={() => {
+                    onChangeAvailabilty('multi');
+                  }}
+                  id="multi"
+                >
+                  <span className="pf-c-toggle-group__text"> {t('multi')}</span>
+                </button>
+              </div>
             </ToggleGroup>
           </FormGroup>
         </Form>
