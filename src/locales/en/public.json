@@ -28,5 +28,7 @@
   "OpenshiftStreams": "OpenshiftStreams",
   "Mock UI": "Mock UI",
   "Currently supported UI": "Currently supported UI",
-  "OpenShift Streams": "OpenShift Streams"
+  "OpenShift Streams": "OpenShift Streams",
+  "view_details":"View details",
+  "connect_to_this_instance":"Connect to this instance"
 }

@@ -14,7 +14,7 @@ import {
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest } from '../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -142,7 +142,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   <StreamsTableView
                     kafkaInstanceItems={kafkaInstanceItems}
                     mainToggle={mainToggle}
-                    onConnectToInstance={onConnectToInstance}
+                    onConnectToInstance={onConnectInstance}
+                    onViewInstance={onViewInstance}
                     refresh={fetchKafkas}
                     createStreamsInstance={createStreamsInstance}
                     setCreateStreamsInstance={setCreateStreamsInstance}
