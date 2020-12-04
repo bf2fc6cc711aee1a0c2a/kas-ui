@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
-import { Level, LevelItem, PageSection, PageSectionVariants, Spinner, Switch, Title } from '@patternfly/react-core';
+import { Level, LevelItem, PageSection, PageSectionVariants, Switch, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
@@ -8,6 +8,7 @@ import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateIns
 import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { BASE_PATH } from '@app/common/app-config';
+import { Loading } from '@app/components/Loading';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -54,14 +55,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   useEffect(() => {
-    if (token!==undefined || token!=='') {
+    if (token !== undefined || token !== '') {
       setKafkaDataLoaded(false);
       fetchKafkas().then(() => setKafkaDataLoaded(true));
     }
   }, [token]);
 
-  if (!kafkaDataLoaded || token === '' || token===undefined) {
-    return <Spinner />;
+  if (!kafkaDataLoaded || token === '' || token === undefined) {
+    return <Loading />;
   }
 
   const handleSwitchChange = (checked: boolean) => {
@@ -102,11 +103,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             total={kafkaInstancesList?.total}
           />
         ) : (
-          <EmptyState
-            createStreamsInstance={createStreamsInstance}
-            setCreateStreamsInstance={setCreateStreamsInstance}
-            mainToggle={mainToggle}
-          />
+          kafkaDataLoaded && (
+            <EmptyState
+              createStreamsInstance={createStreamsInstance}
+              setCreateStreamsInstance={setCreateStreamsInstance}
+              mainToggle={mainToggle}
+            />
+          )
         )}
         {createStreamsInstance && (
           <CreateInstanceModal
