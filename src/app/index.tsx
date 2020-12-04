@@ -5,7 +5,7 @@ import { AppLayout } from '@app/AppLayout/AppLayout';
 import { AppRoutes } from '@app/routes';
 import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
-import { Loading } from './components/Loading';
+import { Loading } from './components/Loading/Loading';
 import { AuthContext } from './auth/AuthContext';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import '../i18n.js';

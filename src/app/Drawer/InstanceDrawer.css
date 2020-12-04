@@ -1,0 +1,35 @@
+.cluster-connection-drawer .pf-c-content {
+  padding-top: var(--pf-global--spacer--lg);
+  padding-bottom: var(--pf-global--spacer--lg);
+}
+
+.pf-c-code-editor__main {
+  height: 220px;
+}
+
+.pf-c-code-editor__code-pre {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.pf-c-card.card-certificate {
+  background-color: #f0f0f0;
+  border-color: transparent;
+}
+
+.instance-detail-first-grid {
+  margin-right: var(--pf-global--spacer--md);
+}
+
+.instance-card-grid {
+  margin-bottom: var(--pf-global--spacer--lg);
+}
+
+.tab-content-body {
+  padding-top: var(--pf-global--spacer--lg);
+  padding-bottom: var(--pf-global--spacer--lg);
+}
+
+.tab-content-body.pf-m-secondary {
+  padding-top: 0;
+}

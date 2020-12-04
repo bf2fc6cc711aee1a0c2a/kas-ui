@@ -92,7 +92,7 @@ const AppRoutes = (): React.ReactElement => {
           isAsync={isAsync}
         />
       ))}
-      <PageNotFound title={t('404 Page Not Found')} />
+      <PageNotFound title={t('404 Page not found')} />
     </Switch>
   </LastLocationProvider>;
 }

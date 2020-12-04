@@ -47,7 +47,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
-
+  const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const { token } = useContext(AuthContext);
 
   // Api Service
@@ -64,12 +64,6 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
-    } else if (!/^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(kafkaFormData.name.trim())) {
-      isValid = false;
-      setNameValidated({
-        fieldState: 'error',
-        message: 'Valid characters for instance name are letters from a to z and numbers from 0 to 9.',
-      });
     }
 
     if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
@@ -87,6 +81,8 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       } catch (error) {
         addAlert(error, AlertVariant.danger);
       }
+    } else {
+      setIsFormValid(false);
     }
   };
 
@@ -96,28 +92,22 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
 
   const handleInstanceNameChange = (name?: string) => {
     setKafkaFormData({ ...kafkaFormData, name: name || '' });
-    setNameValidated(
-      name === undefined || name.trim() === ''
-        ? { fieldState: 'error', message: t('this_is_a_required_field') }
-        : /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/.test(name.trim())
-        ? { fieldState: 'success', message: '' }
-        : {
-            fieldState: 'error',
-            message: 'Valid characters for instance name are letters from a to z and numbers from 0 to 9.',
-          }
-    );
+    if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
+    if (nameValidated.fieldState === 'error') {
+      setNameValidated({ fieldState: 'default', message: '' });
+    }
   };
 
   const handleCloudRegionChange = (region: string) => {
-    setCloudRegionValidated(
-      region === undefined || region === ''
-        ? { fieldState: 'error', message: t('this_is_a_required_field') }
-        : { fieldState: 'default', message: '' }
-    );
+    if (cloudRegionValidated.fieldState === 'error' && nameValidated.fieldState !== 'error') {
+      setIsFormValid(true);
+    }
+    if (cloudRegionValidated.fieldState === 'error') {
+      setCloudRegionValidated({ fieldState: 'default', message: '' });
+    }
     setKafkaFormData({ ...kafkaFormData, region: region });
   };
 
-  const isFormValid = nameValidated.fieldState !== 'error' && cloudRegionValidated.fieldState !== 'error';
   const getTileIcon = (provider: string) => {
     switch (provider.toLowerCase()) {
       case 'aws':
@@ -143,7 +133,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         ]}
       >
         <Form>
-          {(nameValidated.fieldState === 'error' || cloudRegionValidated.fieldState === 'error') && (
+          {!isFormValid && (
             <FormAlert>
               <Alert variant="danger" title={t('create_instance_invalid_alert')} aria-live="polite" isInline />
             </FormAlert>
