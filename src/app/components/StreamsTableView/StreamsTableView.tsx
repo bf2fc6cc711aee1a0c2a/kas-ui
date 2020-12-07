@@ -115,7 +115,7 @@ const StreamsTableView = ({
     const deleteActionTitle = getDeleteInstanceLabel(t, originalData?.status);
     const resolver: (IAction | ISeparator)[] = mainToggle ? [
       {
-        title: 'View details',
+        title: t('view_details'),
         id: 'view-instance',
         onClick: () => onViewInstance(originalData),
       },{
@@ -130,7 +130,7 @@ const StreamsTableView = ({
       },
     ]:[
       {
-        title: 'View details',
+        title: t('view_details'),
         id: 'view-instance',
         onClick: () => onViewInstance(originalData),
       },
