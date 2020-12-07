@@ -2,8 +2,11 @@ import React from 'react';
 import { KafkaRequest } from '../../openapi';
 import { OpenshiftStreams } from '@app/OpenshiftStreams/OpenshiftStreams';
 import { AlertProvider } from '@app/components/Alerts/Alerts';
+import { ApiContext } from '@app/api/ApiContext';
 
-const onConnectInstance = async(event: KafkaRequest) => {
+declare const __BASE_PATH__: string;
+
+const onConnectInstance = async (event: KafkaRequest) => {
   if (event.id === undefined) {
     throw new Error();
   }
@@ -12,8 +15,14 @@ const onConnectInstance = async(event: KafkaRequest) => {
 
 export const OpenshiftStreamsConnected = () => {
   return (
-    <AlertProvider>
-      <OpenshiftStreams onConnectToInstance={onConnectInstance} />
-    </AlertProvider>
+    <ApiContext.Provider value={
+      {
+        basePath: __BASE_PATH__
+      }
+    }>
+      <AlertProvider>
+        <OpenshiftStreams onConnectToInstance={onConnectInstance} />
+      </AlertProvider>
+    </ApiContext.Provider>
   );
-}
+};
