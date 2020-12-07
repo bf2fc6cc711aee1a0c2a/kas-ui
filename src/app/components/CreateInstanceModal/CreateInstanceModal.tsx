@@ -71,7 +71,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       try {
         const apisService = new DefaultApi({
           accessToken,
-          BASE_PATH,
+          basePath: BASE_PATH,
         });
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           addAlert(t('kafka_successfully_created'), AlertVariant.success);
