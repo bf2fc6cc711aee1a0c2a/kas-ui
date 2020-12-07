@@ -190,7 +190,7 @@ const StreamsTableView = ({
     const accessToken = await getToken();
     const apisService = new DefaultApi({
       accessToken,
-      BASE_PATH,
+      basePath: BASE_PATH,
     });
 
     try {

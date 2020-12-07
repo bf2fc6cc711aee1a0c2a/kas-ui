@@ -76,7 +76,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       try {
         const apisService = new DefaultApi({
           accessToken,
-          BASE_PATH,
+          basePath: BASE_PATH,
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
 
