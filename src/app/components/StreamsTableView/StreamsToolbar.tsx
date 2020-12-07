@@ -133,7 +133,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           </Button>
         </ToolbarItem>
         <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
-          <TablePagination itemCount={total} page={page} perPage={perPage} isCompact={true} />
+          <TablePagination
+            widgetId="pagination-options-menu-top"
+            itemCount={total}
+            page={page}
+            perPage={perPage}
+            isCompact={true}
+          />
         </ToolbarItem>
       </ToolbarContent>
     </Toolbar>

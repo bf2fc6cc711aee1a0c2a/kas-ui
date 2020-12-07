@@ -234,6 +234,8 @@ const StreamsTableView = ({
         variant={PaginationVariant.bottom}
         page={page}
         perPage={perPage}
+        aria-label={t('pagination-options-menu-bottom')}
+        paginationTitle={t('pagination-options-menu-bottom')}
       />
       {isDeleteModalOpen && (
         <DeleteInstanceModal

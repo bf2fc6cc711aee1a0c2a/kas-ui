@@ -123,6 +123,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         title={t('create_a_streams_instance')}
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
+        aria-modal="true"        
         actions={[
           <Button key="create" variant="primary" onClick={onCreateInstance} isDisabled={!isFormValid}>
             {t('create_instance')}

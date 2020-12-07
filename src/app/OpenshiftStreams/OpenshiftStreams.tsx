@@ -9,7 +9,7 @@ import {
   PageSectionVariants,
   Title,
   Drawer,
-  DrawerContent
+  DrawerContent,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
@@ -52,7 +52,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
-  const [selectedInstance, setSelectedInstance] = useState<SelectedInstance|null>();
+  const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -89,7 +89,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   useEffect(() => {
-    if (token !== undefined || token !== '') {
+    if (token !== undefined && token !== '') {
       setKafkaDataLoaded(false);
       fetchKafkas().then(() => setKafkaDataLoaded(true));
     }
@@ -119,56 +119,56 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               />
             }
           >
-              <PageSection variant={PageSectionVariants.light}>
-                <Level>
-                  <LevelItem>
-                    <Title headingLevel="h1" size="lg">
-                      {t('OpenshiftStreams')}
-                    </Title>
-                  </LevelItem>
-                  <LevelItem>
-                    <Switch
-                      id="simple-switch"
-                      label={t('Mock UI')}
-                      labelOff={t('Currently supported UI')}
-                      isChecked={mainToggle}
-                      onChange={handleSwitchChange}
-                    />
-                  </LevelItem>
-                </Level>
-              </PageSection>
-              <PageSection>
-                {kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
-                  <StreamsTableView
-                    kafkaInstanceItems={kafkaInstanceItems}
-                    mainToggle={mainToggle}
-                    onConnectToInstance={onConnectInstance}
-                    onViewInstance={onViewInstance}
-                    refresh={fetchKafkas}
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    page={page}
-                    perPage={perPage}
-                    total={kafkaInstancesList?.total}
+            <PageSection variant={PageSectionVariants.light}>
+              <Level>
+                <LevelItem>
+                  <Title headingLevel="h1" size="lg">
+                    {t('OpenshiftStreams')}
+                  </Title>
+                </LevelItem>
+                <LevelItem>
+                  <Switch
+                    id="simple-switch"
+                    label={t('Mock UI')}
+                    labelOff={t('Currently supported UI')}
+                    isChecked={mainToggle}
+                    onChange={handleSwitchChange}
                   />
-                ) : (
-                  kafkaInstanceItems !== undefined && (
-                    <EmptyState
-                      createStreamsInstance={createStreamsInstance}
-                      setCreateStreamsInstance={setCreateStreamsInstance}
-                      mainToggle={mainToggle}
-                    />
-                  )
-                )}
-                {createStreamsInstance && (
-                  <CreateInstanceModal
+                </LevelItem>
+              </Level>
+            </PageSection>
+            <PageSection>
+              {kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
+                <StreamsTableView
+                  kafkaInstanceItems={kafkaInstanceItems}
+                  mainToggle={mainToggle}
+                  onConnectToInstance={onConnectInstance}
+                  onViewInstance={onViewInstance}
+                  refresh={fetchKafkas}
+                  createStreamsInstance={createStreamsInstance}
+                  setCreateStreamsInstance={setCreateStreamsInstance}
+                  page={page}
+                  perPage={perPage}
+                  total={kafkaInstancesList?.total}
+                />
+              ) : (
+                kafkaInstanceItems !== undefined && (
+                  <EmptyState
                     createStreamsInstance={createStreamsInstance}
                     setCreateStreamsInstance={setCreateStreamsInstance}
                     mainToggle={mainToggle}
-                    refresh={fetchKafkas}
                   />
-                )}
-              </PageSection>
+                )
+              )}
+              {createStreamsInstance && (
+                <CreateInstanceModal
+                  createStreamsInstance={createStreamsInstance}
+                  setCreateStreamsInstance={setCreateStreamsInstance}
+                  mainToggle={mainToggle}
+                  refresh={fetchKafkas}
+                />
+              )}
+            </PageSection>
           </DrawerContent>
         </Drawer>
       </AlertProvider>

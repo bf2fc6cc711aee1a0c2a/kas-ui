@@ -41,5 +41,8 @@
   "Mock UI": "Mock UI",
   "Currently supported UI": "Currently supported UI",
   "OpenShift Streams": "OpenShift Streams",
-  "delete_instance_modalv": "Delete instance modal"
+  "delete_instance_modalv": "Delete instance modal",
+  "view_details":"View details",
+  "connect_to_this_instance":"Connect to this instance",
+  "pagination-options-menu-bottom":"Pagination options menu bottom"
 }
