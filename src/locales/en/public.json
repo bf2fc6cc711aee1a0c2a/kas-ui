@@ -35,6 +35,8 @@
   "connect_to_instance": "Connect to instance",
   "kafka_successfully_deleted": "Kafka successfully deleted",
   "cluster_instance_list": "Cluster instance list",
+  "filter_by": "Filter by",
+  "create_streams_instance": "Create Streams instance",
   "basic_info": "Basic info",
   "generate_credential_step1_title_description": "To connect securely to Red Hat OpenShift Streams for Apache Kafka, your application or tool needs an API key with permission to access the Kafka instance and resources such as topics.",
   "credential_name_form_label": "Give the credential a name",
@@ -103,5 +105,6 @@
   "Mock UI": "Mock UI",
   "Currently supported UI": "Currently supported UI",
   "OpenShift Streams": "OpenShift Streams",
-  "delete_instance_modalv": "Delete instance modal"
+  "delete_instance_modalv": "Delete instance modal",
+  "name_lower": "name"
 }
