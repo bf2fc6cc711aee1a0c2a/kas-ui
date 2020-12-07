@@ -233,7 +233,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   );
 
   return (
-    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_66' }}>
+    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_50' }}>
       {instanceDetail === undefined ? (
         <Loading />
       ) : (
