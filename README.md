@@ -76,7 +76,7 @@ By default the UI will run against the staging api (api.stage.openshift.com) in 
 For example, to run the UI locally against the mock API run:
 
 ```
-BASE_PATH=http://localhost:9000 npm run start:dev
+BASE_PATH=http://localhost:8000 npm run start:dev
 ```
 
 ### The Mock Server
@@ -88,8 +88,8 @@ To start the mock server
 ```
 cd mas-mock
 npm install
-npm run start # API running at http://localhost:9000
-BASE_PATH=http://localhost:9000 npm run start:dev # start the UI
+npm run start # API running at http://localhost:8000
+BASE_PATH=http://localhost:8000 npm run start:dev # start the UI
 ```
 
 ## Generating OpenAPI docs
