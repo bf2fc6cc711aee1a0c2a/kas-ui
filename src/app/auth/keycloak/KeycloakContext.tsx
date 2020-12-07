@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
-import { getAuthHeader, getKeyCloakToken } from '@app/auth/keycloak/keycloakAuth';
+import { getKeyCloakToken } from '@app/auth/keycloak/keycloakAuth';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
 
 // This is a context which can manage the keycloak

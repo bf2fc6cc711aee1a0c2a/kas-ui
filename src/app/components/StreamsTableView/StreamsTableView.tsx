@@ -5,7 +5,6 @@ import {
   Table,
   TableHeader,
   TableBody,
-  IRow,
   IRowData,
   IExtraData,
   ISeparator,
@@ -37,6 +36,12 @@ type TableProps = {
   total: number;
 };
 
+type ConfigDetail = {
+  title: string;
+  confirmActionLabel: string;
+  description: string;
+};
+
 export const getDeleteInstanceLabel = (t: TFunction, status: string | undefined) => {
   switch (status) {
     case InstanceStatus.COMPLETED:
@@ -55,8 +60,8 @@ export const getDeleteInstanceModalConfig = (
   t: TFunction,
   status: string | undefined,
   instanceName: string | undefined
-) => {
-  const config = {
+): ConfigDetail => {
+  const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
     description: '',
@@ -188,7 +193,7 @@ const StreamsTableView = ({
     }
 
     try {
-      await apisService.deleteKafkaById(instanceId).then((res) => {
+      await apisService.deleteKafkaById(instanceId).then(() => {
         setIsDeleteModalOpen(false);
         addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
         refresh();
@@ -213,6 +218,7 @@ const StreamsTableView = ({
         setCreateStreamsInstance={setCreateStreamsInstance}
         filterSelected={filterSelected}
         namesSelected={namesSelected}
+        setFilterSelected={setFilterSelected}
         setNamesSelected={setNamesSelected}
         total={total}
         page={page}
@@ -238,11 +244,11 @@ const StreamsTableView = ({
       {isDeleteModalOpen && (
         <DeleteInstanceModal
           title={title}
+          selectedInstance={selectedInstance}
           isModalOpen={isDeleteModalOpen}
           instanceStatus={selectedInstance?.status}
           setIsModalOpen={setIsDeleteModalOpen}
           onConfirm={onDeleteInstance}
-          selectedInstanceName={selectedInstance?.name}
           description={description}
           confirmActionLabel={confirmActionLabel}
         />

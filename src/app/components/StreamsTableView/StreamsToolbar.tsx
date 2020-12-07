@@ -25,6 +25,7 @@ type StreamsToolbarProps = {
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
   filterSelected?: string;
+  setFilterSelected: (value: string) => void;
   namesSelected: string[];
   setNamesSelected: (value: string[]) => void;
   total: number;
