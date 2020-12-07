@@ -80,7 +80,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
           onClick={onConfirmDelete}
           isDisabled={isConfirmButtonDisabled()}
         >
-          {confirmActionLabel || t('confirm')}
+          {confirmActionLabel || t('delete_instance')}
         </Button>,
         <Button key="cancel" variant="link" onClick={handleModalToggle}>
           {cancelActionLabel || t('cancel')}
