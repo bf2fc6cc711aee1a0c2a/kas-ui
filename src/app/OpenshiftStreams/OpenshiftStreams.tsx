@@ -21,6 +21,8 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { BASE_PATH } from '@app/common/app-config';
 import { Loading } from '@app/components/Loading/Loading';
 import { useInterval } from '@app/hooks/useInterval';
+import Axios, { AxiosError } from 'axios';
+import { IApiErrorData, isServiceApiError } from '@app/utils/error';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -84,7 +86,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           setKafkaDataLoaded(true);
         });
       } catch (error) {
-        console.log(error);
+        if (isServiceApiError(error)) {
+          console.log(error.response?.data.reason)
+        }
       }
     }
   };
