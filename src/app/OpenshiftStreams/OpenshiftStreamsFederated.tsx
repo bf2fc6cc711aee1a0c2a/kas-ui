@@ -8,21 +8,21 @@ import { AlertContext, AlertContextProps } from '@app/components/Alerts/Alerts';
 // Version of OpenshiftStreams for federation
 
 export type OpenshiftStreamsFederatedProps = {
-  token: string;
+  getToken: () => Promise<string>;
   onConnectToInstance: (data: KafkaRequest) => void;
   addAlert: (message: string, variant?: AlertVariant) => void;
 };
 
-const OpenshiftStreamsFederated = ({ token, onConnectToInstance, addAlert }: OpenshiftStreamsFederatedProps) => {
+
+const OpenshiftStreamsFederated = ({ getToken, onConnectToInstance, addAlert }: OpenshiftStreamsFederatedProps) => {
 
   const authContext = {
-    token
+    getToken
   } as IAuthContext;
 
   const alertContext = {
     addAlert
   } as AlertContextProps;
-
 
   return (
     <AlertContext.Provider value={alertContext}>

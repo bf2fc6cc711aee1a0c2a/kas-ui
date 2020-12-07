@@ -34,18 +34,12 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
-  const { token } = useContext(AuthContext);
+  const { getToken } = useContext(AuthContext);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
-
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH,
-  });
 
   const { t } = useTranslation();
 
@@ -76,9 +70,17 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // Functions
   const fetchKafkas = async () => {
-    if (token !== undefined || token !== '') {
+    const accessToken = await getToken();
+
+    if (accessToken !== undefined || accessToken !== '') {
       try {
+        const apisService = new DefaultApi({
+          accessToken,
+          BASE_PATH,
+        });
         await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
+
+
           const kafkaInstances = res.data;
           console.log('what is res' + JSON.stringify(kafkaInstances));
           setKafkaInstancesList(kafkaInstances);
@@ -95,13 +97,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useEffect(() => {
     setKafkaDataLoaded(false);
-  }, [token, page, perPage]);
+  }, [getToken, page, perPage]);
 
   useInterval(fetchKafkas, 5000);
-
-  if (token === '' || token === undefined) {
-    return <Loading />;
-  }
 
   const handleSwitchChange = (checked: boolean) => {
     setMainToggle(checked);

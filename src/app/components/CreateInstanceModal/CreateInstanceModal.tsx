@@ -48,13 +48,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
-  const { token } = useContext(AuthContext);
-
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH,
-  });
+  const { getToken } = useContext(AuthContext);
 
   const { addAlert } = useAlerts();
 
@@ -71,8 +65,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       setCloudRegionValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
     }
 
+    const accessToken = await getToken();
+
     if (isValid) {
       try {
+        const apisService = new DefaultApi({
+          accessToken,
+          BASE_PATH,
+        });
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           addAlert(t('kafka_successfully_created'), AlertVariant.success);
           handleModalToggle();
@@ -193,7 +193,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
             <ToggleGroup aria-label={t('availability_zone_selection')}>
               {/*
-                  TODO: Currently using HTML version 
+                  TODO: Currently using HTML version
                   Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
               */}
               <div className="pf-c-toggle-group__item">
