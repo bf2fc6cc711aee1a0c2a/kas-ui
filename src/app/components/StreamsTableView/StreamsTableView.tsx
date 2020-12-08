@@ -6,7 +6,6 @@ import { AlertVariant, Card, Divider, PaginationVariant } from '@patternfly/reac
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
@@ -85,33 +84,29 @@ const StreamsTableView = ({
 
   useEffect(() => {
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
-    // console.log('lastItemsState', lastItemsState);
-    // console.log('kafkaInstanceItems', kafkaInstanceItems);
-    if (items) {
-      const completedItems = Object.assign([], kafkaInstanceItems).filter(
-        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED
+    if (items && items.length>0) {
+      const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
+        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED || item.status === InstanceStatus.FAILED
       );
-      const failedItems = Object.assign([], kafkaInstanceItems).filter(
-        (item: KafkaRequest) => item.status === InstanceStatus.FAILED
-      );
-      for (const item of lastItemsState) {
-        const completedKafkas: KafkaRequest[] = completedItems.filter((ci: KafkaRequest) => ci.id === item.id);
-        for (const instance of completedKafkas) {
-          console.log("SUCESS",instance);
-          addAlert(t('kafka_successfully_created',{name:instance?.name}), AlertVariant.success);
+      lastItemsState.forEach((item: KafkaRequest) => {
+        const instances: KafkaRequest[] = completedOrFailedItems.filter(
+          (cfItem: KafkaRequest) => item.id === cfItem.id
+        );
+        if (instances && instances.length > 0) {
+          if (instances[0].status === InstanceStatus.COMPLETED) {
+            addAlert(t('kafka_successfully_created', { name: instances[0]?.name }), AlertVariant.success);
+          } else if (instances[0].status === InstanceStatus.FAILED) {
+            addAlert(t('kafka_not_created', { name: instances[0]?.name }), AlertVariant.danger);
+          }
         }
-        const failedKafkas: KafkaRequest[] = failedItems.filter((ci: KafkaRequest) => ci.id === item.id);
-        for (const instance of failedKafkas) {
-          console.log("FAILED",instance);
-          addAlert(t('kafka_successfully_created',{name:instance?.name}), AlertVariant.danger);
-        }
-      }
+      });
     }
     const incompleteKafkas = Object.assign(
       [],
-      kafkaInstanceItems.filter((item: KafkaRequest) => item.status != InstanceStatus.COMPLETED)
+      kafkaInstanceItems.filter(
+        (item: KafkaRequest) => item.status != InstanceStatus.COMPLETED && item.status != InstanceStatus.FAILED
+      )
     );
-    // console.log('incompleteKafkas', incompleteKafkas);
     setItems(incompleteKafkas);
   }, [kafkaInstanceItems]);
 
