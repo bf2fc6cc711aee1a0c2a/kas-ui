@@ -19,9 +19,9 @@ import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
 import { Loading } from '@app/components/Loading/Loading';
-import { useInterval } from '@app/hooks/useInterval';
-import { isServiceApiError } from '@app/utils/error';
 import { ApiContext } from '@app/api/ApiContext';
+import { useTimeout } from '@app/hooks/useTimeout';
+import { isServiceApiError } from '@app/utils/error';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -79,8 +79,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           basePath
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
-
-
           const kafkaInstances = res.data;
           console.log('what is res' + JSON.stringify(kafkaInstances));
           setKafkaInstancesList(kafkaInstances);
@@ -99,7 +97,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setKafkaDataLoaded(false);
   }, [getToken, page, perPage]);
 
-  useInterval(fetchKafkas, 5000);
+  useEffect(() => {
+    fetchKafkas();
+  }, []);
+
+  useTimeout(fetchKafkas, 5000);
 
   const handleSwitchChange = (checked: boolean) => {
     setMainToggle(checked);
