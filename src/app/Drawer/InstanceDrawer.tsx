@@ -83,7 +83,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </TextContent>
         <Flex>
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-            <ClipboardCopy>strimzi-external-bootstrap-01 : 1234</ClipboardCopy>
+            <ClipboardCopy>strimzi-external-bootstrap-01:1234</ClipboardCopy>
           </FlexItem>
           <GenerateCredential />
         </Flex>
@@ -93,7 +93,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             {t('drawer_resource_tab_body_description_3')}
           </Text>
         </TextContent>
-        <ClipboardCopy>https : // : 30123</ClipboardCopy>
+        <ClipboardCopy>https: // : 30123</ClipboardCopy>
       </div>
     </>
   );
