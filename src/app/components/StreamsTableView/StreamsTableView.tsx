@@ -81,6 +81,39 @@ const StreamsTableView = ({
   const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('status')];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
+  const [items, setItems] = useState<Array<KafkaRequest>>([]);
+
+  useEffect(() => {
+    const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
+    // console.log('lastItemsState', lastItemsState);
+    // console.log('kafkaInstanceItems', kafkaInstanceItems);
+    if (items) {
+      const completedItems = Object.assign([], kafkaInstanceItems).filter(
+        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED
+      );
+      const failedItems = Object.assign([], kafkaInstanceItems).filter(
+        (item: KafkaRequest) => item.status === InstanceStatus.FAILED
+      );
+      for (const item of lastItemsState) {
+        const completedKafkas: KafkaRequest[] = completedItems.filter((ci: KafkaRequest) => ci.id === item.id);
+        for (const instance of completedKafkas) {
+          console.log("SUCESS",instance);
+          addAlert(t('kafka_successfully_created',{name:instance?.name}), AlertVariant.success);
+        }
+        const failedKafkas: KafkaRequest[] = failedItems.filter((ci: KafkaRequest) => ci.id === item.id);
+        for (const instance of failedKafkas) {
+          console.log("FAILED",instance);
+          addAlert(t('kafka_successfully_created',{name:instance?.name}), AlertVariant.danger);
+        }
+      }
+    }
+    const incompleteKafkas = Object.assign(
+      [],
+      kafkaInstanceItems.filter((item: KafkaRequest) => item.status != InstanceStatus.COMPLETED)
+    );
+    // console.log('incompleteKafkas', incompleteKafkas);
+    setItems(incompleteKafkas);
+  }, [kafkaInstanceItems]);
 
   useEffect(() => {
     refresh();
