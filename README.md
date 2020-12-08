@@ -55,9 +55,9 @@ This project uses [react-i18next](https://react.i18next.com/) for internationali
 
 You should run `npm run i18n` after you internationalize strings in order to generate the required files.
 
-Namespaces other than 'public' must be added to `src/i18n.js` on line 37.
+Namespaces other than 'public' must be added to `src/i18n.ts` on line 37.
 
-If you want to add an additional language, you need to import the dayjs locale in `src/i18n.js` on line 9 and (if you want it managed by the parser) line 51 in `i18next-parser.config.js`.
+If you want to add an additional language, you need to import the dayjs locale in `src/i18n.ts` on line 9 and (if you want it managed by the parser) line 51 in `i18next-parser.config.js`.
 
 ## Query parameters
 ```
