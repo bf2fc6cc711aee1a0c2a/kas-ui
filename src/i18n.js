@@ -26,7 +26,7 @@ i18n
   .init(
     {
       backend: {
-        loadPath: '/locales/{{lng}}/{{ns}}.json',
+        loadPath: `${__PUBLIC_PATH__}locales/{{lng}}/{{ns}}.json`,
       },
       fallbackLng: 'en',
       load: 'all',

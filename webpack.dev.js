@@ -8,12 +8,14 @@ const HOST = process.env.HOST || "prod.foo.redhat.com";
 const PORT = process.env.PORT || port;
 const PROTOCOL = process.env.PROTOCOL || "https";
 
+const publicPath = `${PROTOCOL}://${HOST}:${PORT}/`;
+
 module.exports = merge(common('development'), {
   mode: "development",
   devtool: "eval-source-map",
   output: {
     // This must be set explicitly for module federation
-    publicPath: `${PROTOCOL}://${HOST}:${PORT}/`
+    publicPath
   },
   devServer: {
     contentBase: "./dist",
@@ -25,7 +27,12 @@ module.exports = merge(common('development'), {
     hot: true,
     overlay: true,
     open: true,
-    https: PROTOCOL === "https"
+    https: PROTOCOL === "https",
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+    },
   },
   module: {
     rules: [
@@ -53,7 +60,8 @@ module.exports = merge(common('development'), {
       ]
     }),
     new webpack.DefinePlugin({
-      "__BASE_PATH__": JSON.stringify(process.env.BASE_PATH || 'https://api.stage.openshift.com')
+      "__BASE_PATH__": JSON.stringify(process.env.BASE_PATH || 'https://api.stage.openshift.com'),
+      "__PUBLIC_PATH__": JSON.stringify(publicPath)
     }),
   ]
 });
