@@ -151,29 +151,26 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               </Level>
             </PageSection>
             <PageSection>
-              {!kafkaDataLoaded ? (
-                <Loading />
-              ) : kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
+              {kafkaInstanceItems !== undefined && kafkaInstanceItems.length === 0 ? (
+                <EmptyState
+                  createStreamsInstance={createStreamsInstance}
+                  setCreateStreamsInstance={setCreateStreamsInstance}
+                  mainToggle={mainToggle}
+                />
+              ) : (
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
                   onConnectToInstance={onConnectInstance}
                   onViewInstance={onViewInstance}
                   refresh={fetchKafkas}
+                  kafkaDataLoaded={kafkaDataLoaded}
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   page={page}
                   perPage={perPage}
                   total={kafkaInstancesList?.total}
                 />
-              ) : (
-                kafkaInstanceItems !== undefined && (
-                  <EmptyState
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    mainToggle={mainToggle}
-                  />
-                )
               )}
               {createStreamsInstance && (
                 <CreateInstanceModal

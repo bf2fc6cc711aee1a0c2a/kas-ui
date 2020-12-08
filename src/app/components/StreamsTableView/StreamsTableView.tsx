@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { IAction, IExtraData, IRowData, ISeparator, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { AlertVariant, Card, Divider, PaginationVariant, Tooltip } from '@patternfly/react-core';
+import { AlertVariant, Card, Divider, PaginationVariant, Skeleton } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -20,7 +20,7 @@ import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  kafkaInstanceItems: KafkaRequest[];
+  kafkaInstanceItems?: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onConnectToInstance: (instance: KafkaRequest) => void;
   mainToggle: boolean;
@@ -28,6 +28,7 @@ type TableProps = {
   page: number;
   perPage: number;
   total: number;
+  kafkaDataLoaded: boolean;
 };
 
 type ConfigDetail = {
@@ -69,6 +70,7 @@ const StreamsTableView = ({
   page,
   perPage,
   total,
+  kafkaDataLoaded,
 }: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -114,7 +116,7 @@ const StreamsTableView = ({
     }
     const incompleteKafkas = Object.assign(
       [],
-      kafkaInstanceItems.filter(
+      kafkaInstanceItems?.filter(
         (item: KafkaRequest) => item.status === InstanceStatus.PROVISIONING || item.status === InstanceStatus.ACCEPTED
       )
     );
@@ -179,6 +181,14 @@ const StreamsTableView = ({
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
+    if (!kafkaDataLoaded || kafkaInstanceItems === undefined) {
+      for (let i = 0; i < perPage; i++) {
+        tableRow.push({
+          cells: [{ title: <Skeleton /> }, { title: <Skeleton /> }, { title: <Skeleton /> }, { title: <Skeleton /> }],
+        });
+      }
+      return tableRow;
+    }
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, status, owner } = row;
       const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
