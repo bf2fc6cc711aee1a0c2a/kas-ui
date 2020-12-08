@@ -116,6 +116,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setMainToggle(checked);
   };
 
+  const refreshKafkas = () => {
+    setKafkaDataLoaded(false);
+    fetchKafkas();
+  };
+
   return (
     <>
       <AlertProvider>
@@ -151,7 +156,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               </Level>
             </PageSection>
             <PageSection>
-              {kafkaInstanceItems !== undefined && kafkaInstanceItems.length === 0 ? (
+              {kafkaInstanceItems === undefined ? (
+                <Loading />
+              ) : kafkaInstanceItems.length < 1 ? (
                 <EmptyState
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
@@ -163,7 +170,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   mainToggle={mainToggle}
                   onConnectToInstance={onConnectInstance}
                   onViewInstance={onViewInstance}
-                  refresh={fetchKafkas}
+                  refresh={refreshKafkas}
                   kafkaDataLoaded={kafkaDataLoaded}
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
@@ -177,7 +184,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   mainToggle={mainToggle}
-                  refresh={fetchKafkas}
+                  refresh={refreshKafkas}
                 />
               )}
             </PageSection>

@@ -20,7 +20,7 @@ import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  kafkaInstanceItems?: KafkaRequest[];
+  kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onConnectToInstance: (instance: KafkaRequest) => void;
   mainToggle: boolean;
@@ -124,6 +124,9 @@ const StreamsTableView = ({
   }, [kafkaInstanceItems]);
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
+    if (!kafkaDataLoaded) {
+      return [];
+    }
     const originalData: KafkaRequest = rowData.originalData;
     const isUserSameAsLoggedIn = originalData.owner === loggedInOwner;
     const resolver: (IAction | ISeparator)[] = mainToggle
@@ -178,11 +181,17 @@ const StreamsTableView = ({
         ];
     return resolver;
   };
+  
+  let exactContent = perPage;
+  const totalPage = total % perPage !== 0 ? Math.floor(total / perPage) + 1 : Math.floor(total / perPage);
+  if (totalPage === page) {
+    exactContent = total % perPage;
+  }
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
-    if (!kafkaDataLoaded || kafkaInstanceItems === undefined) {
-      for (let i = 0; i < perPage; i++) {
+    if (!kafkaDataLoaded) {
+      for (let i = 0; i < exactContent; i++) {
         tableRow.push({
           cells: [{ title: <Skeleton /> }, { title: <Skeleton /> }, { title: <Skeleton /> }, { title: <Skeleton /> }],
         });
