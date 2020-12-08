@@ -110,10 +110,6 @@ const StreamsTableView = ({
     setItems(incompleteKafkas);
   }, [kafkaInstanceItems]);
 
-  useEffect(() => {
-    refresh();
-  }, [page, perPage]);
-
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
     const resolver: (IAction | ISeparator)[] = mainToggle
