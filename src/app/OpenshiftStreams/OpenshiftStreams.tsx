@@ -127,14 +127,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               <Level>
                 <LevelItem>
                   <Title headingLevel="h1" size="lg">
-                    {t('OpenshiftStreams')}
+                    {t('openshift_streams')}
                   </Title>
                 </LevelItem>
                 <LevelItem>
                   <Switch
                     id="simple-switch"
-                    label={t('Mock UI')}
-                    labelOff={t('Currently supported UI')}
+                    label={t('mock_ui')}
+                    labelOff={t('currently_supported_ui')}
                     isChecked={mainToggle}
                     onChange={handleSwitchChange}
                   />

@@ -35,20 +35,6 @@ type ConfigDetail = {
   description: string;
 };
 
-export const getDeleteInstanceLabel = (t: TFunction, status: string | undefined) => {
-  switch (status) {
-    case InstanceStatus.COMPLETED:
-      return t('delete_instance');
-    case InstanceStatus.FAILED:
-      return t('remove');
-    case InstanceStatus.ACCEPTED:
-    case InstanceStatus.PROVISIONING:
-      return t('stop_instance');
-    default:
-      return;
-  }
-};
-
 export const getDeleteInstanceModalConfig = (
   t: TFunction,
   status: string | undefined,
@@ -64,8 +50,8 @@ export const getDeleteInstanceModalConfig = (
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_complete', { instanceName });
   } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
-    config.title = `${t('stop_creating_instance')}?`;
-    config.confirmActionLabel = t('stop_creating_instance');
+    config.title = `${t('delete_instance')}?`;
+    config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
   return config;
@@ -101,7 +87,6 @@ const StreamsTableView = ({
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
-    const deleteActionTitle = getDeleteInstanceLabel(t, originalData?.status);
     const resolver: (IAction | ISeparator)[] = mainToggle ? [
       {
         title: t('view_details'),
@@ -113,7 +98,7 @@ const StreamsTableView = ({
         onClick: () => onConnectToInstance(originalData)
       },
       {
-        title: deleteActionTitle,
+        title: t('delete_instance'),
         id: 'delete-instance',
         onClick: () => onDelete(originalData)
       }
@@ -124,7 +109,7 @@ const StreamsTableView = ({
         onClick: () => onViewInstance(originalData)
       },
       {
-        title: deleteActionTitle,
+        title: t('delete_instance'),
         id: 'delete-instance',
         onClick: () => onDelete(originalData)
       }
