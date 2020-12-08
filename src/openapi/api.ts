@@ -20,6 +20,174 @@ import globalAxios, { AxiosPromise, AxiosInstance } from 'axios';
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
 
 /**
+ * Cloud provider.
+ * @export
+ * @interface CloudProvider
+ */
+export interface CloudProvider {
+    /**
+     * Indicates the type of this object. Will be \'CloudProvider\' link.
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    kind?: string;
+    /**
+     * Unique identifier of the object.
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    id?: string;
+    /**
+     * Name of the cloud provider for display purposes.
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    display_name?: string;
+    /**
+     * Human friendly identifier of the cloud provider, for example `aws`.
+     * @type {string}
+     * @memberof CloudProvider
+     */
+    name?: string;
+    /**
+     * Whether the cloud provider is enabled for deploying an OSD cluster.
+     * @type {boolean}
+     * @memberof CloudProvider
+     */
+    enabled: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface CloudProviderList
+ */
+export interface CloudProviderList {
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudProviderList
+     */
+    kind: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CloudProviderList
+     */
+    page: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CloudProviderList
+     */
+    size: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CloudProviderList
+     */
+    total: number;
+    /**
+     * 
+     * @type {Array<CloudProvider>}
+     * @memberof CloudProviderList
+     */
+    items: Array<CloudProvider>;
+}
+/**
+ * 
+ * @export
+ * @interface CloudProviderListAllOf
+ */
+export interface CloudProviderListAllOf {
+    /**
+     * 
+     * @type {Array<CloudProvider>}
+     * @memberof CloudProviderListAllOf
+     */
+    items?: Array<CloudProvider>;
+}
+/**
+ * Description of a region of a cloud provider.
+ * @export
+ * @interface CloudRegion
+ */
+export interface CloudRegion {
+    /**
+     * Indicates the type of this object. Will be \'CloudRegion\'.
+     * @type {string}
+     * @memberof CloudRegion
+     */
+    kind?: string;
+    /**
+     * Unique identifier of the object.
+     * @type {string}
+     * @memberof CloudRegion
+     */
+    id?: string;
+    /**
+     * Name of the region for display purposes, for example `N. Virginia`.
+     * @type {string}
+     * @memberof CloudRegion
+     */
+    display_name?: string;
+    /**
+     * Whether the region is enabled for deploying an OSD cluster.
+     * @type {boolean}
+     * @memberof CloudRegion
+     */
+    enabled: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface CloudRegionList
+ */
+export interface CloudRegionList {
+    /**
+     * 
+     * @type {string}
+     * @memberof CloudRegionList
+     */
+    kind: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CloudRegionList
+     */
+    page: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CloudRegionList
+     */
+    size: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CloudRegionList
+     */
+    total: number;
+    /**
+     * 
+     * @type {Array<CloudRegion>}
+     * @memberof CloudRegionList
+     */
+    items: Array<CloudRegion>;
+}
+/**
+ * 
+ * @export
+ * @interface CloudRegionListAllOf
+ */
+export interface CloudRegionListAllOf {
+    /**
+     * 
+     * @type {Array<CloudRegion>}
+     * @memberof CloudRegionListAllOf
+     */
+    items?: Array<CloudRegion>;
+}
+/**
  * 
  * @export
  * @interface ErrorAllOf
@@ -285,6 +453,37 @@ export interface KafkaRequestListAllOf {
     items?: Array<KafkaRequest>;
 }
 /**
+ * Schema for the request body sent to /kafkas POST
+ * @export
+ * @interface KafkaRequestPayload
+ */
+export interface KafkaRequestPayload {
+    /**
+     * The cloud provider where the Kafka cluster will be created in
+     * @type {string}
+     * @memberof KafkaRequestPayload
+     */
+    cloud_provider?: string;
+    /**
+     * Set this to true to configure the Kafka cluster to be multiAZ
+     * @type {boolean}
+     * @memberof KafkaRequestPayload
+     */
+    multi_az?: boolean;
+    /**
+     * The name of the Kafka cluster
+     * @type {string}
+     * @memberof KafkaRequestPayload
+     */
+    name: string;
+    /**
+     * The region where the Kafka cluster will be created in
+     * @type {string}
+     * @memberof KafkaRequestPayload
+     */
+    region?: string;
+}
+/**
  * 
  * @export
  * @interface List
@@ -386,58 +585,138 @@ export interface ObjectReference {
 /**
  * 
  * @export
- * @interface TokenResponse
+ * @interface ServiceAccountRequest
  */
-export interface TokenResponse {
+export interface ServiceAccountRequest {
     /**
      * 
      * @type {string}
-     * @memberof TokenResponse
+     * @memberof ServiceAccountRequest
      */
     id?: string;
     /**
      * 
      * @type {string}
-     * @memberof TokenResponse
+     * @memberof ServiceAccountRequest
      */
     kind?: string;
     /**
      * 
      * @type {string}
-     * @memberof TokenResponse
+     * @memberof ServiceAccountRequest
      */
     href?: string;
     /**
      * 
      * @type {string}
-     * @memberof TokenResponse
+     * @memberof ServiceAccountRequest
      */
-    clientID?: string;
+    name?: string;
     /**
      * 
      * @type {string}
-     * @memberof TokenResponse
+     * @memberof ServiceAccountRequest
      */
-    clientSecret?: string;
+    description?: string;
 }
 /**
  * 
  * @export
- * @interface TokenResponseAllOf
+ * @interface ServiceAccountRequestAllOf
  */
-export interface TokenResponseAllOf {
+export interface ServiceAccountRequestAllOf {
     /**
      * 
      * @type {string}
-     * @memberof TokenResponseAllOf
+     * @memberof ServiceAccountRequestAllOf
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountRequestAllOf
+     */
+    description?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ServiceAccountResponse
+ */
+export interface ServiceAccountResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponse
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponse
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponse
+     */
+    href?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponse
      */
     clientID?: string;
     /**
      * 
      * @type {string}
-     * @memberof TokenResponseAllOf
+     * @memberof ServiceAccountResponse
      */
     clientSecret?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponse
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponse
+     */
+    description?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ServiceAccountResponseAllOf
+ */
+export interface ServiceAccountResponseAllOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponseAllOf
+     */
+    clientID?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponseAllOf
+     */
+    clientSecret?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponseAllOf
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountResponseAllOf
+     */
+    description?: string;
 }
 
 /**
@@ -450,18 +729,18 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary Create a new kafka Request
          * @param {boolean} async Perform the action in an asynchronous manner
-         * @param {KafkaRequest} kafkaRequest Kafka data
+         * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createKafka: async (async: boolean, kafkaRequest: KafkaRequest, options: any = {}): Promise<RequestArgs> => {
+        createKafka: async (async: boolean, kafkaRequestPayload: KafkaRequestPayload, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'async' is not null or undefined
             if (async === null || async === undefined) {
                 throw new RequiredError('async','Required parameter async was null or undefined when calling createKafka.');
             }
-            // verify required parameter 'kafkaRequest' is not null or undefined
-            if (kafkaRequest === null || kafkaRequest === undefined) {
-                throw new RequiredError('kafkaRequest','Required parameter kafkaRequest was null or undefined when calling createKafka.');
+            // verify required parameter 'kafkaRequestPayload' is not null or undefined
+            if (kafkaRequestPayload === null || kafkaRequestPayload === undefined) {
+                throw new RequiredError('kafkaRequestPayload','Required parameter kafkaRequestPayload was null or undefined when calling createKafka.');
             }
             const localVarPath = `/api/managed-services-api/v1/kafkas`;
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
@@ -495,8 +774,8 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             delete localVarUrlObj.search;
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof kafkaRequest !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
-            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(kafkaRequest !== undefined ? kafkaRequest : {}) : (kafkaRequest || "");
+            const needsSerialization = (typeof kafkaRequestPayload !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(kafkaRequestPayload !== undefined ? kafkaRequestPayload : {}) : (kafkaRequestPayload || "");
 
             return {
                 url: globalImportUrl.format(localVarUrlObj),
@@ -506,17 +785,22 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @summary Create a kafka service account
+         * @param {ServiceAccountRequest} serviceAccountRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createServiceAccount: async (options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/managed-services-api/v1/serviceAccount`;
+        createServiceAccount: async (serviceAccountRequest: ServiceAccountRequest, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'serviceAccountRequest' is not null or undefined
+            if (serviceAccountRequest === null || serviceAccountRequest === undefined) {
+                throw new RequiredError('serviceAccountRequest','Required parameter serviceAccountRequest was null or undefined when calling createServiceAccount.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/serviceaccounts`;
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
             }
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -531,11 +815,15 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
             // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
             delete localVarUrlObj.search;
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            const needsSerialization = (typeof serviceAccountRequest !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(serviceAccountRequest !== undefined ? serviceAccountRequest : {}) : (serviceAccountRequest || "");
 
             return {
                 url: globalImportUrl.format(localVarUrlObj),
@@ -634,6 +922,110 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Retrieves the list of supported regions of the supported cloud provider.
+         * @param {string} id The id of record
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listCloudProviderRegions: async (id: string, page?: string, size?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling listCloudProviderRegions.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/cloud_providers/{id}/regions`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Retrieves the list of supported cloud providers.
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listCloudProviders: async (page?: string, size?: string, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/managed-services-api/v1/cloud_providers`;
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Returns a list of Kafka requests
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
@@ -694,12 +1086,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary Create a new kafka Request
          * @param {boolean} async Perform the action in an asynchronous manner
-         * @param {KafkaRequest} kafkaRequest Kafka data
+         * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createKafka(async: boolean, kafkaRequest: KafkaRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KafkaRequest>> {
-            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).createKafka(async, kafkaRequest, options);
+        async createKafka(async: boolean, kafkaRequestPayload: KafkaRequestPayload, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KafkaRequest>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).createKafka(async, kafkaRequestPayload, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -708,11 +1100,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Create a kafka service account
+         * @param {ServiceAccountRequest} serviceAccountRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createServiceAccount(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenResponse>> {
-            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).createServiceAccount(options);
+        async createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAccountResponse>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).createServiceAccount(serviceAccountRequest, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -748,6 +1141,37 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Retrieves the list of supported regions of the supported cloud provider.
+         * @param {string} id The id of record
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listCloudProviderRegions(id: string, page?: string, size?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CloudRegionList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listCloudProviderRegions(id, page, size, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Retrieves the list of supported cloud providers.
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listCloudProviders(page?: string, size?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CloudProviderList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listCloudProviders(page, size, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
          * @summary Returns a list of Kafka requests
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
@@ -774,21 +1198,22 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary Create a new kafka Request
          * @param {boolean} async Perform the action in an asynchronous manner
-         * @param {KafkaRequest} kafkaRequest Kafka data
+         * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createKafka(async: boolean, kafkaRequest: KafkaRequest, options?: any): AxiosPromise<KafkaRequest> {
-            return DefaultApiFp(configuration).createKafka(async, kafkaRequest, options).then((request) => request(axios, basePath));
+        createKafka(async: boolean, kafkaRequestPayload: KafkaRequestPayload, options?: any): AxiosPromise<KafkaRequest> {
+            return DefaultApiFp(configuration).createKafka(async, kafkaRequestPayload, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Create a kafka service account
+         * @param {ServiceAccountRequest} serviceAccountRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createServiceAccount(options?: any): AxiosPromise<TokenResponse> {
-            return DefaultApiFp(configuration).createServiceAccount(options).then((request) => request(axios, basePath));
+        createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): AxiosPromise<ServiceAccountResponse> {
+            return DefaultApiFp(configuration).createServiceAccount(serviceAccountRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -809,6 +1234,29 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getKafkaById(id: string, options?: any): AxiosPromise<KafkaRequest> {
             return DefaultApiFp(configuration).getKafkaById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Retrieves the list of supported regions of the supported cloud provider.
+         * @param {string} id The id of record
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listCloudProviderRegions(id: string, page?: string, size?: string, options?: any): AxiosPromise<CloudRegionList> {
+            return DefaultApiFp(configuration).listCloudProviderRegions(id, page, size, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Retrieves the list of supported cloud providers.
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listCloudProviders(page?: string, size?: string, options?: any): AxiosPromise<CloudProviderList> {
+            return DefaultApiFp(configuration).listCloudProviders(page, size, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -834,21 +1282,22 @@ export interface DefaultApiInterface {
      * 
      * @summary Create a new kafka Request
      * @param {boolean} async Perform the action in an asynchronous manner
-     * @param {KafkaRequest} kafkaRequest Kafka data
+     * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    createKafka(async: boolean, kafkaRequest: KafkaRequest, options?: any): AxiosPromise<KafkaRequest>;
+    createKafka(async: boolean, kafkaRequestPayload: KafkaRequestPayload, options?: any): AxiosPromise<KafkaRequest>;
 
     /**
      * 
      * @summary Create a kafka service account
+     * @param {ServiceAccountRequest} serviceAccountRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    createServiceAccount(options?: any): AxiosPromise<TokenResponse>;
+    createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): AxiosPromise<ServiceAccountResponse>;
 
     /**
      * 
@@ -869,6 +1318,29 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     getKafkaById(id: string, options?: any): AxiosPromise<KafkaRequest>;
+
+    /**
+     * 
+     * @summary Retrieves the list of supported regions of the supported cloud provider.
+     * @param {string} id The id of record
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    listCloudProviderRegions(id: string, page?: string, size?: string, options?: any): AxiosPromise<CloudRegionList>;
+
+    /**
+     * 
+     * @summary Retrieves the list of supported cloud providers.
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    listCloudProviders(page?: string, size?: string, options?: any): AxiosPromise<CloudProviderList>;
 
     /**
      * 
@@ -894,24 +1366,25 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * 
      * @summary Create a new kafka Request
      * @param {boolean} async Perform the action in an asynchronous manner
-     * @param {KafkaRequest} kafkaRequest Kafka data
+     * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public createKafka(async: boolean, kafkaRequest: KafkaRequest, options?: any) {
-        return DefaultApiFp(this.configuration).createKafka(async, kafkaRequest, options).then((request) => request(this.axios, this.basePath));
+    public createKafka(async: boolean, kafkaRequestPayload: KafkaRequestPayload, options?: any) {
+        return DefaultApiFp(this.configuration).createKafka(async, kafkaRequestPayload, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @summary Create a kafka service account
+     * @param {ServiceAccountRequest} serviceAccountRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public createServiceAccount(options?: any) {
-        return DefaultApiFp(this.configuration).createServiceAccount(options).then((request) => request(this.axios, this.basePath));
+    public createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any) {
+        return DefaultApiFp(this.configuration).createServiceAccount(serviceAccountRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -936,6 +1409,33 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public getKafkaById(id: string, options?: any) {
         return DefaultApiFp(this.configuration).getKafkaById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Retrieves the list of supported regions of the supported cloud provider.
+     * @param {string} id The id of record
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public listCloudProviderRegions(id: string, page?: string, size?: string, options?: any) {
+        return DefaultApiFp(this.configuration).listCloudProviderRegions(id, page, size, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Retrieves the list of supported cloud providers.
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public listCloudProviders(page?: string, size?: string, options?: any) {
+        return DefaultApiFp(this.configuration).listCloudProviders(page, size, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
