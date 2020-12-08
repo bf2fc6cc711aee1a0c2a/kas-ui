@@ -81,7 +81,8 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
       isNavOpen={isNavOpen}
       headerTools={HeaderTools}
       onNavToggle={isMobileView ? onNavToggleMobile : onNavToggle}
-      aria-label={t('Global navigation')}
+      aria-label={t('Global navigation')}    
+      role="header"
     />
   );
 
@@ -108,7 +109,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
   );
 
   const Navigation = (
-    <Nav id="nav-primary-simple" theme="dark" aria-label={t('Global')}>
+    <Nav id="nav-primary-simple" role="navigation" theme="dark" aria-label={t('Global')}>
       <NavList id="nav-list-simple">
         {routes.map(
           (route, idx) => route.label && (!route.routes ? renderNavItem(route, idx) : renderNavGroup(route, idx))
@@ -130,6 +131,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({children}) => {
   return (
     <Page
       mainContainerId="primary-app-container"
+      role="main"
       header={Header}
       sidebar={Sidebar}
       onPageResize={onPageResize}
