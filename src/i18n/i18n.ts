@@ -3,13 +3,19 @@ import { initReactI18next } from 'react-i18next';
 import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
 import Pseudo from 'i18next-pseudo';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
+import * as relativeTime from 'dayjs/plugin/relativeTime';
 
 // import locales for any languages you're supporting (English is included by default)
 import 'dayjs/locale/ja';
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
+
+declare const __PUBLIC_PATH__: string
+declare const window: Window & {
+  windowError: string
+}
 
 i18n
   .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
@@ -43,6 +49,7 @@ i18n
       postProcess: ['pseudo'],
       interpolation: {
         format: function(value, format, lng, options) {
+          options = options || {};
           if (format === 'number') {
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
             return new Intl.NumberFormat(lng).format(value);

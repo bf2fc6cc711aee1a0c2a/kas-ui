@@ -7,7 +7,7 @@ import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { Loading } from './components/Loading/Loading';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
-import '../i18n.js';
+import '../i18n/i18n';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 
