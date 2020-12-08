@@ -53,6 +53,7 @@
     "css-loader": "^5.0.0",
     "dotenv-webpack": "^4.0.0",
     "enzyme": "^3.7.0",
+    "@openapitools/openapi-generator-cli":"2.1.7",
     "enzyme-adapter-react-16": "^1.15.5",
     "enzyme-to-json": "^3.6.1",
     "eslint": "^7.11.0",
