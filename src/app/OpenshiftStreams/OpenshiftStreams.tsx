@@ -9,7 +9,7 @@ import {
   PageSection,
   PageSectionVariants,
   Switch,
-  Title
+  Title,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
@@ -72,11 +72,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const fetchKafkas = async () => {
     const accessToken = await getToken();
 
-    if (accessToken !== undefined || accessToken !== '') {
+    if (accessToken !== undefined && accessToken !== '') {
       try {
         const apisService = new DefaultApi({
           accessToken,
-          basePath
+          basePath,
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
           const kafkaInstances = res.data;
@@ -110,7 +110,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   return (
     <>
       <AlertProvider>
-        <Drawer isExpanded={selectedInstance != null} onExpand={onExpand}>
+        <Drawer isExpanded={selectedInstance != null} onExpand={onExpand} aria-modal="true">
           <DrawerContent
             panelContent={
               <InstanceDrawer

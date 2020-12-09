@@ -72,8 +72,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
       isNavOpen={isNavOpen}
       headerTools={HeaderTools}
       onNavToggle={isMobileView ? onNavToggleMobile : onNavToggle}
-      aria-label={t('Global navigation')}    
-      role="header"
+      aria-label={t('Global navigation')}
     />
   );
 
