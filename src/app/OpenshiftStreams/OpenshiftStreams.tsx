@@ -53,6 +53,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
+
+
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -88,7 +90,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           setKafkaDataLoaded(true);
         });
       } catch (error) {
-        let reason;
+        let reason:string|undefined="";
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }

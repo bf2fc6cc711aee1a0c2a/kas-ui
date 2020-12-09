@@ -1,7 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { IAction, IExtraData, IRowData, ISeparator, Table, TableBody, TableHeader } from '@patternfly/react-table';
+import {
+  IAction,
+  IExtraData,
+  IRowData,
+  ISeparator,
+  Table,
+  TableBody,
+  TableHeader,
+  IRowCell,
+} from '@patternfly/react-table';
 import { AlertVariant, Card, Divider, PaginationVariant, Skeleton } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -82,6 +91,24 @@ const StreamsTableView = ({
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
+  const [skeletonRowsCount, setSkeletonRowsCount] = useState<number>(perPage);
+
+  useEffect(() => {
+    let exact = perPage;
+    if (total && total > 0) {
+      const totalPage = total % perPage !== 0 ? Math.floor(total / perPage) + 1 : Math.floor(total / perPage);
+      if (totalPage === page) {
+        if (total > perPage) {
+          exact = total % perPage === 0 ? perPage : total % perPage;
+        } else {
+          exact = total;
+        }
+      }
+    }
+    if (exact !== perPage) {
+      setSkeletonRowsCount(exact);
+    }
+  }, [total, page, perPage]);
 
   const loggedInOwner: string | undefined =
     keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
@@ -181,19 +208,17 @@ const StreamsTableView = ({
         ];
     return resolver;
   };
-  
-  let exactContent = perPage;
-  const totalPage = total % perPage !== 0 ? Math.floor(total / perPage) + 1 : Math.floor(total / perPage);
-  if (totalPage === page) {
-    exactContent = total % perPage;
-  }
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     if (!kafkaDataLoaded) {
-      for (let i = 0; i < exactContent; i++) {
+      const cells: (React.ReactNode | IRowCell)[] = [];
+      for (let i = 0; i < tableColumns.length; i++) {
+        cells.push({ title: <Skeleton /> });
+      }
+      for (let i = 0; i < skeletonRowsCount; i++) {
         tableRow.push({
-          cells: [{ title: <Skeleton /> }, { title: <Skeleton /> }, { title: <Skeleton /> }, { title: <Skeleton /> }],
+          cells: cells,
         });
       }
       return tableRow;
