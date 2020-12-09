@@ -88,33 +88,36 @@ const StreamsTableView = ({
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
-    const resolver: (IAction | ISeparator)[] = mainToggle ? [
-      {
-        title: t('view_details'),
-        id: 'view-instance',
-        onClick: () => onViewInstance(originalData)
-      }, {
-        title: t('connect_to_instance'),
-        id: 'connect-instance',
-        onClick: () => onConnectToInstance(originalData)
-      },
-      {
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => onDelete(originalData)
-      }
-    ] : [
-      {
-        title: t('view_details'),
-        id: 'view-instance',
-        onClick: () => onViewInstance(originalData)
-      },
-      {
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => onDelete(originalData)
-      }
-    ];
+    const resolver: (IAction | ISeparator)[] = mainToggle
+      ? [
+          {
+            title: t('view_details'),
+            id: 'view-instance',
+            onClick: () => onViewInstance(originalData),
+          },
+          {
+            title: t('connect_to_instance'),
+            id: 'connect-instance',
+            onClick: () => onConnectToInstance(originalData),
+          },
+          {
+            title: t('delete_instance'),
+            id: 'delete-instance',
+            onClick: () => onDelete(originalData),
+          },
+        ]
+      : [
+          {
+            title: t('view_details'),
+            id: 'view-instance',
+            onClick: () => onViewInstance(originalData),
+          },
+          {
+            title: t('delete_instance'),
+            id: 'delete-instance',
+            onClick: () => onDelete(originalData),
+          },
+        ];
     return resolver;
   };
 
@@ -174,7 +177,7 @@ const StreamsTableView = ({
     });
 
     try {
-      await apisService.deleteKafkaById('').then(() => {
+      await apisService.deleteKafkaById(instanceId).then(() => {
         setIsDeleteModalOpen(false);
         addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
         refresh();
