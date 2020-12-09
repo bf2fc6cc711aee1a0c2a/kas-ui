@@ -9,7 +9,8 @@ import {
   PageSection,
   PageSectionVariants,
   Switch,
-  Title
+  Title,
+  AlertVariant,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
@@ -22,6 +23,7 @@ import { Loading } from '@app/components/Loading/Loading';
 import { useInterval } from '@app/hooks/useInterval';
 import { isServiceApiError } from '@app/utils/error';
 import { ApiContext } from '@app/api/ApiContext';
+import { useAlerts } from '@app/components/Alerts/Alerts';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -41,7 +43,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { addAlert } = useAlerts();
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
@@ -72,25 +75,25 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const fetchKafkas = async () => {
     const accessToken = await getToken();
 
-    if (accessToken !== undefined || accessToken !== '') {
+    if (accessToken !== undefined && accessToken !== '') {
       try {
         const apisService = new DefaultApi({
           accessToken,
-          basePath
+          basePath,
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
-
-
           const kafkaInstances = res.data;
-          console.log('what is res' + JSON.stringify(kafkaInstances));
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
           setKafkaDataLoaded(true);
         });
       } catch (error) {
+        let key: string = '';
         if (isServiceApiError(error)) {
-          console.log(error.response?.data.reason);
+          key = error.response?.data.code;
         }
+        const message = i18n.exists(key) ? t(key) : t('something_went_wrong');
+        addAlert(message, AlertVariant.danger);
       }
     }
   };

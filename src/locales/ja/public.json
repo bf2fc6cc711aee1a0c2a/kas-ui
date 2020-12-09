@@ -106,5 +106,10 @@
   "Currently supported UI": "日本語 Currently supported UI",
   "OpenShift Streams": "日本語 OpenShift Streams",
   "delete_instance_modalv": "日本語 Delete instance modal",
-  "name_lower": "日本語 name"
+  "something_went_wrong": "日本語 Something went worng. Please try again!",
+  "MGD-SERV-API-8": "日本語 name is required",
+  "MANAGED-SERVICES-API-401": "日本語 Bearer token is malformed",
+  "OCM-EX-103": "日本語 Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
+  "GATEWAY-404": "日本語 The requested resource doesn't exist",
+  "unexpected_error":"日本語 Unexpected Error"
 }

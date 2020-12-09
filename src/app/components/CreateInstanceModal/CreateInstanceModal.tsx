@@ -12,7 +12,7 @@ import {
   ModalVariant,
   TextInput,
   Tile,
-  ToggleGroup
+  ToggleGroup,
 } from '@patternfly/react-core';
 import { FormDataValidationState, NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
@@ -23,6 +23,7 @@ import { DefaultApi } from '../../../openapi';
 import { cloudProviderOptions, cloudRegionOptions } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
+import { isServiceApiError } from '@app/utils/error';
 
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
@@ -32,17 +33,17 @@ type CreateInstanceModalProps = {
 };
 
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
-                                                                                  createStreamsInstance,
-                                                                                  setCreateStreamsInstance,
-                                                                                  refresh
-                                                                                }: CreateInstanceModalProps) => {
-  const { t } = useTranslation();
+  createStreamsInstance,
+  setCreateStreamsInstance,
+  refresh,
+}: CreateInstanceModalProps) => {
+  const { t, i18n } = useTranslation();
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = 'aws';
   newKafka.region = 'us-east-1';
   newKafka.multi_az = true;
-  const cloudRegionsAvailable = [{ value: '', label: 'please_select', disabled: false }, ...cloudRegionOptions];
+  const cloudRegionsAvailable = [{ value: '', label: t('please_select'), disabled: false }, ...cloudRegionOptions];
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -71,7 +72,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       try {
         const apisService = new DefaultApi({
           accessToken,
-          basePath
+          basePath,
         });
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           addAlert(t('kafka_successfully_created'), AlertVariant.success);
@@ -79,7 +80,12 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh();
         });
       } catch (error) {
-        addAlert(error, AlertVariant.danger);
+        let key: string = '';
+        if (isServiceApiError(error)) {
+          key = error.response?.data.code;
+        }
+        const message = i18n.exists(key) ? t(key) : t('something_went_wrong');
+        addAlert(message, AlertVariant.danger);
       }
     } else {
       setIsFormValid(false);
@@ -132,7 +138,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle}>
             {t('cancel')}
-          </Button>
+          </Button>,
         ]}
       >
         <Form>

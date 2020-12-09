@@ -106,5 +106,10 @@
   "Currently supported UI": "Currently supported UI",
   "OpenShift Streams": "OpenShift Streams",
   "delete_instance_modalv": "Delete instance modal",
-  "name_lower": "name"
+  "something_went_wrong": "Something went worng. Please try again!",
+  "MGD-SERV-API-8": "name is required",
+  "MANAGED-SERVICES-API-401": "Bearer token is malformed",
+  "OCM-EX-103": "Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
+  "GATEWAY-404": "The requested resource doesn't exist",
+  "unexpected_error":"Unexpected Error"
 }
