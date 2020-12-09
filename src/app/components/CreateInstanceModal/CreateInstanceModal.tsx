@@ -1,29 +1,28 @@
 import React, { useContext, useState } from 'react';
 import {
+  Alert,
   AlertVariant,
   Button,
-  Modal,
-  ModalVariant,
   Form,
+  FormAlert,
   FormGroup,
-  TextInput,
-  Tile,
   FormSelect,
   FormSelectOption,
-  FormAlert,
-  Alert,
-  ToggleGroup,
-  ToggleGroupItem,
+  Modal,
+  ModalVariant,
+  TextInput,
+  Tile,
+  ToggleGroup
 } from '@patternfly/react-core';
-import { NewKafka, FormDataValidationState } from '../../models/models';
+import { FormDataValidationState, NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import './CreateInstanceModal.css';
 import { useAlerts } from '../Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
 import { DefaultApi } from '../../../openapi';
-import { BASE_PATH } from '@app/common/app-config';
 import { cloudProviderOptions, cloudRegionOptions } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
+import { ApiContext } from '@app/api/ApiContext';
 
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
@@ -33,32 +32,27 @@ type CreateInstanceModalProps = {
 };
 
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
-  createStreamsInstance,
-  setCreateStreamsInstance,
-  refresh,
-}: CreateInstanceModalProps) => {
+                                                                                  createStreamsInstance,
+                                                                                  setCreateStreamsInstance,
+                                                                                  refresh
+                                                                                }: CreateInstanceModalProps) => {
   const { t } = useTranslation();
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = 'aws';
   newKafka.region = 'us-east-1';
   newKafka.multi_az = true;
-  const cloudRegionsAvailable = [{ value: '', label: t('please_select'), disabled: false }, ...cloudRegionOptions];
+  const cloudRegionsAvailable = [{ value: '', label: 'please_select', disabled: false }, ...cloudRegionOptions];
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
-  const { token } = useContext(AuthContext);
-
-  // Api Service
-  const apisService = new DefaultApi({
-    accessToken: token,
-    basePath: BASE_PATH,
-  });
+  const { getToken } = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
 
   const { addAlert } = useAlerts();
 
-  const onCreateInstance = async (event) => {
+  const onCreateInstance = async () => {
     let isValid = true;
 
     if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
@@ -71,8 +65,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       setCloudRegionValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
     }
 
+    const accessToken = await getToken();
+
     if (isValid) {
       try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath
+        });
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           addAlert(t('kafka_successfully_created'), AlertVariant.success);
           handleModalToggle();
@@ -116,6 +116,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         return;
     }
   };
+  const onChangeAvailabilty = (zone: string) => {
+    setKafkaFormData({ ...kafkaFormData, multi_az: zone === 'multi' });
+  };
   return (
     <>
       <Modal
@@ -130,7 +133,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle}>
             {t('cancel')}
-          </Button>,
+          </Button>
         ]}
       >
         <Form>
@@ -184,19 +187,41 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               aria-label={t('cloud_region')}
             >
               {cloudRegionsAvailable.map((option, index) => (
-                <FormSelectOption key={index} value={option.value} label={option.label} />
+                <FormSelectOption key={index} value={option.value} label={t(option.label)} />
               ))}
             </FormSelect>
           </FormGroup>
           <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
             <ToggleGroup aria-label={t('availability_zone_selection')}>
-              <ToggleGroupItem
-                text={t('single')}
-                buttonId="single"
-                isDisabled={true}
-                isSelected={kafkaFormData.multi_az === false}
-              />
-              <ToggleGroupItem text={t('multi')} buttonId="multi" isSelected={kafkaFormData.multi_az === true} />
+              {/*
+                  TODO: Currently using HTML version
+                  Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
+              */}
+              <div className="pf-c-toggle-group__item">
+                <button
+                  className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === false && 'pf-m-selected'}`}
+                  type="button"
+                  id="single"
+                  disabled
+                  onClick={() => {
+                    onChangeAvailabilty('single');
+                  }}
+                >
+                  <span className="pf-c-toggle-group__text"> {t('single')}</span>
+                </button>
+              </div>
+              <div className="pf-c-toggle-group__item">
+                <button
+                  className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === true && 'pf-m-selected'}`}
+                  type="button"
+                  onClick={() => {
+                    onChangeAvailabilty('multi');
+                  }}
+                  id="multi"
+                >
+                  <span className="pf-c-toggle-group__text"> {t('multi')}</span>
+                </button>
+              </div>
             </ToggleGroup>
           </FormGroup>
         </Form>

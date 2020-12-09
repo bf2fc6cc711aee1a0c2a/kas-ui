@@ -19,12 +19,14 @@ import {
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
 import './StreamsToolbarProps.css';
+import { useTranslation } from 'react-i18next';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
   filterSelected?: string;
+  setFilterSelected: (value: string) => void;
   namesSelected: string[];
   setNamesSelected: (value: string[]) => void;
   total: number;
@@ -45,7 +47,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
-
+  const { t } = useTranslation();
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);
   };
@@ -90,16 +92,21 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
-        <ToolbarFilter chips={namesSelected} deleteChip={onDelete} deleteChipGroup={onDeleteGroup} categoryName="Name">
+        <ToolbarFilter
+          chips={namesSelected}
+          deleteChip={onDelete}
+          deleteChipGroup={onDeleteGroup}
+          categoryName={t('name')}
+        >
           <Select
             variant={SelectVariant.single}
             aria-label="Select filter"
             onToggle={onFilterToggle}
-            selections={filterSelected}
+            selections={filterSelected && t(filterSelected.toLowerCase())}
             isOpen={isFilterExpanded}
           >
             {filterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
+              <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
             ))}
           </Select>
           <InputGroup className="filter-text-input">
@@ -108,7 +115,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               id="filterText"
               type="search"
               aria-label="Search filter input"
-              placeholder={`Filter by ${filterSelected?.toLowerCase()}`}
+              placeholder={`${t('filter_by')} ${
+                filterSelected?.toLowerCase() && t(`${filterSelected?.toLowerCase()}_lower`)
+              }`}
               onChange={onInputChange}
               value={inputValue}
             />
@@ -124,12 +133,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   return (
     <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear}>
       <ToolbarContent>
-        {mainToggle && <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-          {toggleGroupItems}
-        </ToolbarToggleGroup>}
+        {mainToggle && (
+          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+            {toggleGroupItems}
+          </ToolbarToggleGroup>
+        )}
         <ToolbarItem>
           <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
-            Create Streams instance
+            {t('create_streams_instance')}
           </Button>
         </ToolbarItem>
         <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>

@@ -9,8 +9,11 @@ type EmptyStateProps = {
   mainToggle: boolean;
 };
 
-const EmptyState = ({ createStreamsInstance, setCreateStreamsInstance, mainToggle }: EmptyStateProps) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ createStreamsInstance, setCreateStreamsInstance }) => {
   const { t } = useTranslation();
+  const onCreate = () => {
+    setCreateStreamsInstance(!createStreamsInstance);
+  };
   return (
     <>
       <PFEmptyState>
@@ -19,7 +22,7 @@ const EmptyState = ({ createStreamsInstance, setCreateStreamsInstance, mainToggl
           {t("You don't have any Streams instances yet")}
         </Title>
         <EmptyStateBody>{t('Create a Streams instance to get started')}</EmptyStateBody>
-        <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
+        <Button variant="primary" onClick={onCreate}>
           {t('Create a Streams Instance')}
         </Button>
       </PFEmptyState>

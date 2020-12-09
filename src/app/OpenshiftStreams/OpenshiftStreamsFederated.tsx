@@ -4,33 +4,46 @@ import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
 import { KafkaRequest } from '../../openapi';
 import { AlertVariant } from '@patternfly/react-core';
 import { AlertContext, AlertContextProps } from '@app/components/Alerts/Alerts';
+import { ApiContext } from '@app/api/ApiContext';
+import { BrowserRouter } from 'react-router-dom';
+import '../../i18n/i18n';
 
 // Version of OpenshiftStreams for federation
 
 export type OpenshiftStreamsFederatedProps = {
-  token: string;
+  getToken: () => Promise<string>;
   onConnectToInstance: (data: KafkaRequest) => void;
   addAlert: (message: string, variant?: AlertVariant) => void;
+  basePath: string;
 };
 
-const OpenshiftStreamsFederated = ({ token, onConnectToInstance, addAlert }: OpenshiftStreamsFederatedProps) => {
+const OpenshiftStreamsFederated = ({ getToken, onConnectToInstance, addAlert, basePath }: OpenshiftStreamsFederatedProps) => {
 
   const authContext = {
-    token
+    getToken
   } as IAuthContext;
 
   const alertContext = {
     addAlert
   } as AlertContextProps;
 
-
   return (
-    <AlertContext.Provider value={alertContext}>
-      <AuthContext.Provider value={authContext}>
-        <OpenshiftStreams onConnectToInstance={onConnectToInstance}></OpenshiftStreams>
-      </AuthContext.Provider>
-    </AlertContext.Provider>
+    // TODO don't add BrowserRouter here - see  https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/74
+    <BrowserRouter>
+      <ApiContext.Provider value={
+        {
+          basePath: basePath
+        }
+      }>
+        <AlertContext.Provider value={alertContext}>
+          <AuthContext.Provider value={authContext}>
+            <OpenshiftStreams onConnectToInstance={onConnectToInstance}></OpenshiftStreams>
+          </AuthContext.Provider>
+        </AlertContext.Provider>
+      </ApiContext.Provider>
+    </BrowserRouter>
   )
+    ;
 };
 
 export default OpenshiftStreamsFederated;

@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Button,
   Card,
-  CardHeader,
   CardBody,
-  CardFooter,
-  CardTitle,
   ClipboardCopy,
   DrawerPanelContent,
   DrawerHead,
@@ -14,7 +11,6 @@ import {
   DrawerCloseButton,
   Flex,
   FlexItem,
-  FormGroup,
   Grid,
   GridItem,
   Tabs,
@@ -22,7 +18,6 @@ import {
   TabTitleText,
   TextContent,
   Text,
-  TextInput,
   TextVariants,
   TextList,
   TextListItem,
@@ -40,6 +35,7 @@ import { Loading } from '@app/components/Loading/Loading';
 import { KafkaRequest } from 'src/openapi';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import { useTranslation } from 'react-i18next';
 
 export type InstanceDrawerProps = {
   mainToggle: boolean;
@@ -55,6 +51,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   activeTab,
   instanceDetail,
 }) => {
+  const {t} = useTranslation();
   const [activeTab1Key, setActiveTab1Key] = useState(0);
   const [activeTab2Key, setActiveTab2Key] = useState(0);
   useEffect(() => {
@@ -74,31 +71,29 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       <div className="tab-content-body">
         <TextContent className="pf-u-pb-sm">
           <Text component={TextVariants.small}>
-            To connect an application or tool to this Kafka instance, you will need the address of a Kafka listener, and
-            generated credentials.
+            {t('drawer_resource_tab_body_description_1')}
           </Text>
-          <Text component={TextVariants.h5}>Kafka listener and credentials</Text>
+          <Text component={TextVariants.h5}>{t('kafka_listener_and_credentials')}</Text>
           <Text component={TextVariants.small}>
-            Your application or tool will make its initial connection to the Kafka instance using the bootstrap server,
-            and authenticate with credentials specific to the server if required.
+            {t('drawer_resource_tab_body_description_2')}
           </Text>
           <Text component={TextVariants.p} className="pf-u-mt-md">
-            External server
+            {t('external_server')}
           </Text>
         </TextContent>
         <Flex>
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-            <ClipboardCopy>strimzi-external-bootstrap-01 : 1234</ClipboardCopy>
+            <ClipboardCopy>strimzi-external-bootstrap-01:1234</ClipboardCopy>
           </FlexItem>
           <GenerateCredential />
         </Flex>
         <TextContent className="pf-u-pb-sm pf-u-pt-lg">
           <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
           <Text component={TextVariants.small}>
-            Applications and tools that use the REST producer API will need the REST producer endpoint to connect.
+            {t('drawer_resource_tab_body_description_3')}
           </Text>
         </TextContent>
-        <ClipboardCopy>https : // : 30123</ClipboardCopy>
+        <ClipboardCopy>https: // : 30123</ClipboardCopy>
       </div>
     </>
   );
@@ -107,10 +102,10 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     <>
       <div className="tab-content-body">
       <TextContent className="pf-u-pb-sm">
-        <Text component={TextVariants.h5}>Sample connection code</Text>
+        <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
         <Text component={TextVariants.small}>
-          Use this snippet of code to set the properties in your Kafka client to connect securely. Replace the values in
-          &lt;brackets&gt;.
+          {t('drawer_code_section_tab_body_description_1')}
+          &lt;{t('brackets')}&gt;.
         </Text>
       </TextContent>
       <div className="pf-c-code-editor pf-m-read-only">
@@ -132,10 +127,10 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       </div>
 
       <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-        <Text component={TextVariants.h5}>Sample connection code</Text>
+        <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
         <Text component={TextVariants.small}>
-          Use this snippet of code to set the properties in your Kafka client to connect securely. Replace the values in
-          &lt;brackets&gt;.
+         {t('drawer_code_section_tab_body_description_1')}
+          &lt;{t('brackets')}&gt;.
         </Text>
       </TextContent>
       <div className="pf-c-code-editor pf-m-read-only">
@@ -183,7 +178,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
                 <CardBody>
                   <TextContent>
                     <Text component={TextVariants.small} className="pf-u-mb-0">
-                      Topics
+                      {t('topics')}
                     </Text>
                     <Text component={TextVariants.h3} className="pf-u-mt-0">
                       10
@@ -197,7 +192,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
                 <CardBody>
                   <TextContent>
                     <Text component={TextVariants.small} className="pf-u-mb-0">
-                      Consumer groups
+                      {t('consumer_groups')}
                     </Text>
                     <Text component={TextVariants.h3} className="pf-u-mt-0">
                       8
@@ -210,12 +205,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         )}
         <TextContent>
           <TextList component={TextListVariants.dl}>
-            {renderTextListItemDetail('Cloud Provider', 'Amazon Web Services')}
-            {renderTextListItemDetail('Region', 'US East, N. Virginia')}
-            {renderTextListItemDetail('ID', id)}
-            {renderTextListItemDetail('Owner', owner)}
-            {renderTextListItemDetail('Created', dayjs(created_at).format('LLLL'))}
-            {renderTextListItemDetail('Updated', dayjs(updated_at).format('LLLL'))}
+            {renderTextListItemDetail(t('cloud_provider'), t('amazon_web_services'))}
+            {renderTextListItemDetail(t('region'), t('us_east_north_virginia'))}
+            {renderTextListItemDetail(t('id'), id)}
+            {renderTextListItemDetail(t('owner'), owner)}
+            {renderTextListItemDetail(t('created'), dayjs(created_at).format('LLLL'))}
+            {renderTextListItemDetail(t('updated'), dayjs(updated_at).format('LLLL'))}
           </TextList>
         </TextContent>
       </div>
@@ -226,10 +221,10 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     <>
       <div className="tab-content-body pf-m-secondary">
         <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
-          <Tab eventKey={0} title={<TabTitleText>Resources</TabTitleText>}>
+          <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
             {resourcesTab}
           </Tab>
-          <Tab eventKey={1} title={<TabTitleText>Sample code</TabTitleText>}>
+          <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
             {sampleCodeTab}
           </Tab>
         </Tabs>
@@ -238,7 +233,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   );
 
   return (
-    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_66' }}>
+    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_50' }}>
       {instanceDetail === undefined ? (
         <Loading />
       ) : (
@@ -246,7 +241,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <DrawerHead>
             <TextContent>
               <Text component={TextVariants.small} className="pf-u-mb-0">
-                Instance Name
+                {t('instance_name')}
               </Text>
               <Title headingLevel="h3" size={TitleSizes['2xl']} className="pf-u-mt-0 ">
                 {instanceDetail?.name}
@@ -258,11 +253,11 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           </DrawerHead>
           <DrawerPanelBody>
             <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
-              <Tab eventKey={0} title={<TabTitleText>Details</TabTitleText>}>
+              <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
                 {detailsTab}
               </Tab>
               {mainToggle && (
-                <Tab eventKey={1} title={<TabTitleText>Connection</TabTitleText>}>
+                <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
                   {connectionTab}
                 </Tab>
               )}

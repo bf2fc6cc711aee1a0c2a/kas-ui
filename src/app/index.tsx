@@ -6,14 +6,12 @@ import { AppRoutes } from '@app/routes';
 import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { Loading } from './components/Loading/Loading';
-import { AuthContext } from './auth/AuthContext';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
-import '../i18n.js';
+import '../i18n/i18n';
 
-let keycloak: any;
+let keycloak: Keycloak.KeycloakInstance | undefined;
 
 const App: React.FunctionComponent = () => {
-
   const [initialized, setInitialized] = React.useState(false);
 
   // Initialize the client
@@ -21,7 +19,7 @@ const App: React.FunctionComponent = () => {
     const init = async () => {
       keycloak = await getKeycloakInstance();
       setInitialized(true);
-    }
+    };
     init();
   }, []);
 
@@ -42,5 +40,5 @@ const App: React.FunctionComponent = () => {
       </KeycloakAuthProvider>
     </KeycloakContext.Provider>
   );
-}
+};
 export { App };

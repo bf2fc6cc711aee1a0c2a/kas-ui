@@ -55,9 +55,9 @@ This project uses [react-i18next](https://react.i18next.com/) for internationali
 
 You should run `npm run i18n` after you internationalize strings in order to generate the required files.
 
-Namespaces other than 'public' must be added to `src/i18n.js` on line 37.
+Namespaces other than 'public' must be added to `src/i18n.ts` on line 37.
 
-If you want to add an additional language, you need to import the dayjs locale in `src/i18n.js` on line 9 and (if you want it managed by the parser) line 51 in `i18next-parser.config.js`.
+If you want to add an additional language, you need to import the dayjs locale in `src/i18n.ts` on line 9 and (if you want it managed by the parser) line 51 in `i18next-parser.config.js`.
 
 ## Query parameters
 ```
@@ -69,13 +69,27 @@ http://localhost:9000/?pseudolocalization=true&lng=en
 http://localhost:9000/?lng=ja
 ```
 
-## Starting the Mock Server
+## API
+
+By default the UI will run against the staging api (api.stage.openshift.com) in development. To change the API server set the environment variable `BASE_PATH`.
+
+For example, to run the UI locally against the mock API run:
+
+```
+BASE_PATH=http://localhost:8000 npm run start:dev
+```
+
+### The Mock Server
+
+We also provide a mock server which can be useful for developing locally if you don't have access to a real API. 
+
+To start the mock server
 
 ```
 cd mas-mock
-yarn
-yarn start # API running at http://localhost:9000
-
+npm install
+npm run start # API running at http://localhost:8000
+BASE_PATH=http://localhost:8000 npm run start:dev # start the UI
 ```
 
 ## Generating OpenAPI docs
