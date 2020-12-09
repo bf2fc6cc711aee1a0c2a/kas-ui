@@ -6,6 +6,7 @@ import { AlertVariant } from '@patternfly/react-core';
 import { AlertContext, AlertContextProps } from '@app/components/Alerts/Alerts';
 import { ApiContext } from '@app/api/ApiContext';
 import { BrowserRouter } from 'react-router-dom';
+import '../../i18n/i18n';
 
 // Version of OpenshiftStreams for federation
 
