@@ -199,7 +199,7 @@ const StreamsTableView = ({
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
-      let key: string = '';
+      let key;
       if (isServiceApiError(error)) {
         key = error.response?.data.code;
       }

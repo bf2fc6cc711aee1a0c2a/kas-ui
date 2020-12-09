@@ -80,7 +80,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh();
         });
       } catch (error) {
-        let key: string = '';
+        let key;
         if (isServiceApiError(error)) {
           key = error.response?.data.code;
         }
