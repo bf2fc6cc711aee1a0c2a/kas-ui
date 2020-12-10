@@ -43,7 +43,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { addAlert } = useAlerts();
 
   // States
@@ -88,12 +88,16 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           setKafkaDataLoaded(true);
         });
       } catch (error) {
-        let key;
+        let reason;
         if (isServiceApiError(error)) {
-          key = error.response?.data.code;
+          reason = error.response?.data.reason;
         }
-        const message = i18n.exists(key) ? t(key) : t('something_went_wrong');
-        addAlert(message, AlertVariant.danger);
+        /**
+         * Todo: show user friendly message according to server code
+         * and translation for specific language
+         *
+         */
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };

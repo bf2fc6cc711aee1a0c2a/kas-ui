@@ -80,12 +80,16 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh();
         });
       } catch (error) {
-        let key;
+        let reason;
         if (isServiceApiError(error)) {
-          key = error.response?.data.code;
+          reason = error.response?.data.reason;
         }
-        const message = i18n.exists(key) ? t(key) : t('something_went_wrong');
-        addAlert(message, AlertVariant.danger);
+        /**
+         * Todo: show user friendly message according to server code
+         * and translation for specific language
+         *
+         */
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
       }
     } else {
       setIsFormValid(false);
