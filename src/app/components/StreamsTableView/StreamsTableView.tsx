@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { IAction, IExtraData, IRowData, ISeparator, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { AlertVariant, Card, Divider, PaginationVariant } from '@patternfly/react-core';
+import { AlertVariant, Card, Divider, PaginationVariant, Tooltip } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -15,6 +15,7 @@ import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
+import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -72,12 +73,15 @@ const StreamsTableView = ({
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
+  const keycloakContext = useContext(KeycloakContext);
 
+  const loggedInOwner: string | undefined =
+    keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
   const { addAlert } = useAlerts();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('status')];
+  const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('owner'), t('status')];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
@@ -120,6 +124,7 @@ const StreamsTableView = ({
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
+    const sameUserAsLoggedIn = originalData.owner === loggedInOwner;
     const resolver: (IAction | ISeparator)[] = mainToggle
       ? [
           {
@@ -133,9 +138,16 @@ const StreamsTableView = ({
             onClick: () => onConnectToInstance(originalData),
           },
           {
-            title: t('delete_instance'),
+            title: sameUserAsLoggedIn ? (
+              t('delete_instance')
+            ) : (
+              <Tooltip position="left" content={<div>{t('no_permission_to_delete_kafka')}</div>}>
+                {t('delete_instance')}
+              </Tooltip>
+            ),
             id: 'delete-instance',
             onClick: () => onDelete(originalData),
+            isDisabled: !sameUserAsLoggedIn,
           },
         ]
       : [
@@ -145,9 +157,16 @@ const StreamsTableView = ({
             onClick: () => onViewInstance(originalData),
           },
           {
-            title: t('delete_instance'),
+            title: sameUserAsLoggedIn ? (
+              t('delete_instance')
+            ) : (
+              <Tooltip position="left" content={<div>{t('no_permission_to_delete_kafka')}</div>}>
+                {t('delete_instance')}
+              </Tooltip>
+            ),
             id: 'delete-instance',
             onClick: () => onDelete(originalData),
+            isDisabled: !sameUserAsLoggedIn,
           },
         ];
     return resolver;
@@ -156,7 +175,7 @@ const StreamsTableView = ({
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     kafkaInstanceItems.forEach((row: IRowData) => {
-      const { name, cloud_provider, region, status } = row;
+      const { name, cloud_provider, region, status, owner } = row;
       const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
       const regionDisplayName = getCloudRegionDisplayName(region);
       tableRow.push({
@@ -164,6 +183,7 @@ const StreamsTableView = ({
           name,
           cloudProviderDisplayName,
           regionDisplayName,
+          owner,
           {
             title: <StatusColumn status={status} />,
           },
