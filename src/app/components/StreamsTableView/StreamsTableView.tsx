@@ -74,17 +74,16 @@ const StreamsTableView = ({
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const keycloakContext = useContext(KeycloakContext);
-
-  const loggedInOwner: string | undefined =
-    keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
-  const { addAlert } = useAlerts();
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('owner'), t('status')];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
+
+  const loggedInOwner: string | undefined =
+    keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
+  const { addAlert } = useAlerts();
 
   useEffect(() => {
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
@@ -124,7 +123,7 @@ const StreamsTableView = ({
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
-    const sameUserAsLoggedIn = originalData.owner === loggedInOwner;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInOwner;
     const resolver: (IAction | ISeparator)[] = mainToggle
       ? [
           {
@@ -138,16 +137,15 @@ const StreamsTableView = ({
             onClick: () => onConnectToInstance(originalData),
           },
           {
-            title: sameUserAsLoggedIn ? (
-              t('delete_instance')
-            ) : (
-              <Tooltip position="left" content={<div>{t('no_permission_to_delete_kafka')}</div>}>
-                {t('delete_instance')}
-              </Tooltip>
-            ),
+            title: t('delete_instance'),
             id: 'delete-instance',
-            onClick: () => onDelete(originalData),
-            isDisabled: !sameUserAsLoggedIn,
+            onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+            tooltip: !isUserSameAsLoggedIn,
+            tooltipProps: {
+              position: 'left',
+              content: t('no_permission_to_delete_kafka'),
+            },
+            isDisabled: !isUserSameAsLoggedIn,
           },
         ]
       : [
@@ -157,16 +155,15 @@ const StreamsTableView = ({
             onClick: () => onViewInstance(originalData),
           },
           {
-            title: sameUserAsLoggedIn ? (
-              t('delete_instance')
-            ) : (
-              <Tooltip position="left" content={<div>{t('no_permission_to_delete_kafka')}</div>}>
-                {t('delete_instance')}
-              </Tooltip>
-            ),
+            title: t('delete_instance'),
             id: 'delete-instance',
-            onClick: () => onDelete(originalData),
-            isDisabled: !sameUserAsLoggedIn,
+            onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+            tooltip: !isUserSameAsLoggedIn,
+            tooltipProps: {
+              position: 'left',
+              content: t('no_permission_to_delete_kafka'),
+            },
+            isDisabled: !isUserSameAsLoggedIn,
           },
         ];
     return resolver;
