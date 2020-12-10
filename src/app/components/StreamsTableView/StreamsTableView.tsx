@@ -203,7 +203,7 @@ const StreamsTableView = ({
     selectedInstance?.name
   );
   return (
-    <Card>
+    <>
       <StreamsToolbar
         mainToggle={mainToggle}
         createStreamsInstance={createStreamsInstance}
@@ -245,7 +245,7 @@ const StreamsTableView = ({
           confirmActionLabel={confirmActionLabel}
         />
       )}
-    </Card>
+    </>
   );
 };
 

@@ -150,7 +150,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 </LevelItem>
               </Level>
             </PageSection>
-            <PageSection>
+            <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
               {!kafkaDataLoaded ? (
                 <Loading />
               ) : kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
