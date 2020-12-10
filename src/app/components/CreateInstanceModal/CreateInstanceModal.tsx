@@ -75,7 +75,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           basePath,
         });
         await apisService.createKafka(true, kafkaFormData).then((res) => {
-          addAlert(t('kafka_creation_accepted'), AlertVariant.info);
+          // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
           handleModalToggle();
           refresh();
         });

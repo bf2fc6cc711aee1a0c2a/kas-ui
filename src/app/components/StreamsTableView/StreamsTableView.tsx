@@ -71,7 +71,7 @@ const StreamsTableView = ({
 }: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const { addAlert } = useAlerts();
 
@@ -84,7 +84,7 @@ const StreamsTableView = ({
 
   useEffect(() => {
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
-    if (items && items.length>0) {
+    if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
         (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED || item.status === InstanceStatus.FAILED
       );
@@ -94,9 +94,17 @@ const StreamsTableView = ({
         );
         if (instances && instances.length > 0) {
           if (instances[0].status === InstanceStatus.COMPLETED) {
-            addAlert(t('kafka_successfully_created', { name: instances[0]?.name }), AlertVariant.success);
+            addAlert(
+              t('kafka_successfully_created'),
+              AlertVariant.success,
+              t('kafka_success_message', { name: instances[0]?.name })
+            );
           } else if (instances[0].status === InstanceStatus.FAILED) {
-            addAlert(t('kafka_not_created', { name: instances[0]?.name }), AlertVariant.danger);
+            addAlert(
+              t('kafka_not_created'),
+              AlertVariant.danger,
+              t('kafka_failed_message', { name: instances[0]?.name })
+            );
           }
         }
       });
@@ -104,7 +112,7 @@ const StreamsTableView = ({
     const incompleteKafkas = Object.assign(
       [],
       kafkaInstanceItems.filter(
-        (item: KafkaRequest) => item.status != InstanceStatus.COMPLETED && item.status != InstanceStatus.FAILED
+        (item: KafkaRequest) => item.status === InstanceStatus.PROVISIONING || item.status === InstanceStatus.ACCEPTED
       )
     );
     setItems(incompleteKafkas);
