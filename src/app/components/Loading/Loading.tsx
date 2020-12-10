@@ -5,8 +5,8 @@ import './Loading.css';
 
 export const Loading: React.FunctionComponent = () => (
   <PageSection>
-    <Bullseye>
-      <Spinner />
-    </Bullseye>
+    <div className="pf-bullseye-comp">
+        <Spinner />
+    </div>
   </PageSection>
 );
