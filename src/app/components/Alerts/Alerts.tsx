@@ -1,15 +1,9 @@
-import React, {
-  useState,
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-} from "react";
-import { AlertType, AlertToastGroup } from "./AlertToastGroup";
-import { AlertVariant } from "@patternfly/react-core";
+import React, { useState, createContext, ReactNode, useContext, useEffect } from 'react';
+import { AlertType, AlertToastGroup } from './AlertToastGroup';
+import { AlertVariant } from '@patternfly/react-core';
 
 export type AlertContextProps = {
-  addAlert: (message: string, variant?: AlertVariant) => void;
+  addAlert: (message: string, variant?: AlertVariant, body?: string) => void;
 };
 
 export const AlertContext = createContext<AlertContextProps>({
@@ -46,11 +40,8 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
     setTimers((timers) => [...timers.filter((timer) => timer.key === key)]);
   };
 
-  const addAlert = (
-    message: string,
-    variant: AlertVariant = AlertVariant.default
-  ) => {
-    setAlerts([...alerts, { key: createId(), message, variant }]);
+  const addAlert = (title: string, variant: AlertVariant = AlertVariant.default, body?: string) => {
+    setAlerts([...alerts, { key: createId(), title, variant, body }]);
   };
 
   return (

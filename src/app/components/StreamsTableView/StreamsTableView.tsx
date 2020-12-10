@@ -15,6 +15,7 @@ import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
+import { isServiceApiError } from '@app/utils/error';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -71,7 +72,7 @@ const StreamsTableView = ({
 }: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { addAlert } = useAlerts();
 
@@ -183,8 +184,16 @@ const StreamsTableView = ({
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
-      console.log('IS THERE AN ERROR HERE');
-      addAlert(error, AlertVariant.danger);
+      let reason;
+      if (isServiceApiError(error)) {
+        reason = error.response?.data.reason;
+      }
+      /**
+       * Todo: show user friendly message according to server code
+       * and translation for specific language
+       *
+       */
+      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 

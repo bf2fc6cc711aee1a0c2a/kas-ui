@@ -105,5 +105,13 @@
   "delete_instance_modalv": "Delete instance modal",
   "connect_to_this_instance": "Connect to this instance",
   "full_pagination": "Full pagination",
-  "minimal_pagination": "Minimal pagination"
+  "minimal_pagination": "Minimal pagination",
+  "something_went_wrong": "Something went wrong",
+  "MGD-SERV-API-8": "name does not match ^[a-z]([-a-z0-9]*[a-z0-9])?$",
+  "MANAGED-SERVICES-API-401": "Bearer token is malformed",
+  "OCM-EX-103": "Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
+  "GATEWAY-404": "The requested resource doesn't exist",
+  "unexpected_error":"There was a problem processing the request. Please try again.",
+  "MGD-SERV-API-4":"User {{user}} is not authorized to access the service.",
+  "go_to_openshift_streams":"Go to OpenShift Streams"
 }

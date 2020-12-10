@@ -12,7 +12,7 @@ import {
   ModalVariant,
   TextInput,
   Tile,
-  ToggleGroup
+  ToggleGroup,
 } from '@patternfly/react-core';
 import { FormDataValidationState, NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
@@ -23,6 +23,7 @@ import { DefaultApi } from '../../../openapi';
 import { cloudProviderOptions, cloudRegionOptions } from '../../utils/utils';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
+import { isServiceApiError } from '@app/utils/error';
 
 type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
@@ -32,11 +33,11 @@ type CreateInstanceModalProps = {
 };
 
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
-                                                                                  createStreamsInstance,
-                                                                                  setCreateStreamsInstance,
-                                                                                  refresh
-                                                                                }: CreateInstanceModalProps) => {
-  const { t } = useTranslation();
+  createStreamsInstance,
+  setCreateStreamsInstance,
+  refresh,
+}: CreateInstanceModalProps) => {
+  const { t, i18n } = useTranslation();
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = 'aws';
@@ -71,7 +72,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       try {
         const apisService = new DefaultApi({
           accessToken,
-          basePath
+          basePath,
         });
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           addAlert(t('kafka_successfully_created'), AlertVariant.success);
@@ -79,7 +80,16 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh();
         });
       } catch (error) {
-        addAlert(error, AlertVariant.danger);
+        let reason;
+        if (isServiceApiError(error)) {
+          reason = error.response?.data.reason;
+        }
+        /**
+         * Todo: show user friendly message according to server code
+         * and translation for specific language
+         *
+         */
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
       }
     } else {
       setIsFormValid(false);
@@ -133,7 +143,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle}>
             {t('cancel')}
-          </Button>
+          </Button>,
         ]}
       >
         <Form>
