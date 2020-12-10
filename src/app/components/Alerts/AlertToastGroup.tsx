@@ -1,15 +1,11 @@
-import React from "react";
-import {
-  AlertGroup,
-  Alert,
-  AlertActionCloseButton,
-  AlertVariant,
-} from "@patternfly/react-core";
+import React from 'react';
+import { AlertGroup, Alert, AlertActionCloseButton, AlertVariant } from '@patternfly/react-core';
 
 export type AlertType = {
   key: number;
-  message: string;
+  title: string;
   variant: AlertVariant;
+  body?: string;
 };
 
 type AlertToastGroupProps = {
@@ -20,20 +16,17 @@ type AlertToastGroupProps = {
 export function AlertToastGroup({ alerts, onCloseAlert }: AlertToastGroupProps) {
   return (
     <AlertGroup isToast>
-      {alerts.map(({ key, variant, message }) => (
+      {alerts.map(({ key, variant, title, body }) => (
         <Alert
           key={key}
           isLiveRegion
           variant={AlertVariant[variant]}
           variantLabel=""
-          title={message}
-          actionClose={
-            <AlertActionCloseButton
-              title={message}
-              onClose={() => onCloseAlert(key)}
-            />
-          }
-        />
+          title={title}
+          actionClose={<AlertActionCloseButton title={title} onClose={() => onCloseAlert(key)} />}
+        >
+          {body}
+        </Alert>
       ))}
     </AlertGroup>
   );

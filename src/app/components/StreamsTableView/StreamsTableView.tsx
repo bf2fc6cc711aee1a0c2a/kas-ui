@@ -15,6 +15,7 @@ import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
+import { isServiceApiError } from '@app/utils/error';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -43,7 +44,7 @@ export const getDeleteInstanceModalConfig = (
   const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
-    description: ''
+    description: '',
   };
   if (status === InstanceStatus.COMPLETED) {
     config.title = `${t('delete_instance')}?`;
@@ -58,20 +59,20 @@ export const getDeleteInstanceModalConfig = (
 };
 
 const StreamsTableView = ({
-                            mainToggle,
-                            kafkaInstanceItems,
-                            onViewInstance,
-                            onConnectToInstance,
-                            refresh,
-                            createStreamsInstance,
-                            setCreateStreamsInstance,
-                            page,
-                            perPage,
-                            total
-                          }: TableProps) => {
+  mainToggle,
+  kafkaInstanceItems,
+  onViewInstance,
+  onConnectToInstance,
+  refresh,
+  createStreamsInstance,
+  setCreateStreamsInstance,
+  page,
+  perPage,
+  total,
+}: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { addAlert } = useAlerts();
 
@@ -87,33 +88,36 @@ const StreamsTableView = ({
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
-    const resolver: (IAction | ISeparator)[] = mainToggle ? [
-      {
-        title: t('view_details'),
-        id: 'view-instance',
-        onClick: () => onViewInstance(originalData)
-      }, {
-        title: t('connect_to_instance'),
-        id: 'connect-instance',
-        onClick: () => onConnectToInstance(originalData)
-      },
-      {
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => onDelete(originalData)
-      }
-    ] : [
-      {
-        title: t('view_details'),
-        id: 'view-instance',
-        onClick: () => onViewInstance(originalData)
-      },
-      {
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => onDelete(originalData)
-      }
-    ];
+    const resolver: (IAction | ISeparator)[] = mainToggle
+      ? [
+          {
+            title: t('view_details'),
+            id: 'view-instance',
+            onClick: () => onViewInstance(originalData),
+          },
+          {
+            title: t('connect_to_instance'),
+            id: 'connect-instance',
+            onClick: () => onConnectToInstance(originalData),
+          },
+          {
+            title: t('delete_instance'),
+            id: 'delete-instance',
+            onClick: () => onDelete(originalData),
+          },
+        ]
+      : [
+          {
+            title: t('view_details'),
+            id: 'view-instance',
+            onClick: () => onViewInstance(originalData),
+          },
+          {
+            title: t('delete_instance'),
+            id: 'delete-instance',
+            onClick: () => onDelete(originalData),
+          },
+        ];
     return resolver;
   };
 
@@ -129,10 +133,10 @@ const StreamsTableView = ({
           cloudProviderDisplayName,
           regionDisplayName,
           {
-            title: <StatusColumn status={status} />
-          }
+            title: <StatusColumn status={status} />,
+          },
         ],
-        originalData: row
+        originalData: row,
       });
     });
     return tableRow;
@@ -169,7 +173,7 @@ const StreamsTableView = ({
     const accessToken = await getToken();
     const apisService = new DefaultApi({
       accessToken,
-      basePath
+      basePath,
     });
 
     try {
@@ -180,8 +184,16 @@ const StreamsTableView = ({
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
-      console.log('IS THERE AN ERROR HERE');
-      addAlert(error, AlertVariant.danger);
+      let reason;
+      if (isServiceApiError(error)) {
+        reason = error.response?.data.reason;
+      }
+      /**
+       * Todo: show user friendly message according to server code
+       * and translation for specific language
+       *
+       */
+      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 

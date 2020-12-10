@@ -105,5 +105,12 @@
   "currently_supported_ui": "日本語 Currently supported UI",
   "OpenShift Streams": "日本語 OpenShift Streams",
   "delete_instance_modalv": "日本語 Delete instance modal",
-  "name_lower": "日本語 name"
+  "something_went_wrong": "日本語 Something went wrong",
+  "MGD-SERV-API-8": "日本語 name does not match ^[a-z]([-a-z0-9]*[a-z0-9])?$",
+  "MANAGED-SERVICES-API-401": "日本語 Bearer token is malformed",
+  "OCM-EX-103": "日本語 Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
+  "GATEWAY-404": "日本語 The requested resource doesn't exist",
+  "unexpected_error":"日本語 There was a problem processing the request. Please try again.",
+  "MGD-SERV-API-4":"日本語 User {{user}} is not authorized to access the service.",
+  "go_to_openshift_streams":"日本語 Go to OpenShift Streams"
 }

@@ -9,7 +9,8 @@ import {
   PageSection,
   PageSectionVariants,
   Switch,
-  Title
+  Title,
+  AlertVariant,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
@@ -20,6 +21,7 @@ import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
 import { Loading } from '@app/components/Loading/Loading';
 import { ApiContext } from '@app/api/ApiContext';
+import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 
@@ -42,6 +44,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
 
   const { t } = useTranslation();
+  const { addAlert } = useAlerts();
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
@@ -72,23 +75,29 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const fetchKafkas = async () => {
     const accessToken = await getToken();
 
-    if (accessToken !== undefined || accessToken !== '') {
+    if (accessToken !== undefined && accessToken !== '') {
       try {
         const apisService = new DefaultApi({
           accessToken,
-          basePath
+          basePath,
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
           const kafkaInstances = res.data;
-          console.log('what is res' + JSON.stringify(kafkaInstances));
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
           setKafkaDataLoaded(true);
         });
       } catch (error) {
+        let reason;
         if (isServiceApiError(error)) {
-          console.log(error.response?.data.reason);
+          reason = error.response?.data.reason;
         }
+        /**
+         * Todo: show user friendly message according to server code
+         * and translation for specific language
+         *
+         */
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };
