@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import {
@@ -25,6 +25,7 @@ import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
+import { useHistory } from 'react-router-dom';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -33,11 +34,12 @@ type TableProps = {
   onViewInstance: (instance: KafkaRequest) => void;
   onConnectToInstance: (instance: KafkaRequest) => void;
   mainToggle: boolean;
-  refresh: () => void;
+  refresh: (operation: string) => void;
   page: number;
   perPage: number;
   total: number;
   kafkaDataLoaded: boolean;
+  expectedTotal: number;
 };
 
 type ConfigDetail = {
@@ -80,6 +82,7 @@ const StreamsTableView = ({
   perPage,
   total,
   kafkaDataLoaded,
+  expectedTotal,
 }: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -92,23 +95,32 @@ const StreamsTableView = ({
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const [skeletonRowsCount, setSkeletonRowsCount] = useState<number>(perPage);
+  const searchParams = new URLSearchParams(location.search);
+  const history = useHistory();
+  const setSearchParam = useCallback(
+    (name: string, value: string) => {
+      searchParams.set(name, value.toString());
+    },
+    [searchParams]
+  );
 
-  useEffect(() => {
+  const getExactCount = () => {
     let exact = perPage;
-    if (total && total > 0) {
-      const totalPage = total % perPage !== 0 ? Math.floor(total / perPage) + 1 : Math.floor(total / perPage);
+    if (expectedTotal && expectedTotal > 0) {
+      const totalPage =
+        expectedTotal % perPage !== 0 ? Math.floor(expectedTotal / perPage) + 1 : Math.floor(expectedTotal / perPage);
       if (totalPage === page) {
-        if (total > perPage) {
-          exact = total % perPage === 0 ? perPage : total % perPage;
+        if (expectedTotal > perPage) {
+          exact = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
         } else {
-          exact = total;
+          exact = expectedTotal;
         }
       }
     }
-    if (exact !== perPage) {
-      setSkeletonRowsCount(exact);
-    }
-  }, [total, page, perPage]);
+    if (exact !== perPage && exact !== 0) {
+      return exact;
+    } else return perPage;
+  };
 
   const loggedInOwner: string | undefined =
     keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
@@ -149,6 +161,18 @@ const StreamsTableView = ({
     );
     setItems(incompleteKafkas);
   }, [kafkaInstanceItems]);
+
+  useEffect(() => {
+    if (page > 1) {
+      if (kafkaInstanceItems.length === 0) {
+        setSearchParam('page', (page - 1).toString());
+        setSearchParam('perPage', perPage.toString());
+        history.push({
+          search: searchParams.toString(),
+        });
+      }
+    }
+  }, [page, perPage, kafkaInstanceItems]);
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     if (!kafkaDataLoaded) {
@@ -216,7 +240,7 @@ const StreamsTableView = ({
       for (let i = 0; i < tableColumns.length; i++) {
         cells.push({ title: <Skeleton /> });
       }
-      for (let i = 0; i < skeletonRowsCount; i++) {
+      for (let i = 0; i < getExactCount(); i++) {
         tableRow.push({
           cells: cells,
         });
@@ -281,7 +305,7 @@ const StreamsTableView = ({
       await apisService.deleteKafkaById(instanceId).then(() => {
         setIsDeleteModalOpen(false);
         addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
-        refresh();
+        refresh('delete');
       });
     } catch (error) {
       setIsDeleteModalOpen(false);

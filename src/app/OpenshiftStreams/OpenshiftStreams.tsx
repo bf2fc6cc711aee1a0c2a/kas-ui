@@ -53,7 +53,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
-
+  const [expectedTotal, setExpectedTotal] = useState<number>(perPage);
 
   const drawerRef = React.createRef<any>();
 
@@ -87,6 +87,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           const kafkaInstances = res.data;
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
+          setExpectedTotal(kafkaInstancesList.total);
           setKafkaDataLoaded(true);
         });
       } catch (error) {
@@ -118,8 +119,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setMainToggle(checked);
   };
 
-  const refreshKafkas = () => {
+  const refreshKafkas = (value: string) => {
     setKafkaDataLoaded(false);
+    if (value === 'create') {
+      setExpectedTotal(kafkaInstancesList.total + 1);
+    } else if (value === 'delete') {
+      setExpectedTotal(kafkaInstancesList.total - 1);
+    }
     fetchKafkas();
   };
 
@@ -160,7 +166,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             <PageSection>
               {kafkaInstanceItems === undefined ? (
                 <Loading />
-              ) : kafkaInstanceItems.length < 1 ? (
+              ) : kafkaInstancesList.total < 1 ? (
                 <EmptyState
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
@@ -179,6 +185,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   page={page}
                   perPage={perPage}
                   total={kafkaInstancesList?.total}
+                  expectedTotal={expectedTotal}
                 />
               )}
               {createStreamsInstance && (
