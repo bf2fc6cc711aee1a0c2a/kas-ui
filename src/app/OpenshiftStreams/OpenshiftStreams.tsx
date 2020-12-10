@@ -110,7 +110,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   return (
     <>
       <AlertProvider>
-        <Drawer isExpanded={selectedInstance != null} onExpand={onExpand} aria-modal="true">
+        <Drawer isExpanded={selectedInstance != null} onExpand={onExpand}>
           <DrawerContent
             panelContent={
               <InstanceDrawer

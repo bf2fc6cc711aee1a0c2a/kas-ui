@@ -32,11 +32,11 @@ const routes: AppRouteConfig[] = [
   {
     component: OpenshiftStreamsConnected,
     exact: true,
-    // t('OpenShift Streams')
+    // t('openshift_streams')
     label: 'OpenShift Streams',
     path: '/',
     title: 'OpenShift Streams',
-  }
+  },
 ];
 
 // a custom hook for sending focus to the primary content container
@@ -77,21 +77,23 @@ const flattenedRoutes: IAppRoute[] = routes.reduce(
 
 const AppRoutes = (): React.ReactElement => {
   const { t } = useTranslation();
-  return <LastLocationProvider>
-    <Switch>
-      {flattenedRoutes.map(({ path, exact, component, title, isAsync }, idx) => (
-        <RouteWithTitleUpdates
-          path={path}
-          exact={exact}
-          component={component}
-          key={idx}
-          title={title}
-          isAsync={isAsync}
-        />
-      ))}
-      <PageNotFound title={t('404 Page not found')} />
-    </Switch>
-  </LastLocationProvider>;
-}
+  return (
+    <LastLocationProvider>
+      <Switch>
+        {flattenedRoutes.map(({ path, exact, component, title, isAsync }, idx) => (
+          <RouteWithTitleUpdates
+            path={path}
+            exact={exact}
+            component={component}
+            key={idx}
+            title={title}
+            isAsync={isAsync}
+          />
+        ))}
+        <PageNotFound title={t('404_page_not_found')} />
+      </Switch>
+    </LastLocationProvider>
+  );
+};
 
 export { AppRoutes, routes };

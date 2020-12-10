@@ -9,7 +9,6 @@ export const TablePagination: FunctionComponent<PaginationProps & PaginationTitl
   variant,
   isCompact,
   paginationTitle,
-  'aria-label': ariaLabel,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -53,7 +52,6 @@ export const TablePagination: FunctionComponent<PaginationProps & PaginationTitl
         variant={variant || 'top'}
         onPerPageSelect={onPerPageSelect}
         isCompact={isCompact}
-        aria-label={ariaLabel}
         titles={{ paginationTitle }}
       />
     );

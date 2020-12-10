@@ -43,7 +43,7 @@ export const getDeleteInstanceModalConfig = (
   const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
-    description: ''
+    description: '',
   };
   if (status === InstanceStatus.COMPLETED) {
     config.title = `${t('delete_instance')}?`;
@@ -58,17 +58,17 @@ export const getDeleteInstanceModalConfig = (
 };
 
 const StreamsTableView = ({
-                            mainToggle,
-                            kafkaInstanceItems,
-                            onViewInstance,
-                            onConnectToInstance,
-                            refresh,
-                            createStreamsInstance,
-                            setCreateStreamsInstance,
-                            page,
-                            perPage,
-                            total
-                          }: TableProps) => {
+  mainToggle,
+  kafkaInstanceItems,
+  onViewInstance,
+  onConnectToInstance,
+  refresh,
+  createStreamsInstance,
+  setCreateStreamsInstance,
+  page,
+  perPage,
+  total,
+}: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
@@ -87,33 +87,36 @@ const StreamsTableView = ({
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;
-    const resolver: (IAction | ISeparator)[] = mainToggle ? [
-      {
-        title: t('view_details'),
-        id: 'view-instance',
-        onClick: () => onViewInstance(originalData)
-      }, {
-        title: t('connect_to_instance'),
-        id: 'connect-instance',
-        onClick: () => onConnectToInstance(originalData)
-      },
-      {
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => onDelete(originalData)
-      }
-    ] : [
-      {
-        title: t('view_details'),
-        id: 'view-instance',
-        onClick: () => onViewInstance(originalData)
-      },
-      {
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => onDelete(originalData)
-      }
-    ];
+    const resolver: (IAction | ISeparator)[] = mainToggle
+      ? [
+          {
+            title: t('view_details'),
+            id: 'view-instance',
+            onClick: () => onViewInstance(originalData),
+          },
+          {
+            title: t('connect_to_instance'),
+            id: 'connect-instance',
+            onClick: () => onConnectToInstance(originalData),
+          },
+          {
+            title: t('delete_instance'),
+            id: 'delete-instance',
+            onClick: () => onDelete(originalData),
+          },
+        ]
+      : [
+          {
+            title: t('view_details'),
+            id: 'view-instance',
+            onClick: () => onViewInstance(originalData),
+          },
+          {
+            title: t('delete_instance'),
+            id: 'delete-instance',
+            onClick: () => onDelete(originalData),
+          },
+        ];
     return resolver;
   };
 
@@ -129,10 +132,10 @@ const StreamsTableView = ({
           cloudProviderDisplayName,
           regionDisplayName,
           {
-            title: <StatusColumn status={status} />
-          }
+            title: <StatusColumn status={status} />,
+          },
         ],
-        originalData: row
+        originalData: row,
       });
     });
     return tableRow;
@@ -169,7 +172,7 @@ const StreamsTableView = ({
     const accessToken = await getToken();
     const apisService = new DefaultApi({
       accessToken,
-      basePath
+      basePath,
     });
 
     try {
@@ -220,8 +223,7 @@ const StreamsTableView = ({
         variant={PaginationVariant.bottom}
         page={page}
         perPage={perPage}
-        aria-label={t('pagination-options-menu-bottom')}
-        paginationTitle={t('pagination-options-menu-bottom')}
+        paginationTitle={t('full_pagination')}
       />
       {isDeleteModalOpen && (
         <DeleteInstanceModal

@@ -150,6 +150,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             page={page}
             perPage={perPage}
             isCompact={true}
+            paginationTitle={t('minimal_pagination')}
           />
         </ToolbarItem>
       </ToolbarContent>
