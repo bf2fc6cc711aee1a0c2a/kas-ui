@@ -91,11 +91,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const getPlaceholder = () => {
     if (filterSelected) {
       const placeholder = filterSelected?.toLowerCase() + '_lower';
-      return 'Filter by ' + t(placeholder);
+      return t(`filter_by_${placeholder}`);
     }
     return '';
   };
-  
+
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">

@@ -118,5 +118,6 @@
   "name_lower": "日本語 name",
   "no_permission_to_delete_kafka": "日本語 You do not have permissions to delete this Kakfa instance.",
   "kafka_success_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
-  "kafka_failed_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is failed"
+  "kafka_failed_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is failed",
+  "filter_by_name_lower": "日本語 Filter by name"
 }
