@@ -59,6 +59,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
+    } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(kafkaFormData.name.trim())) {
+      isValid = false;
+      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
     }
 
     if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
@@ -101,10 +104,20 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   };
 
   const handleInstanceNameChange = (name?: string) => {
+    let isValid = true;
+    if (name === undefined || name.trim() === '') {
+      isValid = true;
+    } else if (name && !/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
+      isValid = false;
+    }
     setKafkaFormData({ ...kafkaFormData, name: name || '' });
-    if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
-    if (nameValidated.fieldState === 'error') {
-      setNameValidated({ fieldState: 'default', message: '' });
+    if (isValid) {
+      if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
+      if (nameValidated.fieldState === 'error') {
+        setNameValidated({ fieldState: 'default', message: '' });
+      }
+    } else {
+      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
     }
   };
 
@@ -154,8 +167,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           )}
           <FormGroup
             label={t('instance_name')}
+            helperText={t('create_instance_name_helper_text')}
             helperTextInvalid={nameValidated.message}
-            helperTextInvalidIcon={<ExclamationCircleIcon />}
+            helperTextInvalidIcon={nameValidated.message != '' && <ExclamationCircleIcon />}
             isRequired
             validated={nameValidated.fieldState}
             fieldId="form-instance-name"
