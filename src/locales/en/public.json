@@ -3,7 +3,7 @@
   "Global": "Global",
   "Skip to Content": "Skip to Content",
   "this_is_a_required_field": "This is a required field",
-  "kafka_successfully_created": "Kafka successfully created",
+  "kafka_creation_accepted": "Kafka creation accepted",
   "create_a_streams_instance": "Create a Streams instance",
   "create_instance": "Create instance",
   "cancel": "Cancel",
@@ -30,6 +30,8 @@
   "name": "Name",
   "region": "Region",
   "status": "Status",
+  "kafka_successfully_created": "Kafka instance is ready",
+  "kafka_not_created": "Kafka instance creation failed",
   "view_details": "View details",
   "connect_to_instance": "Connect to instance",
   "kafka_successfully_deleted": "Kafka successfully deleted",
@@ -110,7 +112,9 @@
   "MANAGED-SERVICES-API-401": "Bearer token is malformed",
   "OCM-EX-103": "Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
   "GATEWAY-404": "The requested resource doesn't exist",
-  "unexpected_error":"There was a problem processing the request. Please try again.",
-  "MGD-SERV-API-4":"User {{user}} is not authorized to access the service.",
-  "go_to_openshift_streams":"Go to OpenShift Streams"
+  "unexpected_error": "There was a problem processing the request. Please try again.",
+  "MGD-SERV-API-4": "User {{user}} is not authorized to access the service.",
+  "go_to_openshift_streams": "Go to OpenShift Streams",
+  "kafka_success_message": "The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
+  "kafka_failed_message": "The creation of the <b>{{name}}</b> Kafka instance is failed"
 }

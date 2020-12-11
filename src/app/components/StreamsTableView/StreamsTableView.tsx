@@ -6,7 +6,6 @@ import { AlertVariant, Card, Divider, PaginationVariant } from '@patternfly/reac
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
@@ -72,7 +71,7 @@ const StreamsTableView = ({
 }: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const { addAlert } = useAlerts();
 
@@ -81,10 +80,43 @@ const StreamsTableView = ({
   const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('status')];
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
+  const [items, setItems] = useState<Array<KafkaRequest>>([]);
 
   useEffect(() => {
-    refresh();
-  }, [page, perPage]);
+    const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
+    if (items && items.length > 0) {
+      const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
+        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED || item.status === InstanceStatus.FAILED
+      );
+      lastItemsState.forEach((item: KafkaRequest) => {
+        const instances: KafkaRequest[] = completedOrFailedItems.filter(
+          (cfItem: KafkaRequest) => item.id === cfItem.id
+        );
+        if (instances && instances.length > 0) {
+          if (instances[0].status === InstanceStatus.COMPLETED) {
+            addAlert(
+              t('kafka_successfully_created'),
+              AlertVariant.success,
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
+            );
+          } else if (instances[0].status === InstanceStatus.FAILED) {
+            addAlert(
+              t('kafka_not_created'),
+              AlertVariant.danger,
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
+            );
+          }
+        }
+      });
+    }
+    const incompleteKafkas = Object.assign(
+      [],
+      kafkaInstanceItems.filter(
+        (item: KafkaRequest) => item.status === InstanceStatus.PROVISIONING || item.status === InstanceStatus.ACCEPTED
+      )
+    );
+    setItems(incompleteKafkas);
+  }, [kafkaInstanceItems]);
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
     const originalData: KafkaRequest = rowData.originalData;

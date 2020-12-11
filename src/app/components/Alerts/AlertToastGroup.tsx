@@ -5,7 +5,7 @@ export type AlertType = {
   key: number;
   title: string;
   variant: AlertVariant;
-  body?: string;
+  body?: string|React.ReactElement;
 };
 
 type AlertToastGroupProps = {

@@ -3,7 +3,7 @@
   "Global": "日本語 Global",
   "Skip to Content": "日本語 Skip to Content",
   "this_is_a_required_field": "日本語 This is a required field",
-  "kafka_successfully_created": "日本語 Kafka successfully created",
+  "kafka_creation_accepted": "日本語 Kafka creation accepted",
   "create_a_streams_instance": "日本語 Create a streams instance",
   "create_instance": "日本語 日本語 create instance",
   "cancel": "日本語 Cancel",
@@ -30,6 +30,8 @@
   "name": "日本語 Name",
   "region": "日本語 Region",
   "status": "日本語 Status",
+  "kafka_successfully_created": "日本語 {{name}} Kafka successfully created",
+  "kafka_not_created": "日本語 Unable to create {{name}} kafka.",
   "view_details": "日本語 View details",
   "connect_to_instance": "日本語 Connect to instance",
   "kafka_successfully_deleted": "日本語 Kafka successfully deleted",
@@ -110,7 +112,9 @@
   "MANAGED-SERVICES-API-401": "日本語 Bearer token is malformed",
   "OCM-EX-103": "日本語 Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
   "GATEWAY-404": "日本語 The requested resource doesn't exist",
-  "unexpected_error":"日本語 There was a problem processing the request. Please try again.",
-  "MGD-SERV-API-4":"日本語 User {{user}} is not authorized to access the service.",
-  "go_to_openshift_streams":"日本語 Go to OpenShift Streams"
+  "unexpected_error": "日本語 There was a problem processing the request. Please try again.",
+  "MGD-SERV-API-4": "日本語 User {{user}} is not authorized to access the service.",
+  "go_to_openshift_streams": "日本語 Go to OpenShift Streams",
+  "kafka_success_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
+  "kafka_failed_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is failed"
 }
