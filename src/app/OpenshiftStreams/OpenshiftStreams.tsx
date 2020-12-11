@@ -54,7 +54,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   // state to store the expected total kafka instances based on the operation
-  const [expectedTotal, setExpectedTotal] = useState<number>(perPage);
+  const [expectedTotal, setExpectedTotal] = useState<number>(0);
 
   const drawerRef = React.createRef<any>();
 
@@ -88,7 +88,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           const kafkaInstances = res.data;
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
-          setExpectedTotal(kafkaInstancesList.total);
+          kafkaInstancesList?.total !== undefined &&
+            kafkaInstancesList.total > expectedTotal &&
+            setExpectedTotal(kafkaInstancesList.total);
           setKafkaDataLoaded(true);
         });
       } catch (error) {
