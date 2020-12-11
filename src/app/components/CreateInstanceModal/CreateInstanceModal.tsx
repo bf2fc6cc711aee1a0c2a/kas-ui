@@ -29,7 +29,7 @@ type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
-  refresh: () => void;
+  refresh: (operation:string) => void;
 };
 
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
@@ -77,7 +77,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
           handleModalToggle();
-          refresh();
+          refresh('create');
         });
       } catch (error) {
         let reason;

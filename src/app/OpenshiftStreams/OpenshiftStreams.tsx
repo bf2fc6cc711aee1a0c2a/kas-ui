@@ -53,6 +53,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
+  // state to store the expected total kafka instances based on the operation
+  const [expectedTotal, setExpectedTotal] = useState<number>(0);
+
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -85,10 +88,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           const kafkaInstances = res.data;
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
+          kafkaInstancesList?.total !== undefined &&
+            kafkaInstancesList.total > expectedTotal &&
+            setExpectedTotal(kafkaInstancesList.total);
           setKafkaDataLoaded(true);
         });
       } catch (error) {
-        let reason;
+        let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
@@ -104,6 +110,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useEffect(() => {
     setKafkaDataLoaded(false);
+    fetchKafkas();
   }, [getToken, page, perPage]);
 
   useEffect(() => {
@@ -114,6 +121,25 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   const handleSwitchChange = (checked: boolean) => {
     setMainToggle(checked);
+  };
+
+  const refreshKafkas = (value: string) => {
+    //set the page to laoding state
+    setKafkaDataLoaded(false);
+    if (value === 'create') {
+      /*
+        increase the expected total by 1 
+        as create operation will lead to adding a kafka in the list of response
+      */
+      setExpectedTotal(kafkaInstancesList.total + 1);
+    } else if (value === 'delete') {
+      /*
+        decrease the expected total by 1 
+        as create operation will lead to removing a kafka in the list of response
+      */
+      setExpectedTotal(kafkaInstancesList.total - 1);
+    }
+    fetchKafkas();
   };
 
   return (
@@ -151,36 +177,36 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               </Level>
             </PageSection>
             <PageSection>
-              {!kafkaDataLoaded ? (
+              {kafkaInstanceItems === undefined ? (
                 <Loading />
-              ) : kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
+              ) : kafkaInstancesList.total < 1 ? (
+                <EmptyState
+                  createStreamsInstance={createStreamsInstance}
+                  setCreateStreamsInstance={setCreateStreamsInstance}
+                  mainToggle={mainToggle}
+                />
+              ) : (
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
                   onConnectToInstance={onConnectInstance}
                   onViewInstance={onViewInstance}
-                  refresh={fetchKafkas}
+                  refresh={refreshKafkas}
+                  kafkaDataLoaded={kafkaDataLoaded}
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   page={page}
                   perPage={perPage}
                   total={kafkaInstancesList?.total}
+                  expectedTotal={expectedTotal}
                 />
-              ) : (
-                kafkaInstanceItems !== undefined && (
-                  <EmptyState
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    mainToggle={mainToggle}
-                  />
-                )
               )}
               {createStreamsInstance && (
                 <CreateInstanceModal
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   mainToggle={mainToggle}
-                  refresh={fetchKafkas}
+                  refresh={refreshKafkas}
                 />
               )}
             </PageSection>

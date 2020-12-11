@@ -2,7 +2,6 @@ import React from 'react';
 import { CheckCircleIcon, PendingIcon, ExclamationCircleIcon, IconSize } from '@patternfly/react-icons';
 import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
 import { InstanceStatus } from '@app/constants';
-import { capitalize } from '@app/utils';
 import './StatusColumn.css';
 import { useTranslation } from 'react-i18next';
 
