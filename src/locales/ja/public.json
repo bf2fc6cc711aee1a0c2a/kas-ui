@@ -112,18 +112,11 @@
   "MANAGED-SERVICES-API-401": "日本語 Bearer token is malformed",
   "OCM-EX-103": "日本語 Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
   "GATEWAY-404": "日本語 The requested resource doesn't exist",
-<<<<<<< HEAD
   "unexpected_error": "日本語 There was a problem processing the request. Please try again.",
   "MGD-SERV-API-4": "日本語 User {{user}} is not authorized to access the service.",
   "go_to_openshift_streams": "日本語 Go to OpenShift Streams",
+  "name_lower": "日本語 name",
+  "no_permission_to_delete_kafka": "日本語 You do not have permissions to delete this Kakfa instance.",
   "kafka_success_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
   "kafka_failed_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is failed"
 }
-=======
-  "unexpected_error":"日本語 There was a problem processing the request. Please try again.",
-  "MGD-SERV-API-4":"日本語 User {{user}} is not authorized to access the service.",
-  "go_to_openshift_streams":"日本語 Go to OpenShift Streams",
-  "name_lower": "日本語 name",
-  "no_permission_to_delete_kafka": "日本語 You do not have permissions to delete this Kakfa instance."
-}
->>>>>>> add owner column in table and abilty to disable the delete action based on loggedIn user and kafka owner

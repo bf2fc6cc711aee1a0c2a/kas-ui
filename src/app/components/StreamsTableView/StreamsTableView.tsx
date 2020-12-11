@@ -146,6 +146,10 @@ const StreamsTableView = ({
               content: t('no_permission_to_delete_kafka'),
             },
             isDisabled: !isUserSameAsLoggedIn,
+            style: {
+              pointerEvents: 'auto',
+              cursor: 'default',
+            },
           },
         ]
       : [
@@ -164,6 +168,10 @@ const StreamsTableView = ({
               content: t('no_permission_to_delete_kafka'),
             },
             isDisabled: !isUserSameAsLoggedIn,
+            style: {
+              pointerEvents: 'auto',
+              cursor: 'default',
+            },
           },
         ];
     return resolver;
