@@ -29,7 +29,7 @@ type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
-  refresh: () => void;
+  refresh: (operation:string) => void;
 };
 
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
@@ -43,7 +43,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   newKafka.cloud_provider = 'aws';
   newKafka.region = 'us-east-1';
   newKafka.multi_az = true;
-  const cloudRegionsAvailable = [{ value: '', label: 'please_select', disabled: false }, ...cloudRegionOptions];
+  const cloudRegionsAvailable = [{ value: 'please_select', label: 'please_select', disabled: false }, ...cloudRegionOptions];
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -59,6 +59,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
+    } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(kafkaFormData.name.trim())) {
+      isValid = false;
+      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
     }
 
     if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
@@ -75,9 +78,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           basePath,
         });
         await apisService.createKafka(true, kafkaFormData).then((res) => {
-          addAlert(t('kafka_successfully_created'), AlertVariant.success);
+          // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
           handleModalToggle();
-          refresh();
+          refresh('create');
         });
       } catch (error) {
         let reason;
@@ -101,10 +104,20 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   };
 
   const handleInstanceNameChange = (name?: string) => {
+    let isValid = true;
+    if (name === undefined || name.trim() === '') {
+      isValid = true;
+    } else if (name && !/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
+      isValid = false;
+    }
     setKafkaFormData({ ...kafkaFormData, name: name || '' });
-    if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
-    if (nameValidated.fieldState === 'error') {
-      setNameValidated({ fieldState: 'default', message: '' });
+    if (isValid) {
+      if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
+      if (nameValidated.fieldState === 'error') {
+        setNameValidated({ fieldState: 'default', message: '' });
+      }
+    } else {
+      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
     }
   };
 
@@ -136,6 +149,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         title={t('create_a_streams_instance')}
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
+        aria-modal="true"        
         actions={[
           <Button key="create" variant="primary" onClick={onCreateInstance} isDisabled={!isFormValid}>
             {t('create_instance')}
@@ -153,8 +167,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           )}
           <FormGroup
             label={t('instance_name')}
+            helperText={t('create_instance_name_helper_text')}
             helperTextInvalid={nameValidated.message}
-            helperTextInvalidIcon={<ExclamationCircleIcon />}
+            helperTextInvalidIcon={nameValidated.message != '' && <ExclamationCircleIcon />}
             isRequired
             validated={nameValidated.fieldState}
             fieldId="form-instance-name"
@@ -196,7 +211,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               aria-label={t('cloud_region')}
             >
               {cloudRegionsAvailable.map((option, index) => (
-                <FormSelectOption key={index} value={option.value} label={t(option.label)} />
+                <FormSelectOption key={index} value={option.value} label={t(option.value)} />
               ))}
             </FormSelect>
           </FormGroup>

@@ -3,7 +3,7 @@ import { AlertType, AlertToastGroup } from './AlertToastGroup';
 import { AlertVariant } from '@patternfly/react-core';
 
 export type AlertContextProps = {
-  addAlert: (message: string, variant?: AlertVariant, body?: string) => void;
+  addAlert: (message: string, variant?: AlertVariant, body?: string|React.ReactElement) => void;
 };
 
 export const AlertContext = createContext<AlertContextProps>({
@@ -40,7 +40,7 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
     setTimers((timers) => [...timers.filter((timer) => timer.key === key)]);
   };
 
-  const addAlert = (title: string, variant: AlertVariant = AlertVariant.default, body?: string) => {
+  const addAlert = (title: string, variant: AlertVariant = AlertVariant.default, body?: string|React.ReactElement) => {
     setAlerts([...alerts, { key: createId(), title, variant, body }]);
   };
 

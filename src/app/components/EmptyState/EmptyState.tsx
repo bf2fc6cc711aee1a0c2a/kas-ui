@@ -19,11 +19,11 @@ const EmptyState: React.FC<EmptyStateProps> = ({ createStreamsInstance, setCreat
       <PFEmptyState>
         <EmptyStateIcon icon={PlusCircleIcon} />
         <Title headingLevel="h4" size="lg">
-          {t("You don't have any Streams instances yet")}
+          {t('you_do_not_have_any_streams_instances_yet')}
         </Title>
-        <EmptyStateBody>{t('Create a Streams instance to get started')}</EmptyStateBody>
+        <EmptyStateBody>{t('create_a_streams_instance_to_get_started')}</EmptyStateBody>
         <Button variant="primary" onClick={onCreate}>
-          {t('Create a Streams Instance')}
+          {t('create_a_streams_instance')}
         </Button>
       </PFEmptyState>
     </>

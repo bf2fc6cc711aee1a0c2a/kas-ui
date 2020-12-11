@@ -1,12 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { IAction, IExtraData, IRowData, ISeparator, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { AlertVariant, Card, Divider, PaginationVariant } from '@patternfly/react-core';
+import {
+  IAction,
+  IExtraData,
+  IRowData,
+  ISeparator,
+  Table,
+  TableBody,
+  TableHeader,
+  IRowCell,
+} from '@patternfly/react-table';
+import { AlertVariant, Card, Divider, PaginationVariant, Skeleton } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { BASE_PATH } from '../../common/app-config';
 import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
@@ -16,6 +24,8 @@ import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
+import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
+import { useHistory } from 'react-router-dom';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -24,10 +34,12 @@ type TableProps = {
   onViewInstance: (instance: KafkaRequest) => void;
   onConnectToInstance: (instance: KafkaRequest) => void;
   mainToggle: boolean;
-  refresh: () => void;
+  refresh: (operation: string) => void;
   page: number;
   perPage: number;
   total: number;
+  kafkaDataLoaded: boolean;
+  expectedTotal: number;
 };
 
 type ConfigDetail = {
@@ -69,25 +81,118 @@ const StreamsTableView = ({
   page,
   perPage,
   total,
+  kafkaDataLoaded,
+  expectedTotal,
 }: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const keycloakContext = useContext(KeycloakContext);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
+  const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('owner'), t('status')];
+  const [filterSelected, setFilterSelected] = useState('Name');
+  const [namesSelected, setNamesSelected] = useState<string[]>([]);
+  const [items, setItems] = useState<Array<KafkaRequest>>([]);
+  const searchParams = new URLSearchParams(location.search);
+  const history = useHistory();
 
   const { addAlert } = useAlerts();
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('status')];
-  const [filterSelected, setFilterSelected] = useState('Name');
-  const [namesSelected, setNamesSelected] = useState<string[]>([]);
+  const setSearchParam = useCallback(
+    (name: string, value: string) => {
+      searchParams.set(name, value.toString());
+    },
+    [searchParams]
+  );
 
+  const loggedInOwner: string | undefined =
+    keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
+
+  // function to get exact number of skeleton count required for the current page
+  const getLoadingRowsCount = () => {
+    // initiaise loadingRowCount by perPage
+    let loadingRowCount = perPage;
+    /*
+      if number of expected count is greater than 0
+        calculate the loadingRowCount 
+      else
+        leave the loadingRowCount to perPage
+     */
+    if (expectedTotal && expectedTotal > 0) {
+      // get total number of pages
+      const totalPage =
+        expectedTotal % perPage !== 0 ? Math.floor(expectedTotal / perPage) + 1 : Math.floor(expectedTotal / perPage);
+      // check whether the current page is the last page
+      if (page === totalPage) {
+        // check whether to total expected count is greater than perPage count
+        if (expectedTotal > perPage) {
+          // assign the calculated skelton rows count to display the exact number of expected loading skelton rows
+          loadingRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
+        } else {
+          loadingRowCount = expectedTotal;
+        }
+      }
+    }
+    // return the exact number of skeleton expected at the time of loading
+    return loadingRowCount !== 0 ? loadingRowCount : perPage;
+  };
   useEffect(() => {
-    refresh();
-  }, [page, perPage]);
+    /* 
+      the logic is to redirect the user to previous page 
+      if there are no content for the particular page number and page size
+    */
+    if (page > 1) {
+      if (kafkaInstanceItems.length === 0) {
+        setSearchParam('page', (page - 1).toString());
+        setSearchParam('perPage', perPage.toString());
+        history.push({
+          search: searchParams.toString(),
+        });
+      }
+    }
+
+    const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
+    if (items && items.length > 0) {
+      const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
+        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED || item.status === InstanceStatus.FAILED
+      );
+      lastItemsState.forEach((item: KafkaRequest) => {
+        const instances: KafkaRequest[] = completedOrFailedItems.filter(
+          (cfItem: KafkaRequest) => item.id === cfItem.id
+        );
+        if (instances && instances.length > 0) {
+          if (instances[0].status === InstanceStatus.COMPLETED) {
+            addAlert(
+              t('kafka_successfully_created'),
+              AlertVariant.success,
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
+            );
+          } else if (instances[0].status === InstanceStatus.FAILED) {
+            addAlert(
+              t('kafka_not_created'),
+              AlertVariant.danger,
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
+            );
+          }
+        }
+      });
+    }
+    const incompleteKafkas = Object.assign(
+      [],
+      kafkaInstanceItems?.filter(
+        (item: KafkaRequest) => item.status === InstanceStatus.PROVISIONING || item.status === InstanceStatus.ACCEPTED
+      )
+    );
+    setItems(incompleteKafkas);
+  }, [page, perPage, kafkaInstanceItems]);
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
+    if (!kafkaDataLoaded) {
+      return [];
+    }
     const originalData: KafkaRequest = rowData.originalData;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInOwner;
     const resolver: (IAction | ISeparator)[] = mainToggle
       ? [
           {
@@ -103,7 +208,17 @@ const StreamsTableView = ({
           {
             title: t('delete_instance'),
             id: 'delete-instance',
-            onClick: () => onDelete(originalData),
+            onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+            tooltip: !isUserSameAsLoggedIn,
+            tooltipProps: {
+              position: 'left',
+              content: t('no_permission_to_delete_kafka'),
+            },
+            isDisabled: !isUserSameAsLoggedIn,
+            style: {
+              pointerEvents: 'auto',
+              cursor: 'default',
+            },
           },
         ]
       : [
@@ -115,7 +230,17 @@ const StreamsTableView = ({
           {
             title: t('delete_instance'),
             id: 'delete-instance',
-            onClick: () => onDelete(originalData),
+            onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+            tooltip: !isUserSameAsLoggedIn,
+            tooltipProps: {
+              position: 'left',
+              content: t('no_permission_to_delete_kafka'),
+            },
+            isDisabled: !isUserSameAsLoggedIn,
+            style: {
+              pointerEvents: 'auto',
+              cursor: 'default',
+            },
           },
         ];
     return resolver;
@@ -123,8 +248,24 @@ const StreamsTableView = ({
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
+    const loadingCount: number = getLoadingRowsCount();
+    if (!kafkaDataLoaded) {
+      // for loading state
+      const cells: (React.ReactNode | IRowCell)[] = [];
+      //get exact number of skeleton cells based on total columns
+      for (let i = 0; i < tableColumns.length; i++) {
+        cells.push({ title: <Skeleton /> });
+      }
+      // get exact of skeleton rows based on expected total count of instances
+      for (let i = 0; i < loadingCount; i++) {
+        tableRow.push({
+          cells: cells,
+        });
+      }
+      return tableRow;
+    }
     kafkaInstanceItems.forEach((row: IRowData) => {
-      const { name, cloud_provider, region, status } = row;
+      const { name, cloud_provider, region, status, owner } = row;
       const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
       const regionDisplayName = getCloudRegionDisplayName(region);
       tableRow.push({
@@ -132,6 +273,7 @@ const StreamsTableView = ({
           name,
           cloudProviderDisplayName,
           regionDisplayName,
+          owner,
           {
             title: <StatusColumn status={status} />,
           },
@@ -180,7 +322,7 @@ const StreamsTableView = ({
       await apisService.deleteKafkaById(instanceId).then(() => {
         setIsDeleteModalOpen(false);
         addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
-        refresh();
+        refresh('delete');
       });
     } catch (error) {
       setIsDeleteModalOpen(false);
@@ -225,13 +367,13 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      <Divider />
       <TablePagination
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
         variant={PaginationVariant.bottom}
         page={page}
         perPage={perPage}
+        paginationTitle={t('full_pagination')}
       />
       {isDeleteModalOpen && (
         <DeleteInstanceModal

@@ -243,7 +243,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
               <Text component={TextVariants.small} className="pf-u-mb-0">
                 {t('instance_name')}
               </Text>
-              <Title headingLevel="h3" size={TitleSizes['2xl']} className="pf-u-mt-0 ">
+              <Title headingLevel="h1" size={TitleSizes['xl']} className="pf-u-mt-0 ">
                 {instanceDetail?.name}
               </Title>
             </TextContent>
