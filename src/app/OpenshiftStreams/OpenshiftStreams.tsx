@@ -53,6 +53,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
+  // state to store the expected total kafka instances based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(perPage);
 
   const drawerRef = React.createRef<any>();
@@ -91,7 +92,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           setKafkaDataLoaded(true);
         });
       } catch (error) {
-        let reason:string|undefined="";
+        let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
@@ -120,10 +121,19 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   const refreshKafkas = (value: string) => {
+    //set the page to laoding state
     setKafkaDataLoaded(false);
     if (value === 'create') {
+      /*
+        increase the expected total by 1 
+        as create operation will lead to adding a kafka in the list of response
+      */
       setExpectedTotal(kafkaInstancesList.total + 1);
     } else if (value === 'delete') {
+      /*
+        decrease the expected total by 1 
+        as create operation will lead to removing a kafka in the list of response
+      */
       setExpectedTotal(kafkaInstancesList.total - 1);
     }
     fetchKafkas();

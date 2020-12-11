@@ -104,22 +104,33 @@ const StreamsTableView = ({
     [searchParams]
   );
 
-  const getExactCount = () => {
-    let exact = perPage;
+  // function to get exact number of skeleton count required for the current page
+  const getSkeltonRowsCount = () => {
+    // initiaise skeletonRowCount by perPage
+    let skeletonRowCount = perPage;
+    /*
+      if number of expected count is greater than 0
+        calculate the skeletonRowCount 
+      else
+        remain the skeletonRowCount to perPage
+     */
     if (expectedTotal && expectedTotal > 0) {
+      // get total number of pages
       const totalPage =
         expectedTotal % perPage !== 0 ? Math.floor(expectedTotal / perPage) + 1 : Math.floor(expectedTotal / perPage);
-      if (totalPage === page) {
+      // check whether the current page is the last page
+      if (page === totalPage) {
+        // check whether to total expected count is greater than perPage count
         if (expectedTotal > perPage) {
-          exact = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
+          // assign the calculated skelton rows count to display the exact number of expected loading skelton rows
+          skeletonRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
         } else {
-          exact = expectedTotal;
+          skeletonRowCount = expectedTotal;
         }
       }
     }
-    if (exact !== perPage && exact !== 0) {
-      return exact;
-    } else return perPage;
+    // return the exact number of skeleton expected at the time of loading
+    return skeletonRowCount !== 0 ? skeletonRowCount : perPage;
   };
 
   const loggedInOwner: string | undefined =
@@ -163,6 +174,10 @@ const StreamsTableView = ({
   }, [kafkaInstanceItems]);
 
   useEffect(() => {
+    /* 
+      the logic is to redirect the user to previous page 
+      if there are no content for the particular page number and page size
+    */
     if (page > 1) {
       if (kafkaInstanceItems.length === 0) {
         setSearchParam('page', (page - 1).toString());
@@ -236,11 +251,14 @@ const StreamsTableView = ({
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     if (!kafkaDataLoaded) {
+      // for loading state
       const cells: (React.ReactNode | IRowCell)[] = [];
+      //get exact number of skeleton cells based on total columns
       for (let i = 0; i < tableColumns.length; i++) {
         cells.push({ title: <Skeleton /> });
       }
-      for (let i = 0; i < getExactCount(); i++) {
+      // get exact of skeleton rows based on expected total count of instances
+      for (let i = 0; i < getSkeltonRowsCount(); i++) {
         tableRow.push({
           cells: cells,
         });
