@@ -120,5 +120,6 @@
   "name_lower": "name",
   "no_permission_to_delete_kafka": "You do not have permissions to delete this Kakfa instance.",
   "please_select": "Please select",
-  "filter_by_name_lower": "Filter by name"
+  "filter_by_name_lower": "Filter by name",
+  "us-east-1":"US East, N. Virginia"
 }
