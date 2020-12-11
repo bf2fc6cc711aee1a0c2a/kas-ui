@@ -115,6 +115,6 @@
   "unexpected_error": "There was a problem processing the request. Please try again.",
   "MGD-SERV-API-4": "User {{user}} is not authorized to access the service.",
   "go_to_openshift_streams": "Go to OpenShift Streams",
-  "kafka_success_message": "The creation of the {{name}} Kafka instance is complete and ready for you to create topics.",
-  "kafka_failed_message": "The creation of the {{name}} Kafka instance is failed"
+  "kafka_success_message": "The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
+  "kafka_failed_message": "The creation of the <b>{{name}}</b> Kafka instance is failed"
 }

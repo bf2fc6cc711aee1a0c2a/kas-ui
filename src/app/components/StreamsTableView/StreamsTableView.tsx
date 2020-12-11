@@ -97,13 +97,13 @@ const StreamsTableView = ({
             addAlert(
               t('kafka_successfully_created'),
               AlertVariant.success,
-              t('kafka_success_message', { name: instances[0]?.name })
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
             );
           } else if (instances[0].status === InstanceStatus.FAILED) {
             addAlert(
               t('kafka_not_created'),
               AlertVariant.danger,
-              t('kafka_failed_message', { name: instances[0]?.name })
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
             );
           }
         }
