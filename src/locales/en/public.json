@@ -117,7 +117,6 @@
   "go_to_openshift_streams": "Go to OpenShift Streams",
   "kafka_success_message": "The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
   "kafka_failed_message": "The creation of the <b>{{name}}</b> Kafka instance is failed",
-  "name_lower": "name",
   "no_permission_to_delete_kafka": "You do not have permissions to delete this Kakfa instance.",
   "please_select": "Please select",
   "filter_by_name_lower": "Filter by name",
