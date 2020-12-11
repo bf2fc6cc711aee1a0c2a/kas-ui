@@ -289,6 +289,7 @@ const StreamsTableView = ({
         variant={PaginationVariant.bottom}
         page={page}
         perPage={perPage}
+        paginationTitle={t('full_pagination')}
       />
       {isDeleteModalOpen && (
         <DeleteInstanceModal

@@ -1,8 +1,15 @@
 import React, { useCallback, FunctionComponent } from 'react';
 import { useHistory, useLocation } from 'react-router';
-import { Pagination, PaginationProps } from '@patternfly/react-core';
+import { Pagination, PaginationProps, PaginationTitles } from '@patternfly/react-core';
 
-export const TablePagination: FunctionComponent<PaginationProps> = ({ page, perPage, itemCount, variant, isCompact }) => {
+export const TablePagination: FunctionComponent<PaginationProps & PaginationTitles> = ({
+  page,
+  perPage,
+  itemCount,
+  variant,
+  isCompact,
+  paginationTitle,
+}) => {
   const history = useHistory();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -44,7 +51,8 @@ export const TablePagination: FunctionComponent<PaginationProps> = ({ page, perP
         onSetPage={onSetPage}
         variant={variant || 'top'}
         onPerPageSelect={onPerPageSelect}
-        isCompact={isCompact}        
+        isCompact={isCompact}
+        titles={{ paginationTitle }}
       />
     );
   }

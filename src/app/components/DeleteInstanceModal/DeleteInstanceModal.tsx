@@ -38,9 +38,9 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   instanceStatus,
   selectedInstance,
 }: DeleteInstanceModalProps) => {
-  const {t}=useTranslation();
+  const { t } = useTranslation();
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
-  
+
   const selectedInstanceName = selectedInstance?.name;
 
   const handleModalToggle = () => {
@@ -87,12 +87,13 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
         </Button>,
       ]}
     >
-      <Text dangerouslySetInnerHTML={{__html:description || ''}} />   
+      <Text className="text-content" dangerouslySetInnerHTML={{ __html: description || '' }} />
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
-          <TextContent className="text-content">
-            <Text dangerouslySetInnerHTML={{__html:t("instance_name_label",{name:selectedInstanceName})}}/>          
-          </TextContent>
+          <label
+            htmlFor="instance-name"
+            dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
+          />
           <TextInput id="instance-name" type="text" value={instanceNameInput} onChange={handleInstanceName} />
         </>
       )}
