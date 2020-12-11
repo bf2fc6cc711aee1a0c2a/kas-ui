@@ -108,6 +108,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useEffect(() => {
     setKafkaDataLoaded(false);
+    fetchKafkas();
   }, [getToken, page, perPage]);
 
   useEffect(() => {

@@ -94,15 +94,20 @@ const StreamsTableView = ({
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
-  const [skeletonRowsCount, setSkeletonRowsCount] = useState<number>(perPage);
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
+
+  const { addAlert } = useAlerts();
+
   const setSearchParam = useCallback(
     (name: string, value: string) => {
       searchParams.set(name, value.toString());
     },
     [searchParams]
   );
+
+  const loggedInOwner: string | undefined =
+    keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
 
   // function to get exact number of skeleton count required for the current page
   const getLoadingRowsCount = () => {
@@ -132,12 +137,21 @@ const StreamsTableView = ({
     // return the exact number of skeleton expected at the time of loading
     return loadingRowCount !== 0 ? loadingRowCount : perPage;
   };
-
-  const loggedInOwner: string | undefined =
-    keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
-  const { addAlert } = useAlerts();
-
   useEffect(() => {
+    /* 
+      the logic is to redirect the user to previous page 
+      if there are no content for the particular page number and page size
+    */
+    if (page > 1) {
+      if (kafkaInstanceItems.length === 0) {
+        setSearchParam('page', (page - 1).toString());
+        setSearchParam('perPage', perPage.toString());
+        history.push({
+          search: searchParams.toString(),
+        });
+      }
+    }
+
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
@@ -171,22 +185,6 @@ const StreamsTableView = ({
       )
     );
     setItems(incompleteKafkas);
-  }, [kafkaInstanceItems]);
-
-  useEffect(() => {
-    /* 
-      the logic is to redirect the user to previous page 
-      if there are no content for the particular page number and page size
-    */
-    if (page > 1) {
-      if (kafkaInstanceItems.length === 0) {
-        setSearchParam('page', (page - 1).toString());
-        setSearchParam('perPage', perPage.toString());
-        history.push({
-          search: searchParams.toString(),
-        });
-      }
-    }
   }, [page, perPage, kafkaInstanceItems]);
 
   const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
@@ -250,6 +248,7 @@ const StreamsTableView = ({
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
+    const loadingCount: number = getLoadingRowsCount();
     if (!kafkaDataLoaded) {
       // for loading state
       const cells: (React.ReactNode | IRowCell)[] = [];
@@ -258,7 +257,7 @@ const StreamsTableView = ({
         cells.push({ title: <Skeleton /> });
       }
       // get exact of skeleton rows based on expected total count of instances
-      for (let i = 0; i < getLoadingRowsCount(); i++) {
+      for (let i = 0; i < loadingCount; i++) {
         tableRow.push({
           cells: cells,
         });
