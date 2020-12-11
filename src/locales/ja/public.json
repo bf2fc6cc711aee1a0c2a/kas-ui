@@ -116,8 +116,10 @@
   "unexpected_error": "日本語 There was a problem processing the request. Please try again.",
   "MGD-SERV-API-4": "日本語 User {{user}} is not authorized to access the service.",
   "go_to_openshift_streams": "日本語 Go to OpenShift Streams",
-  "name_lower": "日本語 name",
   "no_permission_to_delete_kafka": "日本語 You do not have permissions to delete this Kakfa instance.",
   "kafka_success_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
-  "kafka_failed_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is failed"
+  "kafka_failed_message": "日本語 The creation of the <b>{{name}}</b> Kafka instance is failed",
+  "filter_by_name_lower": "日本語 Filter by name",
+  "please_select": "日本語 Please select",
+  "us-east-1":"日本語 US East, N. Virginia"
 }

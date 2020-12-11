@@ -43,7 +43,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   newKafka.cloud_provider = 'aws';
   newKafka.region = 'us-east-1';
   newKafka.multi_az = true;
-  const cloudRegionsAvailable = [{ value: '', label: 'please_select', disabled: false }, ...cloudRegionOptions];
+  const cloudRegionsAvailable = [{ value: 'please_select', label: 'please_select', disabled: false }, ...cloudRegionOptions];
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -197,7 +197,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               aria-label={t('cloud_region')}
             >
               {cloudRegionsAvailable.map((option, index) => (
-                <FormSelectOption key={index} value={option.value} label={t(option.label)} />
+                <FormSelectOption key={index} value={option.value} label={t(option.value)} />
               ))}
             </FormSelect>
           </FormGroup>
