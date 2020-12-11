@@ -471,7 +471,7 @@ export interface KafkaRequestPayload {
      */
     multi_az?: boolean;
     /**
-     * The name of the Kafka cluster
+     * The name of the Kafka cluster. It must consist of lower-case alphanumeric characters or \'-\', start with an alphabetic character, and end with an alphanumeric character, and can not be longer than 32 characters.
      * @type {string}
      * @memberof KafkaRequestPayload
      */
@@ -583,138 +583,207 @@ export interface ObjectReference {
     href?: string;
 }
 /**
+ * Service Account created in MAS-SSO for the Kafka Cluster for authentication
+ * @export
+ * @interface ServiceAccount
+ */
+export interface ServiceAccount {
+    /**
+     * server generated unique id of the service account
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    href?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    clientID?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    clientSecret?: string;
+}
+/**
  * 
+ * @export
+ * @interface ServiceAccountAllOf
+ */
+export interface ServiceAccountAllOf {
+    /**
+     * server generated unique id of the service account
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    clientID?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    clientSecret?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ServiceAccountList
+ */
+export interface ServiceAccountList extends ServiceAccountListAllOf {
+}
+/**
+ * 
+ * @export
+ * @interface ServiceAccountListAllOf
+ */
+export interface ServiceAccountListAllOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountListAllOf
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {Array<ServiceAccountListItem>}
+     * @memberof ServiceAccountListAllOf
+     */
+    items?: Array<ServiceAccountListItem>;
+}
+/**
+ * 
+ * @export
+ * @interface ServiceAccountListItem
+ */
+export interface ServiceAccountListItem {
+    /**
+     * server generated unique id of the service account
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    href?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    clientID?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    name?: string;
+    /**
+     * 
+     * @type {AnyType}
+     * @memberof ServiceAccountListItem
+     */
+    description?: AnyType;
+}
+/**
+ * 
+ * @export
+ * @interface ServiceAccountListItemAllOf
+ */
+export interface ServiceAccountListItemAllOf {
+    /**
+     * server generated unique id of the service account
+     * @type {string}
+     * @memberof ServiceAccountListItemAllOf
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountListItemAllOf
+     */
+    clientID?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountListItemAllOf
+     */
+    name?: string;
+    /**
+     * 
+     * @type {AnyType}
+     * @memberof ServiceAccountListItemAllOf
+     */
+    description?: AnyType;
+}
+/**
+ * Schema for the request to create a service account
  * @export
  * @interface ServiceAccountRequest
  */
 export interface ServiceAccountRequest {
     /**
-     * 
+     * The name of the service account
      * @type {string}
      * @memberof ServiceAccountRequest
      */
-    id?: string;
+    name: string;
     /**
-     * 
+     * A description for the service account
      * @type {string}
      * @memberof ServiceAccountRequest
-     */
-    kind?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountRequest
-     */
-    href?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountRequest
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountRequest
-     */
-    description?: string;
-}
-/**
- * 
- * @export
- * @interface ServiceAccountRequestAllOf
- */
-export interface ServiceAccountRequestAllOf {
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountRequestAllOf
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountRequestAllOf
-     */
-    description?: string;
-}
-/**
- * 
- * @export
- * @interface ServiceAccountResponse
- */
-export interface ServiceAccountResponse {
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponse
-     */
-    id?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponse
-     */
-    kind?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponse
-     */
-    href?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponse
-     */
-    clientID?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponse
-     */
-    clientSecret?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponse
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponse
-     */
-    description?: string;
-}
-/**
- * 
- * @export
- * @interface ServiceAccountResponseAllOf
- */
-export interface ServiceAccountResponseAllOf {
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponseAllOf
-     */
-    clientID?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponseAllOf
-     */
-    clientSecret?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponseAllOf
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceAccountResponseAllOf
      */
     description?: string;
 }
@@ -784,8 +853,8 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @summary Create a kafka service account
-         * @param {ServiceAccountRequest} serviceAccountRequest 
+         * @summary Create a service account
+         * @param {ServiceAccountRequest} serviceAccountRequest service account request
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -843,6 +912,51 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 throw new RequiredError('id','Required parameter id was null or undefined when calling deleteKafkaById.');
             }
             const localVarPath = `/api/managed-services-api/v1/kafkas/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Delete service account
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteServiceAccount: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteServiceAccount.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/serviceaccounts/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
             let baseOptions;
@@ -1073,6 +1187,90 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary List service accounts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listServiceAccounts: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/managed-services-api/v1/serviceaccounts`;
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary reset credentials for the service account
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetServiceAccountCreds: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling resetServiceAccountCreds.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/serviceaccounts/{id}/reset-credentials`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1099,12 +1297,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Create a kafka service account
-         * @param {ServiceAccountRequest} serviceAccountRequest 
+         * @summary Create a service account
+         * @param {ServiceAccountRequest} serviceAccountRequest service account request
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAccountResponse>> {
+        async createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAccount>> {
             const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).createServiceAccount(serviceAccountRequest, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
@@ -1120,6 +1318,20 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async deleteKafkaById(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
             const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).deleteKafkaById(id, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Delete service account
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteServiceAccount(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).deleteServiceAccount(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1185,6 +1397,33 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 return axios.request(axiosRequestArgs);
             };
         },
+        /**
+         * 
+         * @summary List service accounts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listServiceAccounts(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAccountList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listServiceAccounts(options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary reset credentials for the service account
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async resetServiceAccountCreds(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAccount>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).resetServiceAccountCreds(id, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
     }
 };
 
@@ -1207,12 +1446,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @summary Create a kafka service account
-         * @param {ServiceAccountRequest} serviceAccountRequest 
+         * @summary Create a service account
+         * @param {ServiceAccountRequest} serviceAccountRequest service account request
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): AxiosPromise<ServiceAccountResponse> {
+        createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): AxiosPromise<ServiceAccount> {
             return DefaultApiFp(configuration).createServiceAccount(serviceAccountRequest, options).then((request) => request(axios, basePath));
         },
         /**
@@ -1224,6 +1463,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         deleteKafkaById(id: string, options?: any): AxiosPromise<Error> {
             return DefaultApiFp(configuration).deleteKafkaById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Delete service account
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteServiceAccount(id: string, options?: any): AxiosPromise<Error> {
+            return DefaultApiFp(configuration).deleteServiceAccount(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1269,6 +1518,25 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         listKafkas(page?: string, size?: string, options?: any): AxiosPromise<KafkaRequestList> {
             return DefaultApiFp(configuration).listKafkas(page, size, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary List service accounts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listServiceAccounts(options?: any): AxiosPromise<ServiceAccountList> {
+            return DefaultApiFp(configuration).listServiceAccounts(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary reset credentials for the service account
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetServiceAccountCreds(id: string, options?: any): AxiosPromise<ServiceAccount> {
+            return DefaultApiFp(configuration).resetServiceAccountCreds(id, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -1291,13 +1559,13 @@ export interface DefaultApiInterface {
 
     /**
      * 
-     * @summary Create a kafka service account
-     * @param {ServiceAccountRequest} serviceAccountRequest 
+     * @summary Create a service account
+     * @param {ServiceAccountRequest} serviceAccountRequest service account request
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): AxiosPromise<ServiceAccountResponse>;
+    createServiceAccount(serviceAccountRequest: ServiceAccountRequest, options?: any): AxiosPromise<ServiceAccount>;
 
     /**
      * 
@@ -1308,6 +1576,16 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     deleteKafkaById(id: string, options?: any): AxiosPromise<Error>;
+
+    /**
+     * 
+     * @summary Delete service account
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    deleteServiceAccount(id: string, options?: any): AxiosPromise<Error>;
 
     /**
      * 
@@ -1353,6 +1631,25 @@ export interface DefaultApiInterface {
      */
     listKafkas(page?: string, size?: string, options?: any): AxiosPromise<KafkaRequestList>;
 
+    /**
+     * 
+     * @summary List service accounts
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    listServiceAccounts(options?: any): AxiosPromise<ServiceAccountList>;
+
+    /**
+     * 
+     * @summary reset credentials for the service account
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    resetServiceAccountCreds(id: string, options?: any): AxiosPromise<ServiceAccount>;
+
 }
 
 /**
@@ -1377,8 +1674,8 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
 
     /**
      * 
-     * @summary Create a kafka service account
-     * @param {ServiceAccountRequest} serviceAccountRequest 
+     * @summary Create a service account
+     * @param {ServiceAccountRequest} serviceAccountRequest service account request
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -1397,6 +1694,18 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public deleteKafkaById(id: string, options?: any) {
         return DefaultApiFp(this.configuration).deleteKafkaById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Delete service account
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteServiceAccount(id: string, options?: any) {
+        return DefaultApiFp(this.configuration).deleteServiceAccount(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1449,6 +1758,29 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public listKafkas(page?: string, size?: string, options?: any) {
         return DefaultApiFp(this.configuration).listKafkas(page, size, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary List service accounts
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public listServiceAccounts(options?: any) {
+        return DefaultApiFp(this.configuration).listServiceAccounts(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary reset credentials for the service account
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public resetServiceAccountCreds(id: string, options?: any) {
+        return DefaultApiFp(this.configuration).resetServiceAccountCreds(id, options).then((request) => request(this.axios, this.basePath));
     }
 
 }
