@@ -105,14 +105,14 @@ const StreamsTableView = ({
   );
 
   // function to get exact number of skeleton count required for the current page
-  const getSkeltonRowsCount = () => {
-    // initiaise skeletonRowCount by perPage
-    let skeletonRowCount = perPage;
+  const getLoadingRowsCount = () => {
+    // initiaise loadingRowCount by perPage
+    let loadingRowCount = perPage;
     /*
       if number of expected count is greater than 0
-        calculate the skeletonRowCount 
+        calculate the loadingRowCount 
       else
-        remain the skeletonRowCount to perPage
+        leave the loadingRowCount to perPage
      */
     if (expectedTotal && expectedTotal > 0) {
       // get total number of pages
@@ -123,14 +123,14 @@ const StreamsTableView = ({
         // check whether to total expected count is greater than perPage count
         if (expectedTotal > perPage) {
           // assign the calculated skelton rows count to display the exact number of expected loading skelton rows
-          skeletonRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
+          loadingRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
         } else {
-          skeletonRowCount = expectedTotal;
+          loadingRowCount = expectedTotal;
         }
       }
     }
     // return the exact number of skeleton expected at the time of loading
-    return skeletonRowCount !== 0 ? skeletonRowCount : perPage;
+    return loadingRowCount !== 0 ? loadingRowCount : perPage;
   };
 
   const loggedInOwner: string | undefined =
@@ -258,7 +258,7 @@ const StreamsTableView = ({
         cells.push({ title: <Skeleton /> });
       }
       // get exact of skeleton rows based on expected total count of instances
-      for (let i = 0; i < getSkeltonRowsCount(); i++) {
+      for (let i = 0; i < getLoadingRowsCount(); i++) {
         tableRow.push({
           cells: cells,
         });
