@@ -122,6 +122,6 @@
   "filter_by_name_lower": "日本語 Filter by name",
   "please_select": "日本語 Please select",
   "us-east-1": "日本語 US East, N. Virginia",
-  "create_instance_name_helper_text": "日本語 Valid characters for instance name are letters from a to z, numbers from 0 to 9, and dashes (-). The name must start with a letter, and must end with a letter or number.",
-  "create_instance_name_invalid_helper_text": "日本語 Valid characters for instance name are letters from a to z, numbers from 0 to 9, and dashes (-). The name must start with a letter, and must end with a letter or number."
+  "create_instance_name_helper_text": "日本語 Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
+  "create_instance_name_invalid_helper_text": "日本語 Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number."
 }
