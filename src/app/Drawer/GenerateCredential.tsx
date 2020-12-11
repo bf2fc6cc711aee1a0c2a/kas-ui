@@ -389,6 +389,7 @@ const GenerateCredential: React.FunctionComponent = () => {
 
   const clientID = (
     <>
+      <Alert variant="danger" isInline title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please go to the details tab to generate credentials." />
       <EmptyState variant={EmptyStateVariant.large}>
         <EmptyStateIcon icon={KeyIcon} />
         <Title headingLevel="h4" size="lg">
