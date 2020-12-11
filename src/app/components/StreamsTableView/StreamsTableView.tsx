@@ -345,7 +345,7 @@ const StreamsTableView = ({
     selectedInstance?.name
   );
   return (
-    <Card>
+    <>
       <StreamsToolbar
         mainToggle={mainToggle}
         createStreamsInstance={createStreamsInstance}
@@ -367,7 +367,6 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      <Divider />
       <TablePagination
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
@@ -388,7 +387,7 @@ const StreamsTableView = ({
           confirmActionLabel={confirmActionLabel}
         />
       )}
-    </Card>
+    </>
   );
 };
 
