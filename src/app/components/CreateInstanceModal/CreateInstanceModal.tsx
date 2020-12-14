@@ -19,7 +19,7 @@ import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import './CreateInstanceModal.css';
 import { useAlerts } from '../Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
-import { DefaultApi, CloudProvider, CloudRegion } from '../../../openapi';
+import { DefaultApi, CloudProvider, CloudRegion, KafkaRequest } from '../../../openapi';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
@@ -78,8 +78,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           const enabledRegions = providerRegions.items.filter((provider: CloudProvider) => provider.enabled);
           if (enabledRegions.length === 1 && enabledRegions[0].id && provider.name) {
             const region: string = enabledRegions[0].id;
-            const cloud_provider: string = provider.name;
-            setKafkaFormData((prevSate) => ({ ...prevSate, region, cloud_provider }));
+            setKafkaFormData((prevData) => ({ ...prevData, region }));
           }
         });
       } catch (error) {
@@ -100,6 +99,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   useEffect(() => {
     const enableCloudProviders: CloudProvider[] = cloudProviders.filter((provider: CloudProvider) => provider.enabled);
     if (enableCloudProviders.length > 0 && enableCloudProviders[0].name) {
+      setKafkaFormData({ ...kafkaFormData, cloud_provider: enableCloudProviders[0].name });
       fetchCloudRegions(enableCloudProviders[0]);
     }
   }, [cloudProviders]);
