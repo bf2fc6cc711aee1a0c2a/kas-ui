@@ -15,7 +15,7 @@ import {
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest, KafkaRequestList, ServiceAccountListItem } from '../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProviderList, CloudProvider,ServiceAccountListItem } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -50,10 +50,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
+  const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [serveceAccounts, setServiceAccounts] = useState<ServiceAccountListItem[]>();
+  // state to store the expected total kafka instances based on the operation
+  const [expectedTotal, setExpectedTotal] = useState<number>(0);
+
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -120,10 +124,41 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           const kafkaInstances = res.data;
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
+          kafkaInstancesList?.total !== undefined &&
+            kafkaInstancesList.total > expectedTotal &&
+            setExpectedTotal(kafkaInstancesList.total);
           setKafkaDataLoaded(true);
         });
       } catch (error) {
-        let reason;
+        let reason: string | undefined;
+        if (isServiceApiError(error)) {
+          reason = error.response?.data.reason;
+        }
+        /**
+         * Todo: show user friendly message according to server code
+         * and translation for specific language
+         *
+         */
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      }
+    }
+  };
+
+  // Functions
+  const fetchCloudProviders = async () => {
+    const accessToken = await getToken();
+    if (accessToken !== undefined && accessToken !== '') {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        await apisService.listCloudProviders().then((res) => {
+          const providers = res.data;
+          setCloudProviders(providers.items);
+        });
+      } catch (error) {
+        let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
@@ -139,9 +174,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useEffect(() => {
     setKafkaDataLoaded(false);
+    fetchKafkas();
   }, [getToken, page, perPage]);
 
   useEffect(() => {
+    fetchCloudProviders();
     fetchKafkas();
     listServiceAccounts();
   }, []);
@@ -150,6 +187,25 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   const handleSwitchChange = (checked: boolean) => {
     setMainToggle(checked);
+  };
+
+  const refreshKafkas = (value: string) => {
+    //set the page to laoding state
+    setKafkaDataLoaded(false);
+    if (value === 'create') {
+      /*
+        increase the expected total by 1 
+        as create operation will lead to adding a kafka in the list of response
+      */
+      setExpectedTotal(kafkaInstancesList.total + 1);
+    } else if (value === 'delete') {
+      /*
+        decrease the expected total by 1 
+        as create operation will lead to removing a kafka in the list of response
+      */
+      setExpectedTotal(kafkaInstancesList.total - 1);
+    }
+    fetchKafkas();
   };
 
   return (
@@ -186,40 +242,45 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 </LevelItem>
               </Level>
             </PageSection>
-            <PageSection>
-              {!kafkaDataLoaded ? (
+            {kafkaInstanceItems === undefined ? (
+              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <Loading />
-              ) : kafkaInstanceItems && kafkaInstanceItems.length > 0 ? (
+              </PageSection>
+            ) : kafkaInstancesList.total < 1 ? (
+              <PageSection>
+                <EmptyState
+                  createStreamsInstance={createStreamsInstance}
+                  setCreateStreamsInstance={setCreateStreamsInstance}
+                  mainToggle={mainToggle}
+                />
+              </PageSection>
+            ) : (
+              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
                   onConnectToInstance={onConnectInstance}
                   onViewInstance={onViewInstance}
-                  refresh={fetchKafkas}
+                  refresh={refreshKafkas}
+                  kafkaDataLoaded={kafkaDataLoaded}
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   page={page}
                   perPage={perPage}
                   total={kafkaInstancesList?.total}
+                  expectedTotal={expectedTotal}
                 />
-              ) : (
-                kafkaInstanceItems !== undefined && (
-                  <EmptyState
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    mainToggle={mainToggle}
-                  />
-                )
-              )}
-              {createStreamsInstance && (
-                <CreateInstanceModal
-                  createStreamsInstance={createStreamsInstance}
-                  setCreateStreamsInstance={setCreateStreamsInstance}
-                  mainToggle={mainToggle}
-                  refresh={fetchKafkas}
-                />
-              )}
-            </PageSection>
+              </PageSection>
+            )}
+            {createStreamsInstance && (
+              <CreateInstanceModal
+                createStreamsInstance={createStreamsInstance}
+                setCreateStreamsInstance={setCreateStreamsInstance}
+                cloudProviders={cloudProviders}
+                mainToggle={mainToggle}
+                refresh={refreshKafkas}
+              />
+            )}
           </DrawerContent>
         </Drawer>
       </AlertProvider>

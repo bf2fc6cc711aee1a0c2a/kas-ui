@@ -88,6 +88,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       }
     }
   };
+  const getPlaceholder = () => {
+    if (filterSelected) {
+      const placeholder = filterSelected?.toLowerCase() + '_lower';
+      return t(`filter_by_${placeholder}`);
+    }
+    return '';
+  };
 
   const toggleGroupItems = (
     <>
@@ -115,9 +122,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               id="filterText"
               type="search"
               aria-label="Search filter input"
-              placeholder={`${t('filter_by')} ${
-                filterSelected?.toLowerCase() && t(`${filterSelected?.toLowerCase()}_lower`)
-              }`}
+              placeholder={getPlaceholder()}
               onChange={onInputChange}
               value={inputValue}
             />
@@ -131,7 +136,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   );
 
   return (
-    <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear}>
+    <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear} inset={{ lg: 'insetLg' }}>
       <ToolbarContent>
         {mainToggle && (
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
