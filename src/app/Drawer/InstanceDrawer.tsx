@@ -83,7 +83,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </TextContent>
         <Flex>
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-            <ClipboardCopy>strimzi-external-bootstrap-01:1234</ClipboardCopy>
+            <ClipboardCopy>{instanceDetail?.bootstrapServerHost}:443</ClipboardCopy>
           </FlexItem>
           <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} />
         </Flex>
