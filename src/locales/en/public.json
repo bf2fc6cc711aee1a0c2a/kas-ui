@@ -79,7 +79,7 @@
   "credentials_successfully_generated": "Credentials successfully generated",
   "create_credential_wizard_description": "Generate credential for your application",
   "drawer_resource_tab_body_description_1": "To connect an application or tool to this Kafka instance, you will need the address of a Kafka listener, and generated credentials.",
-  "kafka_listener_and_credentials": "Kafka listener and credentials",
+  "kafka_listener_and_credentials": "Kafka listener and SASL/PLAIN credentials",
   "drawer_resource_tab_body_description_2": "Your application or tool will make its initial connection to the Kafka instance using the bootstrap server, and authenticate with credentials specific to the server if required.",
   "external_server": "External server",
   "drawer_resource_tab_body_description_3": "Applications and tools that use the REST producer API will need the REST producer endpoint to connect.",

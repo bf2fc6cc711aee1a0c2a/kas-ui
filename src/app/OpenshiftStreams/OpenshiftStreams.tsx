@@ -75,11 +75,18 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Connection' });
   };
 
+  const isValidToken = (accessToken: string) => {
+    if (accessToken !== undefined && accessToken !== '') {
+      return true;
+    }
+    return false;
+  };
+
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await getToken();
 
-    if (accessToken !== undefined && accessToken !== '') {
+    if (isValidToken(accessToken)) {
       try {
         const apisService = new DefaultApi({
           accessToken,
