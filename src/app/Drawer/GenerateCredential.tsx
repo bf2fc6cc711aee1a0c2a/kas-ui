@@ -445,7 +445,13 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
 
   const clientID = (
     <>
-      <Alert variant="danger" isInline title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please go to the details tab to generate credentials." />
+      {mainToggle && (
+        <Alert
+          variant="danger"
+          isInline
+          title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please go to the details tab to generate credentials."
+        />
+      )}
       <EmptyState variant={EmptyStateVariant.large}>
         <EmptyStateIcon icon={KeyIcon} />
         <Title headingLevel="h4" size="lg">
@@ -481,7 +487,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   );
 
   const getSteps = () => {
-    let steps: WizardStep[] = [{ id: 5, name: t('finish'), component: clientID, isFinishedStep: true }];
+    const steps: WizardStep[] = [{ id: 5, name: t('finish'), component: clientID, isFinishedStep: true }];
     if (mainToggle) {
       steps.unshift(
         { id: 1, name: t('basic_info'), component: step1, nextButtonText: t('next') },
