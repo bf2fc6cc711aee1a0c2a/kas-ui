@@ -51,9 +51,13 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   activeTab,
   instanceDetail,
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
+  const { id, created_at, updated_at, owner } = instanceDetail || {};
+  dayjs.extend(localizedFormat);
+
   const [activeTab1Key, setActiveTab1Key] = useState(0);
   const [activeTab2Key, setActiveTab2Key] = useState(0);
+
   useEffect(() => {
     setActiveTab1Key(activeTab === 'Details' ? 0 : 1);
   }, [activeTab]);
@@ -70,13 +74,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     <>
       <div className="tab-content-body">
         <TextContent className="pf-u-pb-sm">
-          <Text component={TextVariants.small}>
-            {t('drawer_resource_tab_body_description_1')}
-          </Text>
+          <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_1')}</Text>
           <Text component={TextVariants.h5}>{t('kafka_listener_and_credentials')}</Text>
-          <Text component={TextVariants.small}>
-            {t('drawer_resource_tab_body_description_2')}
-          </Text>
+          <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_2')}</Text>
           <Text component={TextVariants.p} className="pf-u-mt-md">
             {t('external_server')}
           </Text>
@@ -85,15 +85,17 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
             <ClipboardCopy>strimzi-external-bootstrap-01:1234</ClipboardCopy>
           </FlexItem>
-          <GenerateCredential />
+          <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} />
         </Flex>
-        <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-          <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
-          <Text component={TextVariants.small}>
-            {t('drawer_resource_tab_body_description_3')}
-          </Text>
-        </TextContent>
-        <ClipboardCopy>https: // : 30123</ClipboardCopy>
+        {mainToggle && (
+          <>
+            <TextContent className="pf-u-pb-sm pf-u-pt-lg">
+              <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
+              <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_3')}</Text>
+            </TextContent>
+            <ClipboardCopy>https: // : 30123</ClipboardCopy>
+          </>
+        )}
       </div>
     </>
   );
@@ -101,55 +103,55 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   const sampleCodeTab = (
     <>
       <div className="tab-content-body">
-      <TextContent className="pf-u-pb-sm">
-        <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
-        <Text component={TextVariants.small}>
-          {t('drawer_code_section_tab_body_description_1')}
-          &lt;{t('brackets')}&gt;.
-        </Text>
-      </TextContent>
-      <div className="pf-c-code-editor pf-m-read-only">
-        <div className="pf-c-code-editor__header">
-          <div className="pf-c-code-editor__controls">
-            <Button variant="control" aria-label="Action">
-              <CopyIcon />
-            </Button>
+        <TextContent className="pf-u-pb-sm">
+          <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
+          <Text component={TextVariants.small}>
+            {t('drawer_code_section_tab_body_description_1')}
+            &lt;{t('brackets')}&gt;.
+          </Text>
+        </TextContent>
+        <div className="pf-c-code-editor pf-m-read-only">
+          <div className="pf-c-code-editor__header">
+            <div className="pf-c-code-editor__controls">
+              <Button variant="control" aria-label="Action">
+                <CopyIcon />
+              </Button>
+            </div>
+            <div className="pf-c-code-editor__tab">
+              <span className="pf-c-code-editor__tab-text">Java</span>
+            </div>
           </div>
-          <div className="pf-c-code-editor__tab">
-            <span className="pf-c-code-editor__tab-text">Java</span>
+          <div className="pf-c-code-editor__main">
+            <div className="pf-c-code-editor__code">
+              <pre className="pf-c-code-editor__code-pre">import java.util.Properties;</pre>
+            </div>
           </div>
         </div>
-        <div className="pf-c-code-editor__main">
-          <div className="pf-c-code-editor__code">
-            <pre className="pf-c-code-editor__code-pre">import java.util.Properties;</pre>
-          </div>
-        </div>
-      </div>
 
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-        <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
-        <Text component={TextVariants.small}>
-         {t('drawer_code_section_tab_body_description_1')}
-          &lt;{t('brackets')}&gt;.
-        </Text>
-      </TextContent>
-      <div className="pf-c-code-editor pf-m-read-only">
-        <div className="pf-c-code-editor__header">
-          <div className="pf-c-code-editor__controls">
-            <Button variant="control" aria-label="Action">
-              <CopyIcon />
-            </Button>
+        <TextContent className="pf-u-pb-sm pf-u-pt-lg">
+          <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
+          <Text component={TextVariants.small}>
+            {t('drawer_code_section_tab_body_description_1')}
+            &lt;{t('brackets')}&gt;.
+          </Text>
+        </TextContent>
+        <div className="pf-c-code-editor pf-m-read-only">
+          <div className="pf-c-code-editor__header">
+            <div className="pf-c-code-editor__controls">
+              <Button variant="control" aria-label="Action">
+                <CopyIcon />
+              </Button>
+            </div>
+          </div>
+          <div className="pf-c-code-editor__main">
+            <div className="pf-c-code-editor__code">
+              <pre className="pf-c-code-editor__code-pre">
+                bootstrap.servers=es-1-4-0-ibm-es-proxy-route-bootstrap-es.apps.2019-4-1-demo-icp-mst.fyre.ibm.com:44
+                sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=“token
+              </pre>
+            </div>
           </div>
         </div>
-        <div className="pf-c-code-editor__main">
-          <div className="pf-c-code-editor__code">
-            <pre className="pf-c-code-editor__code-pre">
-              bootstrap.servers=es-1-4-0-ibm-es-proxy-route-bootstrap-es.apps.2019-4-1-demo-icp-mst.fyre.ibm.com:44
-              sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=“token
-            </pre>
-          </div>
-        </div>
-      </div>
       </div>
     </>
   );
@@ -164,9 +166,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       )}
     </>
   );
-
-  const { id, created_at, updated_at, owner } = instanceDetail || {};
-  dayjs.extend(localizedFormat);
 
   const detailsTab = (
     <>
@@ -217,20 +216,23 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     </>
   );
 
-  const connectionTab = (
-    <>
-      <div className="tab-content-body pf-m-secondary">
-        <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
-          <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
-            {resourcesTab}
-          </Tab>
-          <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
-            {sampleCodeTab}
-          </Tab>
-        </Tabs>
-      </div>
-    </>
-  );
+  const renderConnectionTab = () => {
+    if (mainToggle) {
+      return (
+        <div className="tab-content-body pf-m-secondary">
+          <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
+            <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
+              {resourcesTab}
+            </Tab>
+            <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
+              {sampleCodeTab}
+            </Tab>
+          </Tabs>
+        </div>
+      );
+    }
+    return <>{resourcesTab}</>;
+  };
 
   return (
     <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_50' }}>
@@ -256,11 +258,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
               <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
                 {detailsTab}
               </Tab>
-              {mainToggle && (
-                <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
-                  {connectionTab}
-                </Tab>
-              )}
+              <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
+                {renderConnectionTab()}
+              </Tab>
             </Tabs>
           </DrawerPanelBody>
         </>

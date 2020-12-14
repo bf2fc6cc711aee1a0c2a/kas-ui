@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, FunctionComponent, useContext, useEffect } from 'react';
 import {
   Alert,
-  Breadcrumb,
-  BreadcrumbItem,
   Bullseye,
   Button,
   ClipboardCopy,
   Checkbox,
-  Divider,
   EmptyState,
   EmptyStateIcon,
   EmptyStateBody,
@@ -44,9 +41,23 @@ import '@patternfly/react-styles/css/utilities/Flex/flex.css';
 import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';
 import './GenerateCredential.css';
 import { useTranslation } from 'react-i18next';
+import { ApiContext } from '@app/api/ApiContext';
+import { AuthContext } from '@app/auth/AuthContext';
+import { isServiceApiError } from '@app/utils/error';
+import { DefaultApi, ServiceAccountRequest } from '../../openapi/api';
 
-const GenerateCredential: React.FunctionComponent = () => {
+type GenerateCredential = {
+  instanceName?: string;
+  mainToggle?: boolean;
+};
+
+const GenerateCredential: FunctionComponent<GenerateCredential> = ({
+  instanceName = '',
+  mainToggle,
+}: GenerateCredential) => {
   const { t } = useTranslation();
+  const { getToken } = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
 
   const [isCreated, setIsCreated] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -68,14 +79,59 @@ const GenerateCredential: React.FunctionComponent = () => {
   const [selectTransactionAccess, setSelectTransactionAccess] = useState('name');
   const [transactionAccessInput, setTransactionAccessInput] = useState();
   const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
+  const [credential, setCredential] = useState();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState('');
 
-  const handleModalToggle = () => {
-    setIsOpen(!isOpen);
+  const generateCrdential = async () => {
+    const accessToken = await getToken();
+    const serviceAccountRequest: ServiceAccountRequest = {
+      name: instanceName,
+    };
+    const apisService = new DefaultApi({
+      accessToken,
+      basePath,
+    });
+
+    try {
+      await apisService.createServiceAccount(serviceAccountRequest).then((res) => {
+        setCredential(res?.data);
+        setIsLoading(false);
+        setIsOpen(true);
+      });
+    } catch (err) {
+      setIsLoading(false);
+      let reason;
+      if (isServiceApiError(err)) {
+        reason = err.response?.data.reason;
+      }
+      setError(reason);
+    }
   };
 
+  const handleModalToggle = () => {
+    if (mainToggle) {
+      setIsOpen(true);
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+      setError('');
+      setCredential(undefined);
+      generateCrdential();
+    }
+  };
+
+  useEffect(() => {
+    if (stepNo === 5) {
+      generateCrdential();
+    }
+  }, [stepNo]);
+
   const handleClose = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(false);
     setIsCreated(!isCreated);
+    setCredential(undefined);
+    setConfirmationCheckbox(false);
     setStepNo(1);
   };
 
@@ -398,13 +454,13 @@ const GenerateCredential: React.FunctionComponent = () => {
         <InputGroup className="pf-u-mt-lg">
           <InputGroupText className="no-wrap">{t('client_id')}</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            FSLG934JM98IL
+            {credential?.clientID}
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
           <InputGroupText className="no-wrap">Client secret</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            898VsyDInUfhSd9ng8K/REs9r8h0n8j98s5c4JdeJfUg/E8
+            {credential?.clientSecret}
           </ClipboardCopy>
         </InputGroup>
         <Bullseye className="pf-u-mt-lg">
@@ -423,46 +479,51 @@ const GenerateCredential: React.FunctionComponent = () => {
     </>
   );
 
-  const steps: WizardStep[] = [
-    { id: 1, name: t('basic_info'), component: step1, nextButtonText: t('next') },
-    { id: 2, name: t('topics_access'), component: step2, nextButtonText: t('next') },
-    { id: 3, name: t('consumer_groups_access'), component: step3, nextButtonText: t('next') },
-    { id: 4, name: t('transaction_ids_access'), component: step4, nextButtonText: t('finish') },
-    { id: 5, name: t('finish'), component: clientID, isFinishedStep: true },
-  ];
+  const getSteps = () => {
+    let steps: WizardStep[] = [{ id: 5, name: t('finish'), component: clientID, isFinishedStep: true }];
+    if (mainToggle) {
+      steps.unshift(
+        { id: 1, name: t('basic_info'), component: step1, nextButtonText: t('next') },
+        { id: 2, name: t('topics_access'), component: step2, nextButtonText: t('next') },
+        { id: 3, name: t('consumer_groups_access'), component: step3, nextButtonText: t('next') },
+        { id: 4, name: t('transaction_ids_access'), component: step4, nextButtonText: t('finish') }
+      );
+    }
+    return steps;
+  };
 
   const title = t('generate_credential');
 
   return (
     <>
-      {isCreated ? (
-        <>
-          <FlexItem className="pf-m-align-right pf-m-spacer-none">
-            <Button variant="danger" onClick={handleModalToggle} className="pf-u-ml-md pf-u-mb-md">
-              {t('generate_new_credential')}
-            </Button>
-          </FlexItem>
-          <FlexItem className="pf-m-grow">
-            <Alert variant="success" isInline title={t('credentials_successfully_generated')} />
-          </FlexItem>
-        </>
-      ) : (
-        <FlexItem className="pf-m-align-right">
-          <Button variant="secondary" onClick={handleModalToggle} className="pf-u-ml-md">
-            {t('generate_credential')}
-          </Button>
-        </FlexItem>
-      )}
+      <FlexItem className="pf-m-align-right">
+        <Button
+          variant="secondary"
+          onClick={handleModalToggle}
+          className="pf-u-ml-md"
+          spinnerAriaValueText={isLoading ? 'Loading' : undefined}
+          isLoading={isLoading}
+        >
+          {t('generate_credential')}
+        </Button>
+      </FlexItem>
       <Wizard
         title={title}
         description={t('create_credential_wizard_description')}
-        steps={steps}
+        steps={getSteps()}
         onNext={onMove}
         onBack={onMove}
-        onClose={handleModalToggle}
+        onClose={() => {
+          setIsOpen(false);
+        }}
         isOpen={isOpen}
         hideClose={stepNo === 5}
       />
+      {error && (
+        <FlexItem className="pf-m-grow">
+          <Alert variant="danger" isInline title={error} />
+        </FlexItem>
+      )}
     </>
   );
 };
