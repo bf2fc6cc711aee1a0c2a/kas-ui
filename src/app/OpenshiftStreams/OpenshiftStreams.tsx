@@ -70,7 +70,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Details' });
   };
 
-  const onConnectInstance = (instance: KafkaRequest) => {
+  const onViewConnection = (instance: KafkaRequest) => {
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Connection' });
   };
 
@@ -193,8 +193,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   <StreamsTableView
                     kafkaInstanceItems={kafkaInstanceItems}
                     mainToggle={mainToggle}
-                    onConnectToInstance={onConnectInstance}
+                    onViewConnection={onViewConnection}
                     onViewInstance={onViewInstance}
+                    onConnectToInstance={onConnectToInstance}
                     refresh={refreshKafkas}
                     kafkaDataLoaded={kafkaDataLoaded}
                     createStreamsInstance={createStreamsInstance}
