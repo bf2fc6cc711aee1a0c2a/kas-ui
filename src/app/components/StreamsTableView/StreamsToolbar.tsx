@@ -145,7 +145,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         )}
         <ToolbarItem>
           <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
-            {t('create_streams_instance')}
+            {t('create_kafka_instance')}
           </Button>
         </ToolbarItem>
         <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
