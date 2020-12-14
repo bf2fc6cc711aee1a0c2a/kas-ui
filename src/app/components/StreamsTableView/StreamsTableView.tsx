@@ -268,8 +268,8 @@ const StreamsTableView = ({
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, status, owner } = row;
-      const cloudProviderDisplayName = getCloudProviderDisplayName(cloud_provider);
-      const regionDisplayName = getCloudRegionDisplayName(region);
+      const cloudProviderDisplayName = t(cloud_provider);
+      const regionDisplayName = t(region);
       tableRow.push({
         cells: [
           {

@@ -15,7 +15,7 @@ import {
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest, KafkaRequestList } from '../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProviderList, CloudProvider } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -50,6 +50,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
+  const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
@@ -108,12 +109,41 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     }
   };
 
+  // Functions
+  const fetchCloudProviders = async () => {
+    const accessToken = await getToken();
+    if (accessToken !== undefined && accessToken !== '') {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        await apisService.listCloudProviders().then((res) => {
+          const providers = res.data;
+          setCloudProviders(providers.items);
+        });
+      } catch (error) {
+        let reason: string | undefined;
+        if (isServiceApiError(error)) {
+          reason = error.response?.data.reason;
+        }
+        /**
+         * Todo: show user friendly message according to server code
+         * and translation for specific language
+         *
+         */
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      }
+    }
+  };
+
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
   }, [getToken, page, perPage]);
 
   useEffect(() => {
+    fetchCloudProviders();
     fetchKafkas();
   }, []);
 
@@ -176,45 +206,46 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 </LevelItem>
               </Level>
             </PageSection>
-              {kafkaInstanceItems === undefined ? (
-                <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-                  <Loading />
-                </PageSection>
-              ) : kafkaInstancesList.total < 1 ? (
-                <PageSection>
-                  <EmptyState
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    mainToggle={mainToggle}
-                  />
-                </PageSection>
-              ) : (
-                <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-                  <StreamsTableView
-                    kafkaInstanceItems={kafkaInstanceItems}
-                    mainToggle={mainToggle}
-                    onViewConnection={onViewConnection}
-                    onViewInstance={onViewInstance}
-                    onConnectToInstance={onConnectToInstance}
-                    refresh={refreshKafkas}
-                    kafkaDataLoaded={kafkaDataLoaded}
-                    createStreamsInstance={createStreamsInstance}
-                    setCreateStreamsInstance={setCreateStreamsInstance}
-                    page={page}
-                    perPage={perPage}
-                    total={kafkaInstancesList?.total}
-                    expectedTotal={expectedTotal}
-                  />
-                </PageSection>
-              )}
-              {createStreamsInstance && (
-                <CreateInstanceModal
+            {kafkaInstanceItems === undefined ? (
+              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+                <Loading />
+              </PageSection>
+            ) : kafkaInstancesList.total < 1 ? (
+              <PageSection>
+                <EmptyState
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   mainToggle={mainToggle}
-                  refresh={refreshKafkas}
                 />
-              )}
+              </PageSection>
+            ) : (
+              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+                <StreamsTableView
+                  kafkaInstanceItems={kafkaInstanceItems}
+                  mainToggle={mainToggle}
+                  onViewConnection={onViewConnection}
+                  onViewInstance={onViewInstance}
+                  onConnectToInstance={onConnectToInstance}
+                  refresh={refreshKafkas}
+                  kafkaDataLoaded={kafkaDataLoaded}
+                  createStreamsInstance={createStreamsInstance}
+                  setCreateStreamsInstance={setCreateStreamsInstance}
+                  page={page}
+                  perPage={perPage}
+                  total={kafkaInstancesList?.total}
+                  expectedTotal={expectedTotal}
+                />
+              </PageSection>
+            )}
+            {createStreamsInstance && (
+              <CreateInstanceModal
+                createStreamsInstance={createStreamsInstance}
+                setCreateStreamsInstance={setCreateStreamsInstance}
+                cloudProviders={cloudProviders}
+                mainToggle={mainToggle}
+                refresh={refreshKafkas}
+              />
+            )}
           </DrawerContent>
         </Drawer>
       </AlertProvider>
