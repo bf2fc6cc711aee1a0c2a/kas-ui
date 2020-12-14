@@ -11,7 +11,7 @@ import {
   TableHeader,
   IRowCell,
 } from '@patternfly/react-table';
-import { AlertVariant, Card, Divider, PaginationVariant, Skeleton } from '@patternfly/react-core';
+import { AlertVariant, Card, Divider, PaginationVariant, Skeleton, Button } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -32,7 +32,8 @@ type TableProps = {
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
-  onConnectToInstance: (instance: KafkaRequest) => void;
+  onViewConnection: (instance: KafkaRequest) => void;
+  onConnectToInstance: (data: KafkaRequest) => void;
   mainToggle: boolean;
   refresh: (operation: string) => void;
   page: number;
@@ -74,6 +75,7 @@ const StreamsTableView = ({
   mainToggle,
   kafkaInstanceItems,
   onViewInstance,
+  onViewConnection,
   onConnectToInstance,
   refresh,
   createStreamsInstance,
@@ -203,7 +205,7 @@ const StreamsTableView = ({
           {
             title: t('connect_to_instance'),
             id: 'connect-instance',
-            onClick: () => onConnectToInstance(originalData),
+            onClick: () => onViewConnection(originalData),
           },
           {
             title: t('delete_instance'),
@@ -270,7 +272,13 @@ const StreamsTableView = ({
       const regionDisplayName = t(region);
       tableRow.push({
         cells: [
-          name,
+          {
+            title: (
+              <Button variant="link" isInline onClick={() => onConnectToInstance(row as KafkaRequest)}>
+                {name}
+              </Button>
+            ),
+          },
           cloudProviderDisplayName,
           regionDisplayName,
           owner,
