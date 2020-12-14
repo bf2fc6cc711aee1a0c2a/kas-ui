@@ -93,7 +93,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
               <Text component={TextVariants.h5}>Producer endpoint and credentials</Text>
               <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_3')}</Text>
             </TextContent>
-            <ClipboardCopy>https: // : 30123</ClipboardCopy>
+            <ClipboardCopy>https://:30123</ClipboardCopy>
           </>
         )}
       </div>

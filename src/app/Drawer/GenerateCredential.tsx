@@ -83,7 +83,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState('');
 
-  const generateCrdential = async () => {
+  const generateCredential = async () => {
     const accessToken = await getToken();
     const serviceAccountRequest: ServiceAccountRequest = {
       name: instanceName,
@@ -117,15 +117,15 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
       setIsLoading(true);
       setError('');
       setCredential(undefined);
-      generateCrdential();
+      generateCredential();
     }
   };
 
-  useEffect(() => {
-    if (stepNo === 5) {
-      generateCrdential();
-    }
-  }, [stepNo]);
+  // useEffect(() => {
+  //   if (stepNo === 5) {
+  //     generateCredential();
+  //   }
+  // }, [stepNo]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -449,7 +449,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         <Alert
           variant="danger"
           isInline
-          title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please go to the details tab to generate credentials."
+          title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please turn off the mock UI to generate credentials."
         />
       )}
       <EmptyState variant={EmptyStateVariant.large}>
@@ -461,13 +461,13 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         <InputGroup className="pf-u-mt-lg">
           <InputGroupText className="no-wrap">{t('client_id')}</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            {credential?.clientID}
+            srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
           <InputGroupText className="no-wrap">Client secret</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            {credential?.clientSecret}
+            441cdf77-083c-41d1-9050-c27a3b4247ac
           </ClipboardCopy>
         </InputGroup>
         <Bullseye className="pf-u-mt-lg">

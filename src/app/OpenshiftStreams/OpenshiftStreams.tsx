@@ -15,7 +15,7 @@ import {
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProviderList, CloudProvider,ServiceAccountListItem } from '../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProviderList, CloudProvider } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -54,7 +54,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
-  const [serveceAccounts, setServiceAccounts] = useState<ServiceAccountListItem[]>();
   // state to store the expected total kafka instances based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
 
@@ -81,33 +80,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       return true;
     }
     return false;
-  };
-
-  const listServiceAccounts = async () => {
-    const accessToken = await getToken();
-    if (isValidToken(accessToken)) {
-      try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
-        await apisService.listServiceAccounts().then((res) => {
-          const serviceAccounts = res?.data;
-          setServiceAccounts(serviceAccounts?.items);
-        });
-      } catch (error) {
-        let reason;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-      }
-    }
   };
 
   // Functions
@@ -180,7 +152,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     fetchCloudProviders();
     fetchKafkas();
-    listServiceAccounts();
   }, []);
 
   useTimeout(fetchKafkas, 5000);
