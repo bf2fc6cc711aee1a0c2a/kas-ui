@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   ToolbarItem,
   InputGroup,
@@ -20,7 +20,6 @@ import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
 import './StreamsToolbarProps.css';
 import { useTranslation } from 'react-i18next';
-import { useHistory, useLocation } from 'react-router';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
@@ -45,29 +44,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   total,
   page,
   perPage,
-  setNameFilter
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
   const { t } = useTranslation();
-  const history = useHistory();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-
-  // console.log("Hi what is this" + searchParams('orderBy', 'name=dsc'));
-  // sconsole.log("Hi what is this 2" + new URLSearchParams("name=dsc"));
-
-  const setSearchParam = useCallback(
-    (name: string, value: string) => {
-      searchParams.set(name, value.toString());
-    },
-    [searchParams]
-  );
-
-  const onFilter = () => { 
-    setNameFilter(inputValue);
-  };
-
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);
   };
@@ -108,7 +88,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       }
     }
   };
-
   const getPlaceholder = () => {
     if (filterSelected) {
       const placeholder = filterSelected?.toLowerCase() + '_lower';
@@ -147,7 +126,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               onChange={onInputChange}
               value={inputValue}
             />
-            <Button variant={ButtonVariant.control} onClick={() => onFilter(inputValue)} aria-label="Search instances">
+            <Button variant={ButtonVariant.control} onClick={onSearch} aria-label="Search instances">
               <SearchIcon />
             </Button>
           </InputGroup>
@@ -159,9 +138,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   return (
     <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear} inset={{ lg: 'insetLg' }}>
       <ToolbarContent>
+        {mainToggle && (
           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
             {toggleGroupItems}
           </ToolbarToggleGroup>
+        )}
         <ToolbarItem>
           <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
             {t('create_streams_instance')}

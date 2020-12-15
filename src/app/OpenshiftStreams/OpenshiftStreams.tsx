@@ -42,11 +42,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
-  
-  const [nameFilter, setNameFilter] = useState("");
-  console.log('what is nameFilter' + nameFilter);
-
-
 
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
@@ -97,7 +92,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           accessToken,
           basePath,
         });
-        await apisService.listKafkas(page?.toString(), perPage?.toString(), nameFilter).then((res) => {
+        await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
           const kafkaInstances = res.data;
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
@@ -246,7 +241,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   perPage={perPage}
                   total={kafkaInstancesList?.total}
                   expectedTotal={expectedTotal}
-                  setNameFilter={setNameFilter}
                 />
               </PageSection>
             )}
