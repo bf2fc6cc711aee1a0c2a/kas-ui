@@ -41,6 +41,10 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
+  filteredValue: {};
+  setFilteredValue: (filteredValue: {}) => void;
+  filterSelected: string;
+  setFilterSelected: (filterSelected: string) => void;
 };
 
 type ConfigDetail = {
@@ -85,7 +89,12 @@ const StreamsTableView = ({
   total,
   kafkaDataLoaded,
   expectedTotal,
+  filteredValue,
+  setFilteredValue,
+  setFilterSelected,
+  filterSelected
 }: TableProps) => {
+
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
@@ -93,7 +102,6 @@ const StreamsTableView = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('owner'), t('status')];
-  const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const searchParams = new URLSearchParams(location.search);
@@ -365,6 +373,8 @@ const StreamsTableView = ({
         total={total}
         page={page}
         perPage={perPage}
+        filteredValue={filteredValue}
+        setFilteredValue={setFilteredValue}
       />
       <Table
         cells={tableColumns}

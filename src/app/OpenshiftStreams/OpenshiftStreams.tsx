@@ -57,6 +57,12 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   // state to store the expected total kafka instances based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
 
+  const [filterSelected, setFilterSelected] = useState('Name');
+  const [filteredValue, setFilteredValue] = useState({ name: 'test', status: '', cloud_provider: 'aws'});
+  console.log('what is filtered value' + filteredValue);
+  console.log('what is filter selected' + filterSelected);
+  const [orderBy, setOrderBy] = useState("");
+
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -92,8 +98,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           accessToken,
           basePath,
         });
-        await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
+          await apisService.listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, `${filteredValue.name && `name = ${filteredValue.name}`} ${filteredValue.status && ` and status = ${filteredValue.status}`} ${filteredValue.cloud_provider && ` and cloud_provider = ${filteredValue.cloud_provider}`}`).then((res) => {
           const kafkaInstances = res.data;
+          console.log('what is data' + JSON.stringify(kafkaInstances));
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
           kafkaInstancesList?.total !== undefined &&
@@ -147,7 +154,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [getToken, page, perPage]);
+  }, [getToken, page, perPage, filteredValue]);
 
   useEffect(() => {
     fetchCloudProviders();
@@ -241,6 +248,10 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   perPage={perPage}
                   total={kafkaInstancesList?.total}
                   expectedTotal={expectedTotal}
+                  filteredValue={filteredValue}
+                  setFilteredValue={setFilteredValue}
+                  setFilterSelected={setFilterSelected}
+                  filterSelected={filterSelected}
                 />
               </PageSection>
             )}

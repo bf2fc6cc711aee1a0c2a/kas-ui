@@ -27,67 +27,78 @@ type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
   setFilterSelected: (value: string) => void;
-  namesSelected: string[];
-  setNamesSelected: (value: string[]) => void;
   total: number;
   page: number;
   perPage: number;
+  filteredValue: {};
+  setFilteredValue: (filteredValue: {}) => void;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
+  setFilterSelected,
   filterSelected,
-  namesSelected,
-  setNamesSelected,
   mainToggle,
   total,
   page,
   perPage,
+  filteredValue,
+  setFilteredValue
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
   const { t } = useTranslation();
+
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);
   };
 
   // options for filter dropdown
-  const filterOptions = [{ value: 'Name', disabled: false }];
+  const filterOptions = [
+    { value: 'Name', disabled: false },
+    { value: 'Status', disabled: false }
+  ];
 
   const onInputChange = (input?: string) => {
     setInputValue(input);
   };
 
   const onClear = () => {
-    setNamesSelected([]);
+    setFilteredValue({});
   };
 
   const onDeleteGroup = (category: string | ToolbarChipGroup) => {
-    if (category.toString().toLowerCase() === 'name') {
-      setNamesSelected([]);
-    }
+    
+    // if (category.toString().toLowerCase() === 'name') {
+    //   setFilteredValue({...filteredValue, name: []});
+    // }
+
+    // this.setState(prevState => {
+    //   prevState.filters[type.toLowerCase()] = [];
+    //   return {
+    //     filters: prevState.filters
+    //   };
+    // });
   };
+
   const onDelete = (category: string | ToolbarChipGroup, chip: ToolbarChip | string) => {
     if (category.toString().toLowerCase() === 'name') {
-      const index = namesSelected.findIndex((name) => name === chip.toString().toLowerCase());
+      const index = filteredValue.findIndex((name) => name === chip.toString().toLowerCase());
       if (index >= 0) {
-        const prevState = Object.assign([], namesSelected);
+        const prevState = Object.assign([], filteredValue);
         prevState.splice(index, 1);
-        setNamesSelected(prevState);
+        setFilteredValue(prevState);
       }
     }
   };
 
-  const onSearch = () => {
-    if (inputValue && inputValue.trim() !== '') {
-      const index = namesSelected.findIndex((name) => name === inputValue.trim().toLowerCase());
-      if (index < 0) {
-        setNamesSelected([...namesSelected, inputValue.trim()]);
-        setInputValue('');
-      }
-    }
+  const onFilter = () => {
+    // if (inputValue) {
+    //   setFilteredValue([inputValue, ...filteredValue]);
+    // }
   };
+
   const getPlaceholder = () => {
     if (filterSelected) {
       const placeholder = filterSelected?.toLowerCase() + '_lower';
@@ -96,11 +107,16 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     return '';
   };
 
+  const onFilterSelect = (event, selection) => {
+    setIsFilterExpanded(!isFilterExpanded);
+    setFilterSelected(selection);
+  };
+
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
         <ToolbarFilter
-          chips={namesSelected}
+          chips={filteredValue.name}
           deleteChip={onDelete}
           deleteChipGroup={onDeleteGroup}
           categoryName={t('name')}
@@ -111,6 +127,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             onToggle={onFilterToggle}
             selections={filterSelected && t(filterSelected.toLowerCase())}
             isOpen={isFilterExpanded}
+            onSelect={onFilterSelect}
           >
             {filterOptions.map((option, index) => (
               <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
@@ -126,23 +143,57 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               onChange={onInputChange}
               value={inputValue}
             />
-            <Button variant={ButtonVariant.control} onClick={onSearch} aria-label="Search instances">
+            <Button variant={ButtonVariant.control} onClick={onFilter} aria-label="Search instances">
               <SearchIcon />
             </Button>
           </InputGroup>
         </ToolbarFilter>
+
+        <ToolbarFilter
+          chips={filteredValue.status}
+          deleteChip={onDelete}
+          deleteChipGroup={onDeleteGroup}
+          categoryName={t('status')}
+        >
+          <Select
+            variant={SelectVariant.single}
+            aria-label="Select filter"
+            onToggle={onFilterToggle}
+            selections={filterSelected && t(filterSelected.toLowerCase())}
+            isOpen={isFilterExpanded}
+            onSelect={onFilterSelect}
+          >
+            {filterOptions.map((option, index) => (
+              <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+            ))}
+          </Select>
+          <InputGroup className="filter-text-input">
+            <TextInput
+              name="filter text input"
+              id="filterText"
+              type="search"
+              aria-label="Search filter input"
+              placeholder={getPlaceholder()}
+              onChange={onInputChange}
+              value={inputValue}
+            />
+            <Button variant={ButtonVariant.control} onClick={onFilter} aria-label="Search instances">
+              <SearchIcon />
+            </Button>
+          </InputGroup>
+        </ToolbarFilter>
+
+
       </ToolbarGroup>
     </>
   );
 
   return (
-    <Toolbar id="instance-toolbar" collapseListedFiltersBreakpoint="md" clearAllFilters={onClear} inset={{ lg: 'insetLg' }}>
+    <Toolbar id="instance-toolbar" clearAllFilters={onClear} inset={{ lg: 'insetLg' }}>
       <ToolbarContent>
-        {mainToggle && (
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-            {toggleGroupItems}
-          </ToolbarToggleGroup>
-        )}
+        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
+          {toggleGroupItems}
+        </ToolbarToggleGroup>
         <ToolbarItem>
           <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
             {t('create_kafka_instance')}
