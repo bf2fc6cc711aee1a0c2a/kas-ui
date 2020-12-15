@@ -206,7 +206,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     <>
       <Modal
         variant={ModalVariant.medium}
-        title={t('create_a_streams_instance')}
+        title={t('create_a_kafka_instance')}
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
         actions={[

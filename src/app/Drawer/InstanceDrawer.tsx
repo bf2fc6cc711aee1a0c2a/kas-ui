@@ -70,6 +70,8 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     setActiveTab2Key(tabIndex);
   };
 
+  const externalServer = instanceDetail?.bootstrapServerHost?.endsWith(":443") ? instanceDetail?.bootstrapServerHost : `${instanceDetail?.bootstrapServerHost}:443`;
+
   const resourcesTab = (
     <>
       <div className="tab-content-body">
@@ -83,7 +85,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </TextContent>
         <Flex>
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-            <ClipboardCopy>strimzi-external-bootstrap-01:1234</ClipboardCopy>
+            <ClipboardCopy>{externalServer}</ClipboardCopy>
           </FlexItem>
           <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} />
         </Flex>

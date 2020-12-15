@@ -19,11 +19,11 @@ const EmptyState: React.FC<EmptyStateProps> = ({ createStreamsInstance, setCreat
       <PFEmptyState>
         <EmptyStateIcon icon={PlusCircleIcon} />
         <Title headingLevel="h4" size="lg">
-          {t('you_do_not_have_any_streams_instances_yet')}
+          {t('you_do_not_have_any_kafka_instances_yet')}
         </Title>
-        <EmptyStateBody>{t('create_a_streams_instance_to_get_started')}</EmptyStateBody>
+        <EmptyStateBody>{t('create_a_kafka_instance_to_get_started')}</EmptyStateBody>
         <Button variant="primary" onClick={onCreate}>
-          {t('create_a_streams_instance')}
+          {t('create_a_kafka_instance')}
         </Button>
       </PFEmptyState>
     </>
