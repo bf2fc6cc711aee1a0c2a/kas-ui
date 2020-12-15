@@ -1143,10 +1143,12 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @summary Returns a list of Kafka requests
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
+         * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
+         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listKafkas: async (page?: string, size?: string, options: any = {}): Promise<RequestArgs> => {
+        listKafkas: async (page?: string, size?: string, orderBy?: string, search?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/managed-services-api/v1/kafkas`;
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
             let baseOptions;
@@ -1172,6 +1174,14 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (size !== undefined) {
                 localVarQueryParameter['size'] = size;
+            }
+
+            if (orderBy !== undefined) {
+                localVarQueryParameter['orderBy'] = orderBy;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
             }
 
 
@@ -1387,11 +1397,13 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @summary Returns a list of Kafka requests
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
+         * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
+         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listKafkas(page?: string, size?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KafkaRequestList>> {
-            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listKafkas(page, size, options);
+        async listKafkas(page?: string, size?: string, orderBy?: string, search?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KafkaRequestList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listKafkas(page, size, orderBy, search, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1512,11 +1524,13 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @summary Returns a list of Kafka requests
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
+         * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
+         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listKafkas(page?: string, size?: string, options?: any): AxiosPromise<KafkaRequestList> {
-            return DefaultApiFp(configuration).listKafkas(page, size, options).then((request) => request(axios, basePath));
+        listKafkas(page?: string, size?: string, orderBy?: string, search?: string, options?: any): AxiosPromise<KafkaRequestList> {
+            return DefaultApiFp(configuration).listKafkas(page, size, orderBy, search, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1625,11 +1639,13 @@ export interface DefaultApiInterface {
      * @summary Returns a list of Kafka requests
      * @param {string} [page] Page index
      * @param {string} [size] Number of items in each page
+     * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
+     * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    listKafkas(page?: string, size?: string, options?: any): AxiosPromise<KafkaRequestList>;
+    listKafkas(page?: string, size?: string, orderBy?: string, search?: string, options?: any): AxiosPromise<KafkaRequestList>;
 
     /**
      * 
@@ -1752,12 +1768,14 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * @summary Returns a list of Kafka requests
      * @param {string} [page] Page index
      * @param {string} [size] Number of items in each page
+     * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
+     * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public listKafkas(page?: string, size?: string, options?: any) {
-        return DefaultApiFp(this.configuration).listKafkas(page, size, options).then((request) => request(this.axios, this.basePath));
+    public listKafkas(page?: string, size?: string, orderBy?: string, search?: string, options?: any) {
+        return DefaultApiFp(this.configuration).listKafkas(page, size, orderBy, search, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
