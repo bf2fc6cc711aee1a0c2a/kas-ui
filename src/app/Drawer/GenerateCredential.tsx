@@ -461,13 +461,13 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         <InputGroup className="pf-u-mt-lg">
           <InputGroupText className="no-wrap">{t('client_id')}</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5
+            { mainToggle ? 'srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5' : credential?.clientID } 
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
           <InputGroupText className="no-wrap">Client secret</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            441cdf77-083c-41d1-9050-c27a3b4247ac
+            { mainToggle ? '441cdf77-083c-41d1-9050-c27a3b4247ac' : credential?.clientSecret } 
           </ClipboardCopy>
         </InputGroup>
         <Bullseye className="pf-u-mt-lg">
