@@ -1146,8 +1146,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listKafkas: async (page?: string, size?: string, options: any = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/managed-services-api/v1/kafkas`;
+        listKafkas: async (page?: string, size?: string, searchQuery?: string, options: any = {}): Promise<RequestArgs> => {
+            const queryPath = searchQuery ? `?search=name%20like%20%27${searchQuery}%25%27%20` : '';
+            const localVarPath = queryPath.length > 1 ? `/api/managed-services-api/v1/kafkas${queryPath}` : `/api/managed-services-api/v1/kafkas`;
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
             let baseOptions;
             if (configuration) {
@@ -1390,8 +1391,8 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listKafkas(page?: string, size?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KafkaRequestList>> {
-            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listKafkas(page, size, options);
+        async listKafkas(page?: string, size?: string, searchQuery?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KafkaRequestList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listKafkas(page, size, searchQuery, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1515,8 +1516,8 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listKafkas(page?: string, size?: string, options?: any): AxiosPromise<KafkaRequestList> {
-            return DefaultApiFp(configuration).listKafkas(page, size, options).then((request) => request(axios, basePath));
+        listKafkas(page?: string, size?: string, searchQuery?: string, options?: any): AxiosPromise<KafkaRequestList> {
+            return DefaultApiFp(configuration).listKafkas(page, size, searchQuery, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1629,7 +1630,7 @@ export interface DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    listKafkas(page?: string, size?: string, options?: any): AxiosPromise<KafkaRequestList>;
+    listKafkas(page?: string, size?: string, searchQuery?: string, options?: any): AxiosPromise<KafkaRequestList>;
 
     /**
      * 
@@ -1756,8 +1757,8 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public listKafkas(page?: string, size?: string, options?: any) {
-        return DefaultApiFp(this.configuration).listKafkas(page, size, options).then((request) => request(this.axios, this.basePath));
+    public listKafkas(page?: string, size?: string, searchQuery?: string, options?: any) {
+        return DefaultApiFp(this.configuration).listKafkas(page, size, searchQuery, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

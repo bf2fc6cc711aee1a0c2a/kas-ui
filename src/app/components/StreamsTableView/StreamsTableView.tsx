@@ -85,6 +85,7 @@ const StreamsTableView = ({
   total,
   kafkaDataLoaded,
   expectedTotal,
+  setNameFilter
 }: TableProps) => {
   const { getToken } = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -365,6 +366,7 @@ const StreamsTableView = ({
         total={total}
         page={page}
         perPage={perPage}
+        setNameFilter={setNameFilter}
       />
       <Table
         cells={tableColumns}
