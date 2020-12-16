@@ -20,6 +20,7 @@ import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
 import './StreamsToolbarProps.css';
 import { useTranslation } from 'react-i18next';
+import { InstanceStatus } from '@app/constants';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
@@ -46,21 +47,40 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   filteredValue,
   setFilteredValue
 }) => {
+
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+  const [isStatusFilterExpanded, setIsStatusFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
   const { t } = useTranslation();
+
+  console.log('what is filtered Value in the Toolbar' + JSON.stringify(filteredValue));
 
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);
   };
 
+  const onStatusFilterToggle = () => {
+    setIsStatusFilterExpanded(!isStatusFilterExpanded);
+  };
+
   // options for filter dropdown
-  const filterOptions = [
+  const mainFilterOptions = [
     { value: 'Name', disabled: false },
     { value: 'Status', disabled: false }
   ];
 
+  const statusFilterOptions = [
+    { value: 'Ready', disabled: false },
+    { value: 'Failed', disabled: false },
+    { value: 'Creation in Progress', disabled: false },
+    { value: 'Creation Pending', disabled: false }
+  ];
+
   const onInputChange = (input?: string) => {
+    if (input === "") {
+      setFilteredValue({...filteredValue, name: ""})
+    }
+
     setInputValue(input);
   };
 
@@ -69,34 +89,36 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onDeleteGroup = (category: string | ToolbarChipGroup) => {
+    var categoryLower = category.toString().toLowerCase();
     
-    // if (category.toString().toLowerCase() === 'name') {
-    //   setFilteredValue({...filteredValue, name: []});
-    // }
+    if (categoryLower === 'name') {
+      setFilteredValue({...filteredValue, name: ""});
+    }
 
-    // this.setState(prevState => {
-    //   prevState.filters[type.toLowerCase()] = [];
-    //   return {
-    //     filters: prevState.filters
-    //   };
-    // });
+    if (categoryLower === 'status') {
+      setFilteredValue({...filteredValue, status: []});
+    }
   };
 
   const onDelete = (category: string | ToolbarChipGroup, chip: ToolbarChip | string) => {
-    if (category.toString().toLowerCase() === 'name') {
-      const index = filteredValue.findIndex((name) => name === chip.toString().toLowerCase());
-      if (index >= 0) {
-        const prevState = Object.assign([], filteredValue);
-        prevState.splice(index, 1);
-        setFilteredValue(prevState);
+    var categoryLower = category.toString().toLowerCase();
+    if (categoryLower === 'name') {
+      setFilteredValue({...filteredValue, name: ""});
+    }
+    if (categoryLower === 'status') {
+      var indexOfItem = filteredValue["status"].indexOf(chip);
+      if (indexOfItem >= 0) {
+        var copiedArray = [...filteredValue["status"]];
+        var newArray = copiedArray.splice(indexOfItem, 1);
+        setFilteredValue({ ...filteredValue, status: newArray })
       }
     }
   };
 
   const onFilter = () => {
-    // if (inputValue) {
-    //   setFilteredValue([inputValue, ...filteredValue]);
-    // }
+    if (inputValue) {
+      setFilteredValue({...filteredValue, name: inputValue});
+    }
   };
 
   const getPlaceholder = () => {
@@ -107,82 +129,87 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     return '';
   };
 
-  const onFilterSelect = (event, selection) => {
+  const onChangeSelect = (event, selection) => {
     setIsFilterExpanded(!isFilterExpanded);
     setFilterSelected(selection);
   };
 
+  const onStatusFilterSelect = (event, selection: string) => {
+    console.log('what is selection' + selection);
+    var indexOfItem = filteredValue["status"].indexOf(selection);
+    console.log('what is indexOfItem' + indexOfItem);
+    console.log('what is the filtered value status' + filteredValue["status"]);
+
+      if (indexOfItem !== -1) {
+        var copiedArray = [...filteredValue["status"]];
+        if (indexOfItem === 0) {
+          copiedArray.shift();
+          setFilteredValue({ ...filteredValue, status: copiedArray })
+        }
+        else {
+          var newArray = copiedArray.splice(indexOfItem, 1);
+          setFilteredValue({ ...filteredValue, status: newArray })
+        }
+      } else {
+        setFilteredValue({ ...filteredValue, status: filteredValue["status"].concat(selection) })
+      }
+      setIsStatusFilterExpanded(!isStatusFilterExpanded);
+  };
+
+
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
-        <ToolbarFilter
-          chips={filteredValue.name}
-          deleteChip={onDelete}
-          deleteChipGroup={onDeleteGroup}
-          categoryName={t('name')}
-        >
           <Select
             variant={SelectVariant.single}
             aria-label="Select filter"
             onToggle={onFilterToggle}
             selections={filterSelected && t(filterSelected.toLowerCase())}
             isOpen={isFilterExpanded}
-            onSelect={onFilterSelect}
+            onSelect={onChangeSelect}
           >
-            {filterOptions.map((option, index) => (
+            {mainFilterOptions.map((option, index) => (
               <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
             ))}
           </Select>
-          <InputGroup className="filter-text-input">
-            <TextInput
-              name="filter text input"
-              id="filterText"
-              type="search"
-              aria-label="Search filter input"
-              placeholder={getPlaceholder()}
-              onChange={onInputChange}
-              value={inputValue}
-            />
-            <Button variant={ButtonVariant.control} onClick={onFilter} aria-label="Search instances">
-              <SearchIcon />
-            </Button>
-          </InputGroup>
-        </ToolbarFilter>
-
-        <ToolbarFilter
-          chips={filteredValue.status}
-          deleteChip={onDelete}
-          deleteChipGroup={onDeleteGroup}
-          categoryName={t('status')}
-        >
-          <Select
-            variant={SelectVariant.single}
-            aria-label="Select filter"
-            onToggle={onFilterToggle}
-            selections={filterSelected && t(filterSelected.toLowerCase())}
-            isOpen={isFilterExpanded}
-            onSelect={onFilterSelect}
-          >
-            {filterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
-            ))}
-          </Select>
-          <InputGroup className="filter-text-input">
-            <TextInput
-              name="filter text input"
-              id="filterText"
-              type="search"
-              aria-label="Search filter input"
-              placeholder={getPlaceholder()}
-              onChange={onInputChange}
-              value={inputValue}
-            />
-            <Button variant={ButtonVariant.control} onClick={onFilter} aria-label="Search instances">
-              <SearchIcon />
-            </Button>
-          </InputGroup>
-        </ToolbarFilter>
-
+          { filterSelected === "Name" &&
+            <InputGroup className="filter-text-input">
+              <TextInput
+                name="filter text input"
+                id="filterText"
+                type="search"
+                aria-label="Search filter input"
+                placeholder={getPlaceholder()}
+                onChange={onInputChange}
+                value={inputValue}
+              />
+              <Button variant={ButtonVariant.control} onClick={onFilter} aria-label="Search instances">
+                <SearchIcon />
+              </Button>
+            </InputGroup>
+          }
+          { filterSelected === "Status" &&
+            <ToolbarFilter
+              chips={filteredValue.status}
+              deleteChip={onDelete}
+              deleteChipGroup={onDeleteGroup}
+              categoryName={t('status')}
+            >
+              <Select
+                variant={SelectVariant.checkbox}
+                aria-label="Select status filter"
+                onToggle={onStatusFilterToggle}
+                selections={filteredValue.status && filteredValue.status}
+                isOpen={isStatusFilterExpanded}
+                onSelect={onStatusFilterSelect}
+                placeholderText="Filter by status"
+              >
+                {statusFilterOptions.map((option, index) => (
+                  <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+                ))}
+              </Select>
+            </ToolbarFilter>
+}
 
       </ToolbarGroup>
     </>
