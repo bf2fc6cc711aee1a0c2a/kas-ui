@@ -1,4 +1,4 @@
-import Keycloak, { KeycloakInstance } from 'keycloak-js';
+import Keycloak, { KeycloakInstance, KeycloakTokenParsed } from 'keycloak-js';
 
 export let keycloak: KeycloakInstance | undefined;
 
@@ -66,6 +66,21 @@ export const getKeyCloakToken = async (): Promise<string> => {
   if (keycloak?.token) return keycloak.token;
   console.error('No keycloak token available');
   return 'foo';
+}
+
+/**
+ * Use keycloak update token function to retrieve
+ * keycloak token
+ *
+ * @return keycloak token or empty string if keycloak
+ * isn't configured
+ *
+ */
+export const getParsedKeyCloakToken = async (): Promise<KeycloakTokenParsed> => {
+  await keycloak?.updateToken(50);
+  if (keycloak?.tokenParsed) return keycloak.tokenParsed;
+  console.error('No keycloak token available');
+  return {} as KeycloakTokenParsed;
 }
 
 /**
