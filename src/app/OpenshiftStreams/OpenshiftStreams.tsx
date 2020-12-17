@@ -24,6 +24,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
+import './OpenshiftStreams.css';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -226,7 +227,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 />
               </PageSection>
             ) : (
-              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+              <PageSection className="table-page-section-padding" variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
