@@ -12,15 +12,17 @@ import '../../i18n/i18n';
 
 export type OpenshiftStreamsFederatedProps = {
   getToken: () => Promise<string>;
+  getUsername: () => Promise<string>;
   onConnectToInstance: (data: KafkaRequest) => void;
   addAlert: (message: string, variant?: AlertVariant) => void;
   basePath: string;
 };
 
-const OpenshiftStreamsFederated = ({ getToken, onConnectToInstance, addAlert, basePath }: OpenshiftStreamsFederatedProps) => {
+const OpenshiftStreamsFederated = ({ getUsername, getToken, onConnectToInstance, addAlert, basePath }: OpenshiftStreamsFederatedProps) => {
 
   const authContext = {
-    getToken
+    getToken,
+    getUsername
   } as IAuthContext;
 
   const alertContext = {

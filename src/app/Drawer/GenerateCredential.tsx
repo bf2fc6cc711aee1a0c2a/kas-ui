@@ -56,7 +56,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   mainToggle,
 }: GenerateCredential) => {
   const { t } = useTranslation();
-  const { getToken } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
   const [isCreated, setIsCreated] = useState(false);
@@ -79,12 +79,12 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   const [selectTransactionAccess, setSelectTransactionAccess] = useState('name');
   const [transactionAccessInput, setTransactionAccessInput] = useState();
   const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
-  const [credential, setCredential] = useState();
+  const [credential, setCredential] = useState<any | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState('');
 
   const generateCredential = async () => {
-    const accessToken = await getToken();
+    const accessToken = await authContext?.getToken();
     const serviceAccountRequest: ServiceAccountRequest = {
       name: instanceName,
     };
@@ -461,13 +461,13 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         <InputGroup className="pf-u-mt-lg">
           <InputGroupText className="no-wrap">{t('client_id')}</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            { mainToggle ? 'srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5' : credential?.clientID } 
+            { mainToggle ? 'srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5' : credential?.clientID }
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
           <InputGroupText className="no-wrap">Client secret</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            { mainToggle ? '441cdf77-083c-41d1-9050-c27a3b4247ac' : credential?.clientSecret } 
+            { mainToggle ? '441cdf77-083c-41d1-9050-c27a3b4247ac' : credential?.clientSecret }
           </ClipboardCopy>
         </InputGroup>
         <Bullseye className="pf-u-mt-lg">
