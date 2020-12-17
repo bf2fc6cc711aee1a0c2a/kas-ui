@@ -102,17 +102,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onDelete = (category: string | ToolbarChipGroup, chip: ToolbarChip | string) => {
     var categoryLower = category.toString().toLowerCase();
-    if (categoryLower === 'name') {
-      setFilteredValue({...filteredValue, name: ""});
-    }
     if (categoryLower === 'status') {
       var indexOfItem = filteredValue["status"].indexOf(chip);
+      var copiedArray = [...filteredValue["status"]];
       if (indexOfItem >= 0) {
-        var copiedArray = [...filteredValue["status"]];
-        var newArray = copiedArray.splice(indexOfItem, 1);
-        setFilteredValue({ ...filteredValue, status: newArray })
+          copiedArray.splice(indexOfItem, 1);
+          setFilteredValue({ ...filteredValue, status: copiedArray })
+        }
       }
-    }
   };
 
   const onFilter = () => {
@@ -135,23 +132,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onStatusFilterSelect = (event, selection: string) => {
-    console.log('what is selection' + selection);
     var indexOfItem = filteredValue["status"].indexOf(selection);
-    console.log('what is indexOfItem' + indexOfItem);
-    console.log('what is the filtered value status' + filteredValue["status"]);
 
+    var copiedArray = [...filteredValue["status"]];
       if (indexOfItem !== -1) {
-        var copiedArray = [...filteredValue["status"]];
-        if (indexOfItem === 0) {
-          copiedArray.shift();
-          setFilteredValue({ ...filteredValue, status: copiedArray })
-        }
-        else {
-          var newArray = copiedArray.splice(indexOfItem, 1);
-          setFilteredValue({ ...filteredValue, status: newArray })
-        }
+        copiedArray.splice(indexOfItem, 1);
+        setFilteredValue({ ...filteredValue, status: copiedArray })
       } else {
-        setFilteredValue({ ...filteredValue, status: filteredValue["status"].concat(selection) })
+        setFilteredValue({ ...filteredValue, status: copiedArray.concat(selection) })
       }
       setIsStatusFilterExpanded(!isStatusFilterExpanded);
   };
