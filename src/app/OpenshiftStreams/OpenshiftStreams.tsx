@@ -59,10 +59,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // States - Filtering
   const [filterSelected, setFilterSelected] = useState('Name');
-  const [filteredValue, setFilteredValue] = useState({ name: '', status: ['complete'], cloud_provider: 'aws'});
+  const [filteredValue, setFilteredValue] = useState({ name: '', status: '', region: 'us-east-1', cloud_provider: 'aws', owner: ''});
+  const [listOfOwners, setListOfOwners] = useState<String[]>([]);
 
-  console.log('what is filtered value' + filteredValue);
-  console.log('what is filter selected' + filterSelected);
   const [orderBy, setOrderBy] = useState("");
 
   const drawerRef = React.createRef<any>();
@@ -90,6 +89,22 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return false;
   };
 
+  const convertStatusStrings = (status: string) => {
+    var statusLower = status.toString().toLowerCase();
+    if(statusLower === 'ready') {
+      return 'complete'
+    }
+    else if(statusLower === 'failed') {
+      return 'failed'
+    }
+    else if(statusLower === 'creation in progress') {
+      return 'provisioning'
+    }
+    else if(statusLower === 'creation pending') {
+      return 'accepted'
+    }
+  }
+
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await getToken();
@@ -105,11 +120,22 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             perPage?.toString(),
             orderBy && orderBy,
             `${filteredValue.name && `name = ${filteredValue.name} and `}
-            ${filteredValue.status && `status = ${filteredValue.status[0]}`}
+            ${filteredValue.status && `status = ${convertStatusStrings(filteredValue.status)} and `}
+            ${filteredValue.region && ` region = ${filteredValue.region}`}
+            ${filteredValue.owner && ` and owner = ${filteredValue.owner}`}
             ${filteredValue.cloud_provider && ` and cloud_provider = ${filteredValue.cloud_provider}`}`
           ).then((res) => {
-          const kafkaInstances = res.data;
-          console.log('what is data' + JSON.stringify(kafkaInstances));
+            const kafkaInstances = res.data;
+            let ownerArray: string[] = [];
+            kafkaInstances.items.map(instance => {
+              if(!ownerArray.includes(instance.owner)) {
+                ownerArray.push(instance.owner);
+              }
+            })
+            console.log('what is ownerArray' + ownerArray);
+            setListOfOwners(ownerArray);
+            console.log('what is data' + JSON.stringify(kafkaInstances));
+
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
           kafkaInstancesList?.total !== undefined &&
@@ -261,6 +287,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   setFilteredValue={setFilteredValue}
                   setFilterSelected={setFilterSelected}
                   filterSelected={filterSelected}
+                  listOfOwners={listOfOwners}
                 />
               </PageSection>
             )}

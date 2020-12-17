@@ -45,6 +45,7 @@ type TableProps = {
   setFilteredValue: (filteredValue: {}) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
+  listOfOwners: String[];
 };
 
 type ConfigDetail = {
@@ -92,7 +93,8 @@ const StreamsTableView = ({
   filteredValue,
   setFilteredValue,
   setFilterSelected,
-  filterSelected
+  filterSelected,
+  listOfOwners
 }: TableProps) => {
 
   const { getToken } = useContext(AuthContext);
@@ -375,6 +377,7 @@ const StreamsTableView = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
+        listOfOwners={listOfOwners}
       />
       <Table
         cells={tableColumns}

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import {
+  ChipGroup,
+  Chip,
   ToolbarItem,
   InputGroup,
   TextInput,
@@ -33,6 +35,7 @@ type StreamsToolbarProps = {
   perPage: number;
   filteredValue: {};
   setFilteredValue: (filteredValue: {}) => void;
+  listOfOwners: String[];
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -45,18 +48,27 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   page,
   perPage,
   filteredValue,
-  setFilteredValue
+  setFilteredValue,
+  listOfOwners
 }) => {
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+  const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
+  const [isRegionFilterExpanded, setIsRegionFilterExpanded] = useState(false);
   const [isStatusFilterExpanded, setIsStatusFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
   const { t } = useTranslation();
 
-  console.log('what is filtered Value in the Toolbar' + JSON.stringify(filteredValue));
-
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);
+  };
+
+  const onCloudProviderFilterToggle = () => {
+    setIsCloudProviderFilterExpanded(!isCloudProviderFilterExpanded);
+  };
+
+  const onRegionFilterToggle = () => {
+    setIsRegionFilterExpanded(!isRegionFilterExpanded);
   };
 
   const onStatusFilterToggle = () => {
@@ -65,15 +77,26 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   // options for filter dropdown
   const mainFilterOptions = [
-    { value: 'Name', disabled: false },
-    { value: 'Status', disabled: false }
+    { value: t('name'), disabled: false },
+    { value: t('cloud_provider'), disabled: false },
+    { value: t('region'), disabled: false },
+    { value: t('owner'), disabled: false },
+    { value: t('status'), disabled: false }
+  ];
+
+  const cloudProviderFilterOptions = [
+    { value: t('aws'), disabled: false }
+  ];
+
+  const regionFilterOptions = [
+    { value: t('us-east-1'), disabled: false }
   ];
 
   const statusFilterOptions = [
-    { value: 'Ready', disabled: false },
-    { value: 'Failed', disabled: false },
-    { value: 'Creation in Progress', disabled: false },
-    { value: 'Creation Pending', disabled: false }
+    { value: t('ready'), disabled: false },
+    { value: t('failed'), disabled: false },
+    { value: t('creation_in_progress'), disabled: false },
+    { value: t('creation_pending'), disabled: false }
   ];
 
   const onInputChange = (input?: string) => {
@@ -88,28 +111,34 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilteredValue({});
   };
 
+  const formatTitle = (title: string) => {
+    switch (title) {
+      case 'name':
+        return t(title);
+      case 'status':
+        return t(title);
+      case 'cloud_provider':
+        return t(title);
+      default:
+        return t(title);
+    }
+  };
+
   const onDeleteGroup = (category: string | ToolbarChipGroup) => {
     var categoryLower = category.toString().toLowerCase();
-    
     if (categoryLower === 'name') {
       setFilteredValue({...filteredValue, name: ""});
     }
-
     if (categoryLower === 'status') {
-      setFilteredValue({...filteredValue, status: []});
+      setFilteredValue({...filteredValue, status: ""});
     }
   };
 
   const onDelete = (category: string | ToolbarChipGroup, chip: ToolbarChip | string) => {
     var categoryLower = category.toString().toLowerCase();
     if (categoryLower === 'status') {
-      var indexOfItem = filteredValue["status"].indexOf(chip);
-      var copiedArray = [...filteredValue["status"]];
-      if (indexOfItem >= 0) {
-          copiedArray.splice(indexOfItem, 1);
-          setFilteredValue({ ...filteredValue, status: copiedArray })
-        }
-      }
+      setFilteredValue({ ...filteredValue, status: '' })
+    }
   };
 
   const onFilter = () => {
@@ -131,19 +160,46 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilterSelected(selection);
   };
 
-  const onStatusFilterSelect = (event, selection: string) => {
-    var indexOfItem = filteredValue["status"].indexOf(selection);
-
-    var copiedArray = [...filteredValue["status"]];
-      if (indexOfItem !== -1) {
-        copiedArray.splice(indexOfItem, 1);
-        setFilteredValue({ ...filteredValue, status: copiedArray })
-      } else {
-        setFilteredValue({ ...filteredValue, status: copiedArray.concat(selection) })
-      }
-      setIsStatusFilterExpanded(!isStatusFilterExpanded);
+  const onCloudProviderFilterSelect = (event, selection, isPlaceholder) => {
+    if (isPlaceholder) clearStatusSelection();
+    setFilteredValue({ ...filteredValue, cloud_provider: selection });
+    setIsCloudProviderFilterExpanded(false);
   };
 
+  const onRegionFilterSelect = (event, selection, isPlaceholder) => {
+    if (isPlaceholder) clearStatusSelection();
+    setFilteredValue({ ...filteredValue, region: selection });
+    setIsRegionFilterExpanded(false);
+  };
+
+  const onStatusFilterSelect = (event, selection, isPlaceholder) => {
+    if (isPlaceholder) clearStatusSelection();
+    setFilteredValue({ ...filteredValue, status: selection });
+    // else if (selection === "Failed") {
+    //   setFilteredValue({ ...filteredValue, status: 'Failed' });
+    // }
+    // else if (selection === "creation in progress") {
+    //   setFilteredValue({ ...filteredValue, status: 'Creation in progress' });
+    // }
+    // else if (selection === "creation pending") {
+    //   setFilteredValue({ ...filteredValue, status: 'Creation pending' });
+    // }
+    setIsStatusFilterExpanded(false);
+  };
+
+  const clearStatusSelection = () => {
+    setFilteredValue({ ...filteredValue, status: "" });
+    setIsStatusFilterExpanded(false);
+  };
+
+  const deleteChip = (key: string) => {
+    if (key === 'name') {
+      setFilteredValue({ ...filteredValue, name: '' });
+    }
+    if (key === 'status') {
+      setFilteredValue({ ...filteredValue, status: '' });
+    }
+  }
 
   const toggleGroupItems = (
     <>
@@ -176,16 +232,55 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               </Button>
             </InputGroup>
           }
-          { filterSelected === "Status" &&
-            <ToolbarFilter
-              chips={filteredValue.status}
-              deleteChip={onDelete}
-              deleteChipGroup={onDeleteGroup}
-              categoryName={t('status')}
-            >
+          { filterSelected === "cloud provider" &&
               <Select
-                variant={SelectVariant.checkbox}
-                aria-label="Select status filter"
+                variant={SelectVariant.single}
+                aria-label="Select cloud provider"
+                onToggle={onCloudProviderFilterToggle}
+                selections={filteredValue.cloud_provider && filteredValue.cloud_provider}
+                isOpen={isCloudProviderFilterExpanded}
+                onSelect={onCloudProviderFilterSelect}
+                placeholderText="Filter by cloud provider"
+              >
+                {cloudProviderFilterOptions.map((option, index) => (
+                  <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+                ))}
+              </Select>
+          }
+          { filterSelected === "Region" &&
+            <Select
+              variant={SelectVariant.single}
+              aria-label="Select region"
+              onToggle={onRegionFilterToggle}
+              selections={filteredValue.region && filteredValue.region}
+              isOpen={isRegionFilterExpanded}
+              onSelect={onRegionFilterSelect}
+              placeholderText="Filter by region"
+            >
+              {regionFilterOptions.map((option, index) => (
+                <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+              ))}
+            </Select>
+          }
+          { filterSelected === "Owner" &&
+            <Select
+              variant={SelectVariant.single}
+              aria-label="Select region"
+              onToggle={onRegionFilterToggle}
+              selections={filteredValue.region && filteredValue.region}
+              isOpen={isRegionFilterExpanded}
+              onSelect={onRegionFilterSelect}
+              placeholderText="Filter by region"
+            >
+              {listOfOwners.map((option, index) => (
+                <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+              ))}
+            </Select>
+          }
+          { filterSelected === "Status" &&
+              <Select
+                variant={SelectVariant.single}
+                aria-label="Select status"
                 onToggle={onStatusFilterToggle}
                 selections={filteredValue.status && filteredValue.status}
                 isOpen={isStatusFilterExpanded}
@@ -196,11 +291,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
                 ))}
               </Select>
-            </ToolbarFilter>
-}
-
+            }
       </ToolbarGroup>
     </>
+  );
+
+  const toolbarChipGroup = (
+    <ToolbarGroup>
+      <ChipGroup>
+        { Object.keys(filteredValue).map(function(key,index) {
+          if (filteredValue[key] !== '') {
+            return (
+            <Chip key={index} onClick={() => deleteChip(key)}>
+              {formatTitle(key)}: {filteredValue[key]}
+            </Chip>
+            )
+          }
+        })}
+      </ChipGroup>
+    </ToolbarGroup>
   );
 
   return (
@@ -224,6 +333,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             paginationTitle={t('minimal_pagination')}
           />
         </ToolbarItem>
+      </ToolbarContent>
+      <ToolbarContent>
+        {toolbarChipGroup}
       </ToolbarContent>
     </Toolbar>
   );
