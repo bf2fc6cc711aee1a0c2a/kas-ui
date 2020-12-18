@@ -120,35 +120,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilteredValue({});
   };
 
-  const formatTitle = (title: string) => {
-    switch (title) {
-      case 'name':
-        return t(title);
-      case 'status':
-        return t(title);
-      case 'cloud_provider':
-        return t(title);
-      default:
-        return t(title);
-    }
-  };
+  // const onDeleteGroup = (category: string | ToolbarChipGroup) => {
+  //   var categoryLower = category.toString().toLowerCase();
+  //   if (categoryLower === 'name') {
+  //     setFilteredValue({...filteredValue, name: ""});
+  //   }
+  //   if (categoryLower === 'status') {
+  //     setFilteredValue({...filteredValue, status: ""});
+  //   }
+  // };
 
-  const onDeleteGroup = (category: string | ToolbarChipGroup) => {
-    var categoryLower = category.toString().toLowerCase();
-    if (categoryLower === 'name') {
-      setFilteredValue({...filteredValue, name: ""});
-    }
-    if (categoryLower === 'status') {
-      setFilteredValue({...filteredValue, status: ""});
-    }
-  };
-
-  const onDelete = (category: string | ToolbarChipGroup, chip: ToolbarChip | string) => {
-    var categoryLower = category.toString().toLowerCase();
-    if (categoryLower === 'status') {
-      setFilteredValue({ ...filteredValue, status: '' })
-    }
-  };
+  // const onDelete = (category: string | ToolbarChipGroup, chip: ToolbarChip | string) => {
+  //   var categoryLower = category.toString().toLowerCase();
+  //   if (categoryLower === 'status') {
+  //     setFilteredValue({ ...filteredValue, status: '' })
+  //   }
+  // };
 
   const onFilter = () => {
     if (inputValue) {
@@ -225,12 +212,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     if (key === 'status') {
       setFilteredValue({ ...filteredValue, status: '' });
     }
-    if (key === 'region') {
-      setFilteredValue({ ...filteredValue, region: '' });
-    }
-    if (key === 'cloud_provider') {
-      setFilteredValue({ ...filteredValue, cloud_provider: '' });
-    }
+    // if (key === 'region') {
+    //   setFilteredValue({ ...filteredValue, region: '' });
+    // }
+    // if (key === 'cloud_provider') {
+    //   setFilteredValue({ ...filteredValue, cloud_provider: '' });
+    // }
     if (key === 'owner') {
       setFilteredValue({ ...filteredValue, owner: '' });
     }
@@ -339,11 +326,20 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       <ChipGroup>
         { Object.keys(filteredValue).map(function(key,index) {
           if (filteredValue[key] !== '') {
-            return (
-            <Chip key={index} onClick={() => deleteChip(key)}>
-              {formatTitle(key)}: {filteredValue[key]}
-            </Chip>
-            )
+            if(key === 'region' || key === 'cloud_provider') {
+              return (
+                <Chip key={index} onClick={() => deleteChip(key)} isReadOnly>
+                  {t(key)}: {filteredValue[key]}
+                </Chip>
+              )
+            }
+            else {
+              return (
+                <Chip key={index} onClick={() => deleteChip(key)}>
+                  {t(key)}: {filteredValue[key]}
+                </Chip>
+              )
+            }
           }
         })}
       </ChipGroup>
