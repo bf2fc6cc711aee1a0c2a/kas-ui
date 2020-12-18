@@ -27,7 +27,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import { useHistory } from 'react-router-dom';
 
-type TableProps = {
+export type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
