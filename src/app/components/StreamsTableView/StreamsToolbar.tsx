@@ -229,7 +229,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       setFilteredValue({ ...filteredValue, region: '' });
     }
     if (key === 'cloud_provider') {
-      setFilteredValue({ ...filteredValue, status: '' });
+      setFilteredValue({ ...filteredValue, cloud_provider: '' });
     }
     if (key === 'owner') {
       setFilteredValue({ ...filteredValue, owner: '' });
@@ -243,7 +243,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             variant={SelectVariant.single}
             aria-label="Select filter"
             onToggle={onFilterToggle}
-            selections={filterSelected && t(filterSelected.toLowerCase())}
+            selections={filterSelected && filterSelected}
             isOpen={isFilterExpanded}
             onSelect={onChangeSelect}
           >
