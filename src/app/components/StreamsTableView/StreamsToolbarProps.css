@@ -1,3 +1,7 @@
 .filter-text-input{
-    min-width: max-content;
+  min-width: max-content;
+}
+
+.select-typeahead-width {
+  width: 230px;
 }

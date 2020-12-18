@@ -23,6 +23,7 @@ import { TablePagination } from './TablePagination';
 import './StreamsToolbarProps.css';
 import { useTranslation } from 'react-i18next';
 import { InstanceStatus } from '@app/constants';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
@@ -56,6 +57,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
   const [isRegionFilterExpanded, setIsRegionFilterExpanded] = useState(false);
   const [isStatusFilterExpanded, setIsStatusFilterExpanded] = useState(false);
+  const [isOwnerFilterExpanded, setIsOwnerFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
   const { t } = useTranslation();
 
@@ -71,11 +73,15 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setIsRegionFilterExpanded(!isRegionFilterExpanded);
   };
 
+  const onOwnerFilterToggle = () => {
+    setIsOwnerFilterExpanded(!isOwnerFilterExpanded);
+  };
+
   const onStatusFilterToggle = () => {
     setIsStatusFilterExpanded(!isStatusFilterExpanded);
   };
 
-  // options for filter dropdown
+  // Options for server-side filtering
   const mainFilterOptions = [
     { value: t('name'), disabled: false },
     { value: t('cloud_provider'), disabled: false },
@@ -84,20 +90,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     { value: t('status'), disabled: false }
   ];
 
-  const cloudProviderFilterOptions = [
-    { value: t('aws'), disabled: false }
-  ];
+  const cloudProviderFilterOptions = cloudProviderOptions.map(cloudProvider => {
+    return (
+      { value: t(cloudProvider.label), disabled: false }
+    )
+  });
 
-  const regionFilterOptions = [
-    { value: t('us-east-1'), disabled: false }
-  ];
+  const regionFilterOptions = cloudRegionOptions.map(region => {
+    return (
+      { value: t(region.label), disabled: false }
+    )
+  });
 
-  const statusFilterOptions = [
-    { value: t('ready'), disabled: false },
-    { value: t('failed'), disabled: false },
-    { value: t('creation_in_progress'), disabled: false },
-    { value: t('creation_pending'), disabled: false }
-  ];
+  const statusFilterOptions = statusOptions.map(status => {
+    return (
+      { value: t(status.label), disabled: false }
+    )
+  });
 
   const onInputChange = (input?: string) => {
     if (input === "") {
@@ -156,41 +165,58 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onChangeSelect = (event, selection) => {
+    console.log('what is the selection here' + selection);
     setIsFilterExpanded(!isFilterExpanded);
     setFilterSelected(selection);
   };
 
   const onCloudProviderFilterSelect = (event, selection, isPlaceholder) => {
-    if (isPlaceholder) clearStatusSelection();
+    if (isPlaceholder) clearSelection('cloud_provider');
     setFilteredValue({ ...filteredValue, cloud_provider: selection });
     setIsCloudProviderFilterExpanded(false);
   };
 
   const onRegionFilterSelect = (event, selection, isPlaceholder) => {
-    if (isPlaceholder) clearStatusSelection();
+    if (isPlaceholder) clearSelection('region');
     setFilteredValue({ ...filteredValue, region: selection });
     setIsRegionFilterExpanded(false);
   };
 
+  const onOwnerFilterSelect = (event, selection, isPlaceholder) => {
+    if (isPlaceholder) clearSelection('owner');
+    setFilteredValue({ ...filteredValue, owner: selection });
+    setIsOwnerFilterExpanded(false);
+  };
+
   const onStatusFilterSelect = (event, selection, isPlaceholder) => {
-    if (isPlaceholder) clearStatusSelection();
+    if (isPlaceholder) clearSelection('status');
     setFilteredValue({ ...filteredValue, status: selection });
-    // else if (selection === "Failed") {
-    //   setFilteredValue({ ...filteredValue, status: 'Failed' });
-    // }
-    // else if (selection === "creation in progress") {
-    //   setFilteredValue({ ...filteredValue, status: 'Creation in progress' });
-    // }
-    // else if (selection === "creation pending") {
-    //   setFilteredValue({ ...filteredValue, status: 'Creation pending' });
-    // }
     setIsStatusFilterExpanded(false);
   };
 
-  const clearStatusSelection = () => {
-    setFilteredValue({ ...filteredValue, status: "" });
-    setIsStatusFilterExpanded(false);
+  const clearSelection = (value: string) => {
+    if(value === 'cloud_provider') {
+      setFilteredValue({ ...filteredValue, cloud_provider: "" });
+      setIsStatusFilterExpanded(false);
+    }
+    if(value === 'region') {
+      setFilteredValue({ ...filteredValue, region: "" });
+      setIsRegionFilterExpanded
+    }
+    if(value === 'owner') {
+      setFilteredValue({ ...filteredValue, owner: "" });
+      setIsOwnerFilterExpanded(false);
+    }
+    if(value === 'status') {
+      setFilteredValue({ ...filteredValue, status: "" });
+      setIsStatusFilterExpanded(false);
+    }
   };
+
+  const onClearOwnerSelection = () => {
+    setFilteredValue({ ...filteredValue, owner: "" });
+    setIsOwnerFilterExpanded(false);
+  }
 
   const deleteChip = (key: string) => {
     if (key === 'name') {
@@ -198,6 +224,15 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     }
     if (key === 'status') {
       setFilteredValue({ ...filteredValue, status: '' });
+    }
+    if (key === 'region') {
+      setFilteredValue({ ...filteredValue, region: '' });
+    }
+    if (key === 'cloud_provider') {
+      setFilteredValue({ ...filteredValue, status: '' });
+    }
+    if (key === 'owner') {
+      setFilteredValue({ ...filteredValue, owner: '' });
     }
   }
 
@@ -213,7 +248,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             onSelect={onChangeSelect}
           >
             {mainFilterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+              <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
             ))}
           </Select>
           { filterSelected === "Name" &&
@@ -232,7 +267,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               </Button>
             </InputGroup>
           }
-          { filterSelected === "cloud provider" &&
+          { filterSelected === "Cloud provider" &&
               <Select
                 variant={SelectVariant.single}
                 aria-label="Select cloud provider"
@@ -243,7 +278,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholderText="Filter by cloud provider"
               >
                 {cloudProviderFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+                  <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
                 ))}
               </Select>
           }
@@ -258,22 +293,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               placeholderText="Filter by region"
             >
               {regionFilterOptions.map((option, index) => (
-                <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+                <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
               ))}
             </Select>
           }
           { filterSelected === "Owner" &&
             <Select
-              variant={SelectVariant.single}
+              className="select-typeahead-width"
+              variant={SelectVariant.typeahead}
+              typeAheadAriaLabel="Select an owner"
               aria-label="Select region"
-              onToggle={onRegionFilterToggle}
-              selections={filteredValue.region && filteredValue.region}
-              isOpen={isRegionFilterExpanded}
-              onSelect={onRegionFilterSelect}
-              placeholderText="Filter by region"
+              onToggle={onOwnerFilterToggle}
+              selections={filteredValue.owner && filteredValue.owner}
+              isOpen={isOwnerFilterExpanded}
+              onSelect={onOwnerFilterSelect}
+              onClear={onClearOwnerSelection}
+              placeholderText="Filter by owner"
             >
-              {listOfOwners.map((option, index) => (
-                <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+              {listOfOwners && listOfOwners.map((option, index) => (
+                <SelectOption key={index} value={option} />
               ))}
             </Select>
           }
@@ -288,7 +326,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholderText="Filter by status"
               >
                 {statusFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
+                  <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
                 ))}
               </Select>
             }

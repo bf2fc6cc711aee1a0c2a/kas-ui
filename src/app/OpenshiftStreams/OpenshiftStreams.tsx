@@ -24,6 +24,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -59,7 +60,15 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // States - Filtering
   const [filterSelected, setFilterSelected] = useState('Name');
-  const [filteredValue, setFilteredValue] = useState({ name: '', status: '', region: 'us-east-1', cloud_provider: 'aws', owner: ''});
+
+  const [filteredValue, setFilteredValue] = useState(
+    { name: '',
+    status: '',
+    region: cloudRegionOptions[0].label,
+    cloud_provider: cloudProviderOptions[0].label,
+    owner: ''}
+  );
+
   const [listOfOwners, setListOfOwners] = useState<String[]>([]);
 
   const [orderBy, setOrderBy] = useState("");
@@ -89,22 +98,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return false;
   };
 
-  const convertStatusStrings = (status: string) => {
-    var statusLower = status.toString().toLowerCase();
-    if(statusLower === 'ready') {
-      return 'complete'
-    }
-    else if(statusLower === 'failed') {
-      return 'failed'
-    }
-    else if(statusLower === 'creation in progress') {
-      return 'provisioning'
-    }
-    else if(statusLower === 'creation pending') {
-      return 'accepted'
-    }
-  }
-
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await getToken();
@@ -120,10 +113,10 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             perPage?.toString(),
             orderBy && orderBy,
             `${filteredValue.name && `name = ${filteredValue.name} and `}
-            ${filteredValue.status && `status = ${convertStatusStrings(filteredValue.status)} and `}
-            ${filteredValue.region && ` region = ${filteredValue.region}`}
+            ${filteredValue.status && `status = ${statusOptions[statusOptions.findIndex(x => x.label === filteredValue.status)].value} and `}
+            ${filteredValue.region && ` region = ${cloudRegionOptions[cloudRegionOptions.findIndex(x => x.label === filteredValue.region)].value}`}
             ${filteredValue.owner && ` and owner = ${filteredValue.owner}`}
-            ${filteredValue.cloud_provider && ` and cloud_provider = ${filteredValue.cloud_provider}`}`
+            ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
           ).then((res) => {
             const kafkaInstances = res.data;
             let ownerArray: string[] = [];
@@ -189,7 +182,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [getToken, page, perPage]);
+  }, [getToken, page, perPage, filteredValue]);
 
   useEffect(() => {
     fetchCloudProviders();
