@@ -55,7 +55,7 @@ type TableProps = {
   setFilteredValue: (filteredValue: {}) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
-  listOfOwners: String[];
+  listOfOwners: string[];
   rawKafkaDataLength: number;
 };
 

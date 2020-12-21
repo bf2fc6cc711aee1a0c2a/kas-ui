@@ -32,7 +32,7 @@ type StreamsToolbarProps = {
   perPage: number;
   filteredValue: {};
   setFilteredValue: (filteredValue: {}) => void;
-  listOfOwners: String[];
+  listOfOwners: string[];
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({

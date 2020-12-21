@@ -58,7 +58,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
-  const [listOfOwners, setListOfOwners] = useState<String[]>([]);
+  const [listOfOwners, setListOfOwners] = useState<string[]>([]);
   const [orderBy, setOrderBy] = useState("");
   const [filterSelected, setFilterSelected] = useState('Name');
   const [filteredValue, setFilteredValue] = useState(
@@ -115,7 +115,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
         ).then((res) => {
           const kafkaInstances = res.data;
-          let ownerArray: string[] = [];
+          const ownerArray: string[] = [];
           kafkaInstances.items.map(instance => {
             if(!ownerArray.includes(instance.owner)) {
               ownerArray.push(instance.owner);
