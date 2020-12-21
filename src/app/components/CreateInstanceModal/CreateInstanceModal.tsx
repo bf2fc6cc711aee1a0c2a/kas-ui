@@ -194,7 +194,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const getTileIcon = (provider?: string) => {
     switch (provider?.toLowerCase()) {
       case 'aws':
-        return <AwsIcon size="lg" color="black" className="cloud-region-icon" />;
+        return <AwsIcon size="lg" color="black" className="mk--create-instance__tile--icon" />;
       default:
         return;
     }
