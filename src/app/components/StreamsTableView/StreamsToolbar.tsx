@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ChipGroup,
   Chip,
@@ -13,17 +13,13 @@ import {
   ToolbarToggleGroup,
   Toolbar,
   ToolbarContent,
-  ToolbarGroup,
-  ToolbarFilter,
-  ToolbarChipGroup,
-  ToolbarChip,
+  ToolbarGroup
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
-import './StreamsToolbarProps.css';
 import { useTranslation } from 'react-i18next';
-import { InstanceStatus } from '@app/constants';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import './StreamsToolbar.css';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
@@ -44,7 +40,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   setCreateStreamsInstance,
   setFilterSelected,
   filterSelected,
-  mainToggle,
   total,
   page,
   perPage,
@@ -59,27 +54,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isStatusFilterExpanded, setIsStatusFilterExpanded] = useState(false);
   const [isOwnerFilterExpanded, setIsOwnerFilterExpanded] = useState(false);
   const [inputValue, setInputValue] = useState<string | undefined>();
+  const [trimmedFilterValue, setTrimmedFilterValue] = useState({});
   const { t } = useTranslation();
 
-  const onFilterToggle = () => {
-    setIsFilterExpanded(!isFilterExpanded);
-  };
-
-  const onCloudProviderFilterToggle = () => {
-    setIsCloudProviderFilterExpanded(!isCloudProviderFilterExpanded);
-  };
-
-  const onRegionFilterToggle = () => {
-    setIsRegionFilterExpanded(!isRegionFilterExpanded);
-  };
-
-  const onOwnerFilterToggle = () => {
-    setIsOwnerFilterExpanded(!isOwnerFilterExpanded);
-  };
-
-  const onStatusFilterToggle = () => {
-    setIsStatusFilterExpanded(!isStatusFilterExpanded);
-  };
+  useEffect(() => {
+    trimFilterValues();
+  }, [filteredValue]);
 
   // Options for server-side filtering
   const mainFilterOptions = [
@@ -108,11 +88,30 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     )
   });
 
+  const onFilterToggle = () => {
+    setIsFilterExpanded(!isFilterExpanded);
+  };
+
+  const onCloudProviderFilterToggle = () => {
+    setIsCloudProviderFilterExpanded(!isCloudProviderFilterExpanded);
+  };
+
+  const onRegionFilterToggle = () => {
+    setIsRegionFilterExpanded(!isRegionFilterExpanded);
+  };
+
+  const onOwnerFilterToggle = () => {
+    setIsOwnerFilterExpanded(!isOwnerFilterExpanded);
+  };
+
+  const onStatusFilterToggle = () => {
+    setIsStatusFilterExpanded(!isStatusFilterExpanded);
+  };
+
   const onInputChange = (input?: string) => {
     if (input === "") {
       setFilteredValue({...filteredValue, name: ""})
     }
-
     setInputValue(input);
   };
 
@@ -120,22 +119,15 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilteredValue({});
   };
 
-  // const onDeleteGroup = (category: string | ToolbarChipGroup) => {
-  //   var categoryLower = category.toString().toLowerCase();
-  //   if (categoryLower === 'name') {
-  //     setFilteredValue({...filteredValue, name: ""});
-  //   }
-  //   if (categoryLower === 'status') {
-  //     setFilteredValue({...filteredValue, status: ""});
-  //   }
-  // };
-
-  // const onDelete = (category: string | ToolbarChipGroup, chip: ToolbarChip | string) => {
-  //   var categoryLower = category.toString().toLowerCase();
-  //   if (categoryLower === 'status') {
-  //     setFilteredValue({ ...filteredValue, status: '' })
-  //   }
-  // };
+  const trimFilterValues = () => {
+    const copyFilteredValue = Object.assign({}, filteredValue);
+    Object.keys(copyFilteredValue).forEach(key => {
+      if(copyFilteredValue[key] === "") {
+        delete copyFilteredValue[key];
+      }
+    });
+    setTrimmedFilterValue(copyFilteredValue);
+  }
 
   const onFilter = () => {
     if (inputValue) {
@@ -212,12 +204,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     if (key === 'status') {
       setFilteredValue({ ...filteredValue, status: '' });
     }
-    // if (key === 'region') {
-    //   setFilteredValue({ ...filteredValue, region: '' });
-    // }
-    // if (key === 'cloud_provider') {
-    //   setFilteredValue({ ...filteredValue, cloud_provider: '' });
-    // }
     if (key === 'owner') {
       setFilteredValue({ ...filteredValue, owner: '' });
     }
@@ -324,19 +310,19 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toolbarChipGroup = (
     <ToolbarGroup>
       <ChipGroup>
-        { Object.keys(filteredValue).map(function(key,index) {
-          if (filteredValue[key] !== '') {
+        { trimmedFilterValue && Object.keys(trimmedFilterValue).map((key,index) => {
+          if (trimmedFilterValue[key] !== '') {
             if(key === 'region' || key === 'cloud_provider') {
               return (
                 <Chip key={index} onClick={() => deleteChip(key)} isReadOnly>
-                  {t(key)}: {filteredValue[key]}
+                  {t(key)}: {trimmedFilterValue[key]}
                 </Chip>
               )
             }
             else {
               return (
                 <Chip key={index} onClick={() => deleteChip(key)}>
-                  {t(key)}: {filteredValue[key]}
+                  {t(key)}: {trimmedFilterValue[key]}
                 </Chip>
               )
             }

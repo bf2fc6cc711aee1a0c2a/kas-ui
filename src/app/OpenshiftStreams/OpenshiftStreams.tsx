@@ -60,7 +60,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // States - Filtering
   const [filterSelected, setFilterSelected] = useState('Name');
-
   const [filteredValue, setFilteredValue] = useState(
     { name: '',
     status: '',
@@ -68,6 +67,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     cloud_provider: cloudProviderOptions[0].label,
     owner: ''}
   );
+  const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
 
   const [listOfOwners, setListOfOwners] = useState<String[]>([]);
 
@@ -101,41 +101,49 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await getToken();
-
     if (isValidToken(accessToken)) {
       try {
         const apisService = new DefaultApi({
           accessToken,
           basePath,
         });
-          await apisService.listKafkas(
-            page?.toString(),
-            perPage?.toString(),
-            orderBy && orderBy,
-            `${filteredValue.name && `name = ${filteredValue.name} and `}
-            ${filteredValue.status && `status = ${statusOptions[statusOptions.findIndex(x => x.label === filteredValue.status)].value} and `}
-            ${filteredValue.region && ` region = ${cloudRegionOptions[cloudRegionOptions.findIndex(x => x.label === filteredValue.region)].value}`}
-            ${filteredValue.owner && ` and owner = ${filteredValue.owner}`}
-            ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
-          ).then((res) => {
-            const kafkaInstances = res.data;
-            let ownerArray: string[] = [];
-            kafkaInstances.items.map(instance => {
-              if(!ownerArray.includes(instance.owner)) {
-                ownerArray.push(instance.owner);
-              }
-            })
-            console.log('what is ownerArray' + ownerArray);
-            setListOfOwners(ownerArray);
-            console.log('what is data' + JSON.stringify(kafkaInstances));
+        await apisService.listKafkas(
+          page?.toString(),
+          perPage?.toString(),
+          orderBy && orderBy,
+          `${filteredValue.name && `name = ${filteredValue.name} and `}
+          ${filteredValue.status && `status = ${statusOptions[statusOptions.findIndex(x => x.label === filteredValue.status)].value} and `}
+          ${filteredValue.region && ` region = ${cloudRegionOptions[cloudRegionOptions.findIndex(x => x.label === filteredValue.region)].value}`}
+          ${filteredValue.owner && ` and owner = ${filteredValue.owner}`}
+          ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
+        ).then((res) => {
+          const kafkaInstances = res.data;
+          let ownerArray: string[] = [];
+          kafkaInstances.items.map(instance => {
+            if(!ownerArray.includes(instance.owner)) {
+              ownerArray.push(instance.owner);
+            }
+          })
+          console.log('what is ownerArray' + ownerArray);
+          setListOfOwners(ownerArray);
+          console.log('what is data' + JSON.stringify(kafkaInstances));
 
-          setKafkaInstancesList(kafkaInstances);
-          setKafkaInstanceItems(kafkaInstances.items);
-          kafkaInstancesList?.total !== undefined &&
-            kafkaInstancesList.total > expectedTotal &&
-            setExpectedTotal(kafkaInstancesList.total);
-          setKafkaDataLoaded(true);
-        });
+        setKafkaInstancesList(kafkaInstances);
+        setKafkaInstanceItems(kafkaInstances.items);
+        kafkaInstancesList?.total !== undefined &&
+          kafkaInstancesList.total > expectedTotal &&
+          setExpectedTotal(kafkaInstancesList.total);
+        setKafkaDataLoaded(true);
+      });
+      // Check to see if at least 1 kafka is present
+      await apisService.listKafkas(
+        page?.toString(),
+        perPage?.toString(),
+        orderBy && orderBy,
+        'region = us-east-1 and cloud_provider = aws'
+      ).then((res) => {
+        setRawKafkaDataLength(res.data.items.length);
+      })
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -252,7 +260,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <Loading />
               </PageSection>
-            ) : kafkaInstancesList.total < 1 ? (
+            ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
               <PageSection>
                 <EmptyState
                   createStreamsInstance={createStreamsInstance}

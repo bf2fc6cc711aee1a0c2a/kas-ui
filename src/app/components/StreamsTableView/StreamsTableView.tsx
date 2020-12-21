@@ -11,11 +11,20 @@ import {
   TableHeader,
   IRowCell,
 } from '@patternfly/react-table';
-import { AlertVariant, Card, Divider, PaginationVariant, Skeleton, Button } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  PaginationVariant,
+  Skeleton,
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  Title,
+  EmptyStateIcon,
+  EmptyStateVariant
+} from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
@@ -26,6 +35,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import { useHistory } from 'react-router-dom';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -46,6 +56,7 @@ type TableProps = {
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
   listOfOwners: String[];
+  rawKafkaDataLength: number;
 };
 
 type ConfigDetail = {
@@ -388,6 +399,17 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
+      { kafkaInstanceItems.length < 1 && (
+      <EmptyState variant={EmptyStateVariant.small}>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title headingLevel="h2" size="lg">
+          No matches
+        </Title>
+        <EmptyStateBody>
+          Please try adjusting your search query and try again.
+        </EmptyStateBody>
+      </EmptyState>
+      )}
       <TablePagination
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
