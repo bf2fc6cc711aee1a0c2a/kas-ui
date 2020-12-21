@@ -219,7 +219,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   };
 
   const step1 = (
-    <div className="generate-cred-wizard-content">
+    <div className="mk--generate-credential__wizard--text-content">
       <TextContent className="pf-u-mb-lg">
         <Text component={TextVariants.h2}>{t('basic_info')}</Text>
         <Text component={TextVariants.small}>{t('generate_credential_step1_title_description')}</Text>
@@ -281,7 +281,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   );
 
   const step2 = (
-    <div className="generate-cred-wizard-content">
+    <div className="mk--generate-credential__wizard--text-content">
       <TextContent className="pf-u-mb-lg">
         <Text component={TextVariants.h2}>{t('generate_credential_step2_title_description')}</Text>
       </TextContent>
@@ -335,7 +335,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   );
 
   const step3 = (
-    <div className="generate-cred-wizard-content">
+    <div className="mk--generate-credential__wizard--text-content">
       <TextContent className="pf-u-mb-lg">
         <Text component={TextVariants.h2}>{t('generate_credential_step3_title_description')}</Text>
       </TextContent>
@@ -378,7 +378,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
   );
 
   const step4 = (
-    <div className="generate-cred-wizard-content">
+    <div className="mk--generate-credential__wizard--text-content">
       <TextContent className="pf-u-mb-lg">
         <Text component={TextVariants.h2} id="step4-title">
           {t('generate_credential_step4_title_description')}
@@ -459,13 +459,13 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         </Title>
         <EmptyStateBody>{t('clientid_empty_state_body')}</EmptyStateBody>
         <InputGroup className="pf-u-mt-lg">
-          <InputGroupText className="no-wrap">{t('client_id')}</InputGroupText>
+          <InputGroupText className="mk--generate-credential__empty-state--input-group">{t('client_id')}</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
             { mainToggle ? 'srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5' : credential?.clientID }
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
-          <InputGroupText className="no-wrap">Client secret</InputGroupText>
+          <InputGroupText className="mk--generate-credential__empty-state--input-group">Client secret</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
             { mainToggle ? '441cdf77-083c-41d1-9050-c27a3b4247ac' : credential?.clientSecret }
           </ClipboardCopy>
