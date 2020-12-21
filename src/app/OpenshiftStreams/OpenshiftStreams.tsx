@@ -25,6 +25,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import './OpenshiftStreams.css';
 
 type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -36,7 +37,7 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
-  const { getToken } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
   const location = useLocation();
@@ -86,7 +87,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Connection' });
   };
 
-  const isValidToken = (accessToken: string) => {
+  const isValidToken = (accessToken: string | undefined) => {
     if (accessToken !== undefined && accessToken !== '') {
       return true;
     }
@@ -95,7 +96,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // Functions
   const fetchKafkas = async () => {
-    const accessToken = await getToken();
+    const accessToken = await authContext?.getToken();
+
     if (isValidToken(accessToken)) {
       try {
         const apisService = new DefaultApi({
@@ -153,7 +155,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // Functions
   const fetchCloudProviders = async () => {
-    const accessToken = await getToken();
+    const accessToken = await authContext?.getToken();
     if (accessToken !== undefined && accessToken !== '') {
       try {
         const apisService = new DefaultApi({
@@ -182,7 +184,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [getToken, page, perPage, filteredValue]);
+  }, [authContext, page, perPage, filteredValue]);
 
   useEffect(() => {
     fetchCloudProviders();
@@ -200,13 +202,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setKafkaDataLoaded(false);
     if (value === 'create') {
       /*
-        increase the expected total by 1 
+        increase the expected total by 1
         as create operation will lead to adding a kafka in the list of response
       */
       setExpectedTotal(kafkaInstancesList.total + 1);
     } else if (value === 'delete') {
       /*
-        decrease the expected total by 1 
+        decrease the expected total by 1
         as create operation will lead to removing a kafka in the list of response
       */
       setExpectedTotal(kafkaInstancesList.total - 1);
@@ -261,7 +263,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 />
               </PageSection>
             ) : (
-              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+              <PageSection className="table-page-section-padding" variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}

@@ -107,16 +107,14 @@ const StreamsTableView = ({
   filterSelected,
   listOfOwners
 }: TableProps) => {
-
-  const { getToken } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
-  const keycloakContext = useContext(KeycloakContext);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('owner'), t('status')];
-  const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
+  const [loggedInUser, setLoggedInUser] = useState<string|undefined>(undefined);
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
 
@@ -129,8 +127,9 @@ const StreamsTableView = ({
     [searchParams]
   );
 
-  const loggedInOwner: string | undefined =
-    keycloakContext?.keycloak?.tokenParsed && keycloakContext?.keycloak?.tokenParsed['username'];
+  useEffect(() => {
+    authContext?.getUsername().then(username => setLoggedInUser(username));
+  }, []);
 
   // function to get exact number of skeleton count required for the current page
   const getLoadingRowsCount = () => {
@@ -138,7 +137,7 @@ const StreamsTableView = ({
     let loadingRowCount = perPage;
     /*
       if number of expected count is greater than 0
-        calculate the loadingRowCount 
+        calculate the loadingRowCount
       else
         leave the loadingRowCount to perPage
      */
@@ -161,8 +160,8 @@ const StreamsTableView = ({
     return loadingRowCount !== 0 ? loadingRowCount : perPage;
   };
   useEffect(() => {
-    /* 
-      the logic is to redirect the user to previous page 
+    /*
+      the logic is to redirect the user to previous page
       if there are no content for the particular page number and page size
     */
     if (page > 1) {
@@ -215,7 +214,7 @@ const StreamsTableView = ({
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
-    const isUserSameAsLoggedIn = originalData.owner === loggedInOwner;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     const resolver: (IAction | ISeparator)[] = mainToggle
       ? [
           {
@@ -341,7 +340,7 @@ const StreamsTableView = ({
       throw new Error('kafka instance id is not set');
     }
 
-    const accessToken = await getToken();
+    const accessToken = await authContext?.getToken();
     const apisService = new DefaultApi({
       accessToken,
       basePath,
@@ -380,9 +379,7 @@ const StreamsTableView = ({
         createStreamsInstance={createStreamsInstance}
         setCreateStreamsInstance={setCreateStreamsInstance}
         filterSelected={filterSelected}
-        namesSelected={namesSelected}
         setFilterSelected={setFilterSelected}
-        setNamesSelected={setNamesSelected}
         total={total}
         page={page}
         perPage={perPage}
