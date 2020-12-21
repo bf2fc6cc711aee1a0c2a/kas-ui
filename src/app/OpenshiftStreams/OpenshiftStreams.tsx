@@ -55,10 +55,10 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
-  // state to store the expected total kafka instances based on the operation
-  const [expectedTotal, setExpectedTotal] = useState<number>(0);
-
-  // States - Filtering
+  const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
+  const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
+  const [listOfOwners, setListOfOwners] = useState<String[]>([]);
+  const [orderBy, setOrderBy] = useState("");
   const [filterSelected, setFilterSelected] = useState('Name');
   const [filteredValue, setFilteredValue] = useState(
     { name: '',
@@ -67,11 +67,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     cloud_provider: cloudProviderOptions[0].label,
     owner: ''}
   );
-  const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
-
-  const [listOfOwners, setListOfOwners] = useState<String[]>([]);
-
-  const [orderBy, setOrderBy] = useState("");
 
   const drawerRef = React.createRef<any>();
 
@@ -124,17 +119,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               ownerArray.push(instance.owner);
             }
           })
-          console.log('what is ownerArray' + ownerArray);
           setListOfOwners(ownerArray);
-          console.log('what is data' + JSON.stringify(kafkaInstances));
-
-        setKafkaInstancesList(kafkaInstances);
-        setKafkaInstanceItems(kafkaInstances.items);
-        kafkaInstancesList?.total !== undefined &&
-          kafkaInstancesList.total > expectedTotal &&
-          setExpectedTotal(kafkaInstancesList.total);
-        setKafkaDataLoaded(true);
-      });
+          setKafkaInstancesList(kafkaInstances);
+          setKafkaInstanceItems(kafkaInstances.items);
+          kafkaInstancesList?.total !== undefined &&
+            kafkaInstancesList.total > expectedTotal &&
+            setExpectedTotal(kafkaInstancesList.total);
+          setKafkaDataLoaded(true);
+        });
       // Check to see if at least 1 kafka is present
       await apisService.listKafkas(
         page?.toString(),

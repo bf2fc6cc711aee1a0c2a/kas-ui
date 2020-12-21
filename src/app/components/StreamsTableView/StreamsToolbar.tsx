@@ -72,19 +72,19 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const cloudProviderFilterOptions = cloudProviderOptions.map(cloudProvider => {
     return (
-      { value: t(cloudProvider.label), disabled: false }
+      { value: t(cloudProvider.value), disabled: false }
     )
   });
 
   const regionFilterOptions = cloudRegionOptions.map(region => {
     return (
-      { value: t(region.label), disabled: false }
+      { value: t(region.value), disabled: false }
     )
   });
 
   const statusFilterOptions = statusOptions.map(status => {
     return (
-      { value: t(status.label), disabled: false }
+      { value: t(status.value), disabled: false }
     )
   });
 
@@ -135,16 +135,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     }
   };
 
-  const getPlaceholder = () => {
-    if (filterSelected) {
-      const placeholder = filterSelected?.toLowerCase() + '_lower';
-      return t(`filter_by_${placeholder}`);
-    }
-    return '';
-  };
 
   const onChangeSelect = (event, selection) => {
-    console.log('what is the selection here' + selection);
     setIsFilterExpanded(!isFilterExpanded);
     setFilterSelected(selection);
   };
@@ -224,14 +216,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
             ))}
           </Select>
-          { filterSelected === "Name" &&
+          { filterSelected === t('name') &&
             <InputGroup className="filter-text-input">
               <TextInput
                 name="filter text input"
                 id="filterText"
                 type="search"
                 aria-label="Search filter input"
-                placeholder={getPlaceholder()}
+                placeholder={t('filter_by_name_lower')}
                 onChange={onInputChange}
                 value={inputValue}
               />
@@ -240,7 +232,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               </Button>
             </InputGroup>
           }
-          { filterSelected === "Cloud provider" &&
+          { filterSelected === t('cloud_provider') &&
               <Select
                 variant={SelectVariant.single}
                 aria-label="Select cloud provider"
@@ -255,7 +247,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 ))}
               </Select>
           }
-          { filterSelected === "Region" &&
+          { filterSelected === t('region') &&
             <Select
               variant={SelectVariant.single}
               aria-label="Select region"
@@ -270,7 +262,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               ))}
             </Select>
           }
-          { filterSelected === "Owner" &&
+          { filterSelected === t('owner') &&
             <Select
               className="select-typeahead-width"
               variant={SelectVariant.typeahead}
@@ -288,7 +280,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               ))}
             </Select>
           }
-          { filterSelected === "Status" &&
+          { filterSelected === t('status') &&
               <Select
                 variant={SelectVariant.single}
                 aria-label="Select status"

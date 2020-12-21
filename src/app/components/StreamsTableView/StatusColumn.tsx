@@ -15,13 +15,13 @@ const StatusColumn = ({ status }: StatusColumnProps) => {
   const getStatus = () => {
     switch (status?.toLowerCase()) {
       case statusOptions[0].value:
-        return t(statusOptions[0].label);
+        return t(statusOptions[0].value);
       case statusOptions[1].value:
-        return t(statusOptions[1].label);
+        return t(statusOptions[1].value);
       case statusOptions[2].value:
-        return t(statusOptions[2].label);
+        return t(statusOptions[2].value);
       case statusOptions[3].value:
-        return t(statusOptions[3].label);
+        return t(statusOptions[3].value);
       default:
         return t('creation_pending');
     }
