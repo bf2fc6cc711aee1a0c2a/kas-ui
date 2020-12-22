@@ -51,8 +51,8 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
-  filteredValue: {};
-  setFilteredValue: (filteredValue: {}) => void;
+  filteredValue: { property: string };
+  setFilteredValue: (filteredValue: { property: string }) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
   listOfOwners: string[];

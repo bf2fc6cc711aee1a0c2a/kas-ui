@@ -30,8 +30,8 @@ type StreamsToolbarProps = {
   total: number;
   page: number;
   perPage: number;
-  filteredValue: {};
-  setFilteredValue: (filteredValue: {}) => void;
+  filteredValue: { property: string };
+  setFilteredValue: (filteredValue: { property: string }) => void;
   listOfOwners: string[];
 };
 
