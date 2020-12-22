@@ -14,7 +14,7 @@ import { InstanceStatus } from '@app/constants';
 import './DeleteInstanceModal.css';
 import { KafkaRequest } from 'src/openapi';
 
-interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
+export interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
   confirmActionLabel?: string;
   cancelActionLabel?: string;
   description?: string;
@@ -53,16 +53,18 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
 
   const isConfirmButtonDisabled = () => {
     if (instanceStatus === InstanceStatus.COMPLETED) {
-      if (instanceNameInput?.toLocaleLowerCase() === selectedInstanceName?.toLowerCase()) {
+      if (instanceNameInput?.toLowerCase() === selectedInstanceName?.toLowerCase()) {
         return false;
       }
       return true;
     }
     return false;
   };
+
   const onConfirmDelete = () => {
     onConfirm(selectedInstance);
   };
+  
   return (
     <Modal
       id="dialog-prompt-modal"
@@ -76,13 +78,14 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       actions={[
         <Button
           key={'confirm-button'}
+          id={'confirm-delete-button'}
           variant={ButtonVariant.danger}
           onClick={onConfirmDelete}
           isDisabled={isConfirmButtonDisabled()}
         >
           {confirmActionLabel || t('delete_instance')}
         </Button>,
-        <Button key="cancel" variant="link" onClick={handleModalToggle}>
+        <Button key="cancel" variant="link" id={'cancel-delete-button'} onClick={handleModalToggle}>
           {cancelActionLabel || t('cancel')}
         </Button>,
       ]}
@@ -91,10 +94,11 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
           <label
+          id="label-completed-instance-name-description"
             htmlFor="instance-name"
             dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
           />
-          <TextInput id="instance-name" type="text" value={instanceNameInput} onChange={handleInstanceName} />
+          <TextInput id="instance-name-input" type="text" value={instanceNameInput} onChange={handleInstanceName} />
         </>
       )}
     </Modal>
