@@ -116,7 +116,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               <SelectOption isDisabled={option.disabled} key={index} value={t(option.value.toLowerCase())} />
             ))}
           </Select>
-          <InputGroup className="filter-text-input">
+          <InputGroup className="mk--filter-instances__toolbar--text-input">
             <TextInput
               name="filter text input"
               id="filterText"

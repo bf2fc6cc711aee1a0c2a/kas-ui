@@ -87,7 +87,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
         </Button>,
       ]}
     >
-      <Text className="text-content" dangerouslySetInnerHTML={{ __html: description || '' }} />
+      <Text className="mk--delete-instance__modal--text" dangerouslySetInnerHTML={{ __html: description || '' }} />
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
           <label

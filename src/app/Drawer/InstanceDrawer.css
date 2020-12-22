@@ -1,8 +1,3 @@
-.cluster-connection-drawer .pf-c-content {
-  padding-top: var(--pf-global--spacer--lg);
-  padding-bottom: var(--pf-global--spacer--lg);
-}
-
 .pf-c-code-editor__main {
   height: 220px;
 }
@@ -12,24 +7,19 @@
   word-break: break-word;
 }
 
-.pf-c-card.card-certificate {
-  background-color: #f0f0f0;
-  border-color: transparent;
-}
-
-.instance-detail-first-grid {
+.mk--instance-details__drawer--grid--column-one {
   margin-right: var(--pf-global--spacer--md);
 }
 
-.instance-card-grid {
+.mk--instance-details__drawer--grid {
   margin-bottom: var(--pf-global--spacer--lg);
 }
 
-.tab-content-body {
+.mk--instance-details__drawer--tab-content {
   padding-top: var(--pf-global--spacer--lg);
   padding-bottom: var(--pf-global--spacer--lg);
 }
 
-.tab-content-body.pf-m-secondary {
+.mk--instance-details__drawer--tab-content.pf-m-secondary {
   padding-top: 0;
 }
