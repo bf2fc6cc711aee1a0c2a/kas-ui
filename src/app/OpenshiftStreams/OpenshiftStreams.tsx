@@ -263,7 +263,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 />
               </PageSection>
             ) : (
-              <PageSection className="table-page-section-padding" variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+              <PageSection className="mk--main-page__page-section--table" variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}

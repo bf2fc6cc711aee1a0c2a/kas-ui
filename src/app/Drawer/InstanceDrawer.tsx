@@ -74,7 +74,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const resourcesTab = (
     <>
-      <div className="tab-content-body">
+      <div className="mk--instance-details__drawer--tab-content">
         <TextContent className="pf-u-pb-sm">
           <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_1')}</Text>
           <Text component={TextVariants.h5}>{t('kafka_listener_and_credentials')}</Text>
@@ -104,7 +104,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const sampleCodeTab = (
     <>
-      <div className="tab-content-body">
+      <div className="mk--instance-details__drawer--tab-content">
         <TextContent className="pf-u-pb-sm">
           <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
           <Text component={TextVariants.small}>
@@ -171,10 +171,10 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const detailsTab = (
     <>
-      <div className="tab-content-body">
+      <div className="mk--instance-details__drawer--tab-content">
         {mainToggle && (
-          <Grid className="instance-card-grid">
-            <GridItem span={6} className="instance-detail-first-grid">
+          <Grid className="mk--instance-details__drawer--grid">
+            <GridItem span={6} className="mk--instance-details__drawer--grid--column-one">
               <Card isFlat>
                 <CardBody>
                   <TextContent>
@@ -221,7 +221,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   const renderConnectionTab = () => {
     if (mainToggle) {
       return (
-        <div className="tab-content-body pf-m-secondary">
+        <div className="mk--instance-details__drawer--tab-content pf-m-secondary">
           <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
             <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
               {resourcesTab}

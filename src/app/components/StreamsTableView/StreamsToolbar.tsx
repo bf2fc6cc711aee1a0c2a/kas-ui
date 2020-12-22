@@ -217,7 +217,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             ))}
           </Select>
           { filterSelected === t('name') &&
-            <InputGroup className="filter-text-input">
+            <InputGroup className="mk--filter-instances__toolbar--text-input">
               <TextInput
                 name="filter text input"
                 id="filterText"
@@ -264,7 +264,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           }
           { filterSelected === t('owner') &&
             <Select
-              className="select-typeahead-width"
+              className="mk--filter-instances__toolbar--select--type-ahead"
               variant={SelectVariant.typeahead}
               typeAheadAriaLabel="Select an owner"
               aria-label="Select region"

@@ -1,7 +1,7 @@
-.filter-text-input{
+.mk--filter-instances__toolbar--text-input {
   min-width: max-content;
 }
 
-.select-typeahead-width .pf-c-select__toggle.pf-m-typeahead {
+.mk--filter-instances__toolbar--select--type-ahead .pf-c-select__toggle.pf-m-typeahead {
   width: 230px;
 }

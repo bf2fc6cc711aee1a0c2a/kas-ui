@@ -1,7 +1,6 @@
 import React from 'react';
 import { CheckCircleIcon, PendingIcon, ExclamationCircleIcon, IconSize } from '@patternfly/react-icons';
 import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
-import { InstanceStatus } from '@app/constants';
 import './StatusColumn.css';
 import { useTranslation } from 'react-i18next';
 import { statusOptions } from '@app/utils/utils';
@@ -30,9 +29,9 @@ const StatusColumn = ({ status }: StatusColumnProps) => {
   const getStatusIcon = () => {
     switch (status?.toLowerCase()) {
       case statusOptions[0].value:
-        return <CheckCircleIcon className="check-circle-icon-color" />;
+        return <CheckCircleIcon className="mk--instances__table--icon--completed" />;
       case statusOptions[1].value:
-        return <ExclamationCircleIcon className="exclamation-circle-icon-color" />;
+        return <ExclamationCircleIcon className="mk--instances__table--icon--failed" />;
       case statusOptions[2].value:
           return <PendingIcon />;
       case statusOptions[3].value:
