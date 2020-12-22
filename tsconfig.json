@@ -25,10 +25,8 @@
     "skipLibCheck": true
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.jsx",
-    "**/*.js"
+    "./src/app/**/*.ts",
+
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "./src/openapi/api.ts"]
 }

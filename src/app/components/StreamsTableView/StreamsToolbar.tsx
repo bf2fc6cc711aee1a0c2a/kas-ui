@@ -152,7 +152,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           <TablePagination
             widgetId="pagination-options-menu-top"
             itemCount={total}
-            page={page}
+            page={page as any}
             perPage={perPage}
             isCompact={true}
             paginationTitle={t('minimal_pagination')}
