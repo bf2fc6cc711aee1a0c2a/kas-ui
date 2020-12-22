@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { DeleteInstanceModal, DeleteInstanceModalProps } from './DeleteInstanceModal';
-import i18n from '../../../i18n/i18n';
+
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from 'src/openapi';
 import { InstanceStatus } from '@app/constants';
+import { ModalVariant } from '@patternfly/react-core';
 
 jest.mock('react-i18next', () => {
   const reactI18next = jest.requireActual('react-i18next');
@@ -18,13 +19,12 @@ const selectedInstance: KafkaRequest = {
   name: 'test-instance',
 };
 const onConfirm = jest.fn();
-const onClose = jest.fn();
 const setIsModalOpen = jest.fn();
 const props: DeleteInstanceModalProps = {
   confirmActionLabel: 'confirm',
   cancelActionLabel: 'cancel',
   title: 'test title',
-  onConfirm: jest.fn(),
+  onConfirm: onConfirm,
   isModalOpen: true,
   setIsModalOpen: setIsModalOpen,
   description: `The ${selectedInstance.name} instance will be deleted.`,
@@ -46,8 +46,8 @@ describe('Delete Instance Modal', () => {
   test('confirm and close actions should be handled', () => {
     const { getByTestId } = render(<DeleteInstanceModal {...props} />);
 
-    // userEvent.click(getByTestId('confirm-delete-button'));
-    // expect(onConfirm).toHaveBeenCalled();
+    userEvent.click(getByTestId('confirm-delete-button'));
+    expect(onConfirm).toHaveBeenCalled();
 
     userEvent.click(getByTestId('cancel-delete-button'));
     expect(setIsModalOpen).toHaveBeenCalled();
@@ -67,8 +67,8 @@ describe('Delete Instance Modal', () => {
     const { getByTestId } = render(<DeleteInstanceModal {...props} />);
 
     const inputElement: any = getByTestId('instance-name-input');
-    const confirmBtn:any = getByTestId('confirm-delete-button');
-    
+    const confirmBtn: any = getByTestId('confirm-delete-button');
+
     expect(confirmBtn.disabled).toBeTruthy();
     userEvent.type(inputElement, selectedInstance?.name || 'test');
 
@@ -76,5 +76,67 @@ describe('Delete Instance Modal', () => {
     expect(inputElement.value).toMatch(selectedInstance?.name || 'test');
     // confirm button get enabled if data matches.
     expect(confirmBtn.disabled).toBeFalsy();
+  });
+
+  test('should render large modal with success icon', () => {
+    const props: DeleteInstanceModalProps = {
+      confirmActionLabel: 'confirm',
+      cancelActionLabel: 'cancel',
+      title: 'test title',
+      onConfirm: jest.fn(),
+      isModalOpen: true,
+      setIsModalOpen: jest.fn(),
+      description: 'test description',
+      variant: ModalVariant.large,
+      titleIconVariant: 'success',
+      instanceStatus: InstanceStatus.FAILED,
+      selectedInstance: selectedInstance,
+    };
+    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
+    const classList: string[] = getByTestId('dialog-prompt-modal').className.split(' ');
+
+    //check the modal variant is large
+    expect(classList).toContain('pf-m-lg');
+    // check the title icon variant is success
+    expect(classList).toContain('pf-m-success');
+  });
+
+  test('should render small modal with warning icon', () => {
+    const props: DeleteInstanceModalProps = {
+      confirmActionLabel: 'confirm',
+      cancelActionLabel: 'cancel',
+      title: 'test title',
+      onConfirm: jest.fn(),
+      isModalOpen: true,
+      setIsModalOpen: jest.fn(),
+      description: 'test description',
+      instanceStatus: InstanceStatus.FAILED,
+      selectedInstance: selectedInstance,
+    };
+    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
+    const classList: string[] = getByTestId('dialog-prompt-modal').className.split(' ');
+
+    //check the modal variant is small
+    expect(classList).toContain('pf-m-sm');
+    // check the title icon variant is warning
+    expect(classList).toContain('pf-m-warning');
+  });
+
+  test('should render with name and description as undefined', () => {
+    const props: DeleteInstanceModalProps = {
+      confirmActionLabel: 'confirm',
+      cancelActionLabel: 'cancel',
+      title: 'test title',
+      onConfirm: jest.fn(),
+      isModalOpen: true,
+      setIsModalOpen: jest.fn(),
+      variant: ModalVariant.large,
+      titleIconVariant: 'success',
+      instanceStatus: InstanceStatus.FAILED,
+      selectedInstance: { id: 'test-id', name: undefined },
+    };
+    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
+
+    getByTestId('dialog-prompt-modal');
   });
 });

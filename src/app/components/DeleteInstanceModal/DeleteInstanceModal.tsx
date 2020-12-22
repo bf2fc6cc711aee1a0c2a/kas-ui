@@ -41,7 +41,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   const { t } = useTranslation();
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
 
-  const selectedInstanceName = selectedInstance?.name;
+  const selectedInstanceName:string = selectedInstance.name || "";
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
@@ -53,7 +53,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
 
   const isConfirmButtonDisabled = () => {
     if (instanceStatus === InstanceStatus.COMPLETED) {
-      if (instanceNameInput?.toLowerCase() === selectedInstanceName?.toLowerCase()) {
+      if (instanceNameInput?.toLowerCase() === selectedInstanceName.toLowerCase()) {
         return false;
       }
       return true;
