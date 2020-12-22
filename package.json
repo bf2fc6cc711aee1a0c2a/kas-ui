@@ -35,6 +35,9 @@
     "build:storybook": "build-storybook",
     "i18n": "i18next 'src/**/**/*.{ts,tsx}' [-oc] -c './i18next-parser.config.js' -o './src/locales/$LOCALE/$NAMESPACE.json'"
   },
+  "jest": {
+    "resolver": "./jest-resolver.js"
+  },
   "devDependencies": {
     "@storybook/addon-actions": "^6.0.26",
     "@storybook/addon-info": "^5.3.21",

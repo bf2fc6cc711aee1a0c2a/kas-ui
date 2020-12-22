@@ -40,10 +40,8 @@ i18n
       detection: { caches: [] },
       contextSeparator: '~',
       // add any namespaces you're using here for loading purposes
-      ns: [
-        'public'
-      ],
-      defaultNS: 'public',
+      ns: ['translations'],
+      defaultNS: 'translations',
       nsSeparator: '~',
       keySeparator: false,
       postProcess: ['pseudo'],

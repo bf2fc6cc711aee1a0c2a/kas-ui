@@ -4,12 +4,13 @@ import i18n from '../../../i18n/i18n';
 import { render, fireEvent } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key) => key,
-    i18n: { changeLanguage: jest.fn() },
-  }),
-}));
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
 
 describe('Empty State Test', () => {
   test('should render empty state component', () => {
