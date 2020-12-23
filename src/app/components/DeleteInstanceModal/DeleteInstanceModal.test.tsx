@@ -139,4 +139,21 @@ describe('Delete Instance Modal', () => {
 
     getByTestId('dialog-prompt-modal');
   });
+
+  test('should render with default label for cancel and delete instance modal', () => {
+    const props: DeleteInstanceModalProps = {
+      title: 'test title',
+      onConfirm: jest.fn(),
+      isModalOpen: true,
+      setIsModalOpen: jest.fn(),
+      variant: ModalVariant.large,
+      titleIconVariant: 'success',
+      instanceStatus: InstanceStatus.FAILED,
+      selectedInstance: selectedInstance,
+    };
+    const { getByText } = render(<DeleteInstanceModal {...props} />);
+
+    getByText('delete_instance');
+    getByText('cancel');
+  });
 });
