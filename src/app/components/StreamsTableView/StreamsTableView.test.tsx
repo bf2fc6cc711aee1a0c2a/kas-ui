@@ -1,30 +1,58 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router';
 import { StreamsTableView, TableProps } from './StreamsTableView';
 import { render, screen } from '@testing-library/react';
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-import OpenAPIBackend from 'openapi-backend';
-import * as path from 'path';
+import { I18nextProvider } from 'react-i18next';
+import i18nForTest from '../../../../test-utils/i18n';
+import i18n from 'i18next';
 
-//create our mock backend with openapi-backend
-const api = new OpenAPIBackend({ definition: path.join(__dirname, '../../../../mas-mock/managed-services-api.yaml') });
-api.register('notFound', (c, res, ctx) => res(ctx.status(404)));
-api.register('notImplemented', (c, res, ctx) => {
-  const { status, mock } = api.mockResponseForOperation(c.operation.operationId || '');
-  return res(ctx.status(status), ctx.json(mock));
+jest.mock('../../../openapi/api', () => {
+  // Works and lets you check for constructor calls:
+  return {
+    DefaultApi: jest.fn().mockImplementation(() => {
+      return {
+        createKafka: () => {},
+        createServiceAccount: () => {},
+        deleteKafkaById: () => {},
+        deleteServiceAccount: () => {},
+        getKafkaById: () => {},
+        listCloudProviderRegions: () => {},
+        listCloudProviders: () => {},
+      };
+    }),
+  };
 });
 
-// tell msw to intercept all requests to api/* with our mock
-const server = setupServer(rest.get('/api/*', (req, res, ctx) => api.handleRequest(req as any, res, ctx)));
-
-beforeAll(() => server.listen());
-afterAll(() => server.close());
-
 describe('<StreamsTableView/>', () => {
-  const porps: TableProps = {
+  const setup = (args: any) => {
+    render(
+      <MemoryRouter>
+        <I18nextProvider i18n={i18nForTest}>
+          <StreamsTableView {...args} />
+        </I18nextProvider>
+      </MemoryRouter>
+    );
+  };
+
+  const props: TableProps = {
     createStreamsInstance: false,
     setCreateStreamsInstance: jest.fn(),
-    kafkaInstanceItems: [],
+    kafkaInstanceItems: [
+      {
+        id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
+        kind: 'kafka',
+        href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
+        status: 'complete',
+        cloud_provider: 'aws',
+        multi_az: false,
+        region: 'us-east-1',
+        owner: 'api_kafka_service',
+        name: 'serviceapi',
+        bootstrapServerHost: 'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
+        created_at: '2020-10-05T12:51:24.053142Z',
+        updated_at: '2020-10-05T12:56:36.362208Z',
+      },
+    ],
     onViewInstance: jest.fn(),
     onViewConnection: jest.fn(),
     onConnectToInstance: jest.fn(),
@@ -32,13 +60,20 @@ describe('<StreamsTableView/>', () => {
     refresh: jest.fn(),
     page: 1,
     perPage: 10,
-    total: 10,
-    kafkaDataLoaded: false,
-    expectedTotal: 0,
+    total: 1,
+    kafkaDataLoaded: true,
+    expectedTotal: 1,
   };
 
-  it('should render', () => {
-    render(<StreamsTableView {...porps} />);
+  it('should render translation text in English language', () => {
+    setup(props);
+    expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
   });
-  screen.debug();
+
+  it('should render translation text in Japaneese language', () => {
+    i18n.changeLanguage('ja');
+    setup(props);
+    //screen.debug();
+    expect(screen.getByText('日本語 US East, N. Virginia')).toBeInTheDocument();
+  });
 });
