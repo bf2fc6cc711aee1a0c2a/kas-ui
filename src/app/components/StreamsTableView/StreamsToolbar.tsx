@@ -20,6 +20,7 @@ import { TablePagination } from './TablePagination';
 import { useTranslation } from 'react-i18next';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './StreamsToolbar.css';
+import { SearchInput } from '@patternfly/react-core';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
@@ -109,9 +110,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onInputChange = (input?: string) => {
-    if (input === "") {
-      setFilteredValue({...filteredValue, name: ""})
-    }
+    // if (input === "") {
+    //   setFilteredValue({...filteredValue, name: ""})
+    // }
     setInputValue(input);
   };
 
@@ -226,11 +227,18 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholder={t('filter_by_name_lower')}
                 onChange={onInputChange}
                 value={inputValue}
+                onClear={() => setFilteredValue({...filteredValue, name: ""})}
               />
               <Button variant={ButtonVariant.control} onClick={onFilter} aria-label="Search instances">
                 <SearchIcon />
               </Button>
             </InputGroup>
+            // <SearchInput
+            //   placeholder={t('filter_by_name_lower')}
+            //   value={inputValue}
+            //   onChange={onInputChange}
+            //   onClear={() => setFilteredValue({...filteredValue, name: ""})}
+            // />
           }
           { filterSelected === t('cloud_provider') &&
               <Select
