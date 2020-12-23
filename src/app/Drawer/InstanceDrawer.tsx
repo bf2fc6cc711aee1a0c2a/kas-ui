@@ -30,7 +30,7 @@ import { CopyIcon } from '@patternfly/react-icons';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import './InstanceDrawer.css';
-import { GenerateCredential } from './GenerateCredential';
+// import { GenerateCredential } from './GenerateCredential';
 import { Loading } from '@app/components/Loading/Loading';
 import { KafkaRequest } from 'src/openapi';
 import dayjs from 'dayjs';
@@ -41,7 +41,6 @@ export type InstanceDrawerProps = {
   mainToggle: boolean;
   onClose: () => void;
   isExpanded: boolean;
-  drawerRef: any;
   instanceDetail?: KafkaRequest;
   activeTab?: 'Details' | 'Connection';
 };
@@ -70,7 +69,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     setActiveTab2Key(tabIndex);
   };
 
-  const externalServer = instanceDetail?.bootstrapServerHost?.endsWith(":443") ? instanceDetail?.bootstrapServerHost : `${instanceDetail?.bootstrapServerHost}:443`;
+  const externalServer = instanceDetail?.bootstrapServerHost?.endsWith(':443')
+    ? instanceDetail?.bootstrapServerHost
+    : `${instanceDetail?.bootstrapServerHost}:443`;
 
   const resourcesTab = (
     <>
@@ -85,9 +86,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </TextContent>
         <Flex>
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-            <ClipboardCopy>{externalServer}</ClipboardCopy>
+            <ClipboardCopy id="external-server-clipboard">{externalServer}</ClipboardCopy>
           </FlexItem>
-          <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} />
+          {/* <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} /> */}
         </Flex>
         {mainToggle && (
           <>
@@ -223,10 +224,14 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       return (
         <div className="mk--instance-details__drawer--tab-content pf-m-secondary">
           <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
-            <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
+            <Tab id="connection-detail-resource-tab" eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
               {resourcesTab}
             </Tab>
-            <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
+            <Tab
+              eventKey={1}
+              id="connection-detail-sample-code-tab"
+              title={<TabTitleText>{t('sample_code')}</TabTitleText>}
+            >
               {sampleCodeTab}
             </Tab>
           </Tabs>
@@ -237,7 +242,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   };
 
   return (
-    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_50' }}>
+    <DrawerPanelContent
+      id="instance-drawer"
+      className="instance-drawer"
+      widths={{ default: 'width_50' }}
+      hidden={false}
+    >
       {instanceDetail === undefined ? (
         <Loading />
       ) : (
@@ -256,11 +266,15 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             </DrawerActions>
           </DrawerHead>
           <DrawerPanelBody>
-            <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
-              <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
+            <Tabs id="instance-drawer-tab" activeKey={activeTab1Key} onSelect={handleTab1Click}>
+              <Tab id="instance-drawer-detail-tab" eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
                 {detailsTab}
               </Tab>
-              <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
+              <Tab
+                id="instance-drawer-connection-tab"
+                eventKey={1}
+                title={<TabTitleText>{t('connection')}</TabTitleText>}
+              >
                 {renderConnectionTab()}
               </Tab>
             </Tabs>
