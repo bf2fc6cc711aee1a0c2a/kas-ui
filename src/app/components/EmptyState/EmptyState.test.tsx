@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EmptyState } from './EmptyState';
 import i18n from '../../../i18n/i18n';
-import { render, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 
 jest.mock('react-i18next', () => {
@@ -17,12 +17,12 @@ describe('Empty State Test', () => {
     const { getByTestId, getByText } = render(
       <EmptyState createStreamsInstance={false} setCreateStreamsInstance={jest.fn()} mainToggle={false} />
     );
-    getByText('you_do_not_have_any_kafka_instances_yet');
-    getByText('create_a_kafka_instance');
-    getByText('create_a_kafka_instance_to_get_started ');
-    getByTestId('empty-state-icon');
-    getByTestId('empty-state-title');
-    getByTestId('create-kafka-btn');
+    expect(getByText('you_do_not_have_any_kafka_instances_yet')).toBeDefined();
+    expect(getByText('create_a_kafka_instance')).toBeDefined();
+    expect(getByText('create_a_kafka_instance_to_get_started')).toBeDefined();
+    expect(getByTestId('empty-state-icon')).toBeDefined();
+    expect(getByTestId('empty-state-title')).toBeDefined();
+    expect(getByTestId('create-kafka-btn')).toBeDefined();
   });
 
   test('should allow user to create instance', () => {
