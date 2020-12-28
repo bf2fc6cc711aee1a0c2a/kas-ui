@@ -41,7 +41,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   const { t } = useTranslation();
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
 
-  const selectedInstanceName:string = selectedInstance.name || "";
+  const selectedInstanceName: string = selectedInstance?.name || '';
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
@@ -64,7 +64,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   const onConfirmDelete = () => {
     onConfirm(selectedInstance);
   };
-  
+
   return (
     <Modal
       id="dialog-prompt-modal"
@@ -77,15 +77,15 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       onClose={handleModalToggle}
       actions={[
         <Button
-          key={'confirm-button'}
-          id={'confirm-delete-button'}
+          key="confirm-button"
+          id="confirm-button"
           variant={ButtonVariant.danger}
           onClick={onConfirmDelete}
           isDisabled={isConfirmButtonDisabled()}
         >
           {confirmActionLabel || t('delete_instance')}
         </Button>,
-        <Button key="cancel" variant="link" id={'cancel-delete-button'} onClick={handleModalToggle}>
+        <Button key="cancel" variant="link" id="cancel-button" onClick={handleModalToggle}>
           {cancelActionLabel || t('cancel')}
         </Button>,
       ]}
@@ -94,7 +94,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
           <label
-          id="label-completed-instance-name-description"
+            id="label-completed-instance-name-description"
             htmlFor="instance-name"
             dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
           />

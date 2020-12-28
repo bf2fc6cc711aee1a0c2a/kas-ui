@@ -43,13 +43,13 @@ describe('Delete Instance Modal', () => {
     props.description && getByText(props.description);
   });
 
-  test('confirm and close actions should be handled', () => {
+  test('should handle confirm and close actions', () => {
     const { getByTestId } = render(<DeleteInstanceModal {...props} />);
 
-    userEvent.click(getByTestId('confirm-delete-button'));
+    userEvent.click(getByTestId('confirm-button'));
     expect(onConfirm).toHaveBeenCalled();
 
-    userEvent.click(getByTestId('cancel-delete-button'));
+    userEvent.click(getByTestId('cancel-button'));
     expect(setIsModalOpen).toHaveBeenCalled();
   });
 
@@ -67,7 +67,7 @@ describe('Delete Instance Modal', () => {
     const { getByTestId } = render(<DeleteInstanceModal {...props} />);
 
     const inputElement: any = getByTestId('instance-name-input');
-    const confirmBtn: any = getByTestId('confirm-delete-button');
+    const confirmBtn: any = getByTestId('confirm-button');
 
     expect(confirmBtn.disabled).toBeTruthy();
     userEvent.type(inputElement, selectedInstance?.name || 'test');
