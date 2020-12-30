@@ -35,7 +35,7 @@ describe('Instance Drawer', () => {
         activeTab={'Details'}
       />
     );
-    getByTestId('instance-drawer');
+    expect(getByTestId('mk--instance-drawer')).toBeDefined();
   });
 
   it('should render loading if no instance is available', () => {
@@ -48,8 +48,8 @@ describe('Instance Drawer', () => {
         />
       </Drawer>
     );
-    getByTestId('instance-drawer');
-    getByRole('status');
+    expect(getByTestId('mk--instance-drawer')).toBeDefined();
+    expect(getByRole('status')).toBeDefined();
   });
 
   it('should render instance name card', () => {
@@ -68,14 +68,14 @@ describe('Instance Drawer', () => {
         />
       </Drawer>
     );
-    getByTestId('instance-drawer');
+    expect(getByTestId('mk--instance-drawer')).toBeDefined();
 
-    getByText('instance_name');
-    instanceDetail.name && getByText(instanceDetail.name);
+    expect(getByText('instance_name')).toBeDefined();
+    instanceDetail.name && expect(getByText(instanceDetail.name)).toBeDefined();
   });
 
   it('should render instance detail as active tab', () => {
-    const { getByTestId, getByText } = render(
+    const { getByTestId } = render(
       <Drawer isExpanded={true} onExpand={jest.fn()}>
         <DrawerContent
           panelContent={
@@ -90,12 +90,14 @@ describe('Instance Drawer', () => {
         />
       </Drawer>
     );
-    getByTestId('instance-drawer');
+    getByTestId('mk--instance-drawer');
 
-    const detailTabClasses = getByTestId('pf-tab-0-instance-drawer-detail-tab').parentElement?.className.split(' ');
-    const connectionTabClasses = getByTestId('pf-tab-1-instance-drawer-connection-tab').parentElement?.className.split(
+    const detailTabClasses = getByTestId('pf-tab-0-mk--instance-drawer-detail-tab-1').parentElement?.className.split(
       ' '
     );
+    const connectionTabClasses = getByTestId(
+      'pf-tab-1-mk--instance-drawer-connection-tab-1'
+    ).parentElement?.className.split(' ');
     expect(detailTabClasses).toContain('pf-m-current');
     expect(connectionTabClasses?.length).toBeLessThan(2);
   });
@@ -117,10 +119,12 @@ describe('Instance Drawer', () => {
       </Drawer>
     );
 
-    const detailTabClasses = getByTestId('pf-tab-0-instance-drawer-detail-tab').parentElement?.className.split(' ');
-    const connectionTabClasses = getByTestId('pf-tab-1-instance-drawer-connection-tab').parentElement?.className.split(
+    const detailTabClasses = getByTestId('pf-tab-0-mk--instance-drawer-detail-tab-1').parentElement?.className.split(
       ' '
     );
+    const connectionTabClasses = getByTestId(
+      'pf-tab-1-mk--instance-drawer-connection-tab-1'
+    ).parentElement?.className.split(' ');
     expect(connectionTabClasses).toContain('pf-m-current');
     expect(detailTabClasses?.length).toBeLessThan(2);
   });
@@ -142,9 +146,11 @@ describe('Instance Drawer', () => {
       </Drawer>
     );
 
-    const detailTab = getByTestId('pf-tab-0-instance-drawer-detail-tab');
+    const detailTab = getByTestId('pf-tab-0-mk--instance-drawer-detail-tab-1');
     userEvent.click(detailTab);
-    const connectionTabClasses = getByTestId('pf-tab-0-instance-drawer-detail-tab').parentElement?.className.split(' ');
+    const connectionTabClasses = getByTestId(
+      'pf-tab-0-mk--instance-drawer-detail-tab-1'
+    ).parentElement?.className.split(' ');
     expect(connectionTabClasses).toContain('pf-m-current');
   });
 });
@@ -168,33 +174,33 @@ describe('Drawer Details Tab', () => {
   it('should render details in toggle off', () => {
     const { getByText } = render(drawer(false));
 
-    getByText('cloud_provider');
-    getByText('region');
-    getByText('id');
-    getByText('owner');
-    getByText('created');
-    getByText('updated');
-    getByText('amazon_web_services');
-    getByText('us_east_north_virginia');
-    instanceDetail.id && getByText(instanceDetail.id);
-    instanceDetail.name && getByText(instanceDetail.name);
+    expect(getByText('cloud_provider')).toBeDefined();
+    expect(getByText('region')).toBeDefined();
+    expect(getByText('id')).toBeDefined();
+    expect(getByText('owner')).toBeDefined();
+    expect(getByText('created')).toBeDefined();
+    expect(getByText('updated')).toBeDefined();
+    expect(getByText('amazon_web_services')).toBeDefined();
+    expect(getByText('us_east_north_virginia')).toBeDefined();
+    instanceDetail.id && expect(getByText(instanceDetail.id)).toBeDefined();
+    instanceDetail.name && expect(getByText(instanceDetail.name)).toBeDefined();
   });
 
   it('should render details in toggle on', () => {
     const { getByText } = render(drawer(true));
 
-    getByText('cloud_provider');
-    getByText('region');
-    getByText('id');
-    getByText('owner');
-    getByText('created');
-    getByText('updated');
-    getByText('amazon_web_services');
-    getByText('us_east_north_virginia');
-    instanceDetail.id && getByText(instanceDetail.id);
-    instanceDetail.name && getByText(instanceDetail.name);
-    getByText('topics');
-    getByText('consumer_groups');
+    expect(getByText('cloud_provider')).toBeDefined();
+    expect(getByText('region')).toBeDefined();
+    expect(getByText('id')).toBeDefined();
+    expect(getByText('owner')).toBeDefined();
+    expect(getByText('created')).toBeDefined();
+    expect(getByText('updated')).toBeDefined();
+    expect(getByText('amazon_web_services')).toBeDefined();
+    expect(getByText('us_east_north_virginia')).toBeDefined();
+    instanceDetail.id && expect(getByText(instanceDetail.id)).toBeDefined();
+    instanceDetail.name && expect(getByText(instanceDetail.name)).toBeDefined();
+    expect(getByText('topics')).toBeDefined();
+    expect(getByText('consumer_groups')).toBeDefined();
   });
 });
 
@@ -216,43 +222,43 @@ describe('Drawer Connection Tab', () => {
   );
   it('should render connection tab in toggle off', () => {
     const { getByText } = render(drawer(false));
-    getByText('drawer_resource_tab_body_description_1');
-    getByText('kafka_listener_and_credentials');
-    getByText('drawer_resource_tab_body_description_2');
-    getByText('external_server');
+    expect(getByText('drawer_resource_tab_body_description_1')).toBeDefined();
+    expect(getByText('kafka_listener_and_credentials')).toBeDefined();
+    expect(getByText('drawer_resource_tab_body_description_2')).toBeDefined();
+    expect(getByText('external_server')).toBeDefined();
   });
 
   it('should render connection tab with resource and sample code tabs in toggle on', () => {
     const { getByText, getByTestId } = render(drawer(true));
-    getByText('drawer_resource_tab_body_description_1');
-    getByText('kafka_listener_and_credentials');
-    getByText('drawer_resource_tab_body_description_2');
-    getByText('external_server');
+    expect(getByText('drawer_resource_tab_body_description_1')).toBeDefined();
+    expect(getByText('kafka_listener_and_credentials')).toBeDefined();
+    expect(getByText('drawer_resource_tab_body_description_2')).toBeDefined();
+    expect(getByText('external_server')).toBeDefined();
 
-    getByText('resources');
-    getByText('sample_code');
+    expect(getByText('resources')).toBeDefined();
+    expect(getByText('sample_code')).toBeDefined();
 
     // check the resources tab is active
-    const resourcesTabClasses = getByTestId('pf-tab-0-connection-detail-resource-tab').parentElement?.className.split(
-      ' '
-    );
+    const resourcesTabClasses = getByTestId(
+      'pf-tab-0-mk--connection-detail-resource-tab'
+    ).parentElement?.className.split(' ');
     expect(resourcesTabClasses).toContain('pf-m-current');
   });
 
   it('should render connection tab with sample code as active tab in toggle on', () => {
     const { getByText, getByTestId } = render(drawer(true));
-    getByText('drawer_resource_tab_body_description_1');
-    getByText('kafka_listener_and_credentials');
-    getByText('drawer_resource_tab_body_description_2');
-    getByText('external_server');
+    expect(getByText('drawer_resource_tab_body_description_1')).toBeDefined();
+    expect(getByText('kafka_listener_and_credentials')).toBeDefined();
+    expect(getByText('drawer_resource_tab_body_description_2')).toBeDefined();
+    expect(getByText('external_server')).toBeDefined();
 
-    getByText('resources');
-    getByText('sample_code');
+    expect(getByText('resources')).toBeDefined();
+    expect(getByText('sample_code')).toBeDefined();
 
-    const sampleCodeTab = getByTestId('pf-tab-1-connection-detail-sample-code-tab');
+    const sampleCodeTab = getByTestId('pf-tab-1-mk--connection-detail-sample-code-tab');
     userEvent.click(sampleCodeTab);
     const sampleCodeTabClasses = getByTestId(
-      'pf-tab-1-connection-detail-sample-code-tab'
+      'pf-tab-1-mk--connection-detail-sample-code-tab'
     ).parentElement?.className.split(' ');
     expect(sampleCodeTabClasses).toContain('pf-m-current');
   });
@@ -276,7 +282,8 @@ describe('Drawer Connection Tab', () => {
         />
       </Drawer>
     );
-    const input: any = getByTestId('text-input-12');
+    const clipboard = getByTestId('mk--external-server-clipboard');
+    const input: any = clipboard.firstChild?.firstChild;
     expect(input.value).toEqual(instance.bootstrapServerHost);
   });
 
@@ -296,7 +303,33 @@ describe('Drawer Connection Tab', () => {
         />
       </Drawer>
     );
-    const input: any = getByTestId('text-input-13');
+
+    const clipboard = getByTestId('mk--external-server-clipboard');
+    const input: any = clipboard.firstChild?.firstChild;
+    expect(input.value).toEqual(instanceDetail.bootstrapServerHost + ':443');
+  });
+
+  it('should render bootstrap server host with default port', () => {
+    const instance = { ...instanceDetail };
+    instance.bootstrapServerHost = 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443';
+    const { getByTestId } = render(
+      <Drawer isExpanded={true} onExpand={jest.fn()}>
+        <DrawerContent
+          panelContent={
+            <InstanceDrawer
+              isExpanded={true}
+              mainToggle={false}
+              onClose={jest.fn()}
+              activeTab={'Connection'}
+              instanceDetail={instanceDetail}
+            />
+          }
+        />
+      </Drawer>
+    );
+
+    const clipboard = getByTestId('mk--external-server-clipboard');
+    const input: any = clipboard.firstChild?.firstChild;
     expect(input.value).toEqual(instanceDetail.bootstrapServerHost + ':443');
   });
 });

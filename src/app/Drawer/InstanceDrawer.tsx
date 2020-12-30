@@ -30,7 +30,7 @@ import { CopyIcon } from '@patternfly/react-icons';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import './InstanceDrawer.css';
-// import { GenerateCredential } from './GenerateCredential';
+import { GenerateCredential } from './GenerateCredential';
 import { Loading } from '@app/components/Loading/Loading';
 import { KafkaRequest } from 'src/openapi';
 import dayjs from 'dayjs';
@@ -86,9 +86,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </TextContent>
         <Flex>
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-            <ClipboardCopy id="external-server-clipboard">{externalServer}</ClipboardCopy>
+            <ClipboardCopy id="mk--external-server-clipboard">{externalServer}</ClipboardCopy>
           </FlexItem>
-          {/* <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} /> */}
+          <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} />
         </Flex>
         {mainToggle && (
           <>
@@ -223,13 +223,13 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     if (mainToggle) {
       return (
         <div className="mk--instance-details__drawer--tab-content pf-m-secondary">
-          <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
-            <Tab id="connection-detail-resource-tab" eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
+          <Tabs id="mk--connection-detail-resource-tabs" activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
+            <Tab id="mk--connection-detail-resource-tab" eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
               {resourcesTab}
             </Tab>
             <Tab
               eventKey={1}
-              id="connection-detail-sample-code-tab"
+              id="mk--connection-detail-sample-code-tab"
               title={<TabTitleText>{t('sample_code')}</TabTitleText>}
             >
               {sampleCodeTab}
@@ -243,7 +243,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   return (
     <DrawerPanelContent
-      id="instance-drawer"
+      id="mk--instance-drawer"
       className="instance-drawer"
       widths={{ default: 'width_50' }}
       hidden={false}
@@ -266,12 +266,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             </DrawerActions>
           </DrawerHead>
           <DrawerPanelBody>
-            <Tabs id="instance-drawer-tab" activeKey={activeTab1Key} onSelect={handleTab1Click}>
-              <Tab id="instance-drawer-detail-tab" eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
+            <Tabs id="mk--instance-drawer-tabs" activeKey={activeTab1Key} onSelect={handleTab1Click}>
+              <Tab id="mk--instance-drawer-detail-tab-1" eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
                 {detailsTab}
               </Tab>
               <Tab
-                id="instance-drawer-connection-tab"
+                id="mk--instance-drawer-connection-tab-1"
                 eventKey={1}
                 title={<TabTitleText>{t('connection')}</TabTitleText>}
               >
