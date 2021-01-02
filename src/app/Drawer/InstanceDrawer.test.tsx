@@ -1,11 +1,20 @@
 import React from 'react';
 
-import { render, screen, getByTestId, getByText } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from 'src/openapi';
+
+jest.mock('../../openapi/api', () => {
+  // Works and lets you check for constructor calls:
+  return {
+    DefaultApi: jest.fn().mockImplementation(() => {
+      return {};
+    }),
+  };
+});
 
 jest.mock('react-i18next', () => {
   const reactI18next = jest.requireActual('react-i18next');
