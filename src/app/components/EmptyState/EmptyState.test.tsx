@@ -20,9 +20,9 @@ describe('Empty State Test', () => {
     expect(getByText('you_do_not_have_any_kafka_instances_yet')).toBeDefined();
     expect(getByText('create_a_kafka_instance')).toBeDefined();
     expect(getByText('create_a_kafka_instance_to_get_started')).toBeDefined();
-    expect(getByTestId('empty-state-icon')).toBeDefined();
-    expect(getByTestId('empty-state-title')).toBeDefined();
-    expect(getByTestId('create-kafka-btn')).toBeDefined();
+    expect(getByTestId('mk--empty-state-icon')).toBeDefined();
+    expect(getByTestId('mk--empty-state-title')).toBeDefined();
+    expect(getByTestId('mk--create-kafka-btn')).toBeDefined();
   });
 
   test('should allow user to create instance', () => {
@@ -31,7 +31,7 @@ describe('Empty State Test', () => {
       <EmptyState createStreamsInstance={false} setCreateStreamsInstance={onCreate} mainToggle={false} />
     );
 
-    const item = getByTestId('create-kafka-btn');
+    const item = getByTestId('mk--create-kafka-btn');
     fireEvent.click(item);
     expect(onCreate).toHaveBeenCalled();
   });

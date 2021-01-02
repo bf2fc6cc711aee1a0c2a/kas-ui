@@ -17,14 +17,12 @@ const EmptyState: React.FC<EmptyStateProps> = ({ createStreamsInstance, setCreat
   return (
     <>
       <PFEmptyState>
-        <EmptyStateIcon id="empty-state-icon" data-testid="empty-state-icon" icon={PlusCircleIcon} />
-        <Title headingLevel="h4" id="empty-state-title" data-testid="empty-state-title" size="lg">
+        <EmptyStateIcon id="mk--empty-state-icon" icon={PlusCircleIcon} />
+        <Title headingLevel="h4" id="mk--empty-state-title" size="lg">
           {t('you_do_not_have_any_kafka_instances_yet')}
         </Title>
-        <EmptyStateBody id="empty-state-body" data-testid="empty-state-body">
-          {t('create_a_kafka_instance_to_get_started')}
-        </EmptyStateBody>
-        <Button variant="primary" onClick={onCreate} id="create-kafka-btn" data-testid="create-kafka-btn">
+        <EmptyStateBody id="mk--empty-state-body">{t('create_a_kafka_instance_to_get_started')}</EmptyStateBody>
+        <Button variant="primary" onClick={onCreate} id="mk--create-kafka-btn">
           {t('create_a_kafka_instance')}
         </Button>
       </PFEmptyState>
