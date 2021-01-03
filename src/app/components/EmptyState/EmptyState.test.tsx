@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { EmptyState } from './EmptyState';
-import i18n from '../../../i18n/i18n';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { I18nextProvider } from 'react-i18next';
+import { render, fireEvent } from '@testing-library/react';
 
 jest.mock('react-i18next', () => {
   const reactI18next = jest.requireActual('react-i18next');
