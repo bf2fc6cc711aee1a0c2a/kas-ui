@@ -24,6 +24,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
 type OpenShiftStreamsProps = {
@@ -55,8 +56,17 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
-  // state to store the expected total kafka instances based on the operation
-  const [expectedTotal, setExpectedTotal] = useState<number>(0);
+  const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
+  const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
+  const [orderBy, setOrderBy] = useState("");
+  const [filterSelected, setFilterSelected] = useState('Name');
+  const [filteredValue, setFilteredValue] = useState(
+    { name: '',
+    status: '',
+    region: cloudRegionOptions[0].label,
+    cloud_provider: cloudProviderOptions[0].label,
+    owner: ''}
+  );
 
   const drawerRef = React.createRef<any>();
 
@@ -93,7 +103,16 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           accessToken,
           basePath,
         });
-        await apisService.listKafkas(page?.toString(), perPage?.toString()).then((res) => {
+        await apisService.listKafkas(
+          page?.toString(),
+          perPage?.toString(),
+          orderBy && orderBy,
+          `${filteredValue.name && `name = ${filteredValue.name} and `}
+          ${filteredValue.status && `status = ${statusOptions[statusOptions.findIndex(x => x.label === filteredValue.status)].value} and `}
+          ${filteredValue.region && ` region = ${cloudRegionOptions[cloudRegionOptions.findIndex(x => x.label === filteredValue.region)].value}`}
+          ${filteredValue.owner && ` and owner = ${filteredValue.owner}`}
+          ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
+        ).then((res) => {
           const kafkaInstances = res.data;
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
@@ -102,6 +121,15 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             setExpectedTotal(kafkaInstancesList.total);
           setKafkaDataLoaded(true);
         });
+      // Check to see if at least 1 kafka is present
+      await apisService.listKafkas(
+        page?.toString(),
+        perPage?.toString(),
+        orderBy && orderBy,
+        `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
+      ).then((res) => {
+        setRawKafkaDataLength(res.data.items.length);
+      })
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -148,7 +176,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [authContext, page, perPage]);
+  }, [authContext, page, perPage, filteredValue]);
 
   useEffect(() => {
     fetchCloudProviders();
@@ -218,7 +246,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <Loading />
               </PageSection>
-            ) : kafkaInstancesList.total < 1 ? (
+            ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
               <PageSection>
                 <EmptyState
                   createStreamsInstance={createStreamsInstance}
@@ -242,6 +270,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   perPage={perPage}
                   total={kafkaInstancesList?.total}
                   expectedTotal={expectedTotal}
+                  filteredValue={filteredValue}
+                  setFilteredValue={setFilteredValue}
+                  setFilterSelected={setFilterSelected}
+                  filterSelected={filterSelected}
+                  // listOfOwners={listOfOwners}
                 />
               </PageSection>
             )}
