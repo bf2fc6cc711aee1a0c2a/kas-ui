@@ -55,7 +55,6 @@ type TableProps = {
   setFilteredValue: (filteredValue: { property: string }) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
-  listOfOwners: string[];
   rawKafkaDataLength: number;
 };
 
@@ -104,8 +103,7 @@ const StreamsTableView = ({
   filteredValue,
   setFilteredValue,
   setFilterSelected,
-  filterSelected,
-  listOfOwners
+  filterSelected
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -385,7 +383,6 @@ const StreamsTableView = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
-        listOfOwners={listOfOwners}
       />
       <Table
         cells={tableColumns}
@@ -400,10 +397,10 @@ const StreamsTableView = ({
       <EmptyState variant={EmptyStateVariant.small}>
         <EmptyStateIcon icon={SearchIcon} />
         <Title headingLevel="h2" size="lg">
-          No matches
+          {t('no_matches')}
         </Title>
         <EmptyStateBody>
-          Please try adjusting your search query and try again.
+          {t('please_try_adjusting_your_search_query_and_try_again')}
         </EmptyStateBody>
       </EmptyState>
       )}

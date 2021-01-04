@@ -58,7 +58,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
-  const [listOfOwners, setListOfOwners] = useState<string[]>([]);
   const [orderBy, setOrderBy] = useState("");
   const [filterSelected, setFilterSelected] = useState('Name');
   const [filteredValue, setFilteredValue] = useState(
@@ -115,13 +114,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
         ).then((res) => {
           const kafkaInstances = res.data;
-          const ownerArray: string[] = [];
-          kafkaInstances.items.map(instance => {
-            if(!ownerArray.includes(instance.owner)) {
-              ownerArray.push(instance.owner);
-            }
-          })
-          setListOfOwners(ownerArray);
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstances.items);
           kafkaInstancesList?.total !== undefined &&
@@ -134,7 +126,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
         page?.toString(),
         perPage?.toString(),
         orderBy && orderBy,
-        'region = us-east-1 and cloud_provider = aws'
+        `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
       ).then((res) => {
         setRawKafkaDataLength(res.data.items.length);
       })
@@ -282,7 +274,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   setFilteredValue={setFilteredValue}
                   setFilterSelected={setFilterSelected}
                   filterSelected={filterSelected}
-                  listOfOwners={listOfOwners}
+                  // listOfOwners={listOfOwners}
                 />
               </PageSection>
             )}

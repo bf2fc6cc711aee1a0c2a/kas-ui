@@ -33,7 +33,7 @@ type StreamsToolbarProps = {
   perPage: number;
   filteredValue: { property: string };
   setFilteredValue: (filteredValue: { property: string }) => void;
-  listOfOwners: string[];
+  // listOfOwners: string[];
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -46,7 +46,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
-  listOfOwners
+  // listOfOwners
 }) => {
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
@@ -54,7 +54,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isRegionFilterExpanded, setIsRegionFilterExpanded] = useState(false);
   const [isStatusFilterExpanded, setIsStatusFilterExpanded] = useState(false);
   const [isOwnerFilterExpanded, setIsOwnerFilterExpanded] = useState(false);
-  const [inputValue, setInputValue] = useState<string | undefined>();
+  const [nameInputValue, setNameInputValue] = useState<string | undefined>();
+  const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
   const [trimmedFilterValue, setTrimmedFilterValue] = useState({});
   const { t } = useTranslation();
 
@@ -109,11 +110,18 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setIsStatusFilterExpanded(!isStatusFilterExpanded);
   };
 
-  const onInputChange = (input?: string) => {
+  const onNameInputChange = (input?: string) => {
     // if (input === "") {
     //   setFilteredValue({...filteredValue, name: ""})
     // }
-    setInputValue(input);
+    setNameInputValue(input);
+  };
+
+  const onOwnerInputChange = (input?: string) => {
+    // if (input === "") {
+    //   setFilteredValue({...filteredValue, name: ""})
+    // }
+    setOwnerInputValue(input);
   };
 
   const onClear = () => {
@@ -130,12 +138,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setTrimmedFilterValue(copyFilteredValue);
   }
 
-  const onFilter = () => {
-    if (inputValue) {
-      setFilteredValue({...filteredValue, name: inputValue});
+  const onFilter = (filterType: string) => {
+    if (filterType === 'name' && nameInputValue) {
+      setFilteredValue({...filteredValue, name: nameInputValue});
+    }
+    else if (filterType === 'owner' && ownerInputValue) {
+      setFilteredValue({...filteredValue, owner: ownerInputValue});
     }
   };
-
 
   const onChangeSelect = (event, selection) => {
     setIsFilterExpanded(!isFilterExpanded);
@@ -152,12 +162,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     if (isPlaceholder) clearSelection('region');
     setFilteredValue({ ...filteredValue, region: selection });
     setIsRegionFilterExpanded(false);
-  };
-
-  const onOwnerFilterSelect = (event, selection, isPlaceholder) => {
-    if (isPlaceholder) clearSelection('owner');
-    setFilteredValue({ ...filteredValue, owner: selection });
-    setIsOwnerFilterExpanded(false);
   };
 
   const onStatusFilterSelect = (event, selection, isPlaceholder) => {
@@ -184,11 +188,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       setIsStatusFilterExpanded(false);
     }
   };
-
-  const onClearOwnerSelection = () => {
-    setFilteredValue({ ...filteredValue, owner: "" });
-    setIsOwnerFilterExpanded(false);
-  }
 
   const deleteChip = (key: string) => {
     if (key === 'name') {
@@ -225,20 +224,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 type="search"
                 aria-label="Search filter input"
                 placeholder={t('filter_by_name_lower')}
-                onChange={onInputChange}
-                value={inputValue}
-                onClear={() => setFilteredValue({...filteredValue, name: ""})}
+                onChange={onNameInputChange}
+                value={nameInputValue}
               />
-              <Button variant={ButtonVariant.control} onClick={onFilter} aria-label="Search instances">
+              <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
                 <SearchIcon />
               </Button>
             </InputGroup>
-            // <SearchInput
-            //   placeholder={t('filter_by_name_lower')}
-            //   value={inputValue}
-            //   onChange={onInputChange}
-            //   onClear={() => setFilteredValue({...filteredValue, name: ""})}
-            // />
           }
           { filterSelected === t('cloud_provider') &&
               <Select
@@ -271,22 +263,20 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             </Select>
           }
           { filterSelected === t('owner') &&
-            <Select
-              className="mk--filter-instances__toolbar--select--type-ahead"
-              variant={SelectVariant.typeahead}
-              typeAheadAriaLabel="Select an owner"
-              aria-label="Select region"
-              onToggle={onOwnerFilterToggle}
-              selections={filteredValue["owner"] && filteredValue["owner"]}
-              isOpen={isOwnerFilterExpanded}
-              onSelect={onOwnerFilterSelect}
-              onClear={onClearOwnerSelection}
-              placeholderText="Filter by owner"
-            >
-              {listOfOwners && listOfOwners.map((option, index) => (
-                <SelectOption key={index} value={option} />
-              ))}
-            </Select>
+            <InputGroup className="mk--filter-instances__toolbar--text-input">
+              <TextInput
+                name="filter owners"
+                id="filterOwners"
+                type="search"
+                aria-label="Search filter input"
+                placeholder={t('filter_by_owner')}
+                onChange={onOwnerInputChange}
+                value={ownerInputValue}
+              />
+              <Button variant={ButtonVariant.control} onClick={() => onFilter('owner')} aria-label="Search owners">
+                <SearchIcon />
+              </Button>
+            </InputGroup>
           }
           { filterSelected === t('status') &&
               <Select
