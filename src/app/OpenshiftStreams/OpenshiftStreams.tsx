@@ -25,7 +25,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 
-type OpenShiftStreamsProps = {
+export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
 };
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import userEvent from '@testing-library/user-event';
 import { StreamsTableView, TableProps } from './StreamsTableView';
-import { render, screen } from '@testing-library/react';
+import { render, screen,cleanup } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../test-utils/i18n';
 import i18n from 'i18next';
@@ -22,6 +23,8 @@ jest.mock('../../../openapi/api', () => {
     }),
   };
 });
+
+afterEach(cleanup);
 
 describe('<StreamsTableView/>', () => {
   const setup = (args: any) => {
@@ -65,15 +68,40 @@ describe('<StreamsTableView/>', () => {
     expectedTotal: 1,
   };
 
-  it('should render translation text in English language', () => {
-    setup(props);
-    expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
-  });
+  // it('should render translation text in English language', () => {
+  //   setup(props);
+  //   expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
+  // });
 
-  it('should render translation text in Japaneese language', () => {
-    i18n.changeLanguage('ja');
-    setup(props);
+  // it('should render translation text in Japaneese language', () => {
+  //   i18n.changeLanguage('ja');
+  //   setup(props);
+  //   expect(screen.getByText('日本語 US East, N. Virginia')).toBeInTheDocument();
+  // });
+
+  // it('should render DeleteInstanceModal component if isDeleteModalOpen is true', () => {
+  //   i18n.changeLanguage('en');
+  //   setup(props);
+  //   console.log('rowgroup',screen.getByRole('rowgroup').firstChild.lastChild);
+  //   userEvent.click(screen.getByTestId('delete-instance'));
+  //   screen.debug();
+  // });
+
+  it('should render DeleteInstanceModal component if isDeleteModalOpen is true', () => {
+    //i18n.changeLanguage('en');
+    const{getByRole,getByText}=render(
+      <MemoryRouter>
+        <I18nextProvider i18n={i18nForTest}>
+          <StreamsTableView {...props} />
+        </I18nextProvider>
+      </MemoryRouter>
+    );
+    //const tr=getByRole('table-role').lastChild.firstChild;
+    const button:any=getByText('api_kafka_service')?.parentElement?.lastChild?.lastChild?.lastChild;
+    //console.log(button);
+    userEvent.click(button);
+    userEvent.click(screen.getByTestId('delete-instance'));
+    //expect(getByText('The kafka instance will be deleted')).toBeInTheDocument();
     //screen.debug();
-    expect(screen.getByText('日本語 US East, N. Virginia')).toBeInTheDocument();
   });
 });

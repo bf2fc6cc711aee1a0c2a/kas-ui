@@ -95,6 +95,7 @@
     "@patternfly/react-table": "^4.19.24",
     "@redhat-cloud-services/frontend-components": "^2.4.22",
     "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/user-event": "^12.6.0",
     "axios": "^0.21.0",
     "dayjs": "^1.9.6",
     "express": "^4.17.1",
