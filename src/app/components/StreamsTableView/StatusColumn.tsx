@@ -28,9 +28,9 @@ const StatusColumn = ({ status }: StatusColumnProps) => {
   const getStatusIcon = () => {
     switch (status?.toLowerCase()) {
       case InstanceStatus.COMPLETED:
-        return <CheckCircleIcon className="check-circle-icon-color" />;
+        return <CheckCircleIcon className="mk--instances__table--icon--completed" />;
       case InstanceStatus.FAILED:
-        return <ExclamationCircleIcon className="exclamation-circle-icon-color" />;
+        return <ExclamationCircleIcon className="mk--instances__table--icon--failed" />;
       case InstanceStatus.PROVISIONING:
         return <Spinner size={IconSize.md} />;
       case InstanceStatus.ACCEPTED:

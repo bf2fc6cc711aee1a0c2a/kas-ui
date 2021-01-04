@@ -56,14 +56,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
-  const { getToken } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
   const { addAlert } = useAlerts();
 
   // Function to fetch cloud Regions based on selected filter
-  const fetchCloudRegions = async (provider: CloudProvider) => {   
-    const accessToken = await getToken();
+  const fetchCloudRegions = async (provider: CloudProvider) => {
+    const accessToken = await authContext?.getToken();
     const id = provider.id;
     
     if (accessToken !== undefined && accessToken !== '' && id) {
@@ -126,7 +126,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       setCloudRegionValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
     }
 
-    const accessToken = await getToken();
+    const accessToken = await authContext?.getToken();
 
     if (isValid) {
       try {
@@ -195,7 +195,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const getTileIcon = (provider?: string) => {
     switch (provider?.toLowerCase()) {
       case 'aws':
-        return <AwsIcon size="lg" color="black" className="cloud-region-icon" />;
+        return <AwsIcon size="lg" color="black" className="mk--create-instance__tile--icon" />;
       default:
         return;
     }

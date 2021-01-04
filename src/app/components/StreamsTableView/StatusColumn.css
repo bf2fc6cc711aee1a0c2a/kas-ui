@@ -1,7 +1,7 @@
-.check-circle-icon-color {
+.mk--instances__table--icon--completed {
   color: var(--pf-global--success-color--100);
 }
 
-.exclamation-circle-icon-color {
+.mk--instances__table--icon--failed {
   color: var(--pf-global--danger-color--100);
 }
