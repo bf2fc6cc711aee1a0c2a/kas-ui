@@ -20,7 +20,6 @@ import { TablePagination } from './TablePagination';
 import { useTranslation } from 'react-i18next';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './StreamsToolbar.css';
-import { SearchInput } from '@patternfly/react-core';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
@@ -32,8 +31,7 @@ type StreamsToolbarProps = {
   page: number;
   perPage: number;
   filteredValue: { property: string };
-  setFilteredValue: (filteredValue: { property: string }) => void;
-  // listOfOwners: string[];
+  setFilteredValue: (filteredValue) => void;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -45,15 +43,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   page,
   perPage,
   filteredValue,
-  setFilteredValue,
-  // listOfOwners
+  setFilteredValue
 }) => {
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
   const [isRegionFilterExpanded, setIsRegionFilterExpanded] = useState(false);
   const [isStatusFilterExpanded, setIsStatusFilterExpanded] = useState(false);
-  const [isOwnerFilterExpanded, setIsOwnerFilterExpanded] = useState(false);
   const [nameInputValue, setNameInputValue] = useState<string | undefined>();
   const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
   const [trimmedFilterValue, setTrimmedFilterValue] = useState({});
@@ -102,25 +98,15 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setIsRegionFilterExpanded(!isRegionFilterExpanded);
   };
 
-  const onOwnerFilterToggle = () => {
-    setIsOwnerFilterExpanded(!isOwnerFilterExpanded);
-  };
-
   const onStatusFilterToggle = () => {
     setIsStatusFilterExpanded(!isStatusFilterExpanded);
   };
 
   const onNameInputChange = (input?: string) => {
-    // if (input === "") {
-    //   setFilteredValue({...filteredValue, name: ""})
-    // }
     setNameInputValue(input);
   };
 
   const onOwnerInputChange = (input?: string) => {
-    // if (input === "") {
-    //   setFilteredValue({...filteredValue, name: ""})
-    // }
     setOwnerInputValue(input);
   };
 
@@ -181,7 +167,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     }
     if(value === 'owner') {
       setFilteredValue({ ...filteredValue, owner: "" });
-      setIsOwnerFilterExpanded(false);
     }
     if(value === 'status') {
       setFilteredValue({ ...filteredValue, status: "" });
