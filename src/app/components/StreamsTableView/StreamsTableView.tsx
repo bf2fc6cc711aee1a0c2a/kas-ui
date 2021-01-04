@@ -11,11 +11,10 @@ import {
   TableHeader,
   IRowCell,
 } from '@patternfly/react-table';
-import { AlertVariant, Card, Divider, PaginationVariant, Skeleton, Button } from '@patternfly/react-core';
+import { AlertVariant,PaginationVariant, Skeleton, Button } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
-import { getCloudProviderDisplayName, getCloudRegionDisplayName } from '@app/utils';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
@@ -24,7 +23,6 @@ import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
-import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import { useHistory } from 'react-router-dom';
 
 type TableProps = {
@@ -330,7 +328,7 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId).then(() => {
         setIsDeleteModalOpen(false);
-        addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
+        addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
         refresh('delete');
       });
     } catch (error) {

@@ -33,7 +33,7 @@
   "kafka_not_created": "日本語 Unable to create {{name}} kafka.",
   "view_details": "日本語 View details",
   "connect_to_instance": "日本語 Connect to instance",
-  "kafka_successfully_deleted": "日本語 Kafka successfully deleted",
+  "kafka_successfully_deleted": "日本語 {{name}} Kafka instance successfully deleted",
   "cluster_instance_list": "日本語 Cluster instance list",
   "filter_by": "日本語 Filter by",
   "create_kafka_instance": "日本語 Create Kafka instance",

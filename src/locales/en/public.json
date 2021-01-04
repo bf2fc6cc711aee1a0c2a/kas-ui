@@ -33,7 +33,7 @@
   "kafka_not_created": "Kafka instance creation failed",
   "view_details": "View details",
   "connect_to_instance": "Connect to instance",
-  "kafka_successfully_deleted": "Kafka successfully deleted",
+  "kafka_successfully_deleted": "{{name}} Kafka instance successfully deleted",
   "cluster_instance_list": "Cluster instance list",
   "filter_by": "Filter by",
   "create_kafka_instance": "Create Kafka instance",
