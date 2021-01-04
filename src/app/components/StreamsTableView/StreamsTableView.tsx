@@ -22,7 +22,7 @@ import {
   EmptyStateBody,
   Title,
   EmptyStateIcon,
-  EmptyStateVariant
+  EmptyStateVariant,
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -38,6 +38,14 @@ import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
+export type Filter = {
+  name?: string;
+  status?: string;
+  region?: string;
+  cloud_provider?: string;
+  owner?: string;
+};
+
 type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
@@ -52,8 +60,8 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
-  filteredValue: { property: string };
-  setFilteredValue: (filteredValue: { property: string }) => void;
+  filteredValue: Filter;
+  setFilteredValue: (filteredValue: Filter) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
   orderBy?: string;
