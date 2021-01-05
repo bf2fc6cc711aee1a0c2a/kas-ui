@@ -33,7 +33,6 @@ import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
-import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
@@ -347,7 +346,7 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId).then(() => {
         setIsDeleteModalOpen(false);
-        addAlert(t('kafka_successfully_deleted'), AlertVariant.success);
+        addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
         refresh('delete');
       });
     } catch (error) {
