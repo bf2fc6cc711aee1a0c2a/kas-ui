@@ -11,7 +11,17 @@ import {
   TableHeader,
   IRowCell,
 } from '@patternfly/react-table';
-import { AlertVariant,PaginationVariant, Skeleton, Button } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  PaginationVariant,
+  Skeleton,
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  Title,
+  EmptyStateIcon,
+  EmptyStateVariant
+} from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { InstanceStatus } from '@app/constants';
@@ -24,6 +34,7 @@ import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 type TableProps = {
   createStreamsInstance: boolean;
@@ -39,6 +50,11 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
+  filteredValue: { property: string };
+  setFilteredValue: (filteredValue: { property: string }) => void;
+  filterSelected: string;
+  setFilterSelected: (filterSelected: string) => void;
+  rawKafkaDataLength: number;
 };
 
 type ConfigDetail = {
@@ -83,6 +99,10 @@ const StreamsTableView = ({
   total,
   kafkaDataLoaded,
   expectedTotal,
+  filteredValue,
+  setFilteredValue,
+  setFilterSelected,
+  filterSelected
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -90,8 +110,6 @@ const StreamsTableView = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('owner'), t('status')];
-  const [filterSelected, setFilterSelected] = useState('Name');
-  const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const [loggedInUser, setLoggedInUser] = useState<string|undefined>(undefined);
   const searchParams = new URLSearchParams(location.search);
@@ -358,12 +376,12 @@ const StreamsTableView = ({
         createStreamsInstance={createStreamsInstance}
         setCreateStreamsInstance={setCreateStreamsInstance}
         filterSelected={filterSelected}
-        namesSelected={namesSelected}
         setFilterSelected={setFilterSelected}
-        setNamesSelected={setNamesSelected}
         total={total}
         page={page}
         perPage={perPage}
+        filteredValue={filteredValue}
+        setFilteredValue={setFilteredValue}
       />
       <Table
         cells={tableColumns}
@@ -374,6 +392,17 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
+      { kafkaInstanceItems.length < 1 && (
+      <EmptyState variant={EmptyStateVariant.small}>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title headingLevel="h2" size="lg">
+          {t('no_matches')}
+        </Title>
+        <EmptyStateBody>
+          {t('please_try_adjusting_your_search_query_and_try_again')}
+        </EmptyStateBody>
+      </EmptyState>
+      )}
       <TablePagination
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
