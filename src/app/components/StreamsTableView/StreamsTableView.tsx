@@ -12,6 +12,7 @@ import {
   IRowCell,
   sortable,
   ISortBy,
+  SortByDirection,
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -402,8 +403,9 @@ const StreamsTableView = ({
         return 'owner';
       case 4:
         return 'status';
+      default:
+        return '';
     }
-    return '';
   };
 
   const getindexForSortParameter = (parameter: string) => {
@@ -418,8 +420,9 @@ const StreamsTableView = ({
         return 3;
       case 'status':
         return 4;
+      default:
+        return undefined;
     }
-    return undefined;
   };
 
   const onSort = (_event: any, index: number, direction: string) => {
@@ -431,10 +434,10 @@ const StreamsTableView = ({
     if (sort.length > 1) {
       return {
         index: getindexForSortParameter(sort[0]),
-        direction: sort[1] === 'asc' ? 'asc' : 'desc',
+        direction: sort[1] === SortByDirection.asc ? SortByDirection.asc : SortByDirection.desc,
       };
     }
-    return undefined;
+    return;
   };
 
   return (
@@ -462,22 +465,20 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      { kafkaInstanceItems.length < 1 && (
-      <EmptyState variant={EmptyStateVariant.small}>
-        <EmptyStateIcon icon={SearchIcon} />
-        <Title headingLevel="h2" size="lg">
-          {t('no_matches')}
-        </Title>
-        <EmptyStateBody>
-          {t('please_try_adjusting_your_search_query_and_try_again')}
-        </EmptyStateBody>
-      </EmptyState>
+      {kafkaInstanceItems.length < 1 && (
+        <EmptyState variant={EmptyStateVariant.small}>
+          <EmptyStateIcon icon={SearchIcon} />
+          <Title headingLevel="h2" size="lg">
+            {t('no_matches')}
+          </Title>
+          <EmptyStateBody>{t('please_try_adjusting_your_search_query_and_try_again')}</EmptyStateBody>
+        </EmptyState>
       )}
       <TablePagination
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
         variant={PaginationVariant.bottom}
-        page={page}
+        page={page as any}
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
