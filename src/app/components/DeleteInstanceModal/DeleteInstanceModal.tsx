@@ -1,14 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import {
-  Modal,
-  Button,
-  ButtonVariant,
-  ModalVariant,
-  ModalProps,
-  TextInput,
-  TextContent,
-  Text,
-} from '@patternfly/react-core';
+import { Modal, Button, ButtonVariant, ModalVariant, ModalProps, TextInput, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InstanceStatus } from '@app/constants';
 import './DeleteInstanceModal.css';
@@ -67,7 +58,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
 
   return (
     <Modal
-      id="dialog-prompt-modal"
+      id="mk--dialog-prompt__modal"
       variant={variant}
       isOpen={isModalOpen}
       aria-label={t('delete_instance_modal')}
@@ -78,14 +69,14 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       actions={[
         <Button
           key="confirm-button"
-          id="confirm-button"
+          id="mk--confirm__button"
           variant={ButtonVariant.danger}
           onClick={onConfirmDelete}
           isDisabled={isConfirmButtonDisabled()}
         >
           {confirmActionLabel || t('delete_instance')}
         </Button>,
-        <Button key="cancel" variant="link" id="cancel-button" onClick={handleModalToggle}>
+        <Button key="cancel" variant="link" id="mk--cancel__button" onClick={handleModalToggle}>
           {cancelActionLabel || t('cancel')}
         </Button>,
       ]}
@@ -94,11 +85,17 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
           <label
-            id="label-completed-instance-name-description"
+            id="mk--completed-instance-name-description__label"
             htmlFor="instance-name"
             dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
           />
-          <TextInput id="instance-name-input" type="text" value={instanceNameInput} onChange={handleInstanceName} />
+          <TextInput
+            id="mk--instance-name__input"
+            name="instance-name-input"
+            type="text"
+            value={instanceNameInput}
+            onChange={handleInstanceName}
+          />
         </>
       )}
     </Modal>

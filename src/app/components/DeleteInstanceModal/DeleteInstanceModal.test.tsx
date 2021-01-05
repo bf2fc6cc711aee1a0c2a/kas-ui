@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DeleteInstanceModal, DeleteInstanceModalProps } from './DeleteInstanceModal';
 
-import { render } from '@testing-library/react';
+import { render, act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from 'src/openapi';
 import { InstanceStatus } from '@app/constants';
@@ -34,51 +34,57 @@ const props: DeleteInstanceModalProps = {
 };
 
 describe('Delete Instance Modal', () => {
-  test('should render modal with props text', () => {
-    const { getByTestId, getByText } = render(<DeleteInstanceModal {...props} />);
-    getByTestId('dialog-prompt-modal');
-    props.title && getByText(props.title);
-    props.confirmActionLabel && getByText(props.confirmActionLabel);
-    props.cancelActionLabel && getByText(props.cancelActionLabel);
-    props.description && getByText(props.description);
+  it('should render modal with props text', () => {
+    const { getByText } = render(<DeleteInstanceModal {...props} />);
+    expect(getByText('test title')).toBeInTheDocument();
+    expect(getByText('confirm')).toBeInTheDocument();
+    expect(getByText('cancel')).toBeInTheDocument();
+    expect(getByText(`The test-instance instance will be deleted.`)).toBeInTheDocument();
   });
 
-  test('should handle confirm and close actions', () => {
-    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
+  it('should handle confirm and close actions', () => {
+    const { getByRole } = render(<DeleteInstanceModal {...props} />);
 
-    userEvent.click(getByTestId('confirm-button'));
-    expect(onConfirm).toHaveBeenCalled();
+    act(() => {
+      userEvent.click(getByRole('button', { name: /confirm/i }));
+      expect(onConfirm).toHaveBeenCalled();
+      expect(onConfirm).toBeCalledTimes(1);
+    });
 
-    userEvent.click(getByTestId('cancel-button'));
-    expect(setIsModalOpen).toHaveBeenCalled();
+    act(() => {
+      userEvent.click(getByRole('button', { name: /cancel/i }));
+      expect(setIsModalOpen).toHaveBeenCalled();
+      expect(setIsModalOpen).toBeCalledTimes(1);
+    });
   });
 
-  test('should render input box for completed status', () => {
+  it('should render input box for completed status', () => {
     props.instanceStatus = InstanceStatus.COMPLETED;
 
-    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
-
-    getByTestId('label-completed-instance-name-description');
-    getByTestId('instance-name-input');
+    const { getByText } = render(<DeleteInstanceModal {...props} />);
+    expect(getByText('instance_name_label')).toBeInTheDocument();
+    const input: any = getByText('instance_name_label').parentElement;
+    expect(input?.lastChild).toBeInTheDocument();
+    expect(input.lastChild.className).toEqual('pf-c-form-control');
   });
 
-  test('confirm button should be disabled for empty or invalid input of instance with completed status', () => {
+  it.only('should render confirm button be disabled for empty or invalid input of instance with completed status', () => {
     props.instanceStatus = InstanceStatus.COMPLETED;
-    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
+    const { getByText, getByRole } = render(<DeleteInstanceModal {...props} />);
 
-    const inputElement: any = getByTestId('instance-name-input');
-    const confirmBtn: any = getByTestId('confirm-button');
+    const inputElement: any = getByText('instance_name_label').parentElement?.lastChild;
+    const confirmBtn: any = getByRole('button', { name: /confirm/i });
 
-    expect(confirmBtn.disabled).toBeTruthy();
+    expect(confirmBtn).toBeDisabled();
     userEvent.type(inputElement, selectedInstance?.name || 'test');
 
     //should match with exact input value
     expect(inputElement.value).toMatch(selectedInstance?.name || 'test');
     // confirm button get enabled if data matches.
-    expect(confirmBtn.disabled).toBeFalsy();
+    expect(confirmBtn).toBeEnabled();
   });
 
-  test('should render large modal with success icon', () => {
+  it('should render large modal with success icon', () => {
     const props: DeleteInstanceModalProps = {
       confirmActionLabel: 'confirm',
       cancelActionLabel: 'cancel',
@@ -92,16 +98,15 @@ describe('Delete Instance Modal', () => {
       instanceStatus: InstanceStatus.FAILED,
       selectedInstance: selectedInstance,
     };
-    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
-    const classList: string[] = getByTestId('dialog-prompt-modal').className.split(' ');
-
+    const { getByRole } = render(<DeleteInstanceModal {...props} />);
+    const classList: string[] = getByRole('dialog', { name: /delete_insta/i }).className.split(' ');
     //check the modal variant is large
     expect(classList).toContain('pf-m-lg');
     // check the title icon variant is success
     expect(classList).toContain('pf-m-success');
   });
 
-  test('should render small modal with warning icon', () => {
+  it('should render small modal with warning icon', () => {
     const props: DeleteInstanceModalProps = {
       confirmActionLabel: 'confirm',
       cancelActionLabel: 'cancel',
@@ -113,8 +118,8 @@ describe('Delete Instance Modal', () => {
       instanceStatus: InstanceStatus.FAILED,
       selectedInstance: selectedInstance,
     };
-    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
-    const classList: string[] = getByTestId('dialog-prompt-modal').className.split(' ');
+    const { getByRole } = render(<DeleteInstanceModal {...props} />);
+    const classList: string[] = getByRole('dialog', { name: /delete_insta/i }).className.split(' ');
 
     //check the modal variant is small
     expect(classList).toContain('pf-m-sm');
@@ -122,7 +127,7 @@ describe('Delete Instance Modal', () => {
     expect(classList).toContain('pf-m-warning');
   });
 
-  test('should render with name and description as undefined', () => {
+  it('should render with name and description as undefined', () => {
     const props: DeleteInstanceModalProps = {
       confirmActionLabel: 'confirm',
       cancelActionLabel: 'cancel',
@@ -135,12 +140,12 @@ describe('Delete Instance Modal', () => {
       instanceStatus: InstanceStatus.FAILED,
       selectedInstance: { id: 'test-id', name: undefined },
     };
-    const { getByTestId } = render(<DeleteInstanceModal {...props} />);
+    const { getByRole } = render(<DeleteInstanceModal {...props} />);
 
-    getByTestId('dialog-prompt-modal');
+    expect(getByRole('dialog')).toBeInTheDocument();
   });
 
-  test('should render with default label for cancel and delete instance modal', () => {
+  it('should render with default label for cancel and delete instance modal', () => {
     const props: DeleteInstanceModalProps = {
       title: 'test title',
       onConfirm: jest.fn(),
