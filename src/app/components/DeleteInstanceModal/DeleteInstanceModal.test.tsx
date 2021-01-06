@@ -68,7 +68,7 @@ describe('Delete Instance Modal', () => {
     expect(input.lastChild.className).toEqual('pf-c-form-control');
   });
 
-  it.only('should render confirm button be disabled for empty or invalid input of instance with completed status', () => {
+  it('should render confirm button be disabled for empty or invalid input of instance with completed status', () => {
     props.instanceStatus = InstanceStatus.COMPLETED;
     const { getByText, getByRole } = render(<DeleteInstanceModal {...props} />);
 
