@@ -86,7 +86,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         </TextContent>
         <Flex>
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-            <ClipboardCopy id="mk--external-server-clipboard">{externalServer}</ClipboardCopy>
+            <ClipboardCopy>{externalServer}</ClipboardCopy>
           </FlexItem>
           <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} />
         </Flex>
@@ -223,13 +223,19 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     if (mainToggle) {
       return (
         <div className="mk--instance-details__drawer--tab-content pf-m-secondary">
-          <Tabs id="mk--connection-detail-resource-tabs" activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
-            <Tab id="mk--connection-detail-resource-tab" eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
+          <Tabs
+            activeKey={activeTab2Key}
+            isSecondary
+            onSelect={handleTab2Click}
+          >
+            <Tab
+              eventKey={0}
+              title={<TabTitleText>{t('resources')}</TabTitleText>}
+            >
               {resourcesTab}
             </Tab>
             <Tab
               eventKey={1}
-              id="mk--connection-detail-sample-code-tab"
               title={<TabTitleText>{t('sample_code')}</TabTitleText>}
             >
               {sampleCodeTab}
@@ -243,7 +249,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   return (
     <DrawerPanelContent
-      id="mk--instance-drawer"
+      data-testid="mk--instance__drawer"
       className="instance-drawer"
       widths={{ default: 'width_50' }}
       hidden={false}
@@ -266,15 +272,11 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             </DrawerActions>
           </DrawerHead>
           <DrawerPanelBody>
-            <Tabs id="mk--instance-drawer-tabs" activeKey={activeTab1Key} onSelect={handleTab1Click}>
-              <Tab id="mk--instance-drawer-detail-tab-1" eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
+            <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
+              <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
                 {detailsTab}
               </Tab>
-              <Tab
-                id="mk--instance-drawer-connection-tab-1"
-                eventKey={1}
-                title={<TabTitleText>{t('connection')}</TabTitleText>}
-              >
+              <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
                 {renderConnectionTab()}
               </Tab>
             </Tabs>
