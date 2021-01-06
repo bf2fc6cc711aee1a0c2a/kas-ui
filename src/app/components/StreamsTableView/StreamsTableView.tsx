@@ -39,12 +39,9 @@ import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
-export type Filter = {
-  name?: string;
-  status?: string;
-  region?: string;
-  cloud_provider?: string;
-  owner?: string;
+export type FilterType = {
+  filterKey: string;
+  filterValue?: string;
 };
 
 type TableProps = {
@@ -61,12 +58,12 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
-  filteredValue: Filter;
-  setFilteredValue: (filteredValue: Filter) => void;
+  filteredValue: Array<FilterType>;
+  setFilteredValue: (filteredValue: Array<FilterType>) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
-  orderBy?: string;
-  setOrderBy: (order?: string) => void;
+  orderBy: string;
+  setOrderBy: (order: string) => void;
 };
 
 type ConfigDetail = {

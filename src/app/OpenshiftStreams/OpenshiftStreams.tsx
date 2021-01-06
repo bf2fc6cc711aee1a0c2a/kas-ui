@@ -13,9 +13,9 @@ import {
   AlertVariant,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
-import { StreamsTableView,Filter } from '../components/StreamsTableView/StreamsTableView';
+import { StreamsTableView, FilterType } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProviderList, CloudProvider } from '../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -24,7 +24,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions, getInitialFilter } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
 type OpenShiftStreamsProps = {
@@ -60,13 +60,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('Name');
-  const [filteredValue, setFilteredValue] = useState<Filter>(
-    { name: '',
-    status: '',
-    region: cloudRegionOptions[0].label,
-    cloud_provider: cloudProviderOptions[0].label,
-    owner: ''}
-  );
+  const [filteredValue, setFilteredValue] = useState<Array<FilterType>>(getInitialFilter() as FilterType[]);
 
   const drawerRef = React.createRef<any>();
 
@@ -93,6 +87,33 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return false;
   };
 
+  const getFilterString = () => {
+    const filters: string[] = [];
+    filteredValue.forEach((filter) => {
+      if (filter.filterValue && filter.filterValue.trim() !== '') {
+        if (filter.filterKey === 'name') {
+          filters.push(`name = ${filter.filterValue}`);
+        } else if (filter.filterKey === 'owner') {
+          filters.push(`owner = ${filter.filterValue}`);
+        } else if (filter.filterKey === 'cloud_provider') {
+          filters.push(
+            `cloud_provider = ${
+              cloudProviderOptions[cloudProviderOptions.findIndex((x) => x.label === filter.filterValue)].value
+            }`
+          );
+        } else if (filter.filterKey === 'region') {
+          filters.push(
+            `region = ${cloudRegionOptions[cloudRegionOptions.findIndex((x) => x.label === filter.filterValue)].value}`
+          );
+        } else if (filter.filterKey === 'status') {
+          filters.push(
+            `status = ${statusOptions[statusOptions.findIndex((x) => x.label === filter.filterValue)].value}`
+          );
+        }
+      }
+    });
+    return filters.join(' and ');
+  };
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await authContext?.getToken();
@@ -103,33 +124,28 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           accessToken,
           basePath,
         });
-        await apisService.listKafkas(
-          page?.toString(),
-          perPage?.toString(),
-          orderBy && orderBy,
-          `${filteredValue.name && `name = ${filteredValue.name} and `}
-          ${filteredValue.status && `status = ${statusOptions[statusOptions.findIndex(x => x.label === filteredValue.status)].value} and `}
-          ${filteredValue.region && ` region = ${cloudRegionOptions[cloudRegionOptions.findIndex(x => x.label === filteredValue.region)].value}`}
-          ${filteredValue.owner && ` and owner = ${filteredValue.owner}`}
-          ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
-        ).then((res) => {
-          const kafkaInstances = res.data;
-          setKafkaInstancesList(kafkaInstances);
-          setKafkaInstanceItems(kafkaInstances.items);
-          kafkaInstancesList?.total !== undefined &&
-            kafkaInstancesList.total > expectedTotal &&
-            setExpectedTotal(kafkaInstancesList.total);
-          setKafkaDataLoaded(true);
-        });
-      // Check to see if at least 1 kafka is present
-      await apisService.listKafkas(
-        page?.toString(),
-        perPage?.toString(),
-        orderBy && orderBy,
-        `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
-      ).then((res) => {
-        setRawKafkaDataLength(res.data.items.length);
-      })
+        await apisService
+          .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
+          .then((res) => {
+            const kafkaInstances = res.data;
+            setKafkaInstancesList(kafkaInstances);
+            setKafkaInstanceItems(kafkaInstances.items);
+            kafkaInstancesList?.total !== undefined &&
+              kafkaInstancesList.total > expectedTotal &&
+              setExpectedTotal(kafkaInstancesList.total);
+            setKafkaDataLoaded(true);
+          });
+        // Check to see if at least 1 kafka is present
+        await apisService
+          .listKafkas(
+            page?.toString(),
+            perPage?.toString(),
+            orderBy && orderBy,
+            `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
+          )
+          .then((res) => {
+            setRawKafkaDataLength(res.data.items.length);
+          });
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
