@@ -107,7 +107,7 @@ describe('<StreamsTableView/>', () => {
     expect(classList).toContain('pf-m-disabled');
   });
 
-  it.only('should call delete instance api and delete instance', async () => {
+  it('should call delete instance api and delete instance', async () => {
     setup(props);
     let btn: any;
 
