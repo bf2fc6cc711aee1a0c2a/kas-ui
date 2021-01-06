@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, cleanup, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import { I18nextProvider } from 'react-i18next';
 import { CreateInstanceModal, CreateInstanceModalProps } from './CreateInstanceModal';
@@ -32,12 +32,15 @@ jest.mock('../../../openapi/api', () => {
   };
 });
 
-afterEach(cleanup);
-
 const setupRender = (props: CreateInstanceModalProps) => {
   render(
     <I18nextProvider i18n={i18nForTest}>
-      <AuthContext.Provider value={{ getToken: () => Promise.resolve('test-token') }}>
+      <AuthContext.Provider
+        value={{
+          getToken: () => Promise.resolve('test-token'),
+          getUsername: () => Promise.resolve('api_kafka_service'),
+        }}
+      >
         <CreateInstanceModal {...props} />
       </AuthContext.Provider>
     </I18nextProvider>
@@ -67,9 +70,8 @@ describe('<CreateInstanceModal/>', () => {
   });
 
   it('should call listCloudProviderRegions api by default and set the data in state', async () => {
-    setupRender(props);  
+    setupRender(props);
     await waitFor(() => {
-      screen.getByTestId('cloud-region-select');
       expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
     });
   });

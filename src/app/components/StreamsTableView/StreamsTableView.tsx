@@ -95,7 +95,7 @@ const StreamsTableView = ({
   const [filterSelected, setFilterSelected] = useState('Name');
   const [namesSelected, setNamesSelected] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
-  const [loggedInUser, setLoggedInUser] = useState<string|undefined>(undefined);
+  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
 
@@ -109,7 +109,9 @@ const StreamsTableView = ({
   );
 
   useEffect(() => {
-    authContext?.getUsername().then(username => setLoggedInUser(username));
+    authContext?.getUsername().then((username) => {
+      setLoggedInUser(username);
+    });
   }, []);
 
   // function to get exact number of skeleton count required for the current page
@@ -299,6 +301,7 @@ const StreamsTableView = ({
 
   const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
     const { status } = instance;
+
     setSelectedInstance(instance);
     /**
      * Hide confirm modal for status 'failed' and call delete api
@@ -353,6 +356,7 @@ const StreamsTableView = ({
     selectedInstance?.status,
     selectedInstance?.name
   );
+
   return (
     <>
       <StreamsToolbar
