@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ChipGroup,
   Chip,
@@ -106,7 +106,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const updateAppliedFilter = (filterKey: string, filterValue?: string) => {
     const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === filterKey);
-    let toUpdate: boolean = true;
+    let toUpdate = true;
     if (filterIndex >= 0) {
       if (copyFilteredValue[filterIndex].filterValue !== filterValue) {
         copyFilteredValue.splice(filterIndex, 1);
