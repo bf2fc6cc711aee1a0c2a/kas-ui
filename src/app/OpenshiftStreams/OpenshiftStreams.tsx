@@ -13,7 +13,7 @@ import {
   AlertVariant,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
-import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
+import { StreamsTableView,Filter } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProviderList, CloudProvider } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
@@ -55,12 +55,12 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
+  const [orderBy, setOrderBy] = useState<string>('name asc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
-  const [orderBy, setOrderBy] = useState("");
   const [filterSelected, setFilterSelected] = useState('Name');
-  const [filteredValue, setFilteredValue] = useState(
+  const [filteredValue, setFilteredValue] = useState<Filter>(
     { name: '',
     status: '',
     region: cloudRegionOptions[0].label,
@@ -176,7 +176,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [authContext, page, perPage, filteredValue]);
+  }, [authContext, page, perPage, filteredValue,orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
@@ -255,7 +255,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 />
               </PageSection>
             ) : (
-              <PageSection className="mk--main-page__page-section--table" variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+              <PageSection
+                className="mk--main-page__page-section--table"
+                variant={PageSectionVariants.light}
+                padding={{ default: 'noPadding' }}
+              >
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
@@ -275,6 +279,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   setFilterSelected={setFilterSelected}
                   filterSelected={filterSelected}
                   // listOfOwners={listOfOwners}
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
                 />
               </PageSection>
             )}
