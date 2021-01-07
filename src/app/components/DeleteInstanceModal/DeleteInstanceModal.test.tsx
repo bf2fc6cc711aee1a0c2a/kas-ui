@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DeleteInstanceModal, DeleteInstanceModalProps } from './DeleteInstanceModal';
 
-import { render, act, screen } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from 'src/openapi';
 import { InstanceStatus } from '@app/constants';
@@ -85,20 +85,12 @@ describe('Delete Instance Modal', () => {
   });
 
   it('should render large modal with success icon', () => {
-    const props: DeleteInstanceModalProps = {
-      confirmActionLabel: 'confirm',
-      cancelActionLabel: 'cancel',
-      title: 'test title',
-      onConfirm: jest.fn(),
-      isModalOpen: true,
-      setIsModalOpen: jest.fn(),
-      description: 'test description',
-      variant: ModalVariant.large,
-      titleIconVariant: 'success',
-      instanceStatus: InstanceStatus.FAILED,
-      selectedInstance: selectedInstance,
-    };
-    const { getByRole } = render(<DeleteInstanceModal {...props} />);
+    const propsData = Object.assign({}, props);
+    propsData.variant = ModalVariant.large;
+    propsData.titleIconVariant = 'success';
+    propsData.instanceStatus = InstanceStatus.FAILED;
+
+    const { getByRole } = render(<DeleteInstanceModal {...propsData} variant={ModalVariant.large} />);
     const classList: string[] = getByRole('dialog', { name: /delete_insta/i }).className.split(' ');
     //check the modal variant is large
     expect(classList).toContain('pf-m-lg');
@@ -107,18 +99,10 @@ describe('Delete Instance Modal', () => {
   });
 
   it('should render small modal with warning icon', () => {
-    const props: DeleteInstanceModalProps = {
-      confirmActionLabel: 'confirm',
-      cancelActionLabel: 'cancel',
-      title: 'test title',
-      onConfirm: jest.fn(),
-      isModalOpen: true,
-      setIsModalOpen: jest.fn(),
-      description: 'test description',
-      instanceStatus: InstanceStatus.FAILED,
-      selectedInstance: selectedInstance,
-    };
-    const { getByRole } = render(<DeleteInstanceModal {...props} />);
+    const propsData = Object.assign({}, props);
+    propsData.variant = undefined;
+    props.titleIconVariant = undefined;
+    const { getByRole } = render(<DeleteInstanceModal {...propsData} />);
     const classList: string[] = getByRole('dialog', { name: /delete_insta/i }).className.split(' ');
 
     //check the modal variant is small
@@ -128,35 +112,20 @@ describe('Delete Instance Modal', () => {
   });
 
   it('should render with name and description as undefined', () => {
-    const props: DeleteInstanceModalProps = {
-      confirmActionLabel: 'confirm',
-      cancelActionLabel: 'cancel',
-      title: 'test title',
-      onConfirm: jest.fn(),
-      isModalOpen: true,
-      setIsModalOpen: jest.fn(),
-      variant: ModalVariant.large,
-      titleIconVariant: 'success',
-      instanceStatus: InstanceStatus.FAILED,
-      selectedInstance: { id: 'test-id', name: undefined },
-    };
+    const propsData = Object.assign({}, props);
+    propsData.selectedInstance = { id: 'test-id', name: undefined };
+    props.description = undefined;
+
     const { getByRole } = render(<DeleteInstanceModal {...props} />);
 
     expect(getByRole('dialog')).toBeInTheDocument();
   });
 
   it('should render with default label for cancel and delete instance modal', () => {
-    const props: DeleteInstanceModalProps = {
-      title: 'test title',
-      onConfirm: jest.fn(),
-      isModalOpen: true,
-      setIsModalOpen: jest.fn(),
-      variant: ModalVariant.large,
-      titleIconVariant: 'success',
-      instanceStatus: InstanceStatus.FAILED,
-      selectedInstance: selectedInstance,
-    };
-    const { getByText } = render(<DeleteInstanceModal {...props} />);
+    const propsData = Object.assign({}, props);
+    propsData.confirmActionLabel = undefined;
+    propsData.cancelActionLabel = undefined;
+    const { getByText } = render(<DeleteInstanceModal {...propsData} />);
 
     getByText('delete_instance');
     getByText('cancel');

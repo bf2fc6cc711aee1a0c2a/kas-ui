@@ -58,7 +58,6 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
 
   return (
     <Modal
-      id="mk--dialog-prompt__modal"
       variant={variant}
       isOpen={isModalOpen}
       aria-label={t('delete_instance_modal')}
@@ -85,7 +84,6 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
           <label
-            id="mk--completed-instance-name-description__label"
             htmlFor="instance-name"
             dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
           />
