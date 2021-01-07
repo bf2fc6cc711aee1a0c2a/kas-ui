@@ -12,10 +12,10 @@ import 'dayjs/locale/ja';
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
-declare const __PUBLIC_PATH__: string
+declare const __PUBLIC_PATH__: string;
 declare const window: Window & {
-  windowError: string
-}
+  windowError: string;
+};
 
 i18n
   .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
@@ -40,15 +40,13 @@ i18n
       detection: { caches: [] },
       contextSeparator: '~',
       // add any namespaces you're using here for loading purposes
-      ns: [
-        'public'
-      ],
+      ns: ['public'],
       defaultNS: 'public',
       nsSeparator: '~',
       keySeparator: false,
       postProcess: ['pseudo'],
       interpolation: {
-        format: function(value, format, lng, options) {
+        format: function (value, format, lng, options) {
           options = options || {};
           if (format === 'number') {
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat#Browser_compatibility
@@ -69,7 +67,7 @@ i18n
         wait: true,
       },
       saveMissing: true,
-      missingKeyHandler: function(lng, ns, key) {
+      missingKeyHandler: function (lng, ns, key) {
         window.windowError = `Missing i18n key "${key}" in namespace "${ns}" and language "${lng}."`;
         // eslint-disable-next-line no-console
         console.error(window.windowError); // we use these in OpenShift to break tests
@@ -77,10 +75,10 @@ i18n
     },
     () => {
       dayjs.locale(i18n.language);
-    },
+    }
   );
 
-i18n.on('languageChanged', function(lng) {
+i18n.on('languageChanged', function (lng) {
   dayjs.locale(lng);
 });
 

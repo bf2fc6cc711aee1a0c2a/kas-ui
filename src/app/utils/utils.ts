@@ -14,7 +14,6 @@ type KeyValueOptions = {
 
 const cloudProviderOptions: KeyValueOptions[] = [
   { value: 'aws', label: 'Amazon Web Services' },
-
   // Only aws is supported for now
   // { value: 'azure', label: 'Microsoft Azure' },
   // { value: 'baremetal', label: 'Bare Metal' },
@@ -23,6 +22,14 @@ const cloudProviderOptions: KeyValueOptions[] = [
   // { value: 'openstack', label: 'OpenStack' },
   // { value: 'vsphere', label: 'VSphere' },
 ];
+
+const statusOptions: KeyValueOptions[] = [
+  { value: 'complete', label: 'Ready' },
+  { value: 'failed', label: 'Failed' },
+  { value: 'accepted', label: 'Creation pending' },
+  { value: 'provisioning', label: 'Creation in progress' }
+];
+
 const getCloudProviderDisplayName = (value: string) => {
   return cloudProviderOptions.find((option) => option.value === value)?.label || value;
 };
@@ -63,4 +70,5 @@ export {
   getCloudProviderDisplayName,
   getCloudRegionDisplayName,
   capitalize,
+  statusOptions
 };
