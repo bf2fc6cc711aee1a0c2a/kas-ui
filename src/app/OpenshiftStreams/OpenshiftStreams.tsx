@@ -55,7 +55,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
-  const [orderBy, setOrderBy] = useState<string>();
+  const [orderBy, setOrderBy] = useState<string>('name asc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
