@@ -32,10 +32,12 @@ const props: DeleteInstanceModalProps = {
   instanceStatus: InstanceStatus.ACCEPTED,
   selectedInstance: selectedInstance,
 };
-
+const setup = (props: DeleteInstanceModalProps) => {
+  return render(<DeleteInstanceModal {...props} />);
+};
 describe('Delete Instance Modal', () => {
   it('should render modal with props text', () => {
-    const { getByText } = render(<DeleteInstanceModal {...props} />);
+    const { getByText } = setup(props);
     expect(getByText('test title')).toBeInTheDocument();
     expect(getByText('confirm')).toBeInTheDocument();
     expect(getByText('cancel')).toBeInTheDocument();
@@ -43,25 +45,29 @@ describe('Delete Instance Modal', () => {
   });
 
   it('should handle confirm and close actions', () => {
-    const { getByRole } = render(<DeleteInstanceModal {...props} />);
+    const { getByRole } = setup(props);
 
     act(() => {
+      // test confirm click button
       userEvent.click(getByRole('button', { name: /confirm/i }));
-      expect(onConfirm).toHaveBeenCalled();
-      expect(onConfirm).toBeCalledTimes(1);
     });
 
+    expect(onConfirm).toHaveBeenCalled();
+    expect(onConfirm).toBeCalledTimes(1);
+
     act(() => {
+      // test cancel click button
       userEvent.click(getByRole('button', { name: /cancel/i }));
-      expect(setIsModalOpen).toHaveBeenCalled();
-      expect(setIsModalOpen).toBeCalledTimes(1);
     });
+
+    expect(setIsModalOpen).toHaveBeenCalled();
+    expect(setIsModalOpen).toBeCalledTimes(1);
   });
 
   it('should render input box for completed status', () => {
     props.instanceStatus = InstanceStatus.COMPLETED;
 
-    const { getByText } = render(<DeleteInstanceModal {...props} />);
+    const { getByText } = setup(props);
     expect(getByText('instance_name_label')).toBeInTheDocument();
     const input: any = getByText('instance_name_label').parentElement;
     expect(input?.lastChild).toBeInTheDocument();
@@ -70,13 +76,15 @@ describe('Delete Instance Modal', () => {
 
   it('should render confirm button be disabled for empty or invalid input of instance with completed status', () => {
     props.instanceStatus = InstanceStatus.COMPLETED;
-    const { getByText, getByRole } = render(<DeleteInstanceModal {...props} />);
+    const { getByText, getByRole } = setup(props);
 
     const inputElement: any = getByText('instance_name_label').parentElement?.lastChild;
     const confirmBtn: any = getByRole('button', { name: /confirm/i });
 
     expect(confirmBtn).toBeDisabled();
-    userEvent.type(inputElement, selectedInstance?.name || 'test');
+    act(() => {
+      userEvent.type(inputElement, selectedInstance?.name || 'test');
+    });
 
     //should match with exact input value
     expect(inputElement.value).toMatch(selectedInstance?.name || 'test');
@@ -90,7 +98,7 @@ describe('Delete Instance Modal', () => {
     propsData.titleIconVariant = 'success';
     propsData.instanceStatus = InstanceStatus.FAILED;
 
-    const { getByRole } = render(<DeleteInstanceModal {...propsData} variant={ModalVariant.large} />);
+    const { getByRole } = setup(propsData);
     const classList: string[] = getByRole('dialog', { name: /delete_insta/i }).className.split(' ');
     //check the modal variant is large
     expect(classList).toContain('pf-m-lg');
@@ -102,7 +110,7 @@ describe('Delete Instance Modal', () => {
     const propsData = Object.assign({}, props);
     propsData.variant = undefined;
     props.titleIconVariant = undefined;
-    const { getByRole } = render(<DeleteInstanceModal {...propsData} />);
+    const { getByRole } = setup(propsData);
     const classList: string[] = getByRole('dialog', { name: /delete_insta/i }).className.split(' ');
 
     //check the modal variant is small
@@ -116,7 +124,7 @@ describe('Delete Instance Modal', () => {
     propsData.selectedInstance = { id: 'test-id', name: undefined };
     props.description = undefined;
 
-    const { getByRole } = render(<DeleteInstanceModal {...props} />);
+    const { getByRole } = setup(propsData);
 
     expect(getByRole('dialog')).toBeInTheDocument();
   });
@@ -125,7 +133,7 @@ describe('Delete Instance Modal', () => {
     const propsData = Object.assign({}, props);
     propsData.confirmActionLabel = undefined;
     propsData.cancelActionLabel = undefined;
-    const { getByText } = render(<DeleteInstanceModal {...propsData} />);
+    const { getByText } = setup(propsData);
 
     getByText('delete_instance');
     getByText('cancel');
