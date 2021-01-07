@@ -331,13 +331,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             if (filter.filterValue && filter.filterValue.trim() != '') {
               if (filter.filterKey === 'region' || filter.filterKey === 'cloud_provider') {
                 return (
-                  <Chip key={index} onClick={() => deleteChip(filter.filterKey)} isReadOnly>
+                  <Chip className="pf-c-chip__text" key={index} onClick={() => deleteChip(filter.filterKey)} isReadOnly>
                     {t(filter.filterKey)}: {filter.filterValue}
                   </Chip>
                 );
               } else {
                 return (
-                  <Chip key={index} onClick={() => deleteChip(filter.filterKey)}>
+                  <Chip className="pf-c-chip__text"  key={index} onClick={() => deleteChip(filter.filterKey)}>
                     {t(filter.filterKey)}: {filter.filterValue}
                   </Chip>
                 );
