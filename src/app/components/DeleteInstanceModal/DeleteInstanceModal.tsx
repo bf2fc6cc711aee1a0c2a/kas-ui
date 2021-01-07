@@ -1,20 +1,11 @@
 import React, { FunctionComponent, useState } from 'react';
-import {
-  Modal,
-  Button,
-  ButtonVariant,
-  ModalVariant,
-  ModalProps,
-  TextInput,
-  TextContent,
-  Text,
-} from '@patternfly/react-core';
+import { Modal, Button, ButtonVariant, ModalVariant, ModalProps, TextInput, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { InstanceStatus } from '@app/constants';
 import './DeleteInstanceModal.css';
 import { KafkaRequest } from 'src/openapi';
 
-interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
+export interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
   confirmActionLabel?: string;
   cancelActionLabel?: string;
   description?: string;
@@ -41,7 +32,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   const { t } = useTranslation();
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
 
-  const selectedInstanceName = selectedInstance?.name;
+  const selectedInstanceName: string = selectedInstance?.name || '';
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
@@ -53,19 +44,20 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
 
   const isConfirmButtonDisabled = () => {
     if (instanceStatus === InstanceStatus.COMPLETED) {
-      if (instanceNameInput?.toLocaleLowerCase() === selectedInstanceName?.toLowerCase()) {
+      if (instanceNameInput?.toLowerCase() === selectedInstanceName.toLowerCase()) {
         return false;
       }
       return true;
     }
     return false;
   };
+
   const onConfirmDelete = () => {
     onConfirm(selectedInstance);
   };
+
   return (
     <Modal
-      id="dialog-prompt-modal"
       variant={variant}
       isOpen={isModalOpen}
       aria-label={t('delete_instance_modal')}
@@ -75,14 +67,15 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       onClose={handleModalToggle}
       actions={[
         <Button
-          key={'confirm-button'}
+          key="confirm-button"
+          id="mk--confirm__button"
           variant={ButtonVariant.danger}
           onClick={onConfirmDelete}
           isDisabled={isConfirmButtonDisabled()}
         >
           {confirmActionLabel || t('delete_instance')}
         </Button>,
-        <Button key="cancel" variant="link" onClick={handleModalToggle}>
+        <Button key="cancel" variant="link" id="mk--cancel__button" onClick={handleModalToggle}>
           {cancelActionLabel || t('cancel')}
         </Button>,
       ]}
@@ -94,7 +87,13 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
             htmlFor="instance-name"
             dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
           />
-          <TextInput id="instance-name" type="text" value={instanceNameInput} onChange={handleInstanceName} />
+          <TextInput
+            id="mk--instance-name__input"
+            name="instance-name-input"
+            type="text"
+            value={instanceNameInput}
+            onChange={handleInstanceName}
+          />
         </>
       )}
     </Modal>
