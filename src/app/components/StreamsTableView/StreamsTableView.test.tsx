@@ -68,11 +68,12 @@ describe('<StreamsTableView/>', () => {
     total: 1,
     kafkaDataLoaded: true,
     expectedTotal: 1,
-    filteredValue: { property: '' },
+    filteredValue:{},
     setFilteredValue: jest.fn(),
     filterSelected: '',
     setFilterSelected: jest.fn(),
-    rawKafkaDataLength: 0,
+    orderBy:'',
+    setOrderBy:jest.fn()
   };
 
   it('should render translation text in English language', () => {
@@ -103,7 +104,7 @@ describe('<StreamsTableView/>', () => {
       userEvent.click(deleteInstanceButton);
     });
     //check delete instance modal is open
-    expect(screen.getByRole('textbox', { name: /Please type serviceapi to confirm./i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Delete instance?/i })).toBeInTheDocument();
   });
 
   it('should disable the delete instance kebab button if the ower and loggedInUser are not the same', () => {

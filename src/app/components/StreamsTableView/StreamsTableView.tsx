@@ -47,7 +47,7 @@ export type Filter = {
   owner?: string;
 };
 
-type TableProps = {
+export type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];

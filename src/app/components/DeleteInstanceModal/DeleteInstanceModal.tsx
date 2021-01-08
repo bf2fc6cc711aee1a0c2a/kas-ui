@@ -84,7 +84,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       {instanceStatus === InstanceStatus.COMPLETED && (
         <>
           <label
-            htmlFor="instance-name"
+            htmlFor="instance-name-input"
             dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
           />
           <TextInput

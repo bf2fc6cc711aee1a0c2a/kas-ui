@@ -13,11 +13,11 @@ import {
   ToolbarToggleGroup,
   Toolbar,
   ToolbarContent,
-  ToolbarGroup
+  ToolbarGroup,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
-import {Filter} from "./StreamsTableView";
+import { Filter } from './StreamsTableView';
 import { useTranslation } from 'react-i18next';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './StreamsToolbar.css';
@@ -44,9 +44,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   page,
   perPage,
   filteredValue,
-  setFilteredValue
+  setFilteredValue,
 }) => {
-
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
   const [isRegionFilterExpanded, setIsRegionFilterExpanded] = useState(false);
@@ -66,25 +65,19 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     { value: t('cloud_provider'), disabled: false },
     { value: t('region'), disabled: false },
     { value: t('owner'), disabled: false },
-    { value: t('status'), disabled: false }
+    { value: t('status'), disabled: false },
   ];
 
-  const cloudProviderFilterOptions = cloudProviderOptions.map(cloudProvider => {
-    return (
-      { value: t(cloudProvider.value), disabled: false }
-    )
+  const cloudProviderFilterOptions = cloudProviderOptions.map((cloudProvider) => {
+    return { value: t(cloudProvider.value), disabled: false };
   });
 
-  const regionFilterOptions = cloudRegionOptions.map(region => {
-    return (
-      { value: t(region.value), disabled: false }
-    )
+  const regionFilterOptions = cloudRegionOptions.map((region) => {
+    return { value: t(region.value), disabled: false };
   });
 
-  const statusFilterOptions = statusOptions.map(status => {
-    return (
-      { value: t(status.value), disabled: false }
-    )
+  const statusFilterOptions = statusOptions.map((status) => {
+    return { value: t(status.value), disabled: false };
   });
 
   const onFilterToggle = () => {
@@ -117,20 +110,19 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const trimFilterValues = () => {
     const copyFilteredValue = Object.assign({}, filteredValue);
-    Object.keys(copyFilteredValue).forEach(key => {
-      if(copyFilteredValue[key] === "") {
+    Object.keys(copyFilteredValue).forEach((key) => {
+      if (copyFilteredValue[key] === '') {
         delete copyFilteredValue[key];
       }
     });
     setTrimmedFilterValue(copyFilteredValue);
-  }
+  };
 
   const onFilter = (filterType: string) => {
     if (filterType === 'name' && nameInputValue) {
-      setFilteredValue({...filteredValue, name: nameInputValue});
-    }
-    else if (filterType === 'owner' && ownerInputValue) {
-      setFilteredValue({...filteredValue, owner: ownerInputValue});
+      setFilteredValue({ ...filteredValue, name: nameInputValue });
+    } else if (filterType === 'owner' && ownerInputValue) {
+      setFilteredValue({ ...filteredValue, owner: ownerInputValue });
     }
   };
 
@@ -158,19 +150,19 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const clearSelection = (value: string) => {
-    if(value === 'cloud_provider') {
-      setFilteredValue({ ...filteredValue, cloud_provider: "" });
+    if (value === 'cloud_provider') {
+      setFilteredValue({ ...filteredValue, cloud_provider: '' });
       setIsStatusFilterExpanded(false);
     }
-    if(value === 'region') {
-      setFilteredValue({ ...filteredValue, region: "" });
-      setIsRegionFilterExpanded
+    if (value === 'region') {
+      setFilteredValue({ ...filteredValue, region: '' });
+      setIsRegionFilterExpanded;
     }
-    if(value === 'owner') {
-      setFilteredValue({ ...filteredValue, owner: "" });
+    if (value === 'owner') {
+      setFilteredValue({ ...filteredValue, owner: '' });
     }
-    if(value === 'status') {
-      setFilteredValue({ ...filteredValue, status: "" });
+    if (value === 'status') {
+      setFilteredValue({ ...filteredValue, status: '' });
       setIsStatusFilterExpanded(false);
     }
   };
@@ -185,100 +177,100 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     if (key === 'owner') {
       setFilteredValue({ ...filteredValue, owner: '' });
     }
-  }
+  };
 
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
+        <Select
+          variant={SelectVariant.single}
+          aria-label="Select filter"
+          onToggle={onFilterToggle}
+          selections={filterSelected}
+          isOpen={isFilterExpanded}
+          onSelect={onChangeSelect}
+        >
+          {mainFilterOptions.map((option, index) => (
+            <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
+          ))}
+        </Select>
+        {filterSelected === t('name') && (
+          <InputGroup className="mk--filter-instances__toolbar--text-input">
+            <TextInput
+              name="filter text input"
+              id="filterText"
+              type="search"
+              aria-label="Search filter input"
+              placeholder={t('filter_by_name_lower')}
+              onChange={onNameInputChange}
+              value={nameInputValue}
+            />
+            <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
+              <SearchIcon />
+            </Button>
+          </InputGroup>
+        )}
+        {filterSelected === t('cloud_provider') && (
           <Select
             variant={SelectVariant.single}
-            aria-label="Select filter"
-            onToggle={onFilterToggle}
-            selections={filterSelected && filterSelected}
-            isOpen={isFilterExpanded}
-            onSelect={onChangeSelect}
+            aria-label="Select cloud provider"
+            onToggle={onCloudProviderFilterToggle}
+            selections={filteredValue['cloud_provider']}
+            isOpen={isCloudProviderFilterExpanded}
+            onSelect={onCloudProviderFilterSelect}
+            placeholderText="Filter by cloud provider"
           >
-            {mainFilterOptions.map((option, index) => (
+            {cloudProviderFilterOptions.map((option, index) => (
               <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
             ))}
           </Select>
-          { filterSelected === t('name') &&
-            <InputGroup className="mk--filter-instances__toolbar--text-input">
-              <TextInput
-                name="filter text input"
-                id="filterText"
-                type="search"
-                aria-label="Search filter input"
-                placeholder={t('filter_by_name_lower')}
-                onChange={onNameInputChange}
-                value={nameInputValue}
-              />
-              <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
-                <SearchIcon />
-              </Button>
-            </InputGroup>
-          }
-          { filterSelected === t('cloud_provider') &&
-              <Select
-                variant={SelectVariant.single}
-                aria-label="Select cloud provider"
-                onToggle={onCloudProviderFilterToggle}
-                selections={filteredValue["cloud_provider"] && filteredValue["cloud_provider"]}
-                isOpen={isCloudProviderFilterExpanded}
-                onSelect={onCloudProviderFilterSelect}
-                placeholderText="Filter by cloud provider"
-              >
-                {cloudProviderFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
-                ))}
-              </Select>
-          }
-          { filterSelected === t('region') &&
-            <Select
-              variant={SelectVariant.single}
-              aria-label="Select region"
-              onToggle={onRegionFilterToggle}
-              selections={filteredValue["region"] && filteredValue["region"]}
-              isOpen={isRegionFilterExpanded}
-              onSelect={onRegionFilterSelect}
-              placeholderText="Filter by region"
-            >
-              {regionFilterOptions.map((option, index) => (
-                <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
-              ))}
-            </Select>
-          }
-          { filterSelected === t('owner') &&
-            <InputGroup className="mk--filter-instances__toolbar--text-input">
-              <TextInput
-                name="filter owners"
-                id="filterOwners"
-                type="search"
-                aria-label="Search filter input"
-                placeholder={t('filter_by_owner')}
-                onChange={onOwnerInputChange}
-                value={ownerInputValue}
-              />
-              <Button variant={ButtonVariant.control} onClick={() => onFilter('owner')} aria-label="Search owners">
-                <SearchIcon />
-              </Button>
-            </InputGroup>
-          }
-          { filterSelected === t('status') &&
-              <Select
-                variant={SelectVariant.single}
-                aria-label="Select status"
-                onToggle={onStatusFilterToggle}
-                selections={filteredValue["status"] && filteredValue["status"]}
-                isOpen={isStatusFilterExpanded}
-                onSelect={onStatusFilterSelect}
-                placeholderText="Filter by status"
-              >
-                {statusFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
-                ))}
-              </Select>
-            }
+        )}
+        {filterSelected === t('region') && (
+          <Select
+            variant={SelectVariant.single}
+            aria-label="Select region"
+            onToggle={onRegionFilterToggle}
+            selections={filteredValue['region']}
+            isOpen={isRegionFilterExpanded}
+            onSelect={onRegionFilterSelect}
+            placeholderText="Filter by region"
+          >
+            {regionFilterOptions.map((option, index) => (
+              <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
+            ))}
+          </Select>
+        )}
+        {filterSelected === t('owner') && (
+          <InputGroup className="mk--filter-instances__toolbar--text-input">
+            <TextInput
+              name="filter owners"
+              id="filterOwners"
+              type="search"
+              aria-label="Search filter input"
+              placeholder={t('filter_by_owner')}
+              onChange={onOwnerInputChange}
+              value={ownerInputValue}
+            />
+            <Button variant={ButtonVariant.control} onClick={() => onFilter('owner')} aria-label="Search owners">
+              <SearchIcon />
+            </Button>
+          </InputGroup>
+        )}
+        {filterSelected === t('status') && (
+          <Select
+            variant={SelectVariant.single}
+            aria-label="Select status"
+            onToggle={onStatusFilterToggle}
+            selections={filteredValue['status']}
+            isOpen={isStatusFilterExpanded}
+            onSelect={onStatusFilterSelect}
+            placeholderText="Filter by status"
+          >
+            {statusFilterOptions.map((option, index) => (
+              <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
+            ))}
+          </Select>
+        )}
       </ToolbarGroup>
     </>
   );
@@ -286,24 +278,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toolbarChipGroup = (
     <ToolbarGroup>
       <ChipGroup>
-        { trimmedFilterValue && Object.keys(trimmedFilterValue).map((key,index) => {
-          if (trimmedFilterValue[key] !== '') {
-            if(key === 'region' || key === 'cloud_provider') {
+        {trimmedFilterValue &&
+          Object.keys(trimmedFilterValue).map((key, index) => {
+            if (key === 'region' || key === 'cloud_provider') {
               return (
                 <Chip key={index} onClick={() => deleteChip(key)} isReadOnly>
                   {t(key)}: {trimmedFilterValue[key]}
                 </Chip>
-              )
-            }
-            else {
+              );
+            } else {
               return (
                 <Chip key={index} onClick={() => deleteChip(key)}>
                   {t(key)}: {trimmedFilterValue[key]}
                 </Chip>
-              )
+              );
             }
-          }
-        })}
+          })}
       </ChipGroup>
     </ToolbarGroup>
   );
@@ -330,9 +320,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           />
         </ToolbarItem>
       </ToolbarContent>
-      <ToolbarContent>
-        {toolbarChipGroup}
-      </ToolbarContent>
+      <ToolbarContent>{toolbarChipGroup}</ToolbarContent>
     </Toolbar>
   );
 };
