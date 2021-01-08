@@ -20,7 +20,7 @@ import {
   EmptyStateBody,
   Title,
   EmptyStateIcon,
-  EmptyStateVariant
+  EmptyStateVariant,
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -102,7 +102,7 @@ const StreamsTableView = ({
   filteredValue,
   setFilteredValue,
   setFilterSelected,
-  filterSelected
+  filterSelected,
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -396,16 +396,14 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      { kafkaInstanceItems.length < 1 && (
-      <EmptyState variant={EmptyStateVariant.small}>
-        <EmptyStateIcon icon={SearchIcon} />
-        <Title headingLevel="h2" size="lg">
-          {t('no_matches')}
-        </Title>
-        <EmptyStateBody>
-          {t('please_try_adjusting_your_search_query_and_try_again')}
-        </EmptyStateBody>
-      </EmptyState>
+      {kafkaInstanceItems.length < 1 && (
+        <EmptyState variant={EmptyStateVariant.small}>
+          <EmptyStateIcon icon={SearchIcon} />
+          <Title headingLevel="h2" size="lg">
+            {t('no_matches')}
+          </Title>
+          <EmptyStateBody>{t('please_try_adjusting_your_search_query_and_try_again')}</EmptyStateBody>
+        </EmptyState>
       )}
       <TablePagination
         widgetId="pagination-options-menu-bottom"

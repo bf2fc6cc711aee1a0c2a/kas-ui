@@ -5,7 +5,7 @@ import { StreamsTableView, TableProps } from './StreamsTableView';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../test-utils/i18n';
-import { AuthContext } from '@app/auth/AuthContext';
+import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
 
 const kafkaInstanceItems = [
   {
@@ -29,27 +29,24 @@ jest.mock('../../../openapi/api', () => {
   return {
     DefaultApi: jest.fn().mockImplementation(() => {
       return {
-        deleteKafkaById: Promise.resolve(''),
+        deleteKafkaById: () => Promise.resolve(),
       };
     }),
   };
 });
 
-afterEach(() => {
-  jest.clearAllMocks();
-});
-
 describe('<StreamsTableView/>', () => {
-  const setup = (args: any) => {
+  const setup = (
+    args: any,
+    authValue: IAuthContext = {
+      getToken: () => Promise.resolve('test-token'),
+      getUsername: () => Promise.resolve('api_kafka_service'),
+    }
+  ) => {
     render(
       <MemoryRouter>
         <I18nextProvider i18n={i18nForTest}>
-          <AuthContext.Provider
-            value={{
-              getToken: () => Promise.resolve('test-token'),
-              getUsername: () => Promise.resolve('api_kafka_service'),
-            }}
-          >
+          <AuthContext.Provider value={authValue}>
             <StreamsTableView {...args} />
           </AuthContext.Provider>
         </I18nextProvider>
@@ -71,72 +68,58 @@ describe('<StreamsTableView/>', () => {
     total: 1,
     kafkaDataLoaded: true,
     expectedTotal: 1,
+    filteredValue: { property: '' },
+    setFilteredValue: jest.fn(),
+    filterSelected: '',
+    setFilterSelected: jest.fn(),
+    rawKafkaDataLength: 0,
   };
 
   it('should render translation text in English language', () => {
+    //arrange
     setup(props);
+
+    //assert
     expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
   });
 
   it('should render DeleteInstanceModal component if isDeleteModalOpen is true', async () => {
+    //arrange
     setup(props);
-    let btn: any;
+
+    //act
+    let kebabDropdownButton: any;
     await waitFor(() => {
-      btn = screen.getByText('api_kafka_service')?.parentElement?.lastChild?.lastChild?.lastChild;
+      kebabDropdownButton = screen.getByText('api_kafka_service')?.parentElement?.lastChild?.lastChild?.lastChild;
     });
     act(() => {
-      userEvent.click(btn);
+      userEvent.click(kebabDropdownButton);
     });
-    const btnDeleteInstance: any = screen.getByRole('button', { name: /Delete instance/i });
+    const deleteInstanceButton: any = screen.getByRole('button', { name: /Delete instance/i });
+
+    //assert
     expect(screen.getByText('Delete instance')).toBeInTheDocument();
     act(() => {
-      userEvent.click(btnDeleteInstance);
+      userEvent.click(deleteInstanceButton);
     });
     //check delete instance modal is open
-    screen.getByRole('textbox', { name: /Please type serviceapi to confirm./i });
+    expect(screen.getByRole('textbox', { name: /Please type serviceapi to confirm./i })).toBeInTheDocument();
   });
 
-  it('should disabled delete instance kebab button if ower and loggedInUser are not same', () => {
-    props.kafkaInstanceItems[0].owner = 'test-user';
-    setup(props);
-    let btn: any = screen.getByText('test-user')?.parentElement?.lastChild?.lastChild?.lastChild;
+  it('should disable the delete instance kebab button if the ower and loggedInUser are not the same', () => {
+    //arrange
+    const newProps = Object.assign({}, props);
+    newProps.kafkaInstanceItems[0].owner = 'test-user';
+    setup(newProps);
+
+    //act
+    const kebabDropdownButton: any = screen.getByText('test-user')?.parentElement?.lastChild?.lastChild?.lastChild;
     act(() => {
-      userEvent.click(btn);
+      userEvent.click(kebabDropdownButton);
     });
     const classList: string[] = screen.getByRole('button', { name: /Delete instance/i }).className.split(' ');
+
+    //assert
     expect(classList).toContain('pf-m-disabled');
-  });
-
-  it('should call delete instance api and delete instance', async () => {
-    setup(props);
-    let btn: any;
-
-    await waitFor(() => {
-      //get kebab button
-      btn = screen.getByText('api_kafka_service')?.parentElement?.lastChild?.lastChild?.lastChild;
-    });
-
-    act(() => {
-      //open kebab drop down
-      userEvent.click(btn);
-    });
-
-    const btnDeleteInstance: any = screen.getByRole('button', { name: /Delete instance/i });
-    act(() => {
-      //click on delete instance button
-      userEvent.click(btnDeleteInstance);
-    });
-
-    let eleDialog: any;
-    let btnConfirm: any;
-
-    await waitFor(() => {
-      eleDialog = screen.getByRole('dialog', { name: /Delete instance?/i });
-      btnConfirm = eleDialog?.lastChild?.firstChild;
-    });
-
-    act(() => {
-      userEvent.click(btnConfirm);
-    });
   });
 });
