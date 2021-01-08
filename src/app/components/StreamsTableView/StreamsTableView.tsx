@@ -418,7 +418,7 @@ const StreamsTableView = ({
         return 'owner';
       case 4:
         return 'status';
-      case 4:
+      case 5:
         return 'created_at';
       default:
         return '';
