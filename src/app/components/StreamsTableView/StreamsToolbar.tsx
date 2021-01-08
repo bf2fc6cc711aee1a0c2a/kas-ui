@@ -17,6 +17,7 @@ import {
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
+import {Filter} from "./StreamsTableView";
 import { useTranslation } from 'react-i18next';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './StreamsToolbar.css';
@@ -30,8 +31,8 @@ type StreamsToolbarProps = {
   total: number;
   page: number;
   perPage: number;
-  filteredValue: { property: string };
-  setFilteredValue: (filteredValue) => void;
+  filteredValue: Filter;
+  setFilteredValue: (filteredValue: Filter) => void;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
