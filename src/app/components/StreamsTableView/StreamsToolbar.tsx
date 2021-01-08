@@ -20,7 +20,8 @@ import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
 import { useTranslation } from 'react-i18next';
 import { FilterType } from './StreamsTableView';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions, getInitialFilter } from '@app/utils/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import { getInitialFilter } from '@app/OpenshiftStreams/OpenshiftStreams';
 import './StreamsToolbar.css';
 
 type StreamsToolbarProps = {
@@ -184,7 +185,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       setIsStatusFilterExpanded(false);
     }
     if (value === 'region') {
-      setIsRegionFilterExpanded;
+      setIsRegionFilterExpanded(false);
     }
     if (value === 'status') {
       setIsStatusFilterExpanded(false);
@@ -206,15 +207,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilteredValue(copyFilteredValue);
   };
 
-  const onNameKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onInputPress = (event) => {
     if (event.key === 'Enter') {
-      onFilter('name');
-    }
-  };
-
-  const onOwnerKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      onFilter('owner');
+      if (event?.target?.name === 'filter names') {
+        onFilter('name');
+      } else if (event.target?.name === 'filter owners') {
+        onFilter('owner');
+      }
     }
   };
 
@@ -243,13 +242,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         {filterSelected === t('name') && (
           <InputGroup className="mk--filter-instances__toolbar--text-input">
             <TextInput
-              name="filter text input"
+              name="filter names"
               id="filterText"
               type="search"
               aria-label="Search filter input"
               placeholder={t('filter_by_name_lower')}
               onChange={onNameInputChange}
-              onKeyPress={onNameKeyPress}
+              onKeyPress={onInputPress}
               value={nameInputValue}
             />
             <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
@@ -296,7 +295,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               aria-label="Search filter input"
               placeholder={t('filter_by_owner')}
               onChange={onOwnerInputChange}
-              onKeyPress={onOwnerKeyPress}
+              onKeyPress={onInputPress}
               value={ownerInputValue}
             />
             <Button variant={ButtonVariant.control} onClick={() => onFilter('owner')} aria-label="Search owners">
@@ -337,7 +336,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 );
               } else {
                 return (
-                  <Chip className="pf-c-chip__text"  key={index} onClick={() => deleteChip(filter.filterKey)}>
+                  <Chip className="pf-c-chip__text" key={index} onClick={() => deleteChip(filter.filterKey)}>
                     {t(filter.filterKey)}: {filter.filterValue}
                   </Chip>
                 );
@@ -363,7 +362,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           <TablePagination
             widgetId="pagination-options-menu-top"
             itemCount={total}
-            page={page as any}
+            page={page}
             perPage={perPage}
             isCompact={true}
             paginationTitle={t('minimal_pagination')}

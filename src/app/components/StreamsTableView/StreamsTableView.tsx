@@ -12,7 +12,7 @@ import {
   IRowCell,
   sortable,
   ISortBy,
-  SortByDirection,
+  SortByDirection
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -23,7 +23,7 @@ import {
   EmptyStateBody,
   Title,
   EmptyStateIcon,
-  EmptyStateVariant,
+  EmptyStateVariant
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -113,7 +113,7 @@ const StreamsTableView = ({
   setFilterSelected,
   filterSelected,
   orderBy,
-  setOrderBy,
+  setOrderBy
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -475,7 +475,7 @@ const StreamsTableView = ({
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
         variant={PaginationVariant.bottom}
-        page={page as any}
+        page={page}
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />

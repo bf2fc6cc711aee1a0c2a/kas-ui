@@ -63,20 +63,12 @@ const capitalize = (s: string) => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-const getInitialFilter = () => {
-  return [
-    { filterKey: 'region', filterValue: cloudRegionOptions[0].label },
-    { filterKey: 'cloud_provider', filterValue: cloudProviderOptions[0].label },
-  ];
-};
-
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
   cloudRegionOptions,
   getCloudProviderDisplayName,
   getCloudRegionDisplayName,
-  getInitialFilter,
   capitalize,
   statusOptions,
 };

@@ -24,7 +24,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions, getInitialFilter } from '@app/utils/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
 type OpenShiftStreamsProps = {
@@ -34,6 +34,13 @@ type OpenShiftStreamsProps = {
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
   activeTab: 'Details' | 'Connection';
+};
+
+export const getInitialFilter = () => {
+  return [
+    { filterKey: 'region', filterValue: cloudRegionOptions[0].label },
+    { filterKey: 'cloud_provider', filterValue: cloudProviderOptions[0].label },
+  ];
 };
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
@@ -192,7 +199,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [authContext, page, perPage, filteredValue,orderBy]);
+  }, [authContext, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
