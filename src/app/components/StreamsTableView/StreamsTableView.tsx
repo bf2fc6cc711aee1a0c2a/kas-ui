@@ -478,7 +478,7 @@ const StreamsTableView = ({
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
         variant={PaginationVariant.bottom}
-        page={page as any}
+        page={page}
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
