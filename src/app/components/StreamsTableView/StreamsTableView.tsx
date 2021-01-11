@@ -12,7 +12,7 @@ import {
   IRowCell,
   sortable,
   ISortBy,
-  SortByDirection,
+  SortByDirection
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -23,7 +23,7 @@ import {
   EmptyStateBody,
   Title,
   EmptyStateIcon,
-  EmptyStateVariant,
+  EmptyStateVariant
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -39,12 +39,9 @@ import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
-export type Filter = {
-  name?: string;
-  status?: string;
-  region?: string;
-  cloud_provider?: string;
-  owner?: string;
+export type FilterType = {
+  filterKey: string;
+  filterValue?: string;
 };
 
 type TableProps = {
@@ -61,12 +58,12 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
-  filteredValue: Filter;
-  setFilteredValue: (filteredValue: Filter) => void;
+  filteredValue: Array<FilterType>;
+  setFilteredValue: (filteredValue: Array<FilterType>) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
-  orderBy?: string;
-  setOrderBy: (order?: string) => void;
+  orderBy: string;
+  setOrderBy: (order: string) => void;
 };
 
 type ConfigDetail = {
@@ -116,7 +113,7 @@ const StreamsTableView = ({
   setFilterSelected,
   filterSelected,
   orderBy,
-  setOrderBy,
+  setOrderBy
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -478,7 +475,7 @@ const StreamsTableView = ({
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
         variant={PaginationVariant.bottom}
-        page={page as any}
+        page={page}
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
