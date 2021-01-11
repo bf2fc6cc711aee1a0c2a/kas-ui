@@ -211,5 +211,15 @@
   "provisioning": "日本語 Creation in progress",
   "no_matches": "日本語 No matches",
   "please_try_adjusting_your_search_query_and_try_again": "日本語 Please try adjusting your search query and try again.",
-  "filter_by_owner": "日本語 Filter by owner"
+  "filter_by_owner": "日本語 Filter by owner",
+  "items": "日本語 items",
+  "page": "日本語 page",
+  "items_per_page": "日本語 Items per page",
+  "per_page_suffix": "日本語 per page",
+  "to_first_page": "日本語 Go to first page",
+  "to_previous_page": "日本語 Go to previous page",
+  "to_last_page": "日本語 Go to last page",
+  "to_next_page": "日本語 Go to next page",
+  "options_toggle": "日本語 Items per page",
+  "curr_page": "日本語 Current page"
 }

@@ -1,6 +1,7 @@
 import React, { useCallback, FunctionComponent } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { Pagination, PaginationProps, PaginationTitles } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 export const TablePagination: FunctionComponent<PaginationProps & PaginationTitles> = ({
   page,
@@ -13,6 +14,7 @@ export const TablePagination: FunctionComponent<PaginationProps & PaginationTitl
   const history = useHistory();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const { t } = useTranslation();
 
   const setSearchParam = useCallback(
     (name: string, value: string) => {
@@ -52,7 +54,19 @@ export const TablePagination: FunctionComponent<PaginationProps & PaginationTitl
         variant={variant || 'top'}
         onPerPageSelect={onPerPageSelect}
         isCompact={isCompact}
-        titles={{ paginationTitle }}
+        titles={{
+          paginationTitle,
+          items: t('items'),
+          page: t('page'),
+          itemsPerPage: t('items_per_page'),
+          perPageSuffix: t('per_page_suffix'),
+          toFirstPage: t('to_first_page'),
+          toPreviousPage: t('to_previous_page'),
+          toLastPage: t('to_last_page'),
+          toNextPage: t('to_next_page'),
+          optionsToggle: t('options_toggle'),
+          currPage: t('curr_page'),
+        }}
       />
     );
   }
