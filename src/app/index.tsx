@@ -44,4 +44,4 @@ const App: React.FunctionComponent = () => {
     </KeycloakContext.Provider>
   );
 };
-export { App };
+export default App;

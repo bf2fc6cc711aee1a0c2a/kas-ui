@@ -8,6 +8,8 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 const { dependencies, federatedModuleName} = require("./package.json");
 delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
+const CRCFederatedPlugin = require('@redhat-cloud-services/frontend-components-config/federated-modules');
+
 module.exports = (env, argv, useContentHash) => {
 
   return {
@@ -151,26 +153,15 @@ module.exports = (env, argv, useContentHash) => {
           { from: './src/locales', to: 'locales' },
         ]
       }),
-      new webpack.container.ModuleFederationPlugin({
-        name: federatedModuleName,
-        filename: "remoteEntry.js",
+      CRCFederatedPlugin({
+        root: __dirname,
+        moduleName: federatedModuleName,
         exposes: {
+          './RootApp': 'src/app',
           "./OpenshiftStreams": "./src/app/OpenshiftStreams/OpenshiftStreamsFederated",
         },
-        shared: {
-          ...dependencies,
-          react: {
-            eager: true,
-            singleton: true,
-            requiredVersion: dependencies["react"],
-          },
-          "react-dom": {
-            eager: true,
-            singleton: true,
-            requiredVersion: dependencies["react-dom"],
-          },
-        },
-      })
+        debug: true
+      }),
     ],
     resolve: {
       extensions: ['.js', '.ts', '.tsx', '.jsx'],
