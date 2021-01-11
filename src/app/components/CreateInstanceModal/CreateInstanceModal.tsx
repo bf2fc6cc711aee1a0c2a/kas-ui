@@ -208,7 +208,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     setKafkaFormData({ ...kafkaFormData, multi_az: zone === 'multi' });
   };
 
-  const renderForm = () => {
+  const createInstanceForm = () => {
     const { message, fieldState } = nameValidated;
     return (
       <Form>
@@ -333,11 +333,11 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         {mainToggle === true ? (
           <Drawer isStatic>
             <DrawerContent className="instance-form" panelContent={<DrawerPanelContentInfo />}>
-              <DrawerContentBody>{renderForm()}</DrawerContentBody>
+              <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
             </DrawerContent>
           </Drawer>
         ) : (
-          renderForm()
+          createInstanceForm()
         )}
         <br />
         <br />
