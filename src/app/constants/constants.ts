@@ -1,5 +1,5 @@
 enum InstanceStatus{
-  COMPLETED="complete",
+  READY="ready",
   ACCEPTED="accepted",
   PROVISIONING="provisioning",
   FAILED="failed"
