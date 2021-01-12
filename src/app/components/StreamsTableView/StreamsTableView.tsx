@@ -40,9 +40,12 @@ import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 
+export type FilterValue ={
+  value: string; isExact: boolean 
+}
 export type FilterType = {
   filterKey: string;
-  filterValue?: string;
+  filterValue: FilterValue[];
 };
 
 export type TableProps = {
