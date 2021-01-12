@@ -5,3 +5,8 @@
 .mk--instances__table--icon--failed {
   color: var(--pf-global--danger-color--100);
 }
+
+.pf-c-table tr {
+  cursor: pointer;
+  outline-offset: var(--pf-c-data-list__item--m-selectable--OutlineOffset);
+}
