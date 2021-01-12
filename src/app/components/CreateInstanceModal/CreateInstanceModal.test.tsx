@@ -29,7 +29,7 @@ jest.mock('../../../openapi/api', () => {
         },
       };
     }),
-  }
+  };
 });
 
 const setupRender = (props: CreateInstanceModalProps) => {
@@ -96,7 +96,7 @@ describe('<CreateInstanceModal/>', () => {
     expect(classList).not.toContain('pf-m-disabled');
   });
 
-  it('should disabled create instance button if mandatory fileds i.e. instance name are empty', async () => {
+  it('should disable the Create Instance Button if the mandatory fields are empty', async () => {
     //arrange
     setupRender(props);
 

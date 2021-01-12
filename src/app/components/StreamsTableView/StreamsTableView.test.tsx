@@ -68,12 +68,12 @@ describe('<StreamsTableView/>', () => {
     total: 1,
     kafkaDataLoaded: true,
     expectedTotal: 1,
-    filteredValue:{},
+    filteredValue: [],
     setFilteredValue: jest.fn(),
     filterSelected: '',
     setFilterSelected: jest.fn(),
-    orderBy:'',
-    setOrderBy:jest.fn()
+    orderBy: '',
+    setOrderBy: jest.fn(),
   };
 
   it('should render translation text in English language', () => {
@@ -84,7 +84,7 @@ describe('<StreamsTableView/>', () => {
     expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
   });
 
-  it('should render DeleteInstanceModal component if isDeleteModalOpen is true', async () => {
+  it('should render the Delete Instance Modal component if isDeleteModalOpen is true', async () => {
     //arrange
     setup(props);
 
