@@ -32,7 +32,7 @@
   "owner": "Owner",
   "status": "Status",
   "kafka_successfully_created": "Kafka instance is ready",
-  "kafka_success_message": "The creation of the <b>{{name}}</b> Kafka instance is complete and ready for you to create topics.",
+  "kafka_success_message": "The creation of the <b>{{name}}</b> Kafka instance is ready for you to create topics.",
   "kafka_not_created": "Kafka instance creation failed",
   "kafka_failed_message": "The creation of the <b>{{name}}</b> Kafka instance is failed",
   "view_details": "View details",

@@ -41,7 +41,6 @@ export type InstanceDrawerProps = {
   mainToggle: boolean;
   onClose: () => void;
   isExpanded: boolean;
-  drawerRef: any;
   instanceDetail?: KafkaRequest;
   activeTab?: 'Details' | 'Connection';
 };
@@ -70,7 +69,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     setActiveTab2Key(tabIndex);
   };
 
-  const externalServer = instanceDetail?.bootstrapServerHost?.endsWith(":443") ? instanceDetail?.bootstrapServerHost : `${instanceDetail?.bootstrapServerHost}:443`;
+  const externalServer = instanceDetail?.bootstrapServerHost?.endsWith(':443')
+    ? instanceDetail?.bootstrapServerHost
+    : `${instanceDetail?.bootstrapServerHost}:443`;
 
   const resourcesTab = (
     <>
@@ -222,11 +223,21 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     if (mainToggle) {
       return (
         <div className="mk--instance-details__drawer--tab-content pf-m-secondary">
-          <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
-            <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
+          <Tabs
+            activeKey={activeTab2Key}
+            isSecondary
+            onSelect={handleTab2Click}
+          >
+            <Tab
+              eventKey={0}
+              title={<TabTitleText>{t('resources')}</TabTitleText>}
+            >
               {resourcesTab}
             </Tab>
-            <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
+            <Tab
+              eventKey={1}
+              title={<TabTitleText>{t('sample_code')}</TabTitleText>}
+            >
               {sampleCodeTab}
             </Tab>
           </Tabs>
@@ -237,7 +248,12 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   };
 
   return (
-    <DrawerPanelContent className="instance-drawer" widths={{ default: 'width_50' }}>
+    <DrawerPanelContent
+      data-testid="mk--instance__drawer"
+      className="instance-drawer"
+      widths={{ default: 'width_50' }}
+      hidden={false}
+    >
       {instanceDetail === undefined ? (
         <Loading />
       ) : (

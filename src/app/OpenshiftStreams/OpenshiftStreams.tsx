@@ -241,7 +241,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 mainToggle={mainToggle}
                 onClose={onCloseClick}
                 isExpanded={selectedInstance != null}
-                drawerRef={drawerRef}
                 activeTab={selectedInstance?.activeTab}
                 instanceDetail={selectedInstance?.instanceDetail}
               />
