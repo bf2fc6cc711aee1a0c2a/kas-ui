@@ -12,7 +12,7 @@ import {
   IRowCell,
   sortable,
   ISortBy,
-  SortByDirection,
+  SortByDirection
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -23,7 +23,7 @@ import {
   EmptyStateBody,
   Title,
   EmptyStateIcon,
-  EmptyStateVariant,
+  EmptyStateVariant
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -39,12 +39,9 @@ import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
-export type Filter = {
-  name?: string;
-  status?: string;
-  region?: string;
-  cloud_provider?: string;
-  owner?: string;
+export type FilterType = {
+  filterKey: string;
+  filterValue?: string;
 };
 
 type TableProps = {
@@ -61,12 +58,12 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
-  filteredValue: Filter;
-  setFilteredValue: (filteredValue: Filter) => void;
+  filteredValue: Array<FilterType>;
+  setFilteredValue: (filteredValue: Array<FilterType>) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
-  orderBy?: string;
-  setOrderBy: (order?: string) => void;
+  orderBy: string;
+  setOrderBy: (order: string) => void;
 };
 
 type ConfigDetail = {
@@ -85,7 +82,7 @@ export const getDeleteInstanceModalConfig = (
     confirmActionLabel: '',
     description: '',
   };
-  if (status === InstanceStatus.COMPLETED) {
+  if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_complete', { instanceName });
@@ -120,7 +117,7 @@ const StreamsTableView = ({
   setFilterSelected,
   filterSelected,
   orderBy,
-  setOrderBy,
+  setOrderBy
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -199,14 +196,14 @@ const StreamsTableView = ({
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
-        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED || item.status === InstanceStatus.FAILED
+        (item: KafkaRequest) => item.status === InstanceStatus.READY || item.status === InstanceStatus.FAILED
       );
       lastItemsState.forEach((item: KafkaRequest) => {
         const instances: KafkaRequest[] = completedOrFailedItems.filter(
           (cfItem: KafkaRequest) => item.id === cfItem.id
         );
         if (instances && instances.length > 0) {
-          if (instances[0].status === InstanceStatus.COMPLETED) {
+          if (instances[0].status === InstanceStatus.READY) {
             addAlert(
               t('kafka_successfully_created'),
               AlertVariant.success,
@@ -482,7 +479,7 @@ const StreamsTableView = ({
         widgetId="pagination-options-menu-bottom"
         itemCount={total}
         variant={PaginationVariant.bottom}
-        page={page as any}
+        page={page}
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />

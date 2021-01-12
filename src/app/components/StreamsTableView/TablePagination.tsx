@@ -3,7 +3,9 @@ import { useHistory, useLocation } from 'react-router';
 import { Pagination, PaginationProps, PaginationTitles } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export const TablePagination: FunctionComponent<PaginationProps & PaginationTitles> = ({
+interface TablePagination extends PaginationProps, Pick<PaginationTitles, 'paginationTitle'> {}
+
+export const TablePagination: FunctionComponent<TablePagination> = ({
   page,
   perPage,
   itemCount,

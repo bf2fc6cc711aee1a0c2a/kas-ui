@@ -24,10 +24,10 @@ const cloudProviderOptions: KeyValueOptions[] = [
 ];
 
 const statusOptions: KeyValueOptions[] = [
-  { value: 'complete', label: 'Ready' },
+  { value: 'ready', label: 'Ready' },
   { value: 'failed', label: 'Failed' },
   { value: 'accepted', label: 'Creation pending' },
-  { value: 'provisioning', label: 'Creation in progress' }
+  { value: 'provisioning', label: 'Creation in progress' },
 ];
 
 const getCloudProviderDisplayName = (value: string) => {
@@ -70,5 +70,5 @@ export {
   getCloudProviderDisplayName,
   getCloudRegionDisplayName,
   capitalize,
-  statusOptions
+  statusOptions,
 };
