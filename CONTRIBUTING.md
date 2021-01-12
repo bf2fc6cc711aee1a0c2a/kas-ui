@@ -196,6 +196,18 @@ const refExampleMutable = (useRef < HTMLElement) | (null > null);
 
 Besides the details outlined above a list of recommendations for Typescript is maintained by several Typescript React developers [here](https://react-typescript-cheatsheet.netlify.app/). This is a great reference to use for any additional questions that are not outlined within the coding standards.
 
+## Classnames and ID Naming Conventions
+
+IDs and classes should follow:
+
+`mk--[page or context]__component--element`
+
+where:
+
+- `mk` = Managed Kafka
+- `page or context = the context that the component is part of 
+- `component` = name of the component
+- `element` = element in the component
 
 ## Testing
 
