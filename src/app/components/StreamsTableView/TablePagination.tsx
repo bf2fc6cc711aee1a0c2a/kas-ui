@@ -2,7 +2,9 @@ import React, { useCallback, FunctionComponent } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { Pagination, PaginationProps, PaginationTitles } from '@patternfly/react-core';
 
-export const TablePagination: FunctionComponent<PaginationProps & Pick<PaginationTitles,'paginationTitle'>> = ({
+interface TablePagination extends PaginationProps, Pick<PaginationTitles, 'paginationTitle'> {}
+
+export const TablePagination: FunctionComponent<TablePagination> = ({
   page,
   perPage,
   itemCount,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ChipGroup,
   Chip,
@@ -14,12 +14,14 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
+  SelectOptionObject,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
-import { Filter } from './StreamsTableView';
 import { useTranslation } from 'react-i18next';
+import { FilterType } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import { getInitialFilter } from '@app/OpenshiftStreams/OpenshiftStreams';
 import './StreamsToolbar.css';
 
 type StreamsToolbarProps = {
@@ -31,8 +33,8 @@ type StreamsToolbarProps = {
   total: number;
   page: number;
   perPage: number;
-  filteredValue: Filter;
-  setFilteredValue: (filteredValue: Filter) => void;
+  filteredValue: Array<FilterType>;
+  setFilteredValue: (filteredValue: Array<FilterType>) => void;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -52,13 +54,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isStatusFilterExpanded, setIsStatusFilterExpanded] = useState(false);
   const [nameInputValue, setNameInputValue] = useState<string | undefined>();
   const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
-  const [trimmedFilterValue, setTrimmedFilterValue] = useState({});
   const { t } = useTranslation();
-
-  useEffect(() => {
-    trimFilterValues();
-  }, [filteredValue]);
-
   // Options for server-side filtering
   const mainFilterOptions = [
     { value: t('name'), disabled: false },
@@ -105,80 +101,129 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onClear = () => {
-    setFilteredValue({});
+    setFilteredValue(getInitialFilter() as FilterType[]);
   };
 
-  const trimFilterValues = () => {
-    const copyFilteredValue = Object.assign({}, filteredValue);
-    Object.keys(copyFilteredValue).forEach((key) => {
-      if (copyFilteredValue[key] === '') {
-        delete copyFilteredValue[key];
+  const updateAppliedFilter = (filterKey: string, filterValue?: string) => {
+    const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === filterKey);
+    let toUpdate = true;
+    if (filterIndex >= 0) {
+      if (copyFilteredValue[filterIndex].filterValue !== filterValue) {
+        copyFilteredValue.splice(filterIndex, 1);
+      } else {
+        toUpdate = false;
       }
-    });
-    setTrimmedFilterValue(copyFilteredValue);
+    }
+    if (toUpdate && filterValue?.trim() !== '') {
+      const filter: FilterType = { filterKey, filterValue };
+      copyFilteredValue.splice(0, 0, filter);
+    }
+    toUpdate && setFilteredValue(copyFilteredValue);
   };
 
   const onFilter = (filterType: string) => {
     if (filterType === 'name' && nameInputValue) {
-      setFilteredValue({ ...filteredValue, name: nameInputValue });
+      updateAppliedFilter('name', nameInputValue);
     } else if (filterType === 'owner' && ownerInputValue) {
-      setFilteredValue({ ...filteredValue, owner: ownerInputValue });
+      updateAppliedFilter('owner', ownerInputValue);
     }
   };
 
-  const onChangeSelect = (event, selection) => {
+  const onChangeSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
+    selection: string | SelectOptionObject
+  ) => {
     setIsFilterExpanded(!isFilterExpanded);
-    setFilterSelected(selection);
+    setFilterSelected(selection?.toString());
   };
 
-  const onCloudProviderFilterSelect = (event, selection, isPlaceholder) => {
+  const onCloudProviderFilterSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
+    selection: string | SelectOptionObject,
+    isPlaceholder?: boolean | undefined
+  ) => {
     if (isPlaceholder) clearSelection('cloud_provider');
-    setFilteredValue({ ...filteredValue, cloud_provider: selection });
+    updateAppliedFilter('cloud_provider', selection.toString());
     setIsCloudProviderFilterExpanded(false);
   };
 
-  const onRegionFilterSelect = (event, selection, isPlaceholder) => {
+  const onRegionFilterSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
+    selection: string | SelectOptionObject,
+    isPlaceholder?: boolean | undefined
+  ) => {
     if (isPlaceholder) clearSelection('region');
-    setFilteredValue({ ...filteredValue, region: selection });
+    updateAppliedFilter('region', selection.toString());
     setIsRegionFilterExpanded(false);
   };
 
-  const onStatusFilterSelect = (event, selection, isPlaceholder) => {
+  const onStatusFilterSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
+    selection: string | SelectOptionObject,
+    isPlaceholder?: boolean | undefined
+  ) => {
     if (isPlaceholder) clearSelection('status');
-    setFilteredValue({ ...filteredValue, status: selection });
+    updateAppliedFilter('status', selection.toString());
     setIsStatusFilterExpanded(false);
   };
 
   const clearSelection = (value: string) => {
+    const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === value);
+    if (filterIndex >= 0) {
+      copyFilteredValue.splice(filterIndex, 1);
+    }
+    setFilteredValue(copyFilteredValue);
+    if (value === 'name') {
+      setNameInputValue('');
+    }
+    if (value === 'owner') {
+      setOwnerInputValue('');
+    }
     if (value === 'cloud_provider') {
-      setFilteredValue({ ...filteredValue, cloud_provider: '' });
       setIsStatusFilterExpanded(false);
     }
     if (value === 'region') {
-      setFilteredValue({ ...filteredValue, region: '' });
-      setIsRegionFilterExpanded;
-    }
-    if (value === 'owner') {
-      setFilteredValue({ ...filteredValue, owner: '' });
+      setIsRegionFilterExpanded(false);
     }
     if (value === 'status') {
-      setFilteredValue({ ...filteredValue, status: '' });
       setIsStatusFilterExpanded(false);
     }
   };
 
   const deleteChip = (key: string) => {
-    if (key === 'name') {
-      setFilteredValue({ ...filteredValue, name: '' });
+    const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === key);
+    if (key === 'name' && copyFilteredValue[filterIndex].filterValue === nameInputValue?.trim()) {
+      setNameInputValue('');
     }
-    if (key === 'status') {
-      setFilteredValue({ ...filteredValue, status: '' });
+    if (key === 'owner' && copyFilteredValue[filterIndex].filterValue === ownerInputValue?.trim()) {
+      setOwnerInputValue('');
     }
-    if (key === 'owner') {
-      setFilteredValue({ ...filteredValue, owner: '' });
+    if (filterIndex >= 0) {
+      copyFilteredValue.splice(filterIndex, 1);
+    }
+    setFilteredValue(copyFilteredValue);
+  };
+
+  const onInputPress = (event) => {
+    if (event.key === 'Enter') {
+      if (event?.target?.name === 'filter names') {
+        onFilter('name');
+      } else if (event.target?.name === 'filter owners') {
+        onFilter('owner');
+      }
     }
   };
 
+  const getSelectionForFilter = (key: string) => {
+    const selectedFilters = filteredValue.filter((filter) => filter.filterKey === key);
+    if (selectedFilters.length > 0) {
+      return selectedFilters[0].filterValue;
+    }
+    return;
+  };
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
@@ -186,7 +231,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           variant={SelectVariant.single}
           aria-label="Select filter"
           onToggle={onFilterToggle}
-          selections={filterSelected}
+          selections={filterSelected && filterSelected}
           isOpen={isFilterExpanded}
           onSelect={onChangeSelect}
         >
@@ -197,12 +242,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         {filterSelected === t('name') && (
           <InputGroup className="mk--filter-instances__toolbar--text-input">
             <TextInput
-              name="filter text input"
+              name="filter names"
               id="filterText"
               type="search"
               aria-label="Search filter input"
               placeholder={t('filter_by_name_lower')}
               onChange={onNameInputChange}
+              onKeyPress={onInputPress}
               value={nameInputValue}
             />
             <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
@@ -215,7 +261,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             variant={SelectVariant.single}
             aria-label="Select cloud provider"
             onToggle={onCloudProviderFilterToggle}
-            selections={filteredValue['cloud_provider']}
+            selections={getSelectionForFilter('cloud_provider')}
             isOpen={isCloudProviderFilterExpanded}
             onSelect={onCloudProviderFilterSelect}
             placeholderText="Filter by cloud provider"
@@ -230,7 +276,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             variant={SelectVariant.single}
             aria-label="Select region"
             onToggle={onRegionFilterToggle}
-            selections={filteredValue['region']}
+            selections={getSelectionForFilter('region')}
             isOpen={isRegionFilterExpanded}
             onSelect={onRegionFilterSelect}
             placeholderText="Filter by region"
@@ -249,6 +295,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               aria-label="Search filter input"
               placeholder={t('filter_by_owner')}
               onChange={onOwnerInputChange}
+              onKeyPress={onInputPress}
               value={ownerInputValue}
             />
             <Button variant={ButtonVariant.control} onClick={() => onFilter('owner')} aria-label="Search owners">
@@ -261,7 +308,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             variant={SelectVariant.single}
             aria-label="Select status"
             onToggle={onStatusFilterToggle}
-            selections={filteredValue['status']}
+            selections={getSelectionForFilter('status')}
             isOpen={isStatusFilterExpanded}
             onSelect={onStatusFilterSelect}
             placeholderText="Filter by status"
@@ -277,21 +324,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const toolbarChipGroup = (
     <ToolbarGroup>
-      <ChipGroup>
-        {trimmedFilterValue &&
-          Object.keys(trimmedFilterValue).map((key, index) => {
-            if (key === 'region' || key === 'cloud_provider') {
-              return (
-                <Chip key={index} onClick={() => deleteChip(key)} isReadOnly>
-                  {t(key)}: {trimmedFilterValue[key]}
-                </Chip>
-              );
-            } else {
-              return (
-                <Chip key={index} onClick={() => deleteChip(key)}>
-                  {t(key)}: {trimmedFilterValue[key]}
-                </Chip>
-              );
+      <ChipGroup numChips={5}>
+        {filteredValue &&
+          filteredValue.map((filter: FilterType, index: number) => {
+            if (filter.filterValue && filter.filterValue.trim() != '') {
+              if (filter.filterKey === 'region' || filter.filterKey === 'cloud_provider') {
+                return (
+                  <Chip className="pf-c-chip__text" key={index} onClick={() => deleteChip(filter.filterKey)} isReadOnly>
+                    {t(filter.filterKey)}: {filter.filterValue}
+                  </Chip>
+                );
+              } else {
+                return (
+                  <Chip className="pf-c-chip__text" key={index} onClick={() => deleteChip(filter.filterKey)}>
+                    {t(filter.filterKey)}: {filter.filterValue}
+                  </Chip>
+                );
+              }
             }
           })}
       </ChipGroup>
