@@ -12,7 +12,7 @@ const kafkaInstanceItems = [
     id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
     kind: 'kafka',
     href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
-    status: 'complete',
+    status: 'ready',
     cloud_provider: 'aws',
     multi_az: false,
     region: 'us-east-1',
