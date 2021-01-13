@@ -82,7 +82,7 @@ export const getDeleteInstanceModalConfig = (
     confirmActionLabel: '',
     description: '',
   };
-  if (status === InstanceStatus.COMPLETED) {
+  if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_complete', { instanceName });
@@ -192,14 +192,14 @@ const StreamsTableView = ({
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
-        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED || item.status === InstanceStatus.FAILED
+        (item: KafkaRequest) => item.status === InstanceStatus.READY || item.status === InstanceStatus.FAILED
       );
       lastItemsState.forEach((item: KafkaRequest) => {
         const instances: KafkaRequest[] = completedOrFailedItems.filter(
           (cfItem: KafkaRequest) => item.id === cfItem.id
         );
         if (instances && instances.length > 0) {
-          if (instances[0].status === InstanceStatus.COMPLETED) {
+          if (instances[0].status === InstanceStatus.READY) {
             addAlert(
               t('kafka_successfully_created'),
               AlertVariant.success,

@@ -64,8 +64,8 @@ describe('Delete Instance Modal', () => {
     expect(setIsModalOpen).toBeCalledTimes(1);
   });
 
-  it('should render input box for completed status', () => {
-    props.instanceStatus = InstanceStatus.COMPLETED;
+  it('should render input box for ready status', () => {
+    props.instanceStatus = InstanceStatus.READY;
 
     const { getByText } = setup(props);
     expect(getByText('instance_name_label')).toBeInTheDocument();
@@ -74,8 +74,8 @@ describe('Delete Instance Modal', () => {
     expect(input.lastChild.className).toEqual('pf-c-form-control');
   });
 
-  it('should render confirm button be disabled for empty or invalid input of instance with completed status', () => {
-    props.instanceStatus = InstanceStatus.COMPLETED;
+  it('should render confirm button be disabled for empty or invalid input of instance with ready status', () => {
+    props.instanceStatus = InstanceStatus.READY;
     const { getByText, getByRole } = setup(props);
 
     const inputElement: any = getByText('instance_name_label').parentElement?.lastChild;
