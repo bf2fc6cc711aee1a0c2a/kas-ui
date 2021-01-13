@@ -13,9 +13,9 @@ import {
   AlertVariant,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
-import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
+import { StreamsTableView, FilterType } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProviderList, CloudProvider } from '../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -34,6 +34,13 @@ type OpenShiftStreamsProps = {
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
   activeTab: 'Details' | 'Connection';
+};
+
+export const getInitialFilter = () => {
+  return [
+    { filterKey: 'region', filterValue: cloudRegionOptions[0].label },
+    { filterKey: 'cloud_provider', filterValue: cloudProviderOptions[0].label },
+  ];
 };
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
@@ -55,18 +62,12 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [mainToggle, setMainToggle] = useState(false);
+  const [orderBy, setOrderBy] = useState<string>('name asc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
-  const [orderBy, setOrderBy] = useState("");
   const [filterSelected, setFilterSelected] = useState('Name');
-  const [filteredValue, setFilteredValue] = useState(
-    { name: '',
-    status: '',
-    region: cloudRegionOptions[0].label,
-    cloud_provider: cloudProviderOptions[0].label,
-    owner: ''}
-  );
+  const [filteredValue, setFilteredValue] = useState<Array<FilterType>>(getInitialFilter() as FilterType[]);
 
   const drawerRef = React.createRef<any>();
 
@@ -93,6 +94,33 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return false;
   };
 
+  const getFilterString = () => {
+    const filters: string[] = [];
+    filteredValue.forEach((filter) => {
+      if (filter.filterValue && filter.filterValue.trim() !== '') {
+        if (filter.filterKey === 'name') {
+          filters.push(`name = ${filter.filterValue}`);
+        } else if (filter.filterKey === 'owner') {
+          filters.push(`owner = ${filter.filterValue}`);
+        } else if (filter.filterKey === 'cloud_provider') {
+          filters.push(
+            `cloud_provider = ${
+              cloudProviderOptions[cloudProviderOptions.findIndex((x) => x.label === filter.filterValue)].value
+            }`
+          );
+        } else if (filter.filterKey === 'region') {
+          filters.push(
+            `region = ${cloudRegionOptions[cloudRegionOptions.findIndex((x) => x.label === filter.filterValue)].value}`
+          );
+        } else if (filter.filterKey === 'status') {
+          filters.push(
+            `status = ${statusOptions[statusOptions.findIndex((x) => x.label === filter.filterValue)].value}`
+          );
+        }
+      }
+    });
+    return filters.join(' and ');
+  };
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await authContext?.getToken();
@@ -103,33 +131,28 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           accessToken,
           basePath,
         });
-        await apisService.listKafkas(
-          page?.toString(),
-          perPage?.toString(),
-          orderBy && orderBy,
-          `${filteredValue.name && `name = ${filteredValue.name} and `}
-          ${filteredValue.status && `status = ${statusOptions[statusOptions.findIndex(x => x.label === filteredValue.status)].value} and `}
-          ${filteredValue.region && ` region = ${cloudRegionOptions[cloudRegionOptions.findIndex(x => x.label === filteredValue.region)].value}`}
-          ${filteredValue.owner && ` and owner = ${filteredValue.owner}`}
-          ${filteredValue.cloud_provider && ` and cloud_provider = ${cloudProviderOptions[cloudProviderOptions.findIndex(x => x.label === filteredValue.cloud_provider)].value}`}`
-        ).then((res) => {
-          const kafkaInstances = res.data;
-          setKafkaInstancesList(kafkaInstances);
-          setKafkaInstanceItems(kafkaInstances.items);
-          kafkaInstancesList?.total !== undefined &&
-            kafkaInstancesList.total > expectedTotal &&
-            setExpectedTotal(kafkaInstancesList.total);
-          setKafkaDataLoaded(true);
-        });
-      // Check to see if at least 1 kafka is present
-      await apisService.listKafkas(
-        page?.toString(),
-        perPage?.toString(),
-        orderBy && orderBy,
-        `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
-      ).then((res) => {
-        setRawKafkaDataLength(res.data.items.length);
-      })
+        await apisService
+          .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
+          .then((res) => {
+            const kafkaInstances = res.data;
+            setKafkaInstancesList(kafkaInstances);
+            setKafkaInstanceItems(kafkaInstances.items);
+            kafkaInstancesList?.total !== undefined &&
+              kafkaInstancesList.total > expectedTotal &&
+              setExpectedTotal(kafkaInstancesList.total);
+            setKafkaDataLoaded(true);
+          });
+        // Check to see if at least 1 kafka is present
+        await apisService
+          .listKafkas(
+            page?.toString(),
+            perPage?.toString(),
+            orderBy && orderBy,
+            `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
+          )
+          .then((res) => {
+            setRawKafkaDataLength(res.data.items.length);
+          });
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -176,7 +199,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [authContext, page, perPage, filteredValue]);
+  }, [authContext, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
@@ -218,7 +241,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 mainToggle={mainToggle}
                 onClose={onCloseClick}
                 isExpanded={selectedInstance != null}
-                drawerRef={drawerRef}
                 activeTab={selectedInstance?.activeTab}
                 instanceDetail={selectedInstance?.instanceDetail}
               />
@@ -255,7 +277,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 />
               </PageSection>
             ) : (
-              <PageSection className="mk--main-page__page-section--table" variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+              <PageSection
+                className="mk--main-page__page-section--table"
+                variant={PageSectionVariants.light}
+                padding={{ default: 'noPadding' }}
+              >
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
@@ -275,6 +301,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   setFilterSelected={setFilterSelected}
                   filterSelected={filterSelected}
                   // listOfOwners={listOfOwners}
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
                 />
               </PageSection>
             )}

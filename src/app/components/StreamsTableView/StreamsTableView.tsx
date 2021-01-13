@@ -10,6 +10,9 @@ import {
   TableBody,
   TableHeader,
   IRowCell,
+  sortable,
+  ISortBy,
+  SortByDirection
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -36,6 +39,11 @@ import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
+export type FilterType = {
+  filterKey: string;
+  filterValue?: string;
+};
+
 type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
@@ -50,11 +58,12 @@ type TableProps = {
   total: number;
   kafkaDataLoaded: boolean;
   expectedTotal: number;
-  filteredValue: { property: string };
-  setFilteredValue: (filteredValue: { property: string }) => void;
+  filteredValue: Array<FilterType>;
+  setFilteredValue: (filteredValue: Array<FilterType>) => void;
   filterSelected: string;
   setFilterSelected: (filterSelected: string) => void;
-  rawKafkaDataLength: number;
+  orderBy: string;
+  setOrderBy: (order: string) => void;
 };
 
 type ConfigDetail = {
@@ -73,7 +82,7 @@ export const getDeleteInstanceModalConfig = (
     confirmActionLabel: '',
     description: '',
   };
-  if (status === InstanceStatus.COMPLETED) {
+  if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_complete', { instanceName });
@@ -102,16 +111,24 @@ const StreamsTableView = ({
   filteredValue,
   setFilteredValue,
   setFilterSelected,
-  filterSelected
+  filterSelected,
+  orderBy,
+  setOrderBy
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const tableColumns = [t('name'), t('cloud_provider'), t('region'), t('owner'), t('status')];
+  const tableColumns = [
+    { title: t('name'), transforms: [sortable] },
+    { title: t('cloud_provider'), transforms: [sortable] },
+    { title: t('region'), transforms: [sortable] },
+    { title: t('owner'), transforms: [sortable] },
+    { title: t('status'), transforms: [sortable] },
+  ];
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
-  const [loggedInUser, setLoggedInUser] = useState<string|undefined>(undefined);
+  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
 
@@ -125,7 +142,7 @@ const StreamsTableView = ({
   );
 
   useEffect(() => {
-    authContext?.getUsername().then(username => setLoggedInUser(username));
+    authContext?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
 
   // function to get exact number of skeleton count required for the current page
@@ -156,6 +173,7 @@ const StreamsTableView = ({
     // return the exact number of skeleton expected at the time of loading
     return loadingRowCount !== 0 ? loadingRowCount : perPage;
   };
+
   useEffect(() => {
     /*
       the logic is to redirect the user to previous page
@@ -174,14 +192,14 @@ const StreamsTableView = ({
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
-        (item: KafkaRequest) => item.status === InstanceStatus.COMPLETED || item.status === InstanceStatus.FAILED
+        (item: KafkaRequest) => item.status === InstanceStatus.READY || item.status === InstanceStatus.FAILED
       );
       lastItemsState.forEach((item: KafkaRequest) => {
         const instances: KafkaRequest[] = completedOrFailedItems.filter(
           (cfItem: KafkaRequest) => item.id === cfItem.id
         );
         if (instances && instances.length > 0) {
-          if (instances[0].status === InstanceStatus.COMPLETED) {
+          if (instances[0].status === InstanceStatus.READY) {
             addAlert(
               t('kafka_successfully_created'),
               AlertVariant.success,
@@ -369,6 +387,56 @@ const StreamsTableView = ({
     selectedInstance?.status,
     selectedInstance?.name
   );
+
+  const getParameterForSortIndex = (index: number) => {
+    switch (index) {
+      case 0:
+        return 'name';
+      case 1:
+        return 'cloud_provider';
+      case 2:
+        return 'region';
+      case 3:
+        return 'owner';
+      case 4:
+        return 'status';
+      default:
+        return '';
+    }
+  };
+
+  const getindexForSortParameter = (parameter: string) => {
+    switch (parameter.toLowerCase()) {
+      case 'name':
+        return 0;
+      case 'cloud_provider':
+        return 1;
+      case 'region':
+        return 2;
+      case 'owner':
+        return 3;
+      case 'status':
+        return 4;
+      default:
+        return undefined;
+    }
+  };
+
+  const onSort = (_event: any, index: number, direction: string) => {
+    setOrderBy(`${getParameterForSortIndex(index)} ${direction}`);
+  };
+
+  const getSortBy = (): ISortBy | undefined => {
+    const sort: string[] = orderBy?.split(' ') || [];
+    if (sort.length > 1) {
+      return {
+        index: getindexForSortParameter(sort[0]),
+        direction: sort[1] === SortByDirection.asc ? SortByDirection.asc : SortByDirection.desc,
+      };
+    }
+    return;
+  };
+
   return (
     <>
       <StreamsToolbar
@@ -388,20 +456,20 @@ const StreamsTableView = ({
         rows={preparedTableCells()}
         aria-label={t('cluster_instance_list')}
         actionResolver={actionResolver}
+        onSort={onSort}
+        sortBy={getSortBy()}
       >
         <TableHeader />
         <TableBody />
       </Table>
-      { kafkaInstanceItems.length < 1 && (
-      <EmptyState variant={EmptyStateVariant.small}>
-        <EmptyStateIcon icon={SearchIcon} />
-        <Title headingLevel="h2" size="lg">
-          {t('no_matches')}
-        </Title>
-        <EmptyStateBody>
-          {t('please_try_adjusting_your_search_query_and_try_again')}
-        </EmptyStateBody>
-      </EmptyState>
+      {kafkaInstanceItems.length < 1 && (
+        <EmptyState variant={EmptyStateVariant.small}>
+          <EmptyStateIcon icon={SearchIcon} />
+          <Title headingLevel="h2" size="lg">
+            {t('no_matches')}
+          </Title>
+          <EmptyStateBody>{t('please_try_adjusting_your_search_query_and_try_again')}</EmptyStateBody>
+        </EmptyState>
       )}
       <TablePagination
         widgetId="pagination-options-menu-bottom"
