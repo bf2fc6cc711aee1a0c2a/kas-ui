@@ -38,6 +38,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import { formatDistance } from 'date-fns';
 
 export type FilterType = {
   filterKey: string;
@@ -126,6 +127,7 @@ const StreamsTableView = ({
     { title: t('region'), transforms: [sortable] },
     { title: t('owner'), transforms: [sortable] },
     { title: t('status'), transforms: [sortable] },
+    { title: t('time_created'), transforms: [sortable] }
   ];
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
@@ -301,8 +303,18 @@ const StreamsTableView = ({
       }
       return tableRow;
     }
+
+    const formatDate = (date) => {
+      date = typeof date === 'string' ? new Date(date) : date;
+      return (
+        <>
+          {formatDistance(date, new Date())} {t('ago')}
+        </>
+      );
+    };
+
     kafkaInstanceItems.forEach((row: IRowData) => {
-      const { name, cloud_provider, region, status, owner } = row;
+      const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
       tableRow.push({
@@ -319,6 +331,9 @@ const StreamsTableView = ({
           owner,
           {
             title: <StatusColumn status={status} />,
+          },
+          {
+            title: formatDate(created_at),
           },
         ],
         originalData: row,
@@ -400,6 +415,8 @@ const StreamsTableView = ({
         return 'owner';
       case 4:
         return 'status';
+      case 5:
+        return 'created_at';
       default:
         return '';
     }
@@ -417,6 +434,8 @@ const StreamsTableView = ({
         return 3;
       case 'status':
         return 4;
+      case 'created_at':
+        return 5;
       default:
         return undefined;
     }
