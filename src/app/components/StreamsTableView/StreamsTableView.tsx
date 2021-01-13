@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { TFunction } from 'i18next';
 import {
   IAction,
@@ -18,7 +19,6 @@ import {
   AlertVariant,
   PaginationVariant,
   Skeleton,
-  Button,
   EmptyState,
   EmptyStateBody,
   Title,
@@ -309,9 +309,9 @@ const StreamsTableView = ({
         cells: [
           {
             title: (
-              <Button variant="link" isInline onClick={() => onConnectToInstance(row as KafkaRequest)}>
+              <Link to="" onClick={() => onConnectToInstance(row as KafkaRequest)}>
                 {name}
-              </Button>
+              </Link>
             ),
           },
           cloudProviderDisplayName,
