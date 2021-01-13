@@ -7,7 +7,7 @@ interface TablePagination extends PaginationProps, Pick<PaginationTitles, 'pagin
 
 export const TablePagination: FunctionComponent<TablePagination> = ({
   page,
-  perPage,
+  perPage = 10,
   itemCount,
   variant,
   isCompact,
@@ -59,7 +59,7 @@ export const TablePagination: FunctionComponent<TablePagination> = ({
         titles={{
           paginationTitle,
           items: t('items'),
-          page: t('page'),
+          page: t('page', { count: Math.ceil(itemCount / perPage) }),
           itemsPerPage: t('items_per_page'),
           perPageSuffix: t('per_page_suffix'),
           toFirstPage: t('to_first_page'),

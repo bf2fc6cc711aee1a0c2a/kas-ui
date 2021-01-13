@@ -216,6 +216,7 @@
   "filter_by_owner": "Filter by owner",
   "items": "items",
   "page": "page",
+  "page_plural":"pages",
   "items_per_page": "Items per page",
   "per_page_suffix": "per page",
   "to_first_page": "Go to first page",
