@@ -18,6 +18,7 @@ import {
   ToolbarChip,
   SplitItem,
   Split,
+  ToolbarFilter,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
@@ -280,20 +281,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
-        <Select
-          variant={SelectVariant.single}
-          aria-label="Select filter"
-          onToggle={onFilterToggle}
-          selections={filterSelected && filterSelected}
-          isOpen={isFilterExpanded}
-          onSelect={onChangeSelect}
-        >
-          {mainFilterOptions.map((option, index) => (
-            <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-              {option.label}
-            </SelectOption>
-          ))}
-        </Select>
+        <ToolbarItem>
+          <Select
+            variant={SelectVariant.single}
+            aria-label="Select filter"
+            onToggle={onFilterToggle}
+            selections={filterSelected && filterSelected}
+            isOpen={isFilterExpanded}
+            onSelect={onChangeSelect}
+          >
+            {mainFilterOptions.map((option, index) => (
+              <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                {option.label}
+              </SelectOption>
+            ))}
+          </Select>
+        </ToolbarItem>
         {/* <ToolbarFilter
           chips={getSelectionForFilter('name')}
           deleteChip={(_category, chip) => onDelete('name', chip)}
@@ -301,21 +304,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           categoryName={t('name')}
         > */}
         {filterSelected?.toLowerCase() === 'name' && (
-          <InputGroup className="mk--filter-instances__toolbar--text-input">
-            <TextInput
-              name="filter names"
-              id="filterText"
-              type="search"
-              aria-label="Search filter input"
-              placeholder={t('filter_by_name_lower')}
-              onChange={onNameInputChange}
-              onKeyPress={onInputPress}
-              value={nameInputValue}
-            />
-            <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
-              <SearchIcon />
-            </Button>
-          </InputGroup>
+          <ToolbarItem>
+            <InputGroup className="mk--filter-instances__toolbar--text-input">
+              <TextInput
+                name="filter names"
+                id="filterText"
+                type="search"
+                aria-label="Search filter input"
+                placeholder={t('filter_by_name_lower')}
+                onChange={onNameInputChange}
+                onKeyPress={onInputPress}
+                value={nameInputValue}
+              />
+              <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
+                <SearchIcon />
+              </Button>
+            </InputGroup>
+          </ToolbarItem>
         )}
         {/* </ToolbarFilter> */}
         {/* <ToolbarFilter
@@ -325,21 +330,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           categoryName={t('cloud_provider')}
         > */}
         {filterSelected === 'cloud_provider' && (
-          <Select
-            variant={SelectVariant.checkbox}
-            aria-label="Select cloud provider"
-            onToggle={onCloudProviderFilterToggle}
-            selections={getSelectionForFilter('cloud_provider')}
-            isOpen={isCloudProviderFilterExpanded}
-            onSelect={onCloudProviderFilterSelect}
-            placeholderText="Filter by cloud provider"
-          >
-            {cloudProviderFilterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                {option.label}
-              </SelectOption>
-            ))}
-          </Select>
+          <ToolbarItem>
+            <Select
+              variant={SelectVariant.checkbox}
+              aria-label="Select cloud provider"
+              onToggle={onCloudProviderFilterToggle}
+              selections={getSelectionForFilter('cloud_provider')}
+              isOpen={isCloudProviderFilterExpanded}
+              onSelect={onCloudProviderFilterSelect}
+              placeholderText={t('filter_by_cloud_provider')}
+            >
+              {cloudProviderFilterOptions.map((option, index) => (
+                <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                  {option.label}
+                </SelectOption>
+              ))}
+            </Select>
+          </ToolbarItem>
         )}
         {/* </ToolbarFilter> */}
 
@@ -350,21 +357,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           categoryName={t('region')}
         > */}
         {filterSelected === 'region' && (
-          <Select
-            variant={SelectVariant.checkbox}
-            aria-label="Select region"
-            onToggle={onRegionFilterToggle}
-            selections={getSelectionForFilter('region')}
-            isOpen={isRegionFilterExpanded}
-            onSelect={onRegionFilterSelect}
-            placeholderText="Filter by region"
-          >
-            {regionFilterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                {option.label}
-              </SelectOption>
-            ))}
-          </Select>
+          <ToolbarItem>
+            <Select
+              variant={SelectVariant.checkbox}
+              aria-label="Select region"
+              onToggle={onRegionFilterToggle}
+              selections={getSelectionForFilter('region')}
+              isOpen={isRegionFilterExpanded}
+              onSelect={onRegionFilterSelect}
+              placeholderText={t('filter_by_region')}
+            >
+              {regionFilterOptions.map((option, index) => (
+                <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                  {option.label}
+                </SelectOption>
+              ))}
+            </Select>
+          </ToolbarItem>
         )}
         {/* </ToolbarFilter> */}
         {/* <ToolbarFilter
@@ -374,21 +383,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           categoryName={t('owner')}
         > */}
         {filterSelected.toLowerCase() === 'owner' && (
-          <InputGroup className="mk--filter-instances__toolbar--text-input">
-            <TextInput
-              name="filter owners"
-              id="filterOwners"
-              type="search"
-              aria-label="Search filter input"
-              placeholder={t('filter_by_owner')}
-              onChange={onOwnerInputChange}
-              onKeyPress={onInputPress}
-              value={ownerInputValue}
-            />
-            <Button variant={ButtonVariant.control} onClick={() => onFilter('owner')} aria-label="Search owners">
-              <SearchIcon />
-            </Button>
-          </InputGroup>
+          <ToolbarItem>
+            <InputGroup className="mk--filter-instances__toolbar--text-input">
+              <TextInput
+                name="filter owners"
+                id="filterOwners"
+                type="search"
+                aria-label="Search filter input"
+                placeholder={t('filter_by_owner')}
+                onChange={onOwnerInputChange}
+                onKeyPress={onInputPress}
+                value={ownerInputValue}
+              />
+              <Button variant={ButtonVariant.control} onClick={() => onFilter('owner')} aria-label="Search owners">
+                <SearchIcon />
+              </Button>
+            </InputGroup>
+          </ToolbarItem>
         )}
         {/* </ToolbarFilter> */}
         {/* <ToolbarFilter
@@ -398,21 +409,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           categoryName={t('status')}
         > */}
         {filterSelected === 'status' && (
-          <Select
-            variant={SelectVariant.checkbox}
-            aria-label="Select status"
-            onToggle={onStatusFilterToggle}
-            selections={getSelectionForFilter('status')}
-            isOpen={isStatusFilterExpanded}
-            onSelect={onStatusFilterSelect}
-            placeholderText="Filter by status"
-          >
-            {statusFilterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                {option.label}
-              </SelectOption>
-            ))}
-          </Select>
+          <ToolbarItem>
+            <Select
+              variant={SelectVariant.checkbox}
+              aria-label="Select status"
+              onToggle={onStatusFilterToggle}
+              selections={getSelectionForFilter('status')}
+              isOpen={isStatusFilterExpanded}
+              onSelect={onStatusFilterSelect}
+              placeholderText={t('filter_by_status')}
+            >
+              {statusFilterOptions.map((option, index) => (
+                <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                  {option.label}
+                </SelectOption>
+              ))}
+            </Select>
+          </ToolbarItem>
         )}
         {/* </ToolbarFilter> */}
       </ToolbarGroup>

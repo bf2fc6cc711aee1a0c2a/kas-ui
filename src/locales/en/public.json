@@ -219,5 +219,7 @@
   "resource_creating": "Resource in creation",
   "preparing": "Resource preparing",
   "completed": "Ready",
-  "filter_by_region": "Filter by region"
+  "filter_by_region": "Filter by region",
+  "filter_by_cloud_provider": "Filter by cloud provider",
+  "filter_by_status": "Filter by status"
 }
