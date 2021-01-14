@@ -114,11 +114,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     const prevFilterValue: FilterValue[] = Object.assign([], copyFilteredValue[filterIndex]?.filterValue);
     let toUpdate = true;
     if (filterIndex >= 0) {
-      if (prevFilterValue.findIndex((val) => val.value !== value) > -1) {
+      if (prevFilterValue.findIndex((val) => val.value !== value.trim()) > -1) {
         copyFilteredValue.splice(filterIndex, 1);
       } else {
         toUpdate = false;
       }
+    }
+    if (prevFilterValue.findIndex((val) => val.value === value.trim()) > -1) {
+      toUpdate = false;
     }
     if (toUpdate && value && value?.trim() !== '') {
       prevFilterValue.splice(0, 0, { value: value?.trim(), isExact: isExact });
