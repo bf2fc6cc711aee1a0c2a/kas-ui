@@ -12,29 +12,29 @@ type StatusColumnProps = {
 const StatusColumn = ({ status }: StatusColumnProps) => {
   const { t } = useTranslation();
   const getStatus = () => {
-    switch (status?.toLowerCase()) {
-      case statusOptions[0].value:
-        return t(statusOptions[0].value);
-      case statusOptions[1].value:
-        return t(statusOptions[1].value);
-      case statusOptions[2].value:
-        return t(statusOptions[2].value);
-      case statusOptions[3].value:
-        return t(statusOptions[3].value);
-      default:
-        return t('creation_pending');
+    const filteredstatus = statusOptions.filter((st) => st.value === status?.toLowerCase());
+    if (filteredstatus.length === 1) {
+      return t(filteredstatus[0].value);
+    } else {
+      return t('creation_pending');
     }
   };
 
   const getStatusIcon = () => {
     switch (status?.toLowerCase()) {
-      case statusOptions[0].value:
+      case statusOptions[0].value: // 'complete'  //remove this in future
         return <CheckCircleIcon className="mk--instances__table--icon--completed" />;
-      case statusOptions[1].value:
+      case statusOptions[1].value: // 'ready' 
+        return <CheckCircleIcon className="mk--instances__table--icon--completed" />;
+      case statusOptions[2].value: // 'failed'
         return <ExclamationCircleIcon className="mk--instances__table--icon--failed" />;
-      case statusOptions[2].value:
-          return <PendingIcon />;
-      case statusOptions[3].value:
+      case statusOptions[3].value: // 'accepted'
+        return <PendingIcon />;
+      case statusOptions[4].value: // 'resource_creating' //remove this in future
+        return <Spinner size={IconSize.md} />;
+      case statusOptions[5].value: // 'provisioning'
+        return <Spinner size={IconSize.md} />;
+      case statusOptions[6].value: // 'preparing'
         return <Spinner size={IconSize.md} />;
       default:
         return <PendingIcon />;

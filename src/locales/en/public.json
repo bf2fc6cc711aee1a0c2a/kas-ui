@@ -214,6 +214,9 @@
   "no_matches": "No matches",
   "please_try_adjusting_your_search_query_and_try_again": "Please try adjusting your search query and try again.",
   "filter_by_owner": "Filter by owner",
-  "time_created":"Time created",
-  "ago":"ago"
+  "time_created": "Time created",
+  "ago": "ago",
+  "resource_creating": "Resource in creation",
+  "preparing": "Resource preparing",
+  "completed": "Ready"
 }
