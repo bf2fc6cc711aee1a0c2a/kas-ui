@@ -232,56 +232,33 @@ const StreamsTableView = ({
     }
     const originalData: KafkaRequest = rowData.originalData;
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
-    const resolver: (IAction | ISeparator)[] = mainToggle
-      ? [
-          {
-            title: t('view_details'),
-            id: 'view-instance',
-            onClick: () => onViewInstance(originalData),
-          },
-          {
-            title: t('connect_to_instance'),
-            id: 'connect-instance',
-            onClick: () => onViewConnection(originalData),
-          },
-          {
-            title: t('delete_instance'),
-            id: 'delete-instance',
-            onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
-            tooltip: !isUserSameAsLoggedIn,
-            tooltipProps: {
-              position: 'left',
-              content: t('no_permission_to_delete_kafka'),
-            },
-            isDisabled: !isUserSameAsLoggedIn,
-            style: {
-              pointerEvents: 'auto',
-              cursor: 'default',
-            },
-          },
-        ]
-      : [
-          {
-            title: t('view_details'),
-            id: 'view-instance',
-            onClick: () => onViewInstance(originalData),
-          },
-          {
-            title: t('delete_instance'),
-            id: 'delete-instance',
-            onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
-            tooltip: !isUserSameAsLoggedIn,
-            tooltipProps: {
-              position: 'left',
-              content: t('no_permission_to_delete_kafka'),
-            },
-            isDisabled: !isUserSameAsLoggedIn,
-            style: {
-              pointerEvents: 'auto',
-              cursor: 'default',
-            },
-          },
-        ];
+    const resolver: (IAction | ISeparator)[] = [
+      {
+        title: t('view_details'),
+        id: 'view-instance',
+        onClick: () => onViewInstance(originalData),
+      },
+      {
+        title: t('connect_to_instance'),
+        id: 'connect-instance',
+        onClick: () => onViewConnection(originalData),
+      },
+      {
+        title: t('delete_instance'),
+        id: 'delete-instance',
+        onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+        tooltip: !isUserSameAsLoggedIn,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_delete_kafka'),
+        },
+        isDisabled: !isUserSameAsLoggedIn,
+        style: {
+          pointerEvents: 'auto',
+          cursor: 'default',
+        },
+      },
+    ];
     return resolver;
   };
 
