@@ -39,6 +39,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
+import './StreamsTableView.css';
 
 export type FilterType = {
   filterKey: string;
