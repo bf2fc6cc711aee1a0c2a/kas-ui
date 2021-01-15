@@ -341,7 +341,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   </Chip>
                 );
               }
-            }
+            } else return <></>;
           })}
       </ChipGroup>
     </ToolbarGroup>

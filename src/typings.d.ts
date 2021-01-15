@@ -10,3 +10,7 @@ declare module '*.m4a';
 declare module '*.rdf';
 declare module '*.ttl';
 declare module '*.pdf';
+declare module '*.json' {
+    const value: any;
+    export default value;
+  }

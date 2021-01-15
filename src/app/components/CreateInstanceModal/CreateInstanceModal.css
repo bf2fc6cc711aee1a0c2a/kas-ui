@@ -1,3 +1,35 @@
 .mk--create-instance__tile--icon {
   margin-right: var(--pf-global--spacer--md);
 }
+
+/* drawer customizations */
+.mk--create-instance-modal__drawer--content .pf-c-drawer__panel {
+  flex-basis: 35%;
+  transform: translateX(0);
+}
+.mk--create-instance-modal__drawer--content
+  .pf-c-drawer.pf-m-static
+  > .pf-c-drawer__main
+  > .pf-c-drawer__panel:not(.pf-m-no-border)::after {
+  background-color: var(--pf-c-drawer--m-inline--m-expanded__panel--after--BackgroundColor);
+}
+.mk--create-instance-modal__drawer--content .pf-c-drawer__panel .pf-c-drawer__body {
+  padding-left: var(--pf-global--spacer--lg);
+}
+.mk--create-instance-modal__drawer--content .pf-c-drawer__content {
+  flex-shrink: 1;
+}
+.mk--create-instance-modal__drawer--content .pf-c-drawer__content .pf-c-drawer__body {
+  padding-right: var(--pf-global--spacer--lg);
+}
+
+/* TextContent dl customizations */
+.mk--create-instance-modal__drawer--content .pf-c-content dl {
+  display: block;
+}
+.mk--create-instance-modal__drawer--content dt {
+  font-size: var(--pf-global--FontSize--sm);
+}
+.mk--create-instance-modal__drawer--content dd {
+  margin-bottom: var(--pf-global--spacer--sm);
+}

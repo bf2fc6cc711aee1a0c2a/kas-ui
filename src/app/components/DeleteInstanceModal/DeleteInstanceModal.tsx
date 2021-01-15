@@ -43,7 +43,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   };
 
   const isConfirmButtonDisabled = () => {
-    if (instanceStatus === InstanceStatus.READY || instanceStatus === InstanceStatus.COMPLETE) {
+    if (instanceStatus === InstanceStatus.READY) {
       if (instanceNameInput?.toLowerCase() === selectedInstanceName.toLowerCase()) {
         return false;
       }
@@ -81,10 +81,10 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
       ]}
     >
       <Text className="mk--delete-instance__modal--text" dangerouslySetInnerHTML={{ __html: description || '' }} />
-      {(instanceStatus === InstanceStatus.READY || instanceStatus === InstanceStatus.COMPLETE) && (
+      {instanceStatus === InstanceStatus.READY && (
         <>
           <label
-            htmlFor="instance-name"
+            htmlFor="instance-name-input"
             dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
           />
           <TextInput
