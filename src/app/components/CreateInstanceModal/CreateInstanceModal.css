@@ -14,13 +14,13 @@
   background-color: var(--pf-c-drawer--m-inline--m-expanded__panel--after--BackgroundColor);
 }
 .mk--create-instance-modal__drawer--content .pf-c-drawer__panel .pf-c-drawer__body {
-  padding: 0 0 0 var(--pf-global--spacer--lg);
+  padding-left: var(--pf-global--spacer--lg);
 }
 .mk--create-instance-modal__drawer--content .pf-c-drawer__content {
   flex-shrink: 1;
 }
 .mk--create-instance-modal__drawer--content .pf-c-drawer__content .pf-c-drawer__body {
-  padding: 0 var(--pf-global--spacer--lg) 0 0;
+  padding-right: var(--pf-global--spacer--lg);
 }
 
 /* TextContent dl customizations */
