@@ -27,7 +27,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
-type OpenShiftStreamsProps = {
+export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
 };
 

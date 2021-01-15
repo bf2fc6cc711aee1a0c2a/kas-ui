@@ -45,7 +45,7 @@ export type FilterType = {
   filterValue?: string;
 };
 
-type TableProps = {
+export type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
@@ -325,6 +325,7 @@ const StreamsTableView = ({
 
   const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
     const { status } = instance;
+
     setSelectedInstance(instance);
     /**
      * Hide confirm modal for status 'failed' and call delete api
