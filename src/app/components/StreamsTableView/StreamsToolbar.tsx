@@ -108,35 +108,52 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilteredValue(getInitialFilter() as FilterType[]);
   };
 
-  const updateAppliedFilterOnlyIfNotPresent = (key: string, value: string, isExact: boolean) => {
-    const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
-    const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === key);
-    const prevFilterValue: FilterValue[] = Object.assign([], copyFilteredValue[filterIndex]?.filterValue);
-    let toUpdate = true;
-    if (filterIndex >= 0) {
-      if (prevFilterValue.findIndex((val) => val.value !== value.trim()) > -1) {
-        copyFilteredValue.splice(filterIndex, 1);
+  const updateFilter = (key: string, filter: FilterValue, removeIfPresent: boolean) => {
+    const newFilterValue: FilterType[] = Object.assign([], filteredValue); // a copy for applied filter
+    const filterIndex = newFilterValue.findIndex((f) => f.filterKey === key); // index of current key in applied filter
+    if (filterIndex > -1) {
+      // if filter is present with the current key
+      const filterValue = newFilterValue[filterIndex];
+      if (filterValue.filterValue && filterValue.filterValue.length > 0) {
+        // if some filters are already there in applied filter for same key
+        const filterValues: FilterValue[] = Object.assign([], filterValue.filterValue); // a copy of applied filtered values
+        const filterValueIndex = filterValue.filterValue.findIndex((f) => f.value === filter.value); // index of current filter value in applied filter
+        if (filterValueIndex > -1) {
+          // filter value is already present
+          if (removeIfPresent) {
+            // remove the value
+            filterValue.filterValue.splice(filterValueIndex, 1);
+          } else {
+            // skip the duplicate values
+            return;
+          }
+        } else {
+          // delete current filter
+          newFilterValue.splice(filterIndex, 1);
+          // add filterValue at positoin 0 in values of the current key
+          filterValues.splice(0, 0, filter);
+          // add filter at position 0
+          newFilterValue.splice(0, 0, { filterKey: key, filterValue: filterValues });
+        }
       } else {
-        toUpdate = false;
+        //delete current filter from the array
+        newFilterValue.splice(filterIndex, 1);
+        // add filter at postion 0
+        newFilterValue.splice(0, 0, { filterKey: key, filterValue: [filter] });
       }
+    } else {
+      // add filter at postion 0
+      newFilterValue.splice(0, 0, { filterKey: key, filterValue: [filter] });
     }
-    if (prevFilterValue.findIndex((val) => val.value === value.trim()) > -1) {
-      toUpdate = false;
-    }
-    if (toUpdate && value && value?.trim() !== '') {
-      prevFilterValue.splice(0, 0, { value: value?.trim(), isExact: isExact });
-      const filter: FilterType = { filterKey: key, filterValue: prevFilterValue };
-      copyFilteredValue.splice(0, 0, filter);
-    }
-    toUpdate && setFilteredValue(copyFilteredValue);
+    setFilteredValue(newFilterValue);
   };
 
   const onFilter = (filterType: string) => {
     if (filterType === 'name' && nameInputValue) {
-      updateAppliedFilterOnlyIfNotPresent('name', nameInputValue, false);
+      updateFilter('name', { value: nameInputValue, isExact: false }, false);
       setNameInputValue('');
     } else if (filterType === 'owner' && ownerInputValue) {
-      updateAppliedFilterOnlyIfNotPresent('owner', ownerInputValue, false);
+      updateFilter('owner', { value: ownerInputValue, isExact: false }, false);
       setOwnerInputValue('');
     }
   };
@@ -149,41 +166,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilterSelected(selection?.toString());
   };
 
-  const updateAppliedFilterAndRemoveIfPresent = (key: string, value: string, isExact: boolean) => {
-    const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
-    const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === key);
-    let prevFilterValue: FilterValue[] = [];
-    let toShift = true;
-    if (copyFilteredValue && copyFilteredValue.length > 0) {
-      if (filterIndex > -1) {
-        prevFilterValue = copyFilteredValue[filterIndex].filterValue;
-      }
-      const filterValueIndex = prevFilterValue.findIndex((val) => val.value === value);
-      if (filterValueIndex > -1) {
-        prevFilterValue.splice(filterValueIndex, 1);
-        toShift = false;
-      } else {
-        prevFilterValue.splice(0, 0, { value: value, isExact: isExact });
-      }
-    } else {
-      prevFilterValue.splice(0, 0, { value: value, isExact: isExact });
-    }
-    if (toShift) {
-      copyFilteredValue.splice(filterIndex, 1);
-      copyFilteredValue.splice(0, 0, { filterKey: key, filterValue: prevFilterValue });
-    } else {
-      copyFilteredValue[filterIndex].filterValue = prevFilterValue;
-    }
-    setFilteredValue(copyFilteredValue);
-  };
-
   const onCloudProviderFilterSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
     selection: string | SelectOptionObject,
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('cloud_provider');
-    // updateAppliedFilterAndRemoveIfPresent('cloud_provider',selection.toString(),true)
+    updateFilter('cloud_provider', { value: selection.toString(), isExact: true }, true);
     setIsCloudProviderFilterExpanded(false);
   };
 
@@ -193,7 +182,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('region');
-    // updateAppliedFilterAndRemoveIfPresent('region',selection.toString(),true)
+    updateFilter('region', { value: selection.toString(), isExact: true }, true);
     setIsRegionFilterExpanded(false);
   };
 
@@ -203,7 +192,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('status');
-    updateAppliedFilterAndRemoveIfPresent('status', selection.toString(), true);
+    updateFilter('status', { value: selection.toString(), isExact: true }, true);
   };
 
   const clearSelection = (value: string) => {
