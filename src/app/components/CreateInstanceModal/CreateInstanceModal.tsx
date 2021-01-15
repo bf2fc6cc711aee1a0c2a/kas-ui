@@ -331,8 +331,8 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         ]}
       >
         {mainToggle === true ? (
-          <Drawer isStatic>
-            <DrawerContent className="instance-form" panelContent={<DrawerPanelContentInfo />}>
+          <Drawer isStatic className="mk--create-instance-modal__drawer--content">
+            <DrawerContent panelContent={<DrawerPanelContentInfo />}>
               <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
             </DrawerContent>
           </Drawer>

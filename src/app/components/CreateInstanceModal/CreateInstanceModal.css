@@ -3,30 +3,33 @@
 }
 
 /* drawer customizations */
-.pf-c-drawer__panel.instance-details-panel {
+.mk--create-instance-modal__drawer--content .pf-c-drawer__panel {
   flex-basis: 35%;
   transform: translateX(0);
 }
-.pf-c-drawer.pf-m-static > .pf-c-drawer__main > .pf-c-drawer__panel:not(.pf-m-no-border)::after {
+.mk--create-instance-modal__drawer--content
+  .pf-c-drawer.pf-m-static
+  > .pf-c-drawer__main
+  > .pf-c-drawer__panel:not(.pf-m-no-border)::after {
   background-color: var(--pf-c-drawer--m-inline--m-expanded__panel--after--BackgroundColor);
 }
-.pf-c-drawer__panel.instance-details-panel .pf-c-drawer__body {
+.mk--create-instance-modal__drawer--content .pf-c-drawer__panel .pf-c-drawer__body {
   padding: 0 0 0 var(--pf-global--spacer--lg);
 }
-.pf-c-drawer__content.instance-form {
+.mk--create-instance-modal__drawer--content .pf-c-drawer__content {
   flex-shrink: 1;
 }
-.pf-c-drawer__content.instance-form .pf-c-drawer__body {
+.mk--create-instance-modal__drawer--content .pf-c-drawer__content .pf-c-drawer__body {
   padding: 0 var(--pf-global--spacer--lg) 0 0;
 }
 
 /* TextContent dl customizations */
-.instance-details-panel .pf-c-content dl {
+.mk--create-instance-modal__drawer--content .pf-c-content dl {
   display: block;
 }
-.instance-details-panel dt {
+.mk--create-instance-modal__drawer--content dt {
   font-size: var(--pf-global--FontSize--sm);
 }
-.instance-details-panel dd {
+.mk--create-instance-modal__drawer--content dd {
   margin-bottom: var(--pf-global--spacer--sm);
 }

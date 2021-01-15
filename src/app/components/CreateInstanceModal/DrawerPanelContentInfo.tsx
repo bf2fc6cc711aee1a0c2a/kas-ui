@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 
 const DrawerPanelContentInfo = () => (
-  <DrawerPanelContent className="instance-details-panel">
+  <DrawerPanelContent>
     <DrawerHead>
       <TextContent>
         <Text component={TextVariants.h2}>Cluster information</Text>
