@@ -58,7 +58,6 @@ export const TablePagination: FunctionComponent<TablePagination> = ({
         isCompact={isCompact}
         titles={{
           paginationTitle,
-          itemsPerPage: t('items_per_page'),
           perPageSuffix: t('per_page_suffix'),
           toFirstPage: t('to_first_page'),
           toPreviousPage: t('to_previous_page'),
