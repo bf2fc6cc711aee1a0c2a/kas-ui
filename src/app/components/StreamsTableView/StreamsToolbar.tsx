@@ -172,7 +172,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('cloud_provider');
-    updateFilter('cloud_provider', { value: selection.toString(), isExact: true }, true);
+    // uncomment next line in future when multi cloud provider is supported
+    // updateFilter('cloud_provider', { value: selection.toString(), isExact: true }, true);
     setIsCloudProviderFilterExpanded(false);
   };
 
@@ -182,7 +183,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('region');
-    updateFilter('region', { value: selection.toString(), isExact: true }, true);
+    // uncomment next line in future when multi region is supported
+    // updateFilter('region', { value: selection.toString(), isExact: true }, true);
     setIsRegionFilterExpanded(false);
   };
 
