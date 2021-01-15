@@ -108,7 +108,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilteredValue(getInitialFilter() as FilterType[]);
   };
 
-  const updateAppliedFilter = (key: string, value: string, isExact: boolean) => {
+  const updateAppliedFilterOnlyIfNotPresent = (key: string, value: string, isExact: boolean) => {
     const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === key);
     const prevFilterValue: FilterValue[] = Object.assign([], copyFilteredValue[filterIndex]?.filterValue);
@@ -133,10 +133,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onFilter = (filterType: string) => {
     if (filterType === 'name' && nameInputValue) {
-      updateAppliedFilter('name', nameInputValue, false);
+      updateAppliedFilterOnlyIfNotPresent('name', nameInputValue, false);
       setNameInputValue('');
     } else if (filterType === 'owner' && ownerInputValue) {
-      updateAppliedFilter('owner', ownerInputValue, false);
+      updateAppliedFilterOnlyIfNotPresent('owner', ownerInputValue, false);
       setOwnerInputValue('');
     }
   };
@@ -149,22 +149,41 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     setFilterSelected(selection?.toString());
   };
 
+  const updateAppliedFilterAndRemoveIfPresent = (key: string, value: string, isExact: boolean) => {
+    const copyFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const filterIndex = copyFilteredValue.findIndex((filter) => filter.filterKey === key);
+    let prevFilterValue: FilterValue[] = [];
+    let toShift = true;
+    if (copyFilteredValue && copyFilteredValue.length > 0) {
+      if (filterIndex > -1) {
+        prevFilterValue = copyFilteredValue[filterIndex].filterValue;
+      }
+      const filterValueIndex = prevFilterValue.findIndex((val) => val.value === value);
+      if (filterValueIndex > -1) {
+        prevFilterValue.splice(filterValueIndex, 1);
+        toShift = false;
+      } else {
+        prevFilterValue.splice(0, 0, { value: value, isExact: isExact });
+      }
+    } else {
+      prevFilterValue.splice(0, 0, { value: value, isExact: isExact });
+    }
+    if (toShift) {
+      copyFilteredValue.splice(filterIndex, 1);
+      copyFilteredValue.splice(0, 0, { filterKey: key, filterValue: prevFilterValue });
+    } else {
+      copyFilteredValue[filterIndex].filterValue = prevFilterValue;
+    }
+    setFilteredValue(copyFilteredValue);
+  };
+
   const onCloudProviderFilterSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
     selection: string | SelectOptionObject,
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('cloud_provider');
-    const filterIndex = filteredValue.findIndex((filter) => filter.filterKey === 'cloud_provider');
-    if (filterIndex >= 0) {
-      const isPresent =
-        filteredValue[filterIndex].filterValue.findIndex((val) => val.value === selection.toString()) >= 0;
-      if (isPresent) {
-        // onDelete('cloud_provider', selection.toString());
-      } else {
-        updateAppliedFilter('cloud_provider', selection.toString(), true);
-      }
-    }
+    // updateAppliedFilterAndRemoveIfPresent('cloud_provider',selection.toString(),true)
     setIsCloudProviderFilterExpanded(false);
   };
 
@@ -174,16 +193,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('region');
-    const filterIndex = filteredValue.findIndex((filter) => filter.filterKey === 'region');
-    if (filterIndex >= 0) {
-      const isPresent =
-        filteredValue[filterIndex].filterValue.findIndex((val) => val.value === selection.toString()) >= 0;
-      if (isPresent) {
-        // onDelete('region', selection.toString());
-      } else {
-        updateAppliedFilter('region', selection.toString(), true);
-      }
-    }
+    // updateAppliedFilterAndRemoveIfPresent('region',selection.toString(),true)
     setIsRegionFilterExpanded(false);
   };
 
@@ -193,16 +203,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('status');
-    const filterIndex = filteredValue.findIndex((filter) => filter.filterKey === 'status');
-    if (
-      filterIndex >= 0 &&
-      filteredValue[filterIndex].filterValue.findIndex((val) => val.value === selection.toString()) >= 0
-    ) {
-      onDeleteChip('status', selection.toString());
-    } else {
-      updateAppliedFilter('status', selection.toString(), true);
-    }
-    setIsStatusFilterExpanded(false);
+    updateAppliedFilterAndRemoveIfPresent('status', selection.toString(), true);
   };
 
   const clearSelection = (value: string) => {
