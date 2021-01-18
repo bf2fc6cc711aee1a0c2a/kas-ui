@@ -312,12 +312,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             ))}
           </Select>
         </ToolbarItem>
-        {/* <ToolbarFilter
+        <ToolbarFilter
           chips={getSelectionForFilter('name')}
           deleteChip={(_category, chip) => onDeleteChip('name', chip)}
           deleteChipGroup={() => onDeleteChipGroup('name')}
           categoryName={t('name')}
-        > */}
+        >
         {filterSelected?.toLowerCase() === 'name' && (
           <ToolbarItem>
             <InputGroup className="mk--filter-instances__toolbar--text-input">
@@ -355,13 +355,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             </InputGroup>
           </ToolbarItem>
         )}
-        {/* </ToolbarFilter>
+        </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('cloud_provider')?.map((val) => t(val))}
           // deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip)}
           // deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
           categoryName={t('cloud_provider')}
-        > */}
+        >
         {filterSelected === 'cloud_provider' && (
           <ToolbarItem>
             <Select
@@ -381,13 +381,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             </Select>
           </ToolbarItem>
         )}
-        {/* </ToolbarFilter>
+        </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('region')?.map((val) => t(val))}
           // deleteChip={(_category, chip) => onDeleteChip('region', chip)}
           // deleteChipGroup={() => onDeleteChipGroup('region')}
           categoryName={t('region')}
-        > */}
+        >
         {filterSelected === 'region' && (
           <ToolbarItem>
             <Select
@@ -407,13 +407,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             </Select>
           </ToolbarItem>
         )}
-        {/* </ToolbarFilter>
+        </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('owner')}
           deleteChip={(_category, chip) => onDeleteChip('owner', chip)}
           deleteChipGroup={() => onDeleteChipGroup('owner')}
           categoryName={t('owner')}
-        > */}
+        >
         {filterSelected.toLowerCase() === 'owner' && (
           <ToolbarItem>
             <InputGroup className="mk--filter-instances__toolbar--text-input">
@@ -451,13 +451,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             </InputGroup>
           </ToolbarItem>
         )}
-        {/* </ToolbarFilter>
+        </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('status')?.map((val) => t(val))}
           deleteChip={(_category, chip) => onDeleteChip('status', chip)}
           deleteChipGroup={() => onDeleteChipGroup('status')}
           categoryName={t('status')}
-        > */}
+        >
         {filterSelected === 'status' && (
           <ToolbarItem>
             <Select
@@ -477,39 +477,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             </Select>
           </ToolbarItem>
         )}
-        {/* </ToolbarFilter> */}
+        </ToolbarFilter>
       </ToolbarGroup>
     </>
-  );
-
-  const toolbarChipGroup = (
-    <ToolbarGroup>
-      <Split hasGutter>
-        {filteredValue &&
-          filteredValue.map((filter: FilterType) => {
-            const { filterKey, filterValue } = filter;
-            if (filterKey && filterValue.length > 0) {
-              return (
-                <SplitItem>
-                  <ChipGroup
-                    key={filterKey}
-                    categoryName={t(filterKey)}
-                    numChips={5}
-                    isClosable={filterKey != 'region' && filterKey != 'cloud_provider'}
-                    onClick={() => onDeleteChipGroup(filterKey)}
-                  >
-                    {filterValue.map((cv) => (
-                      <Chip key={cv.value} onClick={() => onDeleteChip(filter.filterKey, cv.value)}>
-                        {t(cv.value)}
-                      </Chip>
-                    ))}
-                  </ChipGroup>
-                </SplitItem>
-              );
-            } else return <></>;
-          })}
-      </Split>
-    </ToolbarGroup>
   );
 
   return (
@@ -539,7 +509,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           />
         </ToolbarItem>
       </ToolbarContent>
-      <ToolbarContent>{toolbarChipGroup}</ToolbarContent>
     </Toolbar>
   );
 };
