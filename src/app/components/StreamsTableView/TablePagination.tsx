@@ -44,19 +44,16 @@ export const TablePagination: FunctionComponent<TablePagination> = ({
     [setSearchParam, history, searchParams]
   );
 
-  if (itemCount && itemCount > 0) {
-    return (
-      <Pagination
-        itemCount={itemCount}
-        perPage={perPage}
-        page={page}
-        onSetPage={onSetPage}
-        variant={variant || 'top'}
-        onPerPageSelect={onPerPageSelect}
-        isCompact={isCompact}
-        titles={{ paginationTitle }}
-      />
-    );
-  }
-  return null;
+  return (
+    <Pagination
+      itemCount={itemCount}
+      perPage={perPage}
+      page={page}
+      onSetPage={onSetPage}
+      variant={variant || 'top'}
+      onPerPageSelect={onPerPageSelect}
+      isCompact={isCompact}
+      titles={{ paginationTitle }}
+    />
+  );
 };
