@@ -16,7 +16,7 @@ import {
   ToolbarChip,
   ValidatedOptions,
   Tooltip,
-  ToolbarFilter
+  ToolbarFilter,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
@@ -48,7 +48,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   page,
   perPage,
   filteredValue,
-  setFilteredValue
+  setFilteredValue,
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -132,22 +132,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             return;
           }
         } else {
-          // delete current filter
-          newFilterValue.splice(filterIndex, 1);
-          // add filterValue at positoin 0 in values of the current key
-          filterValues.splice(0, 0, filter);
-          // add filter at position 0
-          newFilterValue.splice(0, 0, { filterKey: key, filterValue: filterValues });
+          newFilterValue[filterIndex].filterValue = [...newFilterValue[filterIndex].filterValue, filter];
         }
       } else {
-        //delete current filter from the array
-        newFilterValue.splice(filterIndex, 1);
-        // add filter at postion 0
-        newFilterValue.splice(0, 0, { filterKey: key, filterValue: [filter] });
+        newFilterValue.push({ filterKey: key, filterValue: [filter] });
       }
     } else {
-      // add filter at postion 0
-      newFilterValue.splice(0, 0, { filterKey: key, filterValue: [filter] });
+      newFilterValue.push({ filterKey: key, filterValue: [filter] });
     }
     setFilteredValue(newFilterValue);
   };
@@ -314,43 +305,43 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChipGroup={() => onDeleteChipGroup('name')}
           categoryName={t('name')}
         >
-        {filterSelected?.toLowerCase() === 'name' && (
-          <ToolbarItem>
-            <InputGroup className="mk--filter-instances__toolbar--text-input">
-              <TextInput
-                name="filter names"
-                id="filterText"
-                type="search"
-                aria-label="Search filter input"
-                validated={!isNameValid ? ValidatedOptions.error : ValidatedOptions.default}
-                placeholder={t('filter_by_name_lower')}
-                onChange={onNameInputChange}
-                onKeyPress={onInputPress}
-                value={nameInputValue}
-                ref={nameInputRef as React.RefObject<HTMLInputElement>}
-              />
-              <Button
-                variant={ButtonVariant.control}
-                isDisabled={!isNameValid}
-                onClick={() => onFilter('name')}
-                aria-label="Search instances"
-              >
-                <SearchIcon />
-              </Button>
-              {!isNameValid && (
-                <Tooltip
-                  content={
-                    <div>
-                      Valid characters for owner are lowercase letters from a to z, numbers from 0 to 9, underscore (_)
-                      hyphens (-) and percentage (%)
-                    </div>
-                  }
-                  reference={nameInputRef}
+          {filterSelected?.toLowerCase() === 'name' && (
+            <ToolbarItem>
+              <InputGroup className="mk--filter-instances__toolbar--text-input">
+                <TextInput
+                  name="filter names"
+                  id="filterText"
+                  type="search"
+                  aria-label="Search filter input"
+                  validated={!isNameValid ? ValidatedOptions.error : ValidatedOptions.default}
+                  placeholder={t('filter_by_name_lower')}
+                  onChange={onNameInputChange}
+                  onKeyPress={onInputPress}
+                  value={nameInputValue}
+                  ref={nameInputRef as React.RefObject<HTMLInputElement>}
                 />
-              )}
-            </InputGroup>
-          </ToolbarItem>
-        )}
+                <Button
+                  variant={ButtonVariant.control}
+                  isDisabled={!isNameValid}
+                  onClick={() => onFilter('name')}
+                  aria-label="Search instances"
+                >
+                  <SearchIcon />
+                </Button>
+                {!isNameValid && (
+                  <Tooltip
+                    content={
+                      <div>
+                        Valid characters for owner are lowercase letters from a to z, numbers from 0 to 9, underscore
+                        (_) hyphens (-) and percentage (%)
+                      </div>
+                    }
+                    reference={nameInputRef}
+                  />
+                )}
+              </InputGroup>
+            </ToolbarItem>
+          )}
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('cloud_provider')?.map((val) => t(val))}
@@ -358,25 +349,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           // deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
           categoryName={t('cloud_provider')}
         >
-        {filterSelected === 'cloud_provider' && (
-          <ToolbarItem>
-            <Select
-              variant={SelectVariant.checkbox}
-              aria-label="Select cloud provider"
-              onToggle={onCloudProviderFilterToggle}
-              selections={getSelectionForFilter('cloud_provider')}
-              isOpen={isCloudProviderFilterExpanded}
-              onSelect={onCloudProviderFilterSelect}
-              placeholderText={t('filter_by_cloud_provider')}
-            >
-              {cloudProviderFilterOptions.map((option, index) => (
-                <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                  {option.label}
-                </SelectOption>
-              ))}
-            </Select>
-          </ToolbarItem>
-        )}
+          {filterSelected === 'cloud_provider' && (
+            <ToolbarItem>
+              <Select
+                variant={SelectVariant.checkbox}
+                aria-label="Select cloud provider"
+                onToggle={onCloudProviderFilterToggle}
+                selections={getSelectionForFilter('cloud_provider')}
+                isOpen={isCloudProviderFilterExpanded}
+                onSelect={onCloudProviderFilterSelect}
+                placeholderText={t('filter_by_cloud_provider')}
+              >
+                {cloudProviderFilterOptions.map((option, index) => (
+                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                    {option.label}
+                  </SelectOption>
+                ))}
+              </Select>
+            </ToolbarItem>
+          )}
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('region')?.map((val) => t(val))}
@@ -384,25 +375,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           // deleteChipGroup={() => onDeleteChipGroup('region')}
           categoryName={t('region')}
         >
-        {filterSelected === 'region' && (
-          <ToolbarItem>
-            <Select
-              variant={SelectVariant.checkbox}
-              aria-label="Select region"
-              onToggle={onRegionFilterToggle}
-              selections={getSelectionForFilter('region')}
-              isOpen={isRegionFilterExpanded}
-              onSelect={onRegionFilterSelect}
-              placeholderText={t('filter_by_region')}
-            >
-              {regionFilterOptions.map((option, index) => (
-                <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                  {option.label}
-                </SelectOption>
-              ))}
-            </Select>
-          </ToolbarItem>
-        )}
+          {filterSelected === 'region' && (
+            <ToolbarItem>
+              <Select
+                variant={SelectVariant.checkbox}
+                aria-label="Select region"
+                onToggle={onRegionFilterToggle}
+                selections={getSelectionForFilter('region')}
+                isOpen={isRegionFilterExpanded}
+                onSelect={onRegionFilterSelect}
+                placeholderText={t('filter_by_region')}
+              >
+                {regionFilterOptions.map((option, index) => (
+                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                    {option.label}
+                  </SelectOption>
+                ))}
+              </Select>
+            </ToolbarItem>
+          )}
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('owner')}
@@ -410,43 +401,43 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChipGroup={() => onDeleteChipGroup('owner')}
           categoryName={t('owner')}
         >
-        {filterSelected.toLowerCase() === 'owner' && (
-          <ToolbarItem>
-            <InputGroup className="mk--filter-instances__toolbar--text-input">
-              <TextInput
-                name="filter owners"
-                id="filterOwners"
-                type="search"
-                aria-label="Search filter input"
-                placeholder={t('filter_by_owner')}
-                validated={!isOwnerValid ? ValidatedOptions.error : ValidatedOptions.default}
-                onChange={onOwnerInputChange}
-                onKeyPress={onInputPress}
-                value={ownerInputValue}
-                ref={ownerInputRef as React.RefObject<HTMLInputElement>}
-              />
-              <Button
-                isDisabled={!isOwnerValid}
-                variant={ButtonVariant.control}
-                onClick={() => onFilter('owner')}
-                aria-label="Search owners"
-              >
-                <SearchIcon />
-              </Button>
-              {!isOwnerValid && (
-                <Tooltip
-                  content={
-                    <div>
-                      Valid characters for owner are lowercase letters from a to z, numbers from 0 to 9, underscore (_)
-                      hyphens (-) and percentage (%)
-                    </div>
-                  }
-                  reference={nameInputRef}
+          {filterSelected.toLowerCase() === 'owner' && (
+            <ToolbarItem>
+              <InputGroup className="mk--filter-instances__toolbar--text-input">
+                <TextInput
+                  name="filter owners"
+                  id="filterOwners"
+                  type="search"
+                  aria-label="Search filter input"
+                  placeholder={t('filter_by_owner')}
+                  validated={!isOwnerValid ? ValidatedOptions.error : ValidatedOptions.default}
+                  onChange={onOwnerInputChange}
+                  onKeyPress={onInputPress}
+                  value={ownerInputValue}
+                  ref={ownerInputRef as React.RefObject<HTMLInputElement>}
                 />
-              )}
-            </InputGroup>
-          </ToolbarItem>
-        )}
+                <Button
+                  isDisabled={!isOwnerValid}
+                  variant={ButtonVariant.control}
+                  onClick={() => onFilter('owner')}
+                  aria-label="Search owners"
+                >
+                  <SearchIcon />
+                </Button>
+                {!isOwnerValid && (
+                  <Tooltip
+                    content={
+                      <div>
+                        Valid characters for owner are lowercase letters from a to z, numbers from 0 to 9, underscore
+                        (_) hyphens (-) and percentage (%)
+                      </div>
+                    }
+                    reference={nameInputRef}
+                  />
+                )}
+              </InputGroup>
+            </ToolbarItem>
+          )}
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('status')?.map((val) => t(val))}
@@ -454,25 +445,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChipGroup={() => onDeleteChipGroup('status')}
           categoryName={t('status')}
         >
-        {filterSelected === 'status' && (
-          <ToolbarItem>
-            <Select
-              variant={SelectVariant.checkbox}
-              aria-label="Select status"
-              onToggle={onStatusFilterToggle}
-              selections={getSelectionForFilter('status')}
-              isOpen={isStatusFilterExpanded}
-              onSelect={onStatusFilterSelect}
-              placeholderText={t('filter_by_status')}
-            >
-              {statusFilterOptions.map((option, index) => (
-                <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                  {option.label}
-                </SelectOption>
-              ))}
-            </Select>
-          </ToolbarItem>
-        )}
+          {filterSelected === 'status' && (
+            <ToolbarItem>
+              <Select
+                variant={SelectVariant.checkbox}
+                aria-label="Select status"
+                onToggle={onStatusFilterToggle}
+                selections={getSelectionForFilter('status')}
+                isOpen={isStatusFilterExpanded}
+                onSelect={onStatusFilterSelect}
+                placeholderText={t('filter_by_status')}
+              >
+                {statusFilterOptions.map((option, index) => (
+                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                    {option.label}
+                  </SelectOption>
+                ))}
+              </Select>
+            </ToolbarItem>
+          )}
         </ToolbarFilter>
       </ToolbarGroup>
     </>
