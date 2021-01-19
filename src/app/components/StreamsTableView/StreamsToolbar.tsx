@@ -16,7 +16,7 @@ import {
   ToolbarChip,
   ValidatedOptions,
   Tooltip,
-  ToolbarFilter,
+  ToolbarFilter
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
@@ -48,7 +48,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   page,
   perPage,
   filteredValue,
-  setFilteredValue,
+  setFilteredValue
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -115,28 +115,23 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const updateFilter = (key: string, filter: FilterValue, removeIfPresent: boolean) => {
     const newFilterValue: FilterType[] = Object.assign([], filteredValue); // a copy for applied filter
     const filterIndex = newFilterValue.findIndex((f) => f.filterKey === key); // index of current key in applied filter
-    if (filterIndex > -1) {
-      // if filter is present with the current key
+    if (filterIndex > -1) { // if filter is present with the current key
       const filterValue = newFilterValue[filterIndex];
-      if (filterValue.filterValue && filterValue.filterValue.length > 0) {
-        // if some filters are already there in applied filter for same key
+      if (filterValue.filterValue && filterValue.filterValue.length > 0) { // if some filters are already there in applied filter for same key
         const filterValueIndex = filterValue.filterValue.findIndex((f) => f.value === filter.value); // index of current filter value in applied filter
-        if (filterValueIndex > -1) {
-          // filter value is already present
+        if (filterValueIndex > -1) { // filter value is already present
           if (removeIfPresent) {
-            // remove the value
-            filterValue.filterValue.splice(filterValueIndex, 1);
+            filterValue.filterValue.splice(filterValueIndex, 1); // remove the value
           } else {
-            // skip the duplicate values
-            return;
+            return; // skip the duplicate values
           }
-        } else {
+        } else { // add the filter value to the current applied filter 
           newFilterValue[filterIndex].filterValue.push(filter);
         }
-      } else {
-        newFilterValue.push({ filterKey: key, filterValue: [filter] });
+      } else { // add the filter value to current applied filter 
+        newFilterValue[filterIndex].filterValue = [filter];
       }
-    } else {
+    } else { // add filter with key and value to the applied filter
       newFilterValue.push({ filterKey: key, filterValue: [filter] });
     }
     setFilteredValue(newFilterValue);
@@ -147,14 +142,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onFilter = (filterType: string) => {
-    if (filterType === 'name' && nameInputValue) {
+    if (filterType === 'name' && nameInputValue && nameInputValue.trim() != '') {
       if (isInputValid(nameInputValue)) {
         updateFilter('name', { value: nameInputValue, isExact: false }, false);
         setNameInputValue('');
       } else {
         setIsNameValid(false);
       }
-    } else if (filterType === 'owner' && ownerInputValue) {
+    } else if (filterType === 'owner' && ownerInputValue && ownerInputValue.trim() != '') {
       if (isInputValid(ownerInputValue)) {
         updateFilter('owner', { value: ownerInputValue, isExact: false }, false);
         setOwnerInputValue('');
