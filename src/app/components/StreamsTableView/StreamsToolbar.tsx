@@ -120,7 +120,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       const filterValue = newFilterValue[filterIndex];
       if (filterValue.filterValue && filterValue.filterValue.length > 0) {
         // if some filters are already there in applied filter for same key
-        const filterValues: FilterValue[] = Object.assign([], filterValue.filterValue); // a copy of applied filtered values
         const filterValueIndex = filterValue.filterValue.findIndex((f) => f.value === filter.value); // index of current filter value in applied filter
         if (filterValueIndex > -1) {
           // filter value is already present
@@ -132,7 +131,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             return;
           }
         } else {
-          newFilterValue[filterIndex].filterValue = [...newFilterValue[filterIndex].filterValue, filter];
+          newFilterValue[filterIndex].filterValue.push(filter);
         }
       } else {
         newFilterValue.push({ filterKey: key, filterValue: [filter] });
