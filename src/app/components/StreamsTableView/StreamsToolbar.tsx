@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
 import {
-  ChipGroup,
-  Chip,
   ToolbarItem,
   InputGroup,
   TextInput,
@@ -16,11 +14,9 @@ import {
   ToolbarGroup,
   SelectOptionObject,
   ToolbarChip,
-  SplitItem,
-  Split,
   ValidatedOptions,
   Tooltip,
-  ToolbarFilter,
+  ToolbarFilter
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
@@ -52,7 +48,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   page,
   perPage,
   filteredValue,
-  setFilteredValue,
+  setFilteredValue
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -188,7 +184,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onCloudProviderFilterSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
-    selection: string | SelectOptionObject,
+    _selection: string | SelectOptionObject,
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('cloud_provider');
@@ -199,7 +195,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onRegionFilterSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
-    selection: string | SelectOptionObject,
+    _selection: string | SelectOptionObject,
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('region');
