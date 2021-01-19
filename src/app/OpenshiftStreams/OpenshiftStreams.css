@@ -1,3 +1,8 @@
 .mk--main-page__page-section--table {
   padding-bottom: 69px;
 }
+
+/* Fixed button focus issue */
+button:focus {
+  outline: auto;
+}
