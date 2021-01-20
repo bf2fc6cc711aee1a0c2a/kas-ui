@@ -432,7 +432,12 @@ const StreamsTableView = ({
   };
 
   const onSort = (_event: any, index: number, direction: string) => {
-    setOrderBy(`${getParameterForSortIndex(index)} ${direction}`);
+    let myDirection = direction;
+    if (getSortBy()?.index !== index && index === 5) {
+      // trick table to sort descending first for date column
+      myDirection = 'desc';
+    }
+    setOrderBy(`${getParameterForSortIndex(index)} ${myDirection}`);
   };
 
   const getSortBy = (): ISortBy | undefined => {
