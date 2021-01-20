@@ -13,7 +13,7 @@ import {
   IRowCell,
   sortable,
   ISortBy,
-  SortByDirection
+  SortByDirection,
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -23,7 +23,7 @@ import {
   EmptyStateBody,
   Title,
   EmptyStateIcon,
-  EmptyStateVariant
+  EmptyStateVariant,
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -114,7 +114,7 @@ const StreamsTableView = ({
   setFilterSelected,
   filterSelected,
   orderBy,
-  setOrderBy
+  setOrderBy,
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -127,7 +127,7 @@ const StreamsTableView = ({
     { title: t('region'), transforms: [sortable] },
     { title: t('owner'), transforms: [sortable] },
     { title: t('status'), transforms: [sortable] },
-    { title: t('time_created'), transforms: [sortable] }
+    { title: t('time_created'), transforms: [sortable] },
   ];
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
@@ -226,7 +226,19 @@ const StreamsTableView = ({
     setItems(incompleteKafkas);
   }, [page, perPage, kafkaInstanceItems]);
 
-  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
+  const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
+    if (selectedOption === 'view-instance') {
+      onViewInstance(originalData);
+    } else if (selectedOption === 'connect-instance') {
+      onViewConnection(originalData);
+    } else if (selectedOption === 'delete-instance') {
+      onSelectDeleteInstance(originalData);
+    }
+    // Set focus back on previous selected element i.e. kebab button
+    event?.target?.parentElement?.parentElement?.previousSibling?.focus();
+  };
+
+  const getActionResolver = (rowData: IRowData) => {
     if (!kafkaDataLoaded) {
       return [];
     }
@@ -236,17 +248,18 @@ const StreamsTableView = ({
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: () => onViewInstance(originalData),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
       },
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
-        onClick: () => onViewConnection(originalData),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
       },
       {
         title: t('delete_instance'),
         id: 'delete-instance',
-        onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         tooltip: !isUserSameAsLoggedIn,
         tooltipProps: {
           position: 'left',
@@ -320,12 +333,11 @@ const StreamsTableView = ({
   };
 
   const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData, onSelectDeleteInstanceKebab);
+    return getActionResolver(rowData);
   };
 
-  const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
+  const onSelectDeleteInstance = (instance: KafkaRequest) => {
     const { status } = instance;
-
     setSelectedInstance(instance);
     /**
      * Hide confirm modal for status 'failed' and call delete api

@@ -70,14 +70,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const fetchCloudRegions = async (provider: CloudProvider) => {
     const accessToken = await authContext?.getToken();
     const id = provider.id;
-    
+
     if (accessToken !== undefined && accessToken !== '' && id) {
       try {
         const apisService = new DefaultApi({
           accessToken,
           basePath,
-        });        
-        await apisService.listCloudProviderRegions(id).then((res) => { 
+        });
+        await apisService.listCloudProviderRegions(id).then((res) => {
           const providerRegions = res.data;
           const providers: CloudProvider[] = [emptyProvider].concat(providerRegions.items);
           setCloudRegions(providerRegions.items != null ? providers : []);
@@ -87,7 +87,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             setKafkaFormData((prevData) => ({ ...prevData, region }));
           }
         });
-      } catch (error) {        
+      } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
@@ -102,9 +102,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     }
   };
 
-  useEffect(() => {    
-    const enableCloudProviders: CloudProvider[] = cloudProviders.filter((provider: CloudProvider) => provider.enabled);   
-    if (enableCloudProviders.length > 0 && enableCloudProviders[0].name) {    
+  useEffect(() => {
+    const enableCloudProviders: CloudProvider[] = cloudProviders.filter((provider: CloudProvider) => provider.enabled);
+    if (enableCloudProviders.length > 0 && enableCloudProviders[0].name) {
       setKafkaFormData({ ...kafkaFormData, cloud_provider: enableCloudProviders[0].name });
       fetchCloudRegions(enableCloudProviders[0]);
     }
@@ -235,6 +235,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             name="instance-name"
             value={kafkaFormData?.name}
             onChange={handleInstanceNameChange}
+            autoFocus={true}
           />
         </FormGroup>
         <FormGroup label={t('cloud_provider')} fieldId="form-cloud-provider-name">
