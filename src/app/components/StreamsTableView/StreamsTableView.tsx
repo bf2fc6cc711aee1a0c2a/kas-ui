@@ -246,8 +246,16 @@ const StreamsTableView = ({
         title: t('connect_to_instance'),
         id: 'connect-instance',
         onClick: () => onViewConnection(originalData),
-      },
-      {
+      }
+    ];
+    if (isUserSameAsLoggedIn) {
+      resolver.push({
+        title: t('delete_instance'),
+        id: 'delete-instance',
+        onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+      });
+    } else {
+      resolver.push({
         title: t('delete_instance'),
         id: 'delete-instance',
         onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
@@ -261,8 +269,8 @@ const StreamsTableView = ({
           pointerEvents: 'auto',
           cursor: 'default',
         },
-      },
-    ];
+      });
+    }
     return resolver;
   };
 
