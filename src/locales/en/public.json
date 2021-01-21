@@ -221,6 +221,12 @@
   "to_next_page": "Go to next page",
   "options_toggle": "Items per page",
   "curr_page": "Current page",
-  "time_created":"Time created",
-  "ago":"ago"
+  "time_created": "Time created",
+  "ago": "ago",
+  "resource_creating": "Resource in creation",
+  "preparing": "Resource preparing",
+  "completed": "Ready",
+  "filter_by_region": "Filter by region",
+  "filter_by_cloud_provider": "Filter by cloud provider",
+  "filter_by_status": "Filter by status"
 }

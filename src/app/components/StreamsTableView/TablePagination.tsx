@@ -11,7 +11,7 @@ export const TablePagination: FunctionComponent<TablePagination> = ({
   itemCount,
   variant,
   isCompact,
-  paginationTitle,
+  paginationTitle
 }) => {
   const history = useHistory();
   const location = useLocation();

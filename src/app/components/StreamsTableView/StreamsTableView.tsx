@@ -13,7 +13,7 @@ import {
   IRowCell,
   sortable,
   ISortBy,
-  SortByDirection
+  SortByDirection,
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -23,7 +23,7 @@ import {
   EmptyStateBody,
   Title,
   EmptyStateIcon,
-  EmptyStateVariant
+  EmptyStateVariant,
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
@@ -40,12 +40,16 @@ import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 
+export type FilterValue = {
+  value: string;
+  isExact: boolean;
+};
 export type FilterType = {
   filterKey: string;
-  filterValue?: string;
+  filterValue: FilterValue[];
 };
 
-type TableProps = {
+export type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
@@ -118,7 +122,7 @@ const StreamsTableView = ({
   setFilterSelected,
   filterSelected,
   orderBy,
-  setOrderBy
+  setOrderBy,
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -131,7 +135,7 @@ const StreamsTableView = ({
     { title: t('region'), transforms: [sortable] },
     { title: t('owner'), transforms: [sortable] },
     { title: t('status'), transforms: [sortable] },
-    { title: t('time_created'), transforms: [sortable] }
+    { title: t('time_created'), transforms: [sortable] },
   ];
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
@@ -246,8 +250,16 @@ const StreamsTableView = ({
         title: t('connect_to_instance'),
         id: 'connect-instance',
         onClick: () => onViewConnection(originalData),
-      },
-      {
+      }
+    ];
+    if (isUserSameAsLoggedIn) {
+      resolver.push({
+        title: t('delete_instance'),
+        id: 'delete-instance',
+        onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
+      });
+    } else {
+      resolver.push({
         title: t('delete_instance'),
         id: 'delete-instance',
         onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
@@ -261,8 +273,8 @@ const StreamsTableView = ({
           pointerEvents: 'auto',
           cursor: 'default',
         },
-      },
-    ];
+      });
+    }
     return resolver;
   };
 
@@ -329,6 +341,7 @@ const StreamsTableView = ({
 
   const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
     const { status } = instance;
+
     setSelectedInstance(instance);
     /**
      * Hide confirm modal for status 'failed' and call delete api
@@ -462,7 +475,7 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      {kafkaInstanceItems.length < 1 && (
+      {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <EmptyState variant={EmptyStateVariant.small}>
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
