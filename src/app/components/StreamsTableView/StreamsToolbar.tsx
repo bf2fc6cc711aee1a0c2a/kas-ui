@@ -23,7 +23,6 @@ import { TablePagination } from './TablePagination';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
-import { getInitialFilter } from '@app/OpenshiftStreams/OpenshiftStreams';
 import './StreamsToolbar.css';
 
 type StreamsToolbarProps = {
@@ -61,6 +60,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
   const { t } = useTranslation();
+
   // Options for server-side filtering
   const mainFilterOptions = [
     { label: t('name'), value: 'name', disabled: false },
@@ -109,7 +109,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onClear = () => {
-    setFilteredValue(getInitialFilter() as FilterType[]);
+    setFilteredValue([]);
   };
 
   const updateFilter = (key: string, filter: FilterValue, removeIfPresent: boolean) => {
@@ -169,24 +169,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onCloudProviderFilterSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
-    _selection: string | SelectOptionObject,
+    selection: string | SelectOptionObject,
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('cloud_provider');
-    // uncomment next line in future when multi cloud provider is supported
-    // updateFilter('cloud_provider', { value: selection.toString(), isExact: true }, true);
-    setIsCloudProviderFilterExpanded(false);
+    updateFilter('cloud_provider', { value: selection.toString(), isExact: true }, true);
+    cloudProviderOptions.length < 2 && setIsCloudProviderFilterExpanded(false);
   };
 
   const onRegionFilterSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
-    _selection: string | SelectOptionObject,
+    selection: string | SelectOptionObject,
     isPlaceholder?: boolean | undefined
   ) => {
     if (isPlaceholder) clearSelection('region');
-    // uncomment next line in future when multi region is supported
-    // updateFilter('region', { value: selection.toString(), isExact: true }, true);
-    setIsRegionFilterExpanded(false);
+    updateFilter('region', { value: selection.toString(), isExact: true }, true);
+    regionFilterOptions.length < 2 && setIsRegionFilterExpanded(false);
   };
 
   const onStatusFilterSelect = (
@@ -339,8 +337,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('cloud_provider')?.map((val) => t(val))}
-          // deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip)}
-          // deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
+          deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip)}
+          deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
           categoryName={t('cloud_provider')}
         >
           {filterSelected === 'cloud_provider' && (
@@ -365,8 +363,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('region')?.map((val) => t(val))}
-          // deleteChip={(_category, chip) => onDeleteChip('region', chip)}
-          // deleteChipGroup={() => onDeleteChipGroup('region')}
+          deleteChip={(_category, chip) => onDeleteChip('region', chip)}
+          deleteChipGroup={() => onDeleteChipGroup('region')}
           categoryName={t('region')}
         >
           {filterSelected === 'region' && (

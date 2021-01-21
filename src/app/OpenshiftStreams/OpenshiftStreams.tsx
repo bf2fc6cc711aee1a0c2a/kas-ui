@@ -36,13 +36,6 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-export const getInitialFilter = () => {
-  return [
-    { filterKey: 'region', filterValue: [{ value: cloudRegionOptions[0].value, isExact: true }] },
-    { filterKey: 'cloud_provider', filterValue: [{ value: cloudProviderOptions[0].value, isExact: true }] },
-  ] as FilterType[];
-};
-
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -67,7 +60,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('name');
-  const [filteredValue, setFilteredValue] = useState<FilterType[]>(getInitialFilter() as FilterType[]);
+  const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
 
   const drawerRef = React.createRef<any>();
 
@@ -112,7 +105,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
         );
       }
     });
-    return filters.join(' and ');
+    return filters.join(' or ');
   };
 
   // Functions
