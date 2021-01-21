@@ -13,18 +13,22 @@ import {
   TextInput,
   Tile,
   ToggleGroup,
+  Drawer,
+  DrawerContent,
+  DrawerContentBody,
 } from '@patternfly/react-core';
 import { FormDataValidationState, NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 import './CreateInstanceModal.css';
 import { useAlerts } from '../Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';
-import { DefaultApi, CloudProvider, CloudRegion, KafkaRequest } from '../../../openapi';
+import { DefaultApi, CloudProvider, CloudRegion } from '../../../openapi';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
+import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 
-type CreateInstanceModalProps = {
+export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
@@ -44,6 +48,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   setCreateStreamsInstance,
   cloudProviders,
   refresh,
+  mainToggle,
 }: CreateInstanceModalProps) => {
   const { t } = useTranslation();
   const newKafka: NewKafka = new NewKafka();
@@ -65,13 +70,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const fetchCloudRegions = async (provider: CloudProvider) => {
     const accessToken = await authContext?.getToken();
     const id = provider.id;
+    
     if (accessToken !== undefined && accessToken !== '' && id) {
       try {
         const apisService = new DefaultApi({
           accessToken,
           basePath,
-        });
-        await apisService.listCloudProviderRegions(id).then((res) => {
+        });        
+        await apisService.listCloudProviderRegions(id).then((res) => { 
           const providerRegions = res.data;
           const providers: CloudProvider[] = [emptyProvider].concat(providerRegions.items);
           setCloudRegions(providerRegions.items != null ? providers : []);
@@ -81,7 +87,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             setKafkaFormData((prevData) => ({ ...prevData, region }));
           }
         });
-      } catch (error) {
+      } catch (error) {        
         let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
@@ -96,9 +102,9 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     }
   };
 
-  useEffect(() => {
-    const enableCloudProviders: CloudProvider[] = cloudProviders.filter((provider: CloudProvider) => provider.enabled);
-    if (enableCloudProviders.length > 0 && enableCloudProviders[0].name) {
+  useEffect(() => {    
+    const enableCloudProviders: CloudProvider[] = cloudProviders.filter((provider: CloudProvider) => provider.enabled);   
+    if (enableCloudProviders.length > 0 && enableCloudProviders[0].name) {    
       setKafkaFormData({ ...kafkaFormData, cloud_provider: enableCloudProviders[0].name });
       fetchCloudRegions(enableCloudProviders[0]);
     }
@@ -202,6 +208,113 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const onChangeAvailabilty = (zone: string) => {
     setKafkaFormData({ ...kafkaFormData, multi_az: zone === 'multi' });
   };
+
+  const createInstanceForm = () => {
+    const { message, fieldState } = nameValidated;
+    return (
+      <Form>
+        {!isFormValid && (
+          <FormAlert>
+            <Alert variant="danger" title={t('create_instance_invalid_alert')} aria-live="polite" isInline />
+          </FormAlert>
+        )}
+        <FormGroup
+          label={t('instance_name')}
+          helperText={t('create_instance_name_helper_text')}
+          helperTextInvalid={message}
+          helperTextInvalidIcon={message != '' && <ExclamationCircleIcon />}
+          isRequired
+          validated={fieldState}
+          fieldId="form-instance-name"
+        >
+          <TextInput
+            isRequired
+            validated={fieldState}
+            type="text"
+            id="form-instance-name"
+            name="instance-name"
+            value={kafkaFormData?.name}
+            onChange={handleInstanceNameChange}
+          />
+        </FormGroup>
+        <FormGroup label={t('cloud_provider')} fieldId="form-cloud-provider-name">
+          {cloudProviders.map(
+            (provider: CloudProvider) =>
+              provider.enabled && (
+                <Tile
+                  key={`tile-${provider.name}`}
+                  title={provider.display_name ? t(provider.display_name) : ''}
+                  icon={getTileIcon(provider?.name)}
+                  isSelected={kafkaFormData.cloud_provider === provider.name}
+                  onClick={() => onCloudProviderSelect(provider)}
+                />
+              )
+          )}
+        </FormGroup>
+        <FormGroup
+          label={t('cloud_region')}
+          helperTextInvalid={cloudRegionValidated.message}
+          helperTextInvalidIcon={<ExclamationCircleIcon />}
+          validated={cloudRegionValidated.fieldState}
+          fieldId="form-cloud-region-option"
+        >
+          <FormSelect
+            validated={cloudRegionValidated.fieldState}
+            value={kafkaFormData.region}
+            onChange={handleCloudRegionChange}
+            id="cloud-region-select"
+            name="cloud-region"
+            aria-label={t('cloud_region')}
+          >
+            {cloudRegions.map(
+              (option: CloudRegion, index) =>
+                option.enabled && (
+                  <FormSelectOption
+                    key={index}
+                    value={option.id}
+                    label={option.id ? t(option.id) : option.display_name || ''}
+                  />
+                )
+            )}
+          </FormSelect>
+        </FormGroup>
+        <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
+          <ToggleGroup aria-label={t('availability_zone_selection')}>
+            {/*
+                  TODO: Currently using HTML version
+                  Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
+              */}
+            <div className="pf-c-toggle-group__item">
+              <button
+                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === false && 'pf-m-selected'}`}
+                type="button"
+                id="single"
+                disabled
+                onClick={() => {
+                  onChangeAvailabilty('single');
+                }}
+              >
+                <span className="pf-c-toggle-group__text"> {t('single')}</span>
+              </button>
+            </div>
+            <div className="pf-c-toggle-group__item">
+              <button
+                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === true && 'pf-m-selected'}`}
+                type="button"
+                onClick={() => {
+                  onChangeAvailabilty('multi');
+                }}
+                id="multi"
+              >
+                <span className="pf-c-toggle-group__text"> {t('multi')}</span>
+              </button>
+            </div>
+          </ToggleGroup>
+        </FormGroup>
+      </Form>
+    );
+  };
+
   return (
     <>
       <Modal
@@ -218,106 +331,15 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           </Button>,
         ]}
       >
-        <Form>
-          {!isFormValid && (
-            <FormAlert>
-              <Alert variant="danger" title={t('create_instance_invalid_alert')} aria-live="polite" isInline />
-            </FormAlert>
-          )}
-          <FormGroup
-            label={t('instance_name')}
-            helperText={t('create_instance_name_helper_text')}
-            helperTextInvalid={nameValidated.message}
-            helperTextInvalidIcon={nameValidated.message != '' && <ExclamationCircleIcon />}
-            isRequired
-            validated={nameValidated.fieldState}
-            fieldId="form-instance-name"
-          >
-            <TextInput
-              isRequired
-              validated={nameValidated.fieldState}
-              type="text"
-              id="form-instance-name"
-              name="instance-name"
-              value={kafkaFormData?.name}
-              onChange={handleInstanceNameChange}
-            />
-          </FormGroup>
-          <FormGroup label={t('cloud_provider')} fieldId="form-cloud-provider-name">
-            {cloudProviders.map(
-              (provider: CloudProvider) =>
-                provider.enabled && (
-                  <Tile
-                    key={`tile-${provider.name}`}
-                    title={provider.display_name ? t(provider.display_name) : ''}
-                    icon={getTileIcon(provider?.name)}
-                    isSelected={kafkaFormData.cloud_provider === provider.name}
-                    onClick={() => onCloudProviderSelect(provider)}
-                  />
-                )
-            )}
-          </FormGroup>
-          <FormGroup
-            label={t('cloud_region')}
-            helperTextInvalid={cloudRegionValidated.message}
-            helperTextInvalidIcon={<ExclamationCircleIcon />}
-            validated={cloudRegionValidated.fieldState}
-            fieldId="form-cloud-region-option"
-          >
-            <FormSelect
-              validated={cloudRegionValidated.fieldState}
-              value={kafkaFormData.region}
-              onChange={handleCloudRegionChange}
-              id="cloud-region-select"
-              name="cloud-region"
-              aria-label={t('cloud_region')}
-            >
-              {cloudRegions.map(
-                (option: CloudRegion, index) =>
-                  option.enabled && (
-                    <FormSelectOption
-                      key={index}
-                      value={option.id}
-                      label={option.id ? t(option.id) : option.display_name || ''}
-                    />
-                  )
-              )}
-            </FormSelect>
-          </FormGroup>
-          <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
-            <ToggleGroup aria-label={t('availability_zone_selection')}>
-              {/*
-                  TODO: Currently using HTML version
-                  Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
-              */}
-              <div className="pf-c-toggle-group__item">
-                <button
-                  className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === false && 'pf-m-selected'}`}
-                  type="button"
-                  id="single"
-                  disabled
-                  onClick={() => {
-                    onChangeAvailabilty('single');
-                  }}
-                >
-                  <span className="pf-c-toggle-group__text"> {t('single')}</span>
-                </button>
-              </div>
-              <div className="pf-c-toggle-group__item">
-                <button
-                  className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === true && 'pf-m-selected'}`}
-                  type="button"
-                  onClick={() => {
-                    onChangeAvailabilty('multi');
-                  }}
-                  id="multi"
-                >
-                  <span className="pf-c-toggle-group__text"> {t('multi')}</span>
-                </button>
-              </div>
-            </ToggleGroup>
-          </FormGroup>
-        </Form>
+        {mainToggle === true ? (
+          <Drawer isStatic className="mk--create-instance-modal__drawer--content">
+            <DrawerContent panelContent={<DrawerPanelContentInfo />}>
+              <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
+            </DrawerContent>
+          </Drawer>
+        ) : (
+          createInstanceForm()
+        )}
         <br />
         <br />
       </Modal>

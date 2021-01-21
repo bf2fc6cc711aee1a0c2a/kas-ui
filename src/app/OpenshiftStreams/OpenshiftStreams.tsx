@@ -27,7 +27,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
-type OpenShiftStreamsProps = {
+export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
 };
 
@@ -38,9 +38,9 @@ type SelectedInstance = {
 
 export const getInitialFilter = () => {
   return [
-    { filterKey: 'region', filterValue: cloudRegionOptions[0].label },
-    { filterKey: 'cloud_provider', filterValue: cloudProviderOptions[0].label },
-  ];
+    { filterKey: 'region', filterValue: [{ value: cloudRegionOptions[0].value, isExact: true }] },
+    { filterKey: 'cloud_provider', filterValue: [{ value: cloudProviderOptions[0].value, isExact: true }] },
+  ] as FilterType[];
 };
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
@@ -66,8 +66,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
-  const [filterSelected, setFilterSelected] = useState('Name');
-  const [filteredValue, setFilteredValue] = useState<Array<FilterType>>(getInitialFilter() as FilterType[]);
+  const [filterSelected, setFilterSelected] = useState('name');
+  const [filteredValue, setFilteredValue] = useState<FilterType[]>(getInitialFilter() as FilterType[]);
 
   const drawerRef = React.createRef<any>();
 
@@ -97,30 +97,24 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const getFilterString = () => {
     const filters: string[] = [];
     filteredValue.forEach((filter) => {
-      if (filter.filterValue && filter.filterValue.trim() !== '') {
-        if (filter.filterKey === 'name') {
-          filters.push(`name = ${filter.filterValue}`);
-        } else if (filter.filterKey === 'owner') {
-          filters.push(`owner = ${filter.filterValue}`);
-        } else if (filter.filterKey === 'cloud_provider') {
-          filters.push(
-            `cloud_provider = ${
-              cloudProviderOptions[cloudProviderOptions.findIndex((x) => x.label === filter.filterValue)].value
-            }`
-          );
-        } else if (filter.filterKey === 'region') {
-          filters.push(
-            `region = ${cloudRegionOptions[cloudRegionOptions.findIndex((x) => x.label === filter.filterValue)].value}`
-          );
-        } else if (filter.filterKey === 'status') {
-          filters.push(
-            `status = ${statusOptions[statusOptions.findIndex((x) => x.label === filter.filterValue)].value}`
-          );
-        }
+      const { filterKey, filterValue } = filter;
+      if (filterValue && filterValue.length > 0) {
+        filters.push(
+          filterValue
+            .map((val) => {
+              let value = val.value.trim();
+              if (value === 'provisioning') {
+                value = 'resource_creating';
+              }
+              return value !== '' ? `${filterKey} ${val.isExact === true ? `= ${value}` : `like %${value}%`}` : '';
+            })
+            .join(' or ')
+        );
       }
     });
     return filters.join(' and ');
   };
+
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await authContext?.getToken();
