@@ -492,9 +492,9 @@ const StreamsTableView = ({
         <EmptyState variant={EmptyStateVariant.small}>
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
-            {t('no_matches')}
+            {t('no_results_found')}
           </Title>
-          <EmptyStateBody>{t('please_try_adjusting_your_search_query_and_try_again')}</EmptyStateBody>
+          <EmptyStateBody>{t('no_results_match_the_filter_criteria')}</EmptyStateBody>
         </EmptyState>
       )}
       <TablePagination
