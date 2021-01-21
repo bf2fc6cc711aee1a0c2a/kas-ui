@@ -40,9 +40,13 @@ import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 
+export type FilterValue = {
+  value: string;
+  isExact: boolean;
+};
 export type FilterType = {
   filterKey: string;
-  filterValue?: string;
+  filterValue: FilterValue[];
 };
 
 export type TableProps = {
@@ -244,6 +248,21 @@ const StreamsTableView = ({
     }
     const originalData: KafkaRequest = rowData.originalData;
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
+    let additionalProps: any;
+    if (!isUserSameAsLoggedIn) {
+      additionalProps = {
+        tooltip: true,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_delete_kafka'),
+        },
+        isDisabled: true,
+        style: {
+          pointerEvents: 'auto',
+          cursor: 'default',
+        },
+      };
+    }
     const resolver: (IAction | ISeparator)[] = [
       {
         title: t('view_details'),
@@ -253,23 +272,14 @@ const StreamsTableView = ({
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
+        onClick: () => onViewConnection(originalData),
       },
       {
         title: t('delete_instance'),
         id: 'delete-instance',
         onClick: (event: any) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
-        tooltip: !isUserSameAsLoggedIn,
-        tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_delete_kafka'),
-        },
-        isDisabled: !isUserSameAsLoggedIn,
-        style: {
-          pointerEvents: 'auto',
-          cursor: 'default',
-        },
+        ...additionalProps,
       },
     ];
     return resolver;
@@ -471,7 +481,7 @@ const StreamsTableView = ({
         <TableHeader />
         <TableBody />
       </Table>
-      {kafkaInstanceItems.length < 1 && (
+      {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <EmptyState variant={EmptyStateVariant.small}>
           <EmptyStateIcon icon={SearchIcon} />
           <Title headingLevel="h2" size="lg">
