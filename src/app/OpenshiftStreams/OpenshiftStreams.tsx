@@ -300,15 +300,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 />
               </PageSection>
             )}
-            {createStreamsInstance && (
-              <CreateInstanceModal
-                createStreamsInstance={createStreamsInstance}
-                setCreateStreamsInstance={setCreateStreamsInstance}
-                cloudProviders={cloudProviders}
-                mainToggle={mainToggle}
-                refresh={refreshKafkas}
-              />
-            )}
+            <CreateInstanceModal
+              createStreamsInstance={createStreamsInstance}
+              setCreateStreamsInstance={setCreateStreamsInstance}
+              cloudProviders={cloudProviders}
+              mainToggle={mainToggle}
+              refresh={refreshKafkas}
+            />
           </DrawerContent>
         </Drawer>
       </AlertProvider>

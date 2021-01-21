@@ -23,19 +23,16 @@ const StatusColumn = ({ status }: StatusColumnProps) => {
   const getStatusIcon = () => {
     switch (status?.toLowerCase()) {
       case statusOptions[0].value: // 'complete'  //remove this in future
-        return <CheckCircleIcon className="mk--instances__table--icon--completed" />;
-      case statusOptions[1].value: // 'ready' 
+      case statusOptions[1].value: // 'ready'
         return <CheckCircleIcon className="mk--instances__table--icon--completed" />;
       case statusOptions[2].value: // 'failed'
         return <ExclamationCircleIcon className="mk--instances__table--icon--failed" />;
       case statusOptions[3].value: // 'accepted'
         return <PendingIcon />;
       case statusOptions[4].value: // 'resource_creating' //remove this in future
-        return <Spinner size={IconSize.md} />;
       case statusOptions[5].value: // 'provisioning'
-        return <Spinner size={IconSize.md} />;
       case statusOptions[6].value: // 'preparing'
-        return <Spinner size={IconSize.md} />;
+        return <Spinner size={IconSize.md} aria-label="Loading" />;
       default:
         return <PendingIcon />;
     }

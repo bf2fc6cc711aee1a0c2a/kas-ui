@@ -246,7 +246,7 @@ const StreamsTableView = ({
         title: t('connect_to_instance'),
         id: 'connect-instance',
         onClick: () => onViewConnection(originalData),
-      }
+      },
     ];
     if (isUserSameAsLoggedIn) {
       resolver.push({
@@ -488,18 +488,16 @@ const StreamsTableView = ({
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
-      {isDeleteModalOpen && (
-        <DeleteInstanceModal
-          title={title}
-          selectedInstance={selectedInstance}
-          isModalOpen={isDeleteModalOpen}
-          instanceStatus={selectedInstance?.status}
-          setIsModalOpen={setIsDeleteModalOpen}
-          onConfirm={onDeleteInstance}
-          description={description}
-          confirmActionLabel={confirmActionLabel}
-        />
-      )}
+      <DeleteInstanceModal
+        title={title}
+        selectedInstance={selectedInstance}
+        isModalOpen={isDeleteModalOpen}
+        instanceStatus={selectedInstance?.status}
+        setIsModalOpen={setIsDeleteModalOpen}
+        onConfirm={onDeleteInstance}
+        description={description}
+        confirmActionLabel={confirmActionLabel}
+      />
     </>
   );
 };
