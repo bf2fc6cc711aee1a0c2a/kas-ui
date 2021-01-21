@@ -14,6 +14,7 @@ import {
   sortable,
   ISortBy,
   SortByDirection,
+  IExtraColumnData
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -431,8 +432,14 @@ const StreamsTableView = ({
     }
   };
 
-  const onSort = (_event: any, index: number, direction: string) => {
-    setOrderBy(`${getParameterForSortIndex(index)} ${direction}`);
+  const onSort = (_event: any, index: number, direction: string,extraData:IExtraColumnData) => {
+    let myDirection = direction;
+    if (getSortBy()?.index !== index && extraData.property === 'time-created') {
+      // trick table to sort descending first for date column
+      // https://github.com/patternfly/patternfly-react/issues/5329
+      myDirection = 'desc';
+    }
+    setOrderBy(`${getParameterForSortIndex(index)} ${myDirection}`);
   };
 
   const getSortBy = (): ISortBy | undefined => {
