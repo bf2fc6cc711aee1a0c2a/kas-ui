@@ -93,6 +93,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
             type="text"
             value={instanceNameInput}
             onChange={handleInstanceName}
+            autoFocus={true}
           />
         </>
       )}

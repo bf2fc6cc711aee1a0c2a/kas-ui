@@ -231,47 +231,58 @@ const StreamsTableView = ({
     setItems(incompleteKafkas);
   }, [page, perPage, kafkaInstanceItems]);
 
-  const getActionResolver = (rowData: IRowData, onDelete: (data: KafkaRequest) => void) => {
+  const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
+    if (selectedOption === 'view-instance') {
+      onViewInstance(originalData);
+    } else if (selectedOption === 'connect-instance') {
+      onViewConnection(originalData);
+    } else if (selectedOption === 'delete-instance') {
+      onSelectDeleteInstance(originalData);
+    }
+    // Set focus back on previous selected element i.e. kebab button
+    event?.target?.parentElement?.parentElement?.previousSibling?.focus();
+  };
+
+  const getActionResolver = (rowData: IRowData) => {
     if (!kafkaDataLoaded) {
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
+    let additionalProps: any;
+    if (!isUserSameAsLoggedIn) {
+      additionalProps = {
+        tooltip: true,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_delete_kafka'),
+        },
+        isDisabled: true,
+        style: {
+          pointerEvents: 'auto',
+          cursor: 'default',
+        },
+      };
+    }
     const resolver: (IAction | ISeparator)[] = [
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: () => onViewInstance(originalData),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
       },
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
         onClick: () => onViewConnection(originalData),
-      }
+      },
+      {
+        title: t('delete_instance'),
+        id: 'delete-instance',
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
+        ...additionalProps,
+      },
     ];
-    if (isUserSameAsLoggedIn) {
-      resolver.push({
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
-      });
-    } else {
-      resolver.push({
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: () => isUserSameAsLoggedIn && onDelete(originalData),
-        tooltip: !isUserSameAsLoggedIn,
-        tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_delete_kafka'),
-        },
-        isDisabled: !isUserSameAsLoggedIn,
-        style: {
-          pointerEvents: 'auto',
-          cursor: 'default',
-        },
-      });
-    }
     return resolver;
   };
 
@@ -333,12 +344,11 @@ const StreamsTableView = ({
   };
 
   const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData, onSelectDeleteInstanceKebab);
+    return getActionResolver(rowData);
   };
 
-  const onSelectDeleteInstanceKebab = (instance: KafkaRequest) => {
+  const onSelectDeleteInstance = (instance: KafkaRequest) => {
     const { status } = instance;
-
     setSelectedInstance(instance);
     /**
      * Hide confirm modal for status 'failed' and call delete api
