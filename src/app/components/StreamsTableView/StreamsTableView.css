@@ -1,0 +1,10 @@
+.pf-c-table tr {
+  cursor: pointer;
+  outline-offset: var(--pf-c-data-list__item--m-selectable--OutlineOffset);
+}
+
+.pf-c-table tr:hover {
+  position: relative;
+  z-index: calc(var(--pf-global--ZIndex--xs) + 1);
+  box-shadow: var(--pf-global--BoxShadow--sm-top), var(--pf-global--BoxShadow--sm-bottom);
+}
