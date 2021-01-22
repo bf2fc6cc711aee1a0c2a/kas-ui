@@ -102,7 +102,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
         filters.push(
           filterValue
             .map((val) => {
-              let value = val.value.trim();
+              const value = val.value.trim();
               if (value === 'provisioning') {
                 return `${filterKey} = preparing or ${filterKey} = provisioning`;
               }
