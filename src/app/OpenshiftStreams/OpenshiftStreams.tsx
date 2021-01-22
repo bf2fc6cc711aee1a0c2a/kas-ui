@@ -104,7 +104,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             .map((val) => {
               let value = val.value.trim();
               if (value === 'provisioning') {
-                value = 'resource_creating';
+                return `${filterKey} = preparing or ${filterKey} = provisioning`;
               }
               return value !== '' ? `${filterKey} ${val.isExact === true ? `= ${value}` : `like %${value}%`}` : '';
             })
