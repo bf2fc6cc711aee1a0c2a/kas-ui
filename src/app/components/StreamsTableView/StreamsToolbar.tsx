@@ -326,7 +326,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   <Tooltip
                     content={
                       <div>
-                        Valid characters for owner are lowercase letters from a to z, numbers from 0 to 9, underscore
+                        Valid characters for name are lowercase letters from a to z, numbers from 0 to 9, underscore
                         (_) hyphens (-) and percentage (%)
                       </div>
                     }
@@ -426,7 +426,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                         (_) hyphens (-) and percentage (%)
                       </div>
                     }
-                    reference={nameInputRef}
+                    reference={ownerInputRef}
                   />
                 )}
               </InputGroup>
