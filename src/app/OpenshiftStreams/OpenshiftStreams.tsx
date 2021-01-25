@@ -18,6 +18,7 @@ import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
+import { usePageVisibility } from '@app/hooks/usePageVisibility';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -32,7 +33,7 @@ type SelectedInstance = {
 const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-
+  const isVisible = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
@@ -117,7 +118,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
 
-    if (isValidToken(accessToken)) {
+    if (isValidToken(accessToken) && isVisible) {
       try {
         const apisService = new DefaultApi({
           accessToken,
