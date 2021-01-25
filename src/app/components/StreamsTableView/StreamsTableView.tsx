@@ -18,7 +18,7 @@ import { MASPagination, MASTable, MASEmptyState } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { useAlerts, DeleteInstanceModal, CreateInstanceModal } from '@app/components';
-import { StreamsToolbar } from './StreamsToolbar';
+import StreamsToolbar from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
@@ -115,7 +115,7 @@ const StreamsTableView = ({
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const [activeRow, setActiveRow] = useState();
+  const [activeRow, setActiveRow] = useState<string>();
 
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const tableColumns = [

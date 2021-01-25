@@ -58,7 +58,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
-
+  const { t } = useTranslation();
   // Options for server-side filtering
   const mainFilterOptions = [
     { label: t('name'), value: 'name', disabled: false },
@@ -585,4 +585,4 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   );
 };
 
-export { StreamsToolbar };
+export default React.memo(StreamsToolbar);
