@@ -14,7 +14,7 @@ import {
   sortable,
   ISortBy,
   SortByDirection,
-  IExtraColumnData
+  IExtraColumnData,
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -92,11 +92,7 @@ export const getDeleteInstanceModalConfig = (
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_complete', { instanceName });
-  } else if (
-    status === InstanceStatus.ACCEPTED ||
-    status === InstanceStatus.PROVISIONING ||
-    status === InstanceStatus.READY
-  ) {
+  } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
@@ -446,7 +442,7 @@ const StreamsTableView = ({
     }
   };
 
-  const onSort = (_event: any, index: number, direction: string,extraData:IExtraColumnData) => {
+  const onSort = (_event: any, index: number, direction: string, extraData: IExtraColumnData) => {
     let myDirection = direction;
     if (getSortBy()?.index !== index && extraData.property === 'time-created') {
       // trick table to sort descending first for date column
