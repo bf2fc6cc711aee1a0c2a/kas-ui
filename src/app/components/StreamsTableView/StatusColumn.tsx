@@ -7,9 +7,10 @@ import { statusOptions } from '@app/utils/utils';
 
 type StatusColumnProps = {
   status: string;
+  instanceName: string;
 };
 
-const StatusColumn = ({ status }: StatusColumnProps) => {
+const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
   const { t } = useTranslation();
   const getStatus = () => {
     const filteredstatus = statusOptions.filter((st) => st.value === status?.toLowerCase());
@@ -30,7 +31,7 @@ const StatusColumn = ({ status }: StatusColumnProps) => {
         return <PendingIcon />;
       case statusOptions[3].value: // 'provisioning'
       case statusOptions[4].value: // 'preparing'
-        return <Spinner size={IconSize.md} />;
+        return <Spinner size={IconSize.md} aria-label={instanceName} aria-valuetext="Creation in progress" />;
       default:
         return <PendingIcon />;
     }

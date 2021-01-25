@@ -330,7 +330,7 @@ const StreamsTableView = ({
           regionDisplayName,
           owner,
           {
-            title: <StatusColumn status={status} />,
+            title: <StatusColumn status={status} instanceName={name} />,
           },
           {
             title: formatDate(created_at),
