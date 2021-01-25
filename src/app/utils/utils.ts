@@ -24,11 +24,9 @@ const cloudProviderOptions: KeyValueOptions[] = [
 ];
 
 const statusOptions: KeyValueOptions[] = [
-  { value: 'complete', label: 'Ready' }, //remove this in future
   { value: 'ready', label: 'Ready' },
   { value: 'failed', label: 'Failed' },
   { value: 'accepted', label: 'Creation pending' },
-  { value: 'resource_creating', label: 'Resource in creation' }, // remove this in future
   { value: 'provisioning', label: 'Creation in progress' },
   { value: 'preparing', label: 'Resource preparing' }, 
 ];
