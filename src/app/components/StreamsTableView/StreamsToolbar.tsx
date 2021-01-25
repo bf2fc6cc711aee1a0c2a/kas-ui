@@ -16,7 +16,7 @@ import {
   ToolbarChip,
   ValidatedOptions,
   Tooltip,
-  ToolbarFilter
+  ToolbarFilter,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
@@ -47,7 +47,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   page,
   perPage,
   filteredValue,
-  setFilteredValue
+  setFilteredValue,
 }) => {
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -78,9 +78,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     return { label: t(region.value), value: region.value, disabled: false };
   });
 
-  const statusFilterOptions = statusOptions.map((status) => {
-    return { label: t(status.value), value: status.value, disabled: false };
-  });
+  const statusFilterOptions = statusOptions
+    .filter((option) => option.value !== 'preparing')
+    .map((status) => {
+      return { label: t(status.value), value: status.value, disabled: false };
+    });
 
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);
@@ -115,23 +117,29 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const updateFilter = (key: string, filter: FilterValue, removeIfPresent: boolean) => {
     const newFilterValue: FilterType[] = Object.assign([], filteredValue); // a copy for applied filter
     const filterIndex = newFilterValue.findIndex((f) => f.filterKey === key); // index of current key in applied filter
-    if (filterIndex > -1) { // if filter is present with the current key
+    if (filterIndex > -1) {
+      // if filter is present with the current key
       const filterValue = newFilterValue[filterIndex];
-      if (filterValue.filterValue && filterValue.filterValue.length > 0) { // if some filters are already there in applied filter for same key
+      if (filterValue.filterValue && filterValue.filterValue.length > 0) {
+        // if some filters are already there in applied filter for same key
         const filterValueIndex = filterValue.filterValue.findIndex((f) => f.value === filter.value); // index of current filter value in applied filter
-        if (filterValueIndex > -1) { // filter value is already present
+        if (filterValueIndex > -1) {
+          // filter value is already present
           if (removeIfPresent) {
             filterValue.filterValue.splice(filterValueIndex, 1); // remove the value
           } else {
             return; // skip the duplicate values
           }
-        } else { // add the filter value to the current applied filter 
+        } else {
+          // add the filter value to the current applied filter
           newFilterValue[filterIndex].filterValue.push(filter);
         }
-      } else { // add the filter value to current applied filter 
+      } else {
+        // add the filter value to current applied filter
         newFilterValue[filterIndex].filterValue = [filter];
       }
-    } else { // add filter with key and value to the applied filter
+    } else {
+      // add filter with key and value to the applied filter
       newFilterValue.push({ filterKey: key, filterValue: [filter] });
     }
     setFilteredValue(newFilterValue);
@@ -251,16 +259,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip) => {
-    if (category !== 'region' && category !== 'cloud_provider') {
-      const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
-      const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
-      const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
-      const chipIndex = filterIndex >= 0 ? prevFilterValue.findIndex((val) => val.value === chip.toString()) : -1;
-      if (chipIndex >= 0) {
-        newFilteredValue[filterIndex].filterValue.splice(chipIndex, 1);
-        setFilteredValue(newFilteredValue);
-      }
+    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
+    const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
+    let filterChip: string | undefined = chip.toString();
+    if (category === 'status') {
+      filterChip = statusFilterOptions.find((option) => option.label === chip.toString())?.value;
+    } else if (category === 'region') {
+      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
+    } else if (category === 'cloud_provider') {
+      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
     }
+    const chipIndex = filterIndex >= 0 ? prevFilterValue.findIndex((val) => val.value === filterChip) : -1;
+    if (chipIndex >= 0) {
+      newFilteredValue[filterIndex].filterValue.splice(chipIndex, 1);
+    }
+    setFilteredValue(newFilteredValue);
   };
 
   const onDeleteChipGroup = (category: string) => {
