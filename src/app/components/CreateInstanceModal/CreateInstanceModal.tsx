@@ -31,6 +31,7 @@ import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
+  onCreate:()=>void;
   mainToggle: boolean;
   refresh: (operation: string) => void;
   cloudProviders: Array<CloudProvider>;
@@ -46,6 +47,7 @@ const emptyProvider: CloudProvider = {
 const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
+  onCreate,
   cloudProviders,
   refresh,
   mainToggle,
@@ -139,13 +141,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           accessToken,
           basePath,
         });
+        onCreate();
+        setCreateStreamsInstance(false);
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
-          handleModalToggle();
           refresh('create');
         });
       } catch (error) {
-        let reason;
+        let reason:string|undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }

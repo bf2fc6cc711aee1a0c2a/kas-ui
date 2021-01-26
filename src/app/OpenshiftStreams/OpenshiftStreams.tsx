@@ -202,22 +202,24 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const refreshKafkas = (value: string) => {
     //set the page to laoding state
     setKafkaDataLoaded(false);
-    if (value === 'create') {
-      /*
+    fetchKafkas();
+  };
+  const onCreate = () => {
+    setKafkaDataLoaded(false);
+    /*
         increase the expected total by 1
         as create operation will lead to adding a kafka in the list of response
       */
-      setExpectedTotal(kafkaInstancesList.total + 1);
-    } else if (value === 'delete') {
-      /*
+    setExpectedTotal(kafkaInstancesList.total + 1);
+  };
+  const onDelete = () => {
+    setKafkaDataLoaded(false);
+     /*
         decrease the expected total by 1
         as create operation will lead to removing a kafka in the list of response
       */
-      setExpectedTotal(kafkaInstancesList.total - 1);
-    }
-    fetchKafkas();
+    setExpectedTotal(kafkaInstancesList.total - 1);
   };
-
   return (
     <>
       <AlertProvider>
@@ -277,6 +279,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   onConnectToInstance={onConnectToInstance}
                   refresh={refreshKafkas}
                   kafkaDataLoaded={kafkaDataLoaded}
+                  onDelete={onDelete}
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   page={page}
@@ -297,6 +300,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               <CreateInstanceModal
                 createStreamsInstance={createStreamsInstance}
                 setCreateStreamsInstance={setCreateStreamsInstance}
+                onCreate={onCreate}
                 cloudProviders={cloudProviders}
                 mainToggle={mainToggle}
                 refresh={refreshKafkas}
