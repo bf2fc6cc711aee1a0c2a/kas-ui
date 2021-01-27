@@ -14,7 +14,7 @@ import {
   sortable,
   ISortBy,
   SortByDirection,
-  IExtraColumnData
+  IExtraColumnData,
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -443,7 +443,7 @@ const StreamsTableView = ({
     }
   };
 
-  const onSort = (_event: any, index: number, direction: string,extraData:IExtraColumnData) => {
+  const onSort = (_event: any, index: number, direction: string, extraData: IExtraColumnData) => {
     let myDirection = direction;
     if (getSortBy()?.index !== index && extraData.property === 'time-created') {
       // trick table to sort descending first for date column

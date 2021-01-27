@@ -28,7 +28,7 @@ const statusOptions: KeyValueOptions[] = [
   { value: 'failed', label: 'Failed' },
   { value: 'accepted', label: 'Creation pending' },
   { value: 'provisioning', label: 'Creation in progress' },
-  { value: 'preparing', label: 'Resource preparing' }, 
+  { value: 'preparing', label: 'Creation in progress' }, 
 ];
 
 const getCloudProviderDisplayName = (value: string) => {

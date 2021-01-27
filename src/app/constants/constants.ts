@@ -6,6 +6,6 @@ enum InstanceStatus{
   FAILED="failed"
 }
 
-export{
+export {
   InstanceStatus
 }
