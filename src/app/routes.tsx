@@ -6,6 +6,7 @@ import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
 import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';
+import { QuickStartCatalogPage } from '@cloudmosaic/quickstarts';
 
 let routeFocusTimer: number;
 
@@ -36,6 +37,12 @@ const routes: AppRouteConfig[] = [
     label: 'OpenShift Streams',
     path: '/',
     title: 'OpenShift Streams',
+  },
+  {
+    component: QuickStartCatalogPage,
+    exact: true,
+    path: '/quickstarts',
+    title: 'Quick Starts',
   },
 ];
 
