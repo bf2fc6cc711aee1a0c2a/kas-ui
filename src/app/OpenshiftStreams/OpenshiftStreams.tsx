@@ -193,7 +193,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     fetchKafkas();
   }, []);
 
-  useTimeout(fetchKafkas, 50000000);
+  useTimeout(fetchKafkas, 5000);
 
   const handleSwitchChange = (checked: boolean) => {
     setMainToggle(checked);
