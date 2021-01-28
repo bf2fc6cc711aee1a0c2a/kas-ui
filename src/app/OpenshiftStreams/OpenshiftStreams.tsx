@@ -8,7 +8,6 @@ import {
   LevelItem,
   PageSection,
   PageSectionVariants,
-  Switch,
   Title,
   AlertVariant,
 } from '@patternfly/react-core';
@@ -24,7 +23,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import { cloudProviderOptions, cloudRegionOptions } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
 export type OpenShiftStreamsProps = {
@@ -44,6 +43,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
+  const mainToggle = searchParams.has('user-testing');
 
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
@@ -54,7 +54,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
-  const [mainToggle, setMainToggle] = useState(false);
   const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
@@ -195,10 +194,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useTimeout(fetchKafkas, 5000);
 
-  const handleSwitchChange = (checked: boolean) => {
-    setMainToggle(checked);
-  };
-
   const refreshKafkas = (value: string) => {
     //set the page to laoding state
     setKafkaDataLoaded(false);
@@ -241,15 +236,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   <Title headingLevel="h1" size="lg">
                     {t('openshift_streams')}
                   </Title>
-                </LevelItem>
-                <LevelItem>
-                  <Switch
-                    id="simple-switch"
-                    label={t('mock_ui')}
-                    labelOff={t('currently_supported_ui')}
-                    isChecked={mainToggle}
-                    onChange={handleSwitchChange}
-                  />
                 </LevelItem>
               </Level>
             </PageSection>
