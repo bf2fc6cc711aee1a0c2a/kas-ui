@@ -287,4 +287,4 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   );
 };
 
-export default React.memo(InstanceDrawer);
+export { InstanceDrawer };
