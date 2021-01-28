@@ -27,14 +27,14 @@ import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
+import { useStoreContext } from '@app/context-state-reducer';
 
 export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  onCreate:()=>void;
+  onCreate: () => void;
   mainToggle: boolean;
   refresh: () => void;
-  cloudProviders: Array<CloudProvider>;
 };
 
 const emptyProvider: CloudProvider = {
@@ -48,11 +48,13 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   createStreamsInstance,
   setCreateStreamsInstance,
   onCreate,
-  cloudProviders,
   refresh,
   mainToggle,
 }: CreateInstanceModalProps) => {
   const { t } = useTranslation();
+  const { state } = useStoreContext();
+  const { cloudProviders } = state.openshift_state;
+
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = '';
@@ -148,7 +150,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh();
         });
       } catch (error) {
-        let reason:string|undefined;
+        let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }

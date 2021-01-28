@@ -24,31 +24,25 @@ import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './StreamsToolbar.css';
+import { useStoreContext, types } from '@app/context-state-reducer';
 
 type StreamsToolbarProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
-  filterSelected?: string;
-  setFilterSelected: (value: string) => void;
-  total: number;
   page: number;
   perPage: number;
-  filteredValue: Array<FilterType>;
-  setFilteredValue: (filteredValue: Array<FilterType>) => void;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   createStreamsInstance,
   setCreateStreamsInstance,
-  setFilterSelected,
-  filterSelected = 'name',
-  total,
   page,
   perPage,
-  filteredValue,
-  setFilteredValue,
 }) => {
+  const { state, dispatch } = useStoreContext();
+  const { kafkaInstancesList, filteredValue, filterSelected } = state.openshift_state;
+
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
   const [isRegionFilterExpanded, setIsRegionFilterExpanded] = useState(false);
@@ -110,6 +104,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     !isOwnerValid && setIsOwnerValid(true);
   };
 
+  const setFilteredValue = (value: FilterType[]) => {
+    dispatch({ type: types.UPDATE_FILTER_VALUES, payload: value });
+  };
   const onClear = () => {
     setFilteredValue([]);
   };
@@ -172,7 +169,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     selection: string | SelectOptionObject
   ) => {
     setIsFilterExpanded(!isFilterExpanded);
-    setFilterSelected(selection?.toString());
+    dispatch({ type: types.UPDATE_FILTER_SELECTED, payload: selection?.toString() });
+    // setFilterSelected(selection?.toString());
   };
 
   const onCloudProviderFilterSelect = (
@@ -338,8 +336,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   <Tooltip
                     content={
                       <div>
-                        Valid characters for name are lowercase letters from a to z, numbers from 0 to 9, underscore
-                        (_) hyphens (-) and percentage (%)
+                        Valid characters for name are lowercase letters from a to z, numbers from 0 to 9, underscore (_)
+                        hyphens (-) and percentage (%)
                       </div>
                     }
                     reference={nameInputRef}
@@ -494,7 +492,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
           <TablePagination
             widgetId="pagination-options-menu-top"
-            itemCount={total}
+            itemCount={kafkaInstancesList.total}
             page={page}
             perPage={perPage}
             isCompact={true}

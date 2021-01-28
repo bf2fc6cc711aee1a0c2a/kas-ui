@@ -12,9 +12,9 @@ import {
   AlertVariant,
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
-import { StreamsTableView, FilterType } from '../components/StreamsTableView/StreamsTableView';
+import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
 import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
+import { DefaultApi, KafkaRequest } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -24,6 +24,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 import './OpenshiftStreams.css';
+import { useStoreContext, types } from '@app/context-state-reducer';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -38,6 +39,16 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
+  const { state, dispatch } = useStoreContext();
+  const {
+    kafkaInstanceItems,
+    kafkaInstancesList,
+    cloudProviders,
+    expectedTotal,
+    filteredValue,
+    orderBy
+  } = state.openshift_state;
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
@@ -49,17 +60,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
-  const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
-  const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
-  const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
-  const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
-  const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
-  const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
-  const [filterSelected, setFilterSelected] = useState('name');
-  const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -120,12 +122,12 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
           .then((res) => {
             const kafkaInstances = res.data;
-            setKafkaInstancesList(kafkaInstances);
-            setKafkaInstanceItems(kafkaInstances.items);
+            dispatch({ type: types.UPDATE_KAFKA_INSTANCE_LIST, payload: kafkaInstances });
+            dispatch({ type: types.UPDATE_KAFKA_INSTANCE_ITEMS, payload: kafkaInstances.items });
             kafkaInstancesList?.total !== undefined &&
               kafkaInstancesList.total > expectedTotal &&
-              setExpectedTotal(kafkaInstancesList.total);
-            setKafkaDataLoaded(true);
+              dispatch({ type: types.UPDATE_EXPECTED_TOTAL, payload: kafkaInstances.total });
+            dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: true });
           });
         // only if we are not just polling the kafka
         if (!justPoll) {
@@ -152,33 +154,35 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   // Functions
   const fetchCloudProviders = async () => {
     const accessToken = await authContext?.getToken();
-    if (accessToken !== undefined && accessToken !== '') {
-      try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
-        await apisService.listCloudProviders().then((res) => {
-          const providers = res.data;
-          setCloudProviders(providers.items);
-        });
-      } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
+    if (cloudProviders.length < 1) {
+      if (accessToken !== undefined && accessToken !== '') {
+        try {
+          const apisService = new DefaultApi({
+            accessToken,
+            basePath,
+          });
+          await apisService.listCloudProviders().then((res) => {
+            const providers = res.data;
+            dispatch({ type: types.UPDATE_CLOUD_PROVIDERS, payload: providers.items });
+          });
+        } catch (error) {
+          let reason: string | undefined;
+          if (isServiceApiError(error)) {
+            reason = error.response?.data.reason;
+          }
+          /**
+           * Todo: show user friendly message according to server code
+           * and translation for specific language
+           *
+           */
+          addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
         }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };
 
   useEffect(() => {
-    setKafkaDataLoaded(false);
+    dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: false });
     fetchKafkas(true);
   }, [authContext, page, perPage, filteredValue, orderBy]);
 
@@ -191,25 +195,27 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   const refreshKafkas = () => {
     //set the page to laoding state
-    setKafkaDataLoaded(false);
-    fetchKafkas(false);
+    fetchKafkas(true);
   };
+
   const onCreate = () => {
-    setKafkaDataLoaded(false);
+    dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: false });
     /*
         increase the expected total by 1
         as create operation will lead to adding a kafka in the list of response
       */
-    setExpectedTotal(kafkaInstancesList.total + 1);
+    dispatch({ type: types.UPDATE_EXPECTED_TOTAL, payload: kafkaInstancesList.total + 1 });
   };
+
   const onDelete = () => {
-    setKafkaDataLoaded(false);
+    dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: false });
     /*
         decrease the expected total by 1
         as create operation will lead to removing a kafka in the list of response
       */
-    setExpectedTotal(kafkaInstancesList.total - 1);
+    dispatch({ type: types.UPDATE_EXPECTED_TOTAL, payload: kafkaInstancesList.total - 1 });
   };
+  
   return (
     <>
       <AlertProvider>
@@ -253,27 +259,16 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 padding={{ default: 'noPadding' }}
               >
                 <StreamsTableView
-                  kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
                   onViewConnection={onViewConnection}
                   onViewInstance={onViewInstance}
                   onConnectToInstance={onConnectToInstance}
                   refresh={refreshKafkas}
-                  kafkaDataLoaded={kafkaDataLoaded}
                   onDelete={onDelete}
                   createStreamsInstance={createStreamsInstance}
                   setCreateStreamsInstance={setCreateStreamsInstance}
                   page={page}
                   perPage={perPage}
-                  total={kafkaInstancesList?.total}
-                  expectedTotal={expectedTotal}
-                  filteredValue={filteredValue}
-                  setFilteredValue={setFilteredValue}
-                  setFilterSelected={setFilterSelected}
-                  filterSelected={filterSelected}
-                  // listOfOwners={listOfOwners}
-                  orderBy={orderBy}
-                  setOrderBy={setOrderBy}
                 />
               </PageSection>
             )}
@@ -281,7 +276,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               createStreamsInstance={createStreamsInstance}
               setCreateStreamsInstance={setCreateStreamsInstance}
               onCreate={onCreate}
-              cloudProviders={cloudProviders}
               mainToggle={mainToggle}
               refresh={refreshKafkas}
             />

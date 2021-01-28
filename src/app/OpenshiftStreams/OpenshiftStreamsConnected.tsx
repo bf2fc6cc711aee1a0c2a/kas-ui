@@ -3,6 +3,7 @@ import { KafkaRequest } from '../../openapi';
 import { OpenshiftStreams } from '@app/OpenshiftStreams/OpenshiftStreams';
 import { AlertProvider } from '@app/components/Alerts/Alerts';
 import { ApiContext } from '@app/api/ApiContext';
+import { StoreProvider, useStore, rootReducer } from '@app/context-state-reducer';
 
 declare const __BASE_PATH__: string;
 
@@ -14,14 +15,17 @@ const onConnectInstance = async (event: KafkaRequest) => {
 };
 
 export const OpenshiftStreamsConnected = () => {
+  const [store] = useStore(rootReducer);
   return (
-    <ApiContext.Provider value={
-      {
-        basePath: __BASE_PATH__
-      }
-    }>
+    <ApiContext.Provider
+      value={{
+        basePath: __BASE_PATH__,
+      }}
+    >
       <AlertProvider>
-        <OpenshiftStreams onConnectToInstance={onConnectInstance} />
+        <StoreProvider value={store}>
+          <OpenshiftStreams onConnectToInstance={onConnectInstance} />
+        </StoreProvider>
       </AlertProvider>
     </ApiContext.Provider>
   );

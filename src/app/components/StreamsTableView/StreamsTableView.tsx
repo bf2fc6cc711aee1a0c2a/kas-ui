@@ -39,6 +39,7 @@ import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
+import { useStoreContext, types } from '@app/context-state-reducer';
 
 export type FilterValue = {
   value: string;
@@ -52,7 +53,6 @@ export type FilterType = {
 export type TableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -60,16 +60,7 @@ export type TableProps = {
   refresh: () => void;
   page: number;
   perPage: number;
-  total: number;
-  kafkaDataLoaded: boolean;
-  onDelete:()=>void;
-  expectedTotal: number;
-  filteredValue: Array<FilterType>;
-  setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  filterSelected: string;
-  setFilterSelected: (filterSelected: string) => void;
-  orderBy: string;
-  setOrderBy: (order: string) => void;
+  onDelete: () => void;
 };
 
 type ConfigDetail = {
@@ -102,7 +93,6 @@ export const getDeleteInstanceModalConfig = (
 
 const StreamsTableView = ({
   mainToggle,
-  kafkaInstanceItems,
   onViewInstance,
   onViewConnection,
   onConnectToInstance,
@@ -111,18 +101,11 @@ const StreamsTableView = ({
   setCreateStreamsInstance,
   page,
   perPage,
-  total,
-  kafkaDataLoaded,
   onDelete,
-  expectedTotal,
-  filteredValue,
-  setFilteredValue,
-  setFilterSelected,
-  filterSelected,
-  orderBy,
-  setOrderBy,
 }: TableProps) => {
   const authContext = useContext(AuthContext);
+  const { state, dispatch } = useStoreContext();
+  const { kafkaInstanceItems, kafkaInstancesList, kafkaDataLoaded, expectedTotal, orderBy } = state.openshift_state;
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
@@ -188,7 +171,7 @@ const StreamsTableView = ({
       if there are no content for the particular page number and page size
     */
     if (page > 1) {
-      if (kafkaInstanceItems.length === 0) {
+      if (kafkaInstanceItems?.length === 0) {
         setSearchParam('page', (page - 1).toString());
         setSearchParam('perPage', perPage.toString());
         history.push({
@@ -448,7 +431,7 @@ const StreamsTableView = ({
       // https://github.com/patternfly/patternfly-react/issues/5329
       myDirection = 'desc';
     }
-    setOrderBy(`${getParameterForSortIndex(index)} ${myDirection}`);
+    dispatch({ type: types.UPDATE_ORDER_BY, payload: `${getParameterForSortIndex(index)} ${myDirection}` });
   };
 
   const getSortBy = (): ISortBy | undefined => {
@@ -468,13 +451,13 @@ const StreamsTableView = ({
         mainToggle={mainToggle}
         createStreamsInstance={createStreamsInstance}
         setCreateStreamsInstance={setCreateStreamsInstance}
-        filterSelected={filterSelected}
-        setFilterSelected={setFilterSelected}
-        total={total}
+        // filterSelected={filterSelected}
+        // setFilterSelected={setFilterSelected}
+        // total={total}
         page={page}
         perPage={perPage}
-        filteredValue={filteredValue}
-        setFilteredValue={setFilteredValue}
+        // filteredValue={filteredValue}
+        // setFilteredValue={setFilteredValue}
       />
       <Table
         cells={tableColumns}
@@ -498,7 +481,7 @@ const StreamsTableView = ({
       )}
       <TablePagination
         widgetId="pagination-options-menu-bottom"
-        itemCount={total}
+        itemCount={kafkaInstancesList.total}
         variant={PaginationVariant.bottom}
         page={page}
         perPage={perPage}
