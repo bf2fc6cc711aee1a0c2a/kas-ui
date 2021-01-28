@@ -235,7 +235,12 @@ const StreamsTableView = ({
     setItems(incompleteKafkas);
   }, [page, perPage, kafkaInstanceItems]);
 
-  const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
+  const onSelectKebabDropdownOption = (
+    event: any,
+    originalData: KafkaRequest,
+    selectedOption: string,
+    rowIndex: number | undefined
+  ) => {
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
     } else if (selectedOption === 'connect-instance') {
@@ -245,9 +250,11 @@ const StreamsTableView = ({
     }
     // Set focus back on previous selected element i.e. kebab button
     event?.target?.parentElement?.parentElement?.previousSibling?.focus();
+    setActiveRow(rowIndex);
   };
 
-  const getActionResolver = (rowData: IRowData) => {
+  const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
+    const { rowIndex } = extraData;
     if (!kafkaDataLoaded) {
       return [];
     }
@@ -272,18 +279,18 @@ const StreamsTableView = ({
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance', rowIndex),
       },
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
-        onClick: () => onViewConnection(originalData),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance', rowIndex),
       },
       {
         title: t('delete_instance'),
         id: 'delete-instance',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance', rowIndex),
         ...additionalProps,
       },
     ];
@@ -348,7 +355,7 @@ const StreamsTableView = ({
   };
 
   const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData);
+    return getActionResolver(rowData, _extraData);
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
@@ -473,8 +480,8 @@ const StreamsTableView = ({
     //Open modal on row click except kebab button click
     if (clickedEventType !== 'button') {
       onViewInstance(originalData);
+      setActiveRow(rowIndex);
     }
-    setActiveRow(rowIndex);
   };
 
   const customRowWrapper = ({ trRef, className, rowProps, row, ...props }) => {
