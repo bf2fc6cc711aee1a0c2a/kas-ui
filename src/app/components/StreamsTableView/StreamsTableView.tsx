@@ -63,6 +63,7 @@ export type TableProps = {
   perPage: number;
   total: number;
   kafkaDataLoaded: boolean;
+  onDelete:()=>void;
   expectedTotal: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
@@ -113,6 +114,7 @@ const StreamsTableView = ({
   perPage,
   total,
   kafkaDataLoaded,
+  onDelete,
   expectedTotal,
   filteredValue,
   setFilteredValue,
@@ -376,16 +378,15 @@ const StreamsTableView = ({
       accessToken,
       basePath,
     });
-
+    onDelete();
+    setIsDeleteModalOpen(false);
     try {
       await apisService.deleteKafkaById(instanceId).then(() => {
-        setIsDeleteModalOpen(false);
         addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
         refresh('delete');
       });
     } catch (error) {
-      setIsDeleteModalOpen(false);
-      let reason;
+      let reason: string | undefined;
       if (isServiceApiError(error)) {
         reason = error.response?.data.reason;
       }
