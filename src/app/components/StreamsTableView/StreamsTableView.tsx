@@ -484,7 +484,7 @@ const StreamsTableView = ({
       <tr
         {...props}
         ref={trRef}
-        className={css(className, 'pf-c-table-row__item m-selectable', activeRow === rowIndex && 'pf-m-selected')}
+        className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
         hidden={isExpanded !== undefined && !isExpanded}
         onClick={(event: any) => onRowClick(event, rowIndex, row)}
       />
@@ -506,6 +506,7 @@ const StreamsTableView = ({
         setFilteredValue={setFilteredValue}
       />
       <Table
+        className="mk--streams-table-view__table"
         cells={tableColumns}
         rows={preparedTableCells()}
         aria-label={t('cluster_instance_list')}
