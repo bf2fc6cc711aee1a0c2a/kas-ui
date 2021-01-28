@@ -33,7 +33,7 @@ export type CreateInstanceModalProps = {
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   onCreate:()=>void;
   mainToggle: boolean;
-  refresh: (operation: string) => void;
+  refresh: () => void;
   cloudProviders: Array<CloudProvider>;
 };
 
@@ -145,7 +145,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         setCreateStreamsInstance(false);
         await apisService.createKafka(true, kafkaFormData).then((res) => {
           // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
-          refresh('create');
+          refresh();
         });
       } catch (error) {
         let reason:string|undefined;

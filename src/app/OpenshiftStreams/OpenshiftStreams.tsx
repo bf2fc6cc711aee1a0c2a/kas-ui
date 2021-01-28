@@ -23,7 +23,6 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
-import { cloudProviderOptions, cloudRegionOptions } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
 export type OpenShiftStreamsProps = {
@@ -107,6 +106,41 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return filters.join(' or ');
   };
 
+  const pollKafkas = async () => {
+    const accessToken = await authContext?.getToken();
+    if (isValidToken(accessToken)) {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        !createStreamsInstance &&
+          (await apisService
+            .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
+            .then((res) => {
+              const kafkaInstances = res.data;
+              setKafkaInstancesList(kafkaInstances);
+              setKafkaInstanceItems(kafkaInstances.items);
+              kafkaInstancesList?.total !== undefined &&
+                kafkaInstancesList.total > expectedTotal &&
+                setExpectedTotal(kafkaInstancesList.total);
+              setKafkaDataLoaded(true);
+            }));
+      } catch (error) {
+        let reason: string | undefined;
+        if (isServiceApiError(error)) {
+          reason = error.response?.data.reason;
+        }
+        /**
+         * Todo: show user friendly message according to server code
+         * and translation for specific language
+         *
+         */
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      }
+    }
+  };
+
   // Functions
   const fetchKafkas = async () => {
     const accessToken = await authContext?.getToken();
@@ -129,16 +163,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             setKafkaDataLoaded(true);
           });
         // Check to see if at least 1 kafka is present
-        await apisService
-          .listKafkas(
-            page?.toString(),
-            perPage?.toString(),
-            orderBy && orderBy,
-            `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
-          )
-          .then((res) => {
-            setRawKafkaDataLength(res.data.items.length);
-          });
+        await apisService.listKafkas('1', '1').then((res) => {
+          setRawKafkaDataLength(res.data.items.length);
+        });
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -184,7 +211,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useEffect(() => {
     setKafkaDataLoaded(false);
-    fetchKafkas();
+    pollKafkas();
   }, [authContext, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
@@ -192,9 +219,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     fetchKafkas();
   }, []);
 
-  useTimeout(fetchKafkas, 5000);
+  useTimeout(pollKafkas, 5000);
 
-  const refreshKafkas = (value: string) => {
+  const refreshKafkas = () => {
     //set the page to laoding state
     setKafkaDataLoaded(false);
     fetchKafkas();
@@ -209,7 +236,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
   const onDelete = () => {
     setKafkaDataLoaded(false);
-     /*
+    /*
         decrease the expected total by 1
         as create operation will lead to removing a kafka in the list of response
       */
