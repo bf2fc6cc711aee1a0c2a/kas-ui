@@ -41,6 +41,7 @@ import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 import './StreamsTableView.css';
+import { css } from '@patternfly/react-styles';
 
 export type FilterValue = {
   value: string;
@@ -127,6 +128,8 @@ const StreamsTableView = ({
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
+  const [activeRow, setActiveRow] = useState();
+
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
     { title: t('cloud_provider'), transforms: [sortable] },
@@ -464,13 +467,28 @@ const StreamsTableView = ({
     return;
   };
 
-  const onRowClick = (event: any, row: IRowData) => {
+  const onRowClick = (event: any, rowIndex: number, row: IRowData) => {
     const { originalData } = row;
     const clickedEventType = event?.target?.type;
     //Open modal on row click except kebab button click
     if (clickedEventType !== 'button') {
       onViewInstance(originalData);
     }
+    setActiveRow(rowIndex);
+  };
+
+  const customRowWrapper = ({ trRef, className, rowProps, row, ...props }) => {
+    const { rowIndex } = rowProps;
+    const { isExpanded } = row;
+    return (
+      <tr
+        {...props}
+        ref={trRef}
+        className={css(className, 'pf-c-table-row__item m-selectable', activeRow === rowIndex && 'pf-m-selected')}
+        hidden={isExpanded !== undefined && !isExpanded}
+        onClick={(event: any) => onRowClick(event, rowIndex, row)}
+      />
+    );
   };
 
   return (
@@ -494,9 +512,10 @@ const StreamsTableView = ({
         actionResolver={actionResolver}
         onSort={onSort}
         sortBy={getSortBy()}
+        rowWrapper={customRowWrapper}
       >
         <TableHeader />
-        <TableBody onRowClick={onRowClick} />
+        <TableBody />
       </Table>
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <EmptyState variant={EmptyStateVariant.small}>

@@ -1,10 +1,62 @@
-.pf-c-table tr {
-  cursor: pointer;
-  outline-offset: var(--pf-c-data-list__item--m-selectable--OutlineOffset);
+.pf-c-table {
+  --pf-c-table-row__item--m-selected--ZIndex: var(--pf-global--ZIndex--xs);
+  --pf-c-table-row__item--m-selected--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+    var(--pf-global--BoxShadow--sm-bottom);
+  --pf-c-table-row__item--m-selectable--focus--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+    var(--pf-global--BoxShadow--sm-bottom);
+  --pf-c-table-row__item--m-selectable--hover--ZIndex: calc(var(--pf-c-table-row__item--m-selected--ZIndex) + 1);
+  --pf-c-table-row__item--before--BackgroundColor: transparent;
+  --pf-c-table-row__item--m-selected--before--BackgroundColor: var(--pf-global--active-color--100);
+  --pf-c-table-row__item--before--Top: 0;
+  --pf-c-table-row__item--before--Width: var(--pf-global--BorderWidth--lg);
+  --pf-c-table-row__item--before--Transition: var(--pf-global--Transition);
+  --pf-c-table-row__item--m-selectable--active--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+    var(--pf-global--BoxShadow--sm-bottom);
+  --pf-c-table-row__item--m-selectable--OutlineOffset: calc(-1 * var(--pf-global--spacer--xs));
+  --pf-c-table-row__item--m-selectable--hover--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+    var(--pf-global--BoxShadow--sm-bottom);
 }
 
-.pf-c-table tr:hover {
+.pf-c-table-row__item::before {
+  position: absolute;
+  top: var(--pf-c-table-row__item--before--Top);
+  bottom: 0;
+  width: var(--pf-c-table-row__item--before--Width);
+  content: '';
+  background-color: var(--pf-c-table-row__item--before--BackgroundColor);
+  transition: var(--pf-c-table-row__item--before--Transition);
+}
+
+.pf-c-table-row__item.pf-m-selected {
+  --pf-c-table-row__item--before--BackgroundColor: var(--pf-c-table-row__item--m-selected--before--BackgroundColor);
   position: relative;
-  z-index: calc(var(--pf-global--ZIndex--xs) + 1);
-  box-shadow: var(--pf-global--BoxShadow--sm-top), var(--pf-global--BoxShadow--sm-bottom);
+  z-index: var(--pf-c-table-row__item--m-selected--ZIndex);
+  box-shadow: var(--pf-c-table-row__item--m-selected--BoxShadow);
+}
+
+.pf-c-table-row__item.pf-m-selectable {
+  cursor: pointer;
+  outline-offset: var(--pf-c-table-row__item--m-selectable--OutlineOffset);
+}
+
+.pf-c-table-row__item {
+  position: relative;
+  cursor: pointer;
+  outline-offset: calc(-1 * var(--pf-global--spacer--xs));
+}
+
+.pf-c-table-row__item.pf-m-selectable:hover {
+  box-shadow: var(--pf-c-table-row__item--m-selectable--hover--BoxShadow);
+}
+.pf-c-table-row__item.pf-m-selectable:focus {
+  box-shadow: var(--pf-c-table-row__item--m-selectable--focus--BoxShadow);
+}
+.pf-c-table-row__item.pf-m-selectable:active {
+  box-shadow: var(--pf-c-table-row__item--m-selectable--active--BoxShadow);
+}
+
+.pf-c-table-row__item.pf-m-selectable:hover,
+.pf-c-table-row__item.pf-m-selectable:focus {
+  position: relative;
+  z-index: var(--pf-c-table-row__item--m-selectable--hover--ZIndex);
 }
