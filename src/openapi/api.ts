@@ -340,6 +340,12 @@ export interface KafkaRequest {
      * @memberof KafkaRequest
      */
     updated_at?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof KafkaRequest
+     */
+    failed_reason?: string;
 }
 /**
  * 
@@ -401,6 +407,12 @@ export interface KafkaRequestAllOf {
      * @memberof KafkaRequestAllOf
      */
     updated_at?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof KafkaRequestAllOf
+     */
+    failed_reason?: string;
 }
 /**
  * 
@@ -513,6 +525,57 @@ export interface List {
      * @memberof List
      */
     total: number;
+}
+/**
+ * 
+ * @export
+ * @interface Metric
+ */
+export interface Metric {
+    /**
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof Metric
+     */
+    metric?: { [key: string]: string; };
+    /**
+     * 
+     * @type {Array<Values>}
+     * @memberof Metric
+     */
+    values?: Array<Values>;
+}
+/**
+ * 
+ * @export
+ * @interface MetricsList
+ */
+export interface MetricsList extends MetricsListAllOf {
+}
+/**
+ * 
+ * @export
+ * @interface MetricsListAllOf
+ */
+export interface MetricsListAllOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof MetricsListAllOf
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MetricsListAllOf
+     */
+    id?: string;
+    /**
+     * 
+     * @type {Array<Metric>}
+     * @memberof MetricsListAllOf
+     */
+    items?: Array<Metric>;
 }
 /**
  * 
@@ -787,6 +850,25 @@ export interface ServiceAccountRequest {
      */
     description?: string;
 }
+/**
+ * 
+ * @export
+ * @interface Values
+ */
+export interface Values {
+    /**
+     * 
+     * @type {number}
+     * @memberof Values
+     */
+    Timestamp?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Values
+     */
+    Value: number;
+}
 
 /**
  * DefaultApi - axios parameter creator
@@ -903,13 +985,18 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * 
          * @summary Delete a kafka request by id
          * @param {string} id The id of record
+         * @param {boolean} async Perform the action in an asynchronous manner
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteKafkaById: async (id: string, options: any = {}): Promise<RequestArgs> => {
+        deleteKafkaById: async (id: string, async: boolean, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
                 throw new RequiredError('id','Required parameter id was null or undefined when calling deleteKafkaById.');
+            }
+            // verify required parameter 'async' is not null or undefined
+            if (async === null || async === undefined) {
+                throw new RequiredError('async','Required parameter async was null or undefined when calling deleteKafkaById.');
             }
             const localVarPath = `/api/managed-services-api/v1/kafkas/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
@@ -929,6 +1016,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                     ? configuration.accessToken()
                     : configuration.accessToken;
                 localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (async !== undefined) {
+                localVarQueryParameter['async'] = async;
             }
 
 
@@ -1019,6 +1110,74 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                     ? configuration.accessToken()
                     : configuration.accessToken;
                 localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get metrics by kafka id.
+         * @param {string} id The id of record
+         * @param {number} duration The length of time in minutes over which to return the metrics.
+         * @param {number} interval The interval in seconds between data points.
+         * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMetricsByKafkaId: async (id: string, duration: number, interval: number, filters?: Array<string>, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getMetricsByKafkaId.');
+            }
+            // verify required parameter 'duration' is not null or undefined
+            if (duration === null || duration === undefined) {
+                throw new RequiredError('duration','Required parameter duration was null or undefined when calling getMetricsByKafkaId.');
+            }
+            // verify required parameter 'interval' is not null or undefined
+            if (interval === null || interval === undefined) {
+                throw new RequiredError('interval','Required parameter interval was null or undefined when calling getMetricsByKafkaId.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/metrics`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (duration !== undefined) {
+                localVarQueryParameter['duration'] = duration;
+            }
+
+            if (interval !== undefined) {
+                localVarQueryParameter['interval'] = interval;
+            }
+
+            if (filters) {
+                localVarQueryParameter['filters'] = filters;
             }
 
 
@@ -1144,7 +1303,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
          * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
-         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
+         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: cloud_provider, name, owner, region and status. Allowed comparators are &#x60;&lt;&gt;&#x60;, &#x60;&#x3D;&#x60; or &#x60;LIKE&#x60;. Allowed joins are &#x60;AND&#x60; and &#x60;OR&#x60;, however there is a limit of max 10 joins in the search query.  Examples:  To retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  To retrieve kafka request with its name starting with &#x60;my&#x60;, the value should be:  &#x60;&#x60;&#x60; name like my%25 &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned.  Note. If the query is invalid, an error will be returned 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1323,11 +1482,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @summary Delete a kafka request by id
          * @param {string} id The id of record
+         * @param {boolean} async Perform the action in an asynchronous manner
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteKafkaById(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
-            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).deleteKafkaById(id, options);
+        async deleteKafkaById(id: string, async: boolean, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).deleteKafkaById(id, async, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1356,6 +1516,23 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async getKafkaById(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KafkaRequest>> {
             const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getKafkaById(id, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Get metrics by kafka id.
+         * @param {string} id The id of record
+         * @param {number} duration The length of time in minutes over which to return the metrics.
+         * @param {number} interval The interval in seconds between data points.
+         * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MetricsList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getMetricsByKafkaId(id, duration, interval, filters, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1398,7 +1575,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
          * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
-         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
+         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: cloud_provider, name, owner, region and status. Allowed comparators are &#x60;&lt;&gt;&#x60;, &#x60;&#x3D;&#x60; or &#x60;LIKE&#x60;. Allowed joins are &#x60;AND&#x60; and &#x60;OR&#x60;, however there is a limit of max 10 joins in the search query.  Examples:  To retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  To retrieve kafka request with its name starting with &#x60;my&#x60;, the value should be:  &#x60;&#x60;&#x60; name like my%25 &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned.  Note. If the query is invalid, an error will be returned 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1470,11 +1647,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @summary Delete a kafka request by id
          * @param {string} id The id of record
+         * @param {boolean} async Perform the action in an asynchronous manner
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteKafkaById(id: string, options?: any): AxiosPromise<Error> {
-            return DefaultApiFp(configuration).deleteKafkaById(id, options).then((request) => request(axios, basePath));
+        deleteKafkaById(id: string, async: boolean, options?: any): AxiosPromise<Error> {
+            return DefaultApiFp(configuration).deleteKafkaById(id, async, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1495,6 +1673,19 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getKafkaById(id: string, options?: any): AxiosPromise<KafkaRequest> {
             return DefaultApiFp(configuration).getKafkaById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get metrics by kafka id.
+         * @param {string} id The id of record
+         * @param {number} duration The length of time in minutes over which to return the metrics.
+         * @param {number} interval The interval in seconds between data points.
+         * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): AxiosPromise<MetricsList> {
+            return DefaultApiFp(configuration).getMetricsByKafkaId(id, duration, interval, filters, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1525,7 +1716,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {string} [page] Page index
          * @param {string} [size] Number of items in each page
          * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
-         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
+         * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: cloud_provider, name, owner, region and status. Allowed comparators are &#x60;&lt;&gt;&#x60;, &#x60;&#x3D;&#x60; or &#x60;LIKE&#x60;. Allowed joins are &#x60;AND&#x60; and &#x60;OR&#x60;, however there is a limit of max 10 joins in the search query.  Examples:  To retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  To retrieve kafka request with its name starting with &#x60;my&#x60;, the value should be:  &#x60;&#x60;&#x60; name like my%25 &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned.  Note. If the query is invalid, an error will be returned 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1585,11 +1776,12 @@ export interface DefaultApiInterface {
      * 
      * @summary Delete a kafka request by id
      * @param {string} id The id of record
+     * @param {boolean} async Perform the action in an asynchronous manner
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    deleteKafkaById(id: string, options?: any): AxiosPromise<Error>;
+    deleteKafkaById(id: string, async: boolean, options?: any): AxiosPromise<Error>;
 
     /**
      * 
@@ -1610,6 +1802,19 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     getKafkaById(id: string, options?: any): AxiosPromise<KafkaRequest>;
+
+    /**
+     * 
+     * @summary Get metrics by kafka id.
+     * @param {string} id The id of record
+     * @param {number} duration The length of time in minutes over which to return the metrics.
+     * @param {number} interval The interval in seconds between data points.
+     * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): AxiosPromise<MetricsList>;
 
     /**
      * 
@@ -1640,7 +1845,7 @@ export interface DefaultApiInterface {
      * @param {string} [page] Page index
      * @param {string} [size] Number of items in each page
      * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
-     * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
+     * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: cloud_provider, name, owner, region and status. Allowed comparators are &#x60;&lt;&gt;&#x60;, &#x60;&#x3D;&#x60; or &#x60;LIKE&#x60;. Allowed joins are &#x60;AND&#x60; and &#x60;OR&#x60;, however there is a limit of max 10 joins in the search query.  Examples:  To retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  To retrieve kafka request with its name starting with &#x60;my&#x60;, the value should be:  &#x60;&#x60;&#x60; name like my%25 &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned.  Note. If the query is invalid, an error will be returned 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
@@ -1704,12 +1909,13 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * 
      * @summary Delete a kafka request by id
      * @param {string} id The id of record
+     * @param {boolean} async Perform the action in an asynchronous manner
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public deleteKafkaById(id: string, options?: any) {
-        return DefaultApiFp(this.configuration).deleteKafkaById(id, options).then((request) => request(this.axios, this.basePath));
+    public deleteKafkaById(id: string, async: boolean, options?: any) {
+        return DefaultApiFp(this.configuration).deleteKafkaById(id, async, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1734,6 +1940,21 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public getKafkaById(id: string, options?: any) {
         return DefaultApiFp(this.configuration).getKafkaById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get metrics by kafka id.
+     * @param {string} id The id of record
+     * @param {number} duration The length of time in minutes over which to return the metrics.
+     * @param {number} interval The interval in seconds between data points.
+     * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any) {
+        return DefaultApiFp(this.configuration).getMetricsByKafkaId(id, duration, interval, filters, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1769,7 +1990,7 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * @param {string} [page] Page index
      * @param {string} [size] Number of items in each page
      * @param {string} [orderBy] Specifies the order by criteria. The syntax of this parameter is similar to the syntax of the _order by_ clause of an SQL statement. Each query can be ordered by any of the kafkaRequests fields. For example, in order to retrieve all kafkas ordered by their name:  &#x60;&#x60;&#x60;sql name asc &#x60;&#x60;&#x60;  Or in order to retrieve all kafkas ordered by their name _and_ created date:  &#x60;&#x60;&#x60;sql name asc, created_at asc &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then the results will be ordered by name.
-     * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: region, cloud_provider, multi_az, name, status. Allowed comparators are &#x60;&lt;&gt;&#x60; and &#x60;&#x3D;&#x60; For example, to retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned. Note. If the query is invalid, an error will be returned 
+     * @param {string} [search] Search criteria.  The syntax of this parameter is similar to the syntax of the _where_ clause of an SQL statement. Allowed fields in the search are: cloud_provider, name, owner, region and status. Allowed comparators are &#x60;&lt;&gt;&#x60;, &#x60;&#x3D;&#x60; or &#x60;LIKE&#x60;. Allowed joins are &#x60;AND&#x60; and &#x60;OR&#x60;, however there is a limit of max 10 joins in the search query.  Examples:  To retrieve kafka request with name equal &#x60;my-kafka&#x60; and region equal &#x60;aws&#x60;, the value should be:  &#x60;&#x60;&#x60; name &#x3D; my-kafka and cloud_provider &#x3D; aws &#x60;&#x60;&#x60;  To retrieve kafka request with its name starting with &#x60;my&#x60;, the value should be:  &#x60;&#x60;&#x60; name like my%25 &#x60;&#x60;&#x60;  If the parameter isn\&#39;t provided, or if the value is empty, then all the kafkas that the user has permission to see will be returned.  Note. If the query is invalid, an error will be returned 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
