@@ -28,7 +28,6 @@ import {
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { InstanceStatus } from '@app/constants';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
@@ -36,7 +35,7 @@ import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
-import { isServiceApiError } from '@app/utils/error';
+import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
