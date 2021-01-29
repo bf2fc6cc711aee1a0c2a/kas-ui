@@ -489,6 +489,7 @@ const StreamsTableView = ({
     const { isExpanded } = row;
     return (
       <tr
+        tabIndex="0"
         {...props}
         ref={trRef}
         className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
