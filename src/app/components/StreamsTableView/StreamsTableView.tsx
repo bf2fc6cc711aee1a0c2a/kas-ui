@@ -380,7 +380,7 @@ const StreamsTableView = ({
     onDelete();
     setIsDeleteModalOpen(false);
     try {
-      await apisService.deleteKafkaById(instanceId).then(() => {
+      await apisService.deleteKafkaById(instanceId,true).then(() => {
         addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
         refresh('delete');
       });
