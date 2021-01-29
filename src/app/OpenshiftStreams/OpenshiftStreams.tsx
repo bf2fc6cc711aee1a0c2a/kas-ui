@@ -194,7 +194,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useTimeout(fetchKafkas, 5000);
 
-  const refreshKafkas = (value: string) => {
+  const refreshKafkas = () => {
     //set the page to laoding state
     setKafkaDataLoaded(false);
     fetchKafkas();

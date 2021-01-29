@@ -16,6 +16,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerContentBody,
+  ToggleGroupItem,
 } from '@patternfly/react-core';
 import { FormDataValidationState, NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
@@ -31,7 +32,7 @@ import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  onCreate:()=>void;
+  onCreate: () => void;
   mainToggle: boolean;
   refresh: (operation: string) => void;
   cloudProviders: Array<CloudProvider>;
@@ -148,7 +149,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh('create');
         });
       } catch (error) {
-        let reason:string|undefined;
+        let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
@@ -208,8 +209,12 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         return;
     }
   };
-  const onChangeAvailabilty = (zone: string) => {
-    setKafkaFormData({ ...kafkaFormData, multi_az: zone === 'multi' });
+
+  const onChangeAvailabilty = (isSelected: boolean, event) => {
+    if (isSelected) {
+      const value = event.currentTarget.id;
+      setKafkaFormData({ ...kafkaFormData, multi_az: value === 'multi' });
+    }
   };
 
   const createInstanceForm = () => {
@@ -284,35 +289,21 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
           <ToggleGroup aria-label={t('availability_zone_selection')}>
-            {/*
-                  TODO: Currently using HTML version
-                  Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
-              */}
-            <div className="pf-c-toggle-group__item">
-              <button
-                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === false && 'pf-m-selected'}`}
-                type="button"
-                id="single"
-                disabled
-                onClick={() => {
-                  onChangeAvailabilty('single');
-                }}
-              >
-                <span className="pf-c-toggle-group__text"> {t('single')}</span>
-              </button>
-            </div>
-            <div className="pf-c-toggle-group__item">
-              <button
-                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === true && 'pf-m-selected'}`}
-                type="button"
-                onClick={() => {
-                  onChangeAvailabilty('multi');
-                }}
-                id="multi"
-              >
-                <span className="pf-c-toggle-group__text"> {t('multi')}</span>
-              </button>
-            </div>
+            <ToggleGroupItem
+              text={t('single')}
+              value={'single'}
+              isDisabled
+              buttonId="single"
+              isSelected={kafkaFormData.multi_az === false}
+              onChange={onChangeAvailabilty}
+            />
+            <ToggleGroupItem
+              text={t('multi')}
+              value="multi"
+              buttonId="multi"
+              isSelected={kafkaFormData.multi_az === true}
+              onChange={onChangeAvailabilty}
+            />
           </ToggleGroup>
         </FormGroup>
       </Form>
