@@ -106,43 +106,8 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return filters.join(' or ');
   };
 
-  const pollKafkas = async () => {
-    const accessToken = await authContext?.getToken();
-    if (isValidToken(accessToken)) {
-      try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
-        !createStreamsInstance &&
-          (await apisService
-            .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
-            .then((res) => {
-              const kafkaInstances = res.data;
-              setKafkaInstancesList(kafkaInstances);
-              setKafkaInstanceItems(kafkaInstances.items);
-              kafkaInstancesList?.total !== undefined &&
-                kafkaInstancesList.total > expectedTotal &&
-                setExpectedTotal(kafkaInstancesList.total);
-              setKafkaDataLoaded(true);
-            }));
-      } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-      }
-    }
-  };
-
   // Functions
-  const fetchKafkas = async () => {
+  const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
 
     if (isValidToken(accessToken)) {
@@ -162,10 +127,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               setExpectedTotal(kafkaInstancesList.total);
             setKafkaDataLoaded(true);
           });
-        // Check to see if at least 1 kafka is present
-        await apisService.listKafkas('1', '1').then((res) => {
-          setRawKafkaDataLength(res.data.items.length);
-        });
+        // only if we are not just polling the kafka
+        if (!justPoll) {
+          // Check to see if at least 1 kafka is present
+          await apisService.listKafkas('1', '1').then((res) => {
+            setRawKafkaDataLength(res.data.items.length);
+          });
+        }
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -211,20 +179,20 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useEffect(() => {
     setKafkaDataLoaded(false);
-    pollKafkas();
+    fetchKafkas(true);
   }, [authContext, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
-    fetchKafkas();
+    fetchKafkas(false);
   }, []);
 
-  useTimeout(pollKafkas, 5000);
+  useTimeout(() => fetchKafkas(true), 5000);
 
   const refreshKafkas = () => {
     //set the page to laoding state
     setKafkaDataLoaded(false);
-    fetchKafkas();
+    fetchKafkas(false);
   };
   const onCreate = () => {
     setKafkaDataLoaded(false);
