@@ -22,8 +22,9 @@ import { Loading } from '@app/components/Loading/Loading';
 import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError } from '@app/utils/error';
+import { isServiceApiError, ErrorCodes } from '@app/utils/error';
 import './OpenshiftStreams.css';
+import { UnAuthorizeUser } from '@app/components/UnAuthorizeUser';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -59,6 +60,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
+  const [isUserUnAuthorize, setIsUserUnAuthorize] = useState<boolean>(false);
 
   const drawerRef = React.createRef<any>();
 
@@ -106,6 +108,21 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return filters.join(' or ');
   };
 
+  const setServerError = (error: any) => {
+    let reason: string | undefined;
+    let errorCode: string | undefined;
+    if (isServiceApiError(error)) {
+      reason = error.response?.data.reason;
+      errorCode = error.response?.data?.code;
+    }
+    //check unauthorize user
+    if (errorCode === ErrorCodes.UNAUTHORIZE_USER) {
+      setIsUserUnAuthorize(true);
+    } else {
+      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    }
+  };
+
   // Functions
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
@@ -135,21 +152,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           });
         }
       } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        setServerError(error);
       }
     }
   };
 
-  // Functions
   const fetchCloudProviders = async () => {
     const accessToken = await authContext?.getToken();
     if (accessToken !== undefined && accessToken !== '') {
@@ -194,6 +201,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     setKafkaDataLoaded(false);
     fetchKafkas(false);
   };
+
   const onCreate = () => {
     setKafkaDataLoaded(false);
     /*
@@ -202,6 +210,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       */
     setExpectedTotal(kafkaInstancesList.total + 1);
   };
+
   const onDelete = () => {
     setKafkaDataLoaded(false);
     /*
@@ -210,6 +219,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       */
     setExpectedTotal(kafkaInstancesList.total - 1);
   };
+
+  /**
+   * Show UnAthorize page in case user is not authorize
+   */
+  if (isUserUnAuthorize) {
+    return <UnAuthorizeUser />;
+  }
+
   return (
     <>
       <AlertProvider>
