@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent, useContext, useEffect } from 'react';
+import React, { useState, FunctionComponent, useContext } from 'react';
 import {
   Alert,
   Bullseye,
@@ -9,7 +9,6 @@ import {
   EmptyStateIcon,
   EmptyStateBody,
   EmptyStateVariant,
-  Flex,
   FlexItem,
   Form,
   FormGroup,
@@ -18,13 +17,8 @@ import {
   InputGroup,
   InputGroupText,
   TextInput,
-  PageSection,
-  PageSectionVariants,
   Popover,
   Radio,
-  Select,
-  SelectOption,
-  SelectVariant,
   Split,
   SplitItem,
   Switch,
@@ -135,7 +129,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
     setStepNo(1);
   };
 
-  const onMove = (curr, prev) => {
+  const onMove = (curr, _prev) => {
     setStepNo(curr.id);
   };
 
@@ -143,7 +137,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
     setCredentialNameInput(credentialNameInput);
   };
 
-  const handleChangeStep1 = (checked, event) => {
+  const handleChangeStep1 = (_checked, event) => {
     setRadio1Step1(false);
     setRadio2Step1(false);
     setRadio3Step1(false);
@@ -188,7 +182,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
     setConsumerAccessInput(consumerAccessInput);
   };
 
-  const handleChangeStep4 = (checked, event) => {
+  const handleChangeStep4 = (_checked, event) => {
     setRadio1Step4(false);
     setRadio2Step4(false);
     setRadio3Step4(false);

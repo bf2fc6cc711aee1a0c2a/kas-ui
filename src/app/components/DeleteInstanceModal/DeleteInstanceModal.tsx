@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Modal, Button, ButtonVariant, ModalVariant, ModalProps, TextInput, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { InstanceStatus } from '@app/constants';
+import { InstanceStatus } from '@app/utils';
 import './DeleteInstanceModal.css';
 import { KafkaRequest } from 'src/openapi';
 
