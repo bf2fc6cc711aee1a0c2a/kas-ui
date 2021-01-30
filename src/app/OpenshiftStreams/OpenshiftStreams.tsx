@@ -209,7 +209,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
   const onDelete = () => {
     setKafkaDataLoaded(false);
-     /*
+    /*
         decrease the expected total by 1
         as create operation will lead to removing a kafka in the list of response
       */
@@ -282,16 +282,14 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                 />
               </PageSection>
             )}
-            {createStreamsInstance && (
-              <CreateInstanceModal
-                createStreamsInstance={createStreamsInstance}
-                setCreateStreamsInstance={setCreateStreamsInstance}
-                onCreate={onCreate}
-                cloudProviders={cloudProviders}
-                mainToggle={mainToggle}
-                refresh={refreshKafkas}
-              />
-            )}
+            <CreateInstanceModal
+              createStreamsInstance={createStreamsInstance}
+              setCreateStreamsInstance={setCreateStreamsInstance}
+              onCreate={onCreate}
+              cloudProviders={cloudProviders}
+              mainToggle={mainToggle}
+              refresh={refreshKafkas}
+            />
           </DrawerContent>
         </Drawer>
       </AlertProvider>
