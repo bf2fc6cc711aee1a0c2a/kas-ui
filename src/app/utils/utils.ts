@@ -12,6 +12,14 @@ type KeyValueOptions = {
   label: string;
 };
 
+enum InstanceStatus{
+  READY="ready",
+  ACCEPTED="accepted",
+  PREPARING="preparing",
+  PROVISIONING="provisioning",
+  FAILED="failed"
+}
+
 const cloudProviderOptions: KeyValueOptions[] = [
   { value: 'aws', label: 'Amazon Web Services' },
   // Only aws is supported for now
@@ -28,7 +36,7 @@ const statusOptions: KeyValueOptions[] = [
   { value: 'failed', label: 'Failed' },
   { value: 'accepted', label: 'Creation pending' },
   { value: 'provisioning', label: 'Creation in progress' },
-  { value: 'preparing', label: 'Resource preparing' }, 
+  { value: 'preparing', label: 'Creation in progress' }, 
 ];
 
 const getCloudProviderDisplayName = (value: string) => {
@@ -72,4 +80,5 @@ export {
   getCloudRegionDisplayName,
   capitalize,
   statusOptions,
+  InstanceStatus
 };

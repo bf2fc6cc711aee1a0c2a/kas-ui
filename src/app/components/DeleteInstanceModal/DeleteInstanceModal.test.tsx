@@ -4,7 +4,7 @@ import { DeleteInstanceModal, DeleteInstanceModalProps } from './DeleteInstanceM
 import { render, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from 'src/openapi';
-import { InstanceStatus } from '@app/constants';
+import { InstanceStatus } from '@app/utils';
 import { ModalVariant } from '@patternfly/react-core';
 
 jest.mock('react-i18next', () => {

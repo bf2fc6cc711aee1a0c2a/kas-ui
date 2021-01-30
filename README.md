@@ -97,3 +97,7 @@ BASE_PATH=http://localhost:8000 npm run start:dev # start the UI
 ```
 npm run api:generate
 ```
+
+## User testing URL
+
+To view the "mock" UI for user testing, add this query param: `/?user-testing` e.g. `https://prod.foo.redhat.com:1337/?user-testing` 
