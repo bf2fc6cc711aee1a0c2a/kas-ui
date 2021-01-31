@@ -11,16 +11,19 @@ import {
   Title,
   AlertVariant,
 } from '@patternfly/react-core';
-import { EmptyState } from '../components/EmptyState/EmptyState';
-import { StreamsTableView, FilterType } from '../components/StreamsTableView/StreamsTableView';
-import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
+import {
+  EmptyState,
+  StreamsTableView,
+  FilterType,
+  CreateInstanceModal,
+  AlertProvider,
+  Loading,
+  useAlerts,
+} from '@app/components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
-import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
-import { Loading } from '@app/components/Loading/Loading';
 import { ApiContext } from '@app/api/ApiContext';
-import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 import { cloudProviderOptions, cloudRegionOptions } from '@app/utils/utils';
@@ -133,7 +136,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           .listKafkas(
             page?.toString(),
             perPage?.toString(),
-            orderBy && orderBy,
+            orderBy,
             `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
           )
           .then((res) => {
@@ -209,7 +212,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
   const onDelete = () => {
     setKafkaDataLoaded(false);
-     /*
+    /*
         decrease the expected total by 1
         as create operation will lead to removing a kafka in the list of response
       */
@@ -246,9 +249,17 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
               <PageSection>
                 <EmptyState
-                  createStreamsInstance={createStreamsInstance}
-                  setCreateStreamsInstance={setCreateStreamsInstance}
-                  mainToggle={mainToggle}
+                  titleProps={{
+                    title: t('you_do_not_have_any_kafka_instances_yet'),
+                    headingLevel: 'h4',
+                  }}
+                  emptyStateBodyProps={{
+                    body: t('create_a_kafka_instance_to_get_started'),
+                  }}
+                  buttonProps={{
+                    title: t('create_a_kafka_instance'),
+                    onClick: () => setCreateStreamsInstance(!createStreamsInstance),
+                  }}
                 />
               </PageSection>
             ) : (

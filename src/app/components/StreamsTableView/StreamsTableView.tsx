@@ -16,21 +16,11 @@ import {
   SortByDirection,
   IExtraColumnData,
 } from '@patternfly/react-table';
-import {
-  AlertVariant,
-  PaginationVariant,
-  Skeleton,
-  EmptyState,
-  EmptyStateBody,
-  Title,
-  EmptyStateIcon,
-  EmptyStateVariant,
-} from '@patternfly/react-core';
+import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
+import { useAlerts, EmptyState } from '@app/components';
 import { TablePagination } from './TablePagination';
-import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
@@ -39,6 +29,7 @@ import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
+import { DeleteInstanceModalContainer } from '@app/containers';
 
 export type FilterValue = {
   value: string;
@@ -62,7 +53,7 @@ export type TableProps = {
   perPage: number;
   total: number;
   kafkaDataLoaded: boolean;
-  onDelete:()=>void;
+  onDelete: () => void;
   expectedTotal: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
@@ -380,7 +371,7 @@ const StreamsTableView = ({
     onDelete();
     setIsDeleteModalOpen(false);
     try {
-      await apisService.deleteKafkaById(instanceId,true).then(() => {
+      await apisService.deleteKafkaById(instanceId, true).then(() => {
         addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
         refresh('delete');
       });
@@ -489,13 +480,22 @@ const StreamsTableView = ({
         <TableBody />
       </Table>
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
-        <EmptyState variant={EmptyStateVariant.small}>
-          <EmptyStateIcon icon={SearchIcon} />
-          <Title headingLevel="h2" size="lg">
-            {t('no_results_found')}
-          </Title>
-          <EmptyStateBody>{t('no_results_match_the_filter_criteria')}</EmptyStateBody>
-        </EmptyState>
+        <EmptyState
+          emptyStateProps={{
+            variant: EmptyStateVariant.full,
+          }}
+          emptyStateIconProps={{
+            icon: SearchIcon,
+          }}
+          titleProps={{
+            title: t('you_do_not_have_any_kafka_instances_yet'),
+            headingLevel: 'h2',
+            size: TitleSizes.lg,
+          }}
+          emptyStateBodyProps={{
+            body: t('no_results_match_the_filter_criteria'),
+          }}
+        />
       )}
       <TablePagination
         widgetId="pagination-options-menu-bottom"
@@ -505,18 +505,22 @@ const StreamsTableView = ({
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
-      {isDeleteModalOpen && (
-        <DeleteInstanceModal
-          title={title}
-          selectedInstance={selectedInstance}
-          isModalOpen={isDeleteModalOpen}
-          instanceStatus={selectedInstance?.status}
-          setIsModalOpen={setIsDeleteModalOpen}
-          onConfirm={onDeleteInstance}
-          description={description}
-          confirmActionLabel={confirmActionLabel}
-        />
-      )}
+      <DeleteInstanceModalContainer
+        isModalOpen={isDeleteModalOpen}
+        instanceStatus={selectedInstance?.status}
+        selectedItemData={selectedInstance}
+        handleModalToggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
+        modalProps={{
+          title,
+        }}
+        confirmButtonProps={{
+          onClick: onDeleteInstance,
+          label: confirmActionLabel,
+        }}
+        textProps={{
+          description,
+        }}
+      />
     </>
   );
 };

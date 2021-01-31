@@ -1,33 +1,59 @@
 import React from 'react';
-import { Title, Button, EmptyState as PFEmptyState, EmptyStateIcon, EmptyStateBody } from '@patternfly/react-core';
+import {
+  Title,
+  Button,
+  EmptyState as PFEmptyState,
+  EmptyStateIcon,
+  EmptyStateBody,
+  TitleSizes,
+  TitleProps,
+  ButtonProps,
+  EmptyStateIconProps,
+  EmptyStateProps as PFEmptyStateProps,
+  EmptyStateBodyProps,
+  ButtonVariant,
+} from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 
-type EmptyStateProps = {
-  createStreamsInstance: boolean;
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  mainToggle: boolean;
+export type EmptyStateProps = {
+  titleProps: Omit<TitleProps, 'children'>;
+  emptyStateProps?: Omit<PFEmptyStateProps, 'children'>;
+  emptyStateIconProps?: EmptyStateIconProps;
+  emptyStateBodyProps?: Omit<EmptyStateBodyProps, 'children'> & {
+    body?: string | React.ReactNode;
+  };
+  buttonProps?: Omit<ButtonProps, 'children'> & {
+    title?: string;
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  };
 };
 
-const EmptyState: React.FC<EmptyStateProps> = ({ createStreamsInstance, setCreateStreamsInstance }) => {
-  const { t } = useTranslation();
-  const onCreate = () => {
-    setCreateStreamsInstance(!createStreamsInstance);
-  };
+export const EmptyState: React.FC<EmptyStateProps> = ({
+  titleProps,
+  buttonProps,
+  emptyStateIconProps,
+  emptyStateProps,
+  emptyStateBodyProps,
+}: EmptyStateProps) => {
+  const { variant = ButtonVariant.primary, onClick, ...restButton } = buttonProps || {};
+  const { icon = PlusCircleIcon, ...restEmptyStateIcon } = emptyStateIconProps || {};
+  const { title, size = TitleSizes.lg, headingLevel, ...restTitle } = titleProps || {};
+  const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
+
   return (
     <>
-      <PFEmptyState>
-        <EmptyStateIcon icon={PlusCircleIcon} />
-        <Title headingLevel="h4" size="lg">
-          {t('you_do_not_have_any_kafka_instances_yet')}
+      <PFEmptyState {...emptyStateProps}>
+        <EmptyStateIcon icon={icon} {...restEmptyStateIcon} />
+        <Title headingLevel={headingLevel} size={size} {...restTitle}>
+          {title}
         </Title>
-        <EmptyStateBody>{t('create_a_kafka_instance_to_get_started')}</EmptyStateBody>
-        <Button variant="primary" onClick={onCreate}>
-          {t('create_a_kafka_instance')}
-        </Button>
+        <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>
+        {buttonProps?.title && (
+          <Button variant={variant} onClick={onClick} {...restButton}>
+            {buttonProps?.title}
+          </Button>
+        )}
       </PFEmptyState>
     </>
   );
 };
-
-export { EmptyState };
