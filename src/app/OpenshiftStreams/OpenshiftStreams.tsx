@@ -24,7 +24,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils/error';
 import './OpenshiftStreams.css';
-import { UnAuthorizeUser } from '@app/components/UnAuthorizeUser';
+import { UnAuthorizeUser } from '@app/components';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -224,7 +224,17 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
    * Show UnAthorize page in case user is not authorize
    */
   if (isUserUnAuthorize) {
-    return <UnAuthorizeUser />;
+    return (
+      <UnAuthorizeUser
+        pageTitles={{
+          title: t('openshift_streams'),
+        }}
+        emptyStateTitles={{
+          title: t('you_do_not_have_access_of_openshift_streams'),
+          body: t('contact_your_organization_administration_for_more_information'),
+        }}
+      />
+    );
   }
 
   return (

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   EmptyState,
   EmptyStateBody,
@@ -13,29 +12,53 @@ import {
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
 
-const UnAuthorizeUser = () => {
-  const { t } = useTranslation();
+export type Size = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
+export type UnAuthorizeUserProps = {
+  pageTitles?: {
+    variant?: PageSectionVariants;
+    headingLevel?: HeadingLevel;
+    size?: Size;
+    title?: string;
+  };
+  emptyStateTitles?: {
+    variant?: EmptyStateVariant;
+    icon?: React.ComponentType<any>;
+    headingLevel?: HeadingLevel;
+    size?: Size;
+    title?: string;
+    body?: string;
+  };
+  children?: React.ReactNode;
+};
+
+export const UnAuthorizeUser: React.FC<UnAuthorizeUserProps> = ({
+  pageTitles,
+  emptyStateTitles,
+  children,
+}: UnAuthorizeUserProps) => {
   return (
     <>
-      <PageSection variant={PageSectionVariants.light}>
+      <PageSection variant={pageTitles?.variant || PageSectionVariants.light}>
         <Level>
           <LevelItem>
-            <Title headingLevel="h1" size="lg">
-              {t('openshift_streams')}
+            <Title headingLevel={pageTitles?.headingLevel || 'h1'} size={pageTitles?.size || 'lg'}>
+              {pageTitles?.title}
             </Title>
           </LevelItem>
         </Level>
       </PageSection>
-      <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateIcon icon={LockIcon} />
-        <Title headingLevel="h2" size="lg">
-          {t('you_do_not_have_access_of_openshift_streams')}
+      <EmptyState variant={emptyStateTitles?.variant || EmptyStateVariant.full}>
+        <EmptyStateIcon icon={emptyStateTitles?.icon || LockIcon} />
+        <Title headingLevel={emptyStateTitles?.headingLevel || 'h2'} size={emptyStateTitles?.size || 'lg'}>
+          {emptyStateTitles?.title}
         </Title>
-        <EmptyStateBody>{t('contact_your_organization_administration_for_more_information')}</EmptyStateBody>
+        <EmptyStateBody>
+          {emptyStateTitles?.body}
+          {children}
+        </EmptyStateBody>
       </EmptyState>
     </>
   );
 };
-
-export { UnAuthorizeUser };
