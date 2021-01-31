@@ -35,21 +35,21 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   emptyStateProps,
   emptyStateBodyProps,
 }: EmptyStateProps) => {
-  const { variant = ButtonVariant.primary, onClick, ...restButton } = buttonProps || {};
-  const { icon = PlusCircleIcon, ...restEmptyStateIcon } = emptyStateIconProps || {};
-  const { title, size = TitleSizes.lg, headingLevel, ...restTitle } = titleProps || {};
+  const { variant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
+  const { icon = PlusCircleIcon, ...restEmptyStateIconProps } = emptyStateIconProps || {};
+  const { title, size = TitleSizes.lg, headingLevel, ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
 
   return (
     <>
       <PFEmptyState {...emptyStateProps}>
-        <EmptyStateIcon icon={icon} {...restEmptyStateIcon} />
-        <Title headingLevel={headingLevel} size={size} {...restTitle}>
+        <EmptyStateIcon icon={icon} {...restEmptyStateIconProps} />
+        <Title headingLevel={headingLevel} size={size} {...restTitleProps}>
           {title}
         </Title>
         <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>
         {buttonProps?.title && (
-          <Button variant={variant} onClick={onClick} {...restButton}>
+          <Button variant={variant} onClick={onClick} {...restButtonProps}>
             {buttonProps?.title}
           </Button>
         )}
