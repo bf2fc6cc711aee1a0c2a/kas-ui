@@ -286,7 +286,6 @@ const StreamsTableView = ({
     ];
     return resolver;
   };
-
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount();
@@ -332,7 +331,7 @@ const StreamsTableView = ({
           regionDisplayName,
           owner,
           {
-            title: <StatusColumn status={status} />,
+            title: <StatusColumn status={status} instanceName={name} />,
           },
           {
             title: formatDate(created_at),
@@ -505,18 +504,16 @@ const StreamsTableView = ({
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
-      {isDeleteModalOpen && (
-        <DeleteInstanceModal
-          title={title}
-          selectedInstance={selectedInstance}
-          isModalOpen={isDeleteModalOpen}
-          instanceStatus={selectedInstance?.status}
-          setIsModalOpen={setIsDeleteModalOpen}
-          onConfirm={onDeleteInstance}
-          description={description}
-          confirmActionLabel={confirmActionLabel}
-        />
-      )}
+      <DeleteInstanceModal
+        title={title}
+        selectedInstance={selectedInstance}
+        isModalOpen={isDeleteModalOpen}
+        instanceStatus={selectedInstance?.status}
+        setIsModalOpen={setIsDeleteModalOpen}
+        onConfirm={onDeleteInstance}
+        description={description}
+        confirmActionLabel={confirmActionLabel}
+      />
     </>
   );
 };
