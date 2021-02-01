@@ -23,7 +23,6 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
-import { cloudProviderOptions, cloudRegionOptions } from '@app/utils/utils';
 import './OpenshiftStreams.css';
 
 export type OpenShiftStreamsProps = {
@@ -108,7 +107,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   // Functions
-  const fetchKafkas = async () => {
+  const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
 
     if (isValidToken(accessToken)) {
@@ -128,17 +127,13 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               setExpectedTotal(kafkaInstancesList.total);
             setKafkaDataLoaded(true);
           });
-        // Check to see if at least 1 kafka is present
-        await apisService
-          .listKafkas(
-            page?.toString(),
-            perPage?.toString(),
-            orderBy && orderBy,
-            `region = ${cloudRegionOptions[0].value} and cloud_provider = ${cloudProviderOptions[0].value}`
-          )
-          .then((res) => {
+        // only if we are not just polling the kafka
+        if (!justPoll) {
+          // Check to see if at least 1 kafka is present
+          await apisService.listKafkas('1', '1').then((res) => {
             setRawKafkaDataLength(res.data.items.length);
           });
+        }
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -184,20 +179,20 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
 
   useEffect(() => {
     setKafkaDataLoaded(false);
-    fetchKafkas();
+    fetchKafkas(true);
   }, [authContext, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
-    fetchKafkas();
+    fetchKafkas(false);
   }, []);
 
-  useTimeout(fetchKafkas, 5000);
+  useTimeout(() => fetchKafkas(true), 5000);
 
-  const refreshKafkas = (value: string) => {
+  const refreshKafkas = () => {
     //set the page to laoding state
     setKafkaDataLoaded(false);
-    fetchKafkas();
+    fetchKafkas(false);
   };
   const onCreate = () => {
     setKafkaDataLoaded(false);
