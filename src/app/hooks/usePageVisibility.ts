@@ -37,5 +37,5 @@ export function usePageVisibility() {
       document.removeEventListener(visibilityChange, onVisibilityChange);
     };
   });
-  return isVisible;
+  return {isVisible,setIsVisible};
 }

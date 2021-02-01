@@ -33,7 +33,7 @@ type SelectedInstance = {
 const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const isVisible = usePageVisibility();
+  const {isVisible} = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
