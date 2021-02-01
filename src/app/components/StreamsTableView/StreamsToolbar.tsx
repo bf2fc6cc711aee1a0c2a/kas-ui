@@ -19,7 +19,7 @@ import {
   ToolbarFilter,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
-import { TablePagination } from './TablePagination';
+import { Pagination } from '@app/sharedComponents';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
@@ -490,13 +490,20 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           </Button>
         </ToolbarItem>
         <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
-          <TablePagination
+          <Pagination
             widgetId="pagination-options-menu-top"
             itemCount={kafkaInstancesList.total}
             page={page}
             perPage={perPage}
             isCompact={true}
             paginationTitle={t('minimal_pagination')}
+            perPageSuffix={t('per_page_suffix')}
+            toFirstPage={t('to_first_page')}
+            toPreviousPage={t('to_previous_page')}
+            toLastPage={t('to_last_page')}
+            toNextPage={t('to_next_page')}
+            optionsToggle={t('options_toggle')}
+            currPage={t('curr_page')}
           />
         </ToolbarItem>
       </ToolbarContent>

@@ -7,9 +7,6 @@ import {
   IExtraData,
   IRowData,
   ISeparator,
-  Table,
-  TableBody,
-  TableHeader,
   IRowCell,
   sortable,
   ISortBy,
@@ -26,10 +23,10 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
 } from '@patternfly/react-core';
+import { Pagination,Table } from '@app/sharedComponents';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
-import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -451,13 +448,8 @@ const StreamsTableView = ({
         mainToggle={mainToggle}
         createStreamsInstance={createStreamsInstance}
         setCreateStreamsInstance={setCreateStreamsInstance}
-        // filterSelected={filterSelected}
-        // setFilterSelected={setFilterSelected}
-        // total={total}
         page={page}
         perPage={perPage}
-        // filteredValue={filteredValue}
-        // setFilteredValue={setFilteredValue}
       />
       <Table
         cells={tableColumns}
@@ -466,10 +458,7 @@ const StreamsTableView = ({
         actionResolver={actionResolver}
         onSort={onSort}
         sortBy={getSortBy()}
-      >
-        <TableHeader />
-        <TableBody />
-      </Table>
+      />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <EmptyState variant={EmptyStateVariant.small}>
           <EmptyStateIcon icon={SearchIcon} />
@@ -479,13 +468,20 @@ const StreamsTableView = ({
           <EmptyStateBody>{t('no_results_match_the_filter_criteria')}</EmptyStateBody>
         </EmptyState>
       )}
-      <TablePagination
+      <Pagination
         widgetId="pagination-options-menu-bottom"
         itemCount={kafkaInstancesList.total}
         variant={PaginationVariant.bottom}
         page={page}
         perPage={perPage}
         paginationTitle={t('full_pagination')}
+        perPageSuffix={t('per_page_suffix')}
+        toFirstPage={t('to_first_page')}
+        toPreviousPage={t('to_previous_page')}
+        toLastPage={t('to_last_page')}
+        toNextPage={t('to_next_page')}
+        optionsToggle={t('options_toggle')}
+        currPage={t('curr_page')}
       />
       <DeleteInstanceModal
         title={title}
