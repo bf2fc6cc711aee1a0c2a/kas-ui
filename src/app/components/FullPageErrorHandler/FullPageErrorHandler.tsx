@@ -15,7 +15,7 @@ import { LockIcon } from '@patternfly/react-icons';
 export type Size = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
-export type UnAuthorizeUserProps = {
+export type FullPageErrorHandlerProps = {
   pageTitles?: {
     variant?: PageSectionVariants;
     headingLevel?: HeadingLevel;
@@ -33,11 +33,11 @@ export type UnAuthorizeUserProps = {
   children?: React.ReactNode;
 };
 
-export const UnAuthorizeUser: React.FC<UnAuthorizeUserProps> = ({
+export const FullPageErrorHandler: React.FC<FullPageErrorHandlerProps> = ({
   pageTitles,
   emptyStateTitles,
   children,
-}: UnAuthorizeUserProps) => {
+}: FullPageErrorHandlerProps) => {
   return (
     <>
       <PageSection variant={pageTitles?.variant || PageSectionVariants.light}>

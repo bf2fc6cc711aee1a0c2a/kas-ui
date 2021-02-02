@@ -24,7 +24,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils/error';
 import './OpenshiftStreams.css';
-import { UnAuthorizeUser } from '@app/components';
+import { FullPageErrorHandler } from '@app/components';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -60,7 +60,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const [isUserUnAuthorize, setIsUserUnAuthorize] = useState<boolean>(false);
+  const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
   const drawerRef = React.createRef<any>();
 
@@ -117,7 +117,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     }
     //check unauthorize user
     if (errorCode === ErrorCodes.UNAUTHORIZE_USER) {
-      setIsUserUnAuthorize(true);
+      setIsUserUnauthorized(true);
     } else {
       addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
     }
@@ -223,9 +223,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   /**
    * Show UnAthorize page in case user is not authorize
    */
-  if (isUserUnAuthorize) {
+  if (isUserUnauthorized) {
     return (
-      <UnAuthorizeUser
+      <FullPageErrorHandler
         pageTitles={{
           title: t('openshift_streams'),
         }}
