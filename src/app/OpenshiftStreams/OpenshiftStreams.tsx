@@ -33,7 +33,7 @@ type SelectedInstance = {
 const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const {isVisible} = usePageVisibility();
+  const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
@@ -176,7 +176,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas(true);
-  }, [authContext, page, perPage, filteredValue, orderBy]);
+  }, [authContext, page, perPage, filteredValue, orderBy, isVisible]);
 
   useEffect(() => {
     fetchCloudProviders();
