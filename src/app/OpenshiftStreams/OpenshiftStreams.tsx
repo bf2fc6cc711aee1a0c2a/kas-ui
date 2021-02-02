@@ -103,7 +103,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
         );
       }
     });
-    return filters.join(' or ');
+    return filters.join(' and ');
   };
 
   // Functions
