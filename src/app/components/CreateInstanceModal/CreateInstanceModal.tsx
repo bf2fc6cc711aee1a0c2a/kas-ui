@@ -27,15 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { useStoreContext } from '@app/context-state-reducer';
-
-export type CreateInstanceModalProps = {
-  createStreamsInstance: boolean;
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  onCreate: () => void;
-  mainToggle: boolean;
-  refresh: () => void;
-};
+import { useStoreContext, types } from '@app/context-state-reducer';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -44,16 +36,13 @@ const emptyProvider: CloudProvider = {
   enabled: true,
 };
 
-const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
-  createStreamsInstance,
-  setCreateStreamsInstance,
-  onCreate,
-  refresh,
-  mainToggle,
-}: CreateInstanceModalProps) => {
+const CreateInstanceModal = () => {
   const { t } = useTranslation();
-  const { state } = useStoreContext();
-  const { cloudProviders } = state.openshift_state;
+  const { state, dispatch } = useStoreContext();
+  const { modalProps } = state && state.modal;
+  const { kafkaInstancesList } = state && state.openshift_state;
+  const { refresh, mainToggle } = modalProps;
+  const { cloudProviders } = state && state.openshift_state;
 
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
@@ -143,10 +132,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           accessToken,
           basePath,
         });
-        onCreate();
-        setCreateStreamsInstance(false);
-        await apisService.createKafka(true, kafkaFormData).then((res) => {
-          // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
+       await dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: false });
+        /*
+        increase the expected total by 1
+        as create operation will lead to adding a kafka in the list of response
+      */
+       await dispatch({ type: types.UPDATE_EXPECTED_TOTAL, payload: kafkaInstancesList.total + 1 });
+        dispatch({ type: types.HIDE_MODAL });
+        await apisService.createKafka(true, kafkaFormData).then(() => {
           refresh();
         });
       } catch (error) {
@@ -167,7 +160,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   };
 
   const handleModalToggle = () => {
-    setCreateStreamsInstance(!createStreamsInstance);
+    dispatch({ type: types.HIDE_MODAL });
   };
 
   const handleInstanceNameChange = (name?: string) => {
@@ -326,7 +319,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       <Modal
         variant={ModalVariant.medium}
         title={t('create_a_kafka_instance')}
-        isOpen={createStreamsInstance}
+        isOpen={true}
         onClose={handleModalToggle}
         actions={[
           <Button key="create" variant="primary" onClick={onCreateInstance} isDisabled={!isFormValid}>

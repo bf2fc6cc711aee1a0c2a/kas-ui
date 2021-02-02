@@ -28,7 +28,6 @@ import {
 } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
 import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
@@ -39,7 +38,7 @@ import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
-import { useStoreContext, types } from '@app/context-state-reducer';
+import { useStoreContext, types, MODAL_TYPES } from '@app/context-state-reducer';
 
 export type FilterValue = {
   value: string;
@@ -51,8 +50,6 @@ export type FilterType = {
 };
 
 export type TableProps = {
-  createStreamsInstance: boolean;
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -60,7 +57,6 @@ export type TableProps = {
   refresh: () => void;
   page: number;
   perPage: number;
-  onDelete: () => void;
 };
 
 type ConfigDetail = {
@@ -97,11 +93,8 @@ const StreamsTableView = ({
   onViewConnection,
   onConnectToInstance,
   refresh,
-  createStreamsInstance,
-  setCreateStreamsInstance,
   page,
   perPage,
-  onDelete,
 }: TableProps) => {
   const authContext = useContext(AuthContext);
   const { state, dispatch } = useStoreContext();
@@ -109,7 +102,6 @@ const StreamsTableView = ({
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
-  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
     { title: t('cloud_provider'), transforms: [sortable] },
@@ -332,7 +324,6 @@ const StreamsTableView = ({
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
     const { status } = instance;
-    setSelectedInstance(instance);
     /**
      * Hide confirm modal for status 'failed' and call delete api
      * Show confirm modal for all status except 'failed' and call delete api
@@ -340,12 +331,30 @@ const StreamsTableView = ({
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
-      setIsDeleteModalOpen(!isDeleteModalOpen);
+      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
+        t,
+        instance?.status,
+        instance?.name
+      );
+      dispatch({
+        type: types.SHOW_MODAL,
+        modalType: MODAL_TYPES.DELETE_KAFKA,
+        modalProps: {
+          title: title,
+          selectedInstance: instance,
+          isModalOpen: isDeleteModalOpen,
+          instanceStatus: instance?.status,
+          setIsModalOpen: setIsDeleteModalOpen,
+          onConfirm: () => onDeleteInstance(instance),
+          description: description,
+          confirmActionLabel: confirmActionLabel,
+        },
+      });
     }
   };
 
   const onDeleteInstance = async (instance: KafkaRequest) => {
-    const instanceId = selectedInstance?.id || instance?.id;
+    const instanceId = instance?.id;
     /**
      * Throw an error if kafka id is not set
      * and avoid delete instance api call
@@ -359,10 +368,16 @@ const StreamsTableView = ({
       accessToken,
       basePath,
     });
-    onDelete();
+
+    await dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: false });
+    /*
+      increase the expected total by 1
+      as create operation will lead to removing a kafka in the list of response
+    */
+    await dispatch({ type: types.UPDATE_EXPECTED_TOTAL, payload: kafkaInstancesList.total - 1 });
     setIsDeleteModalOpen(false);
     try {
-      await apisService.deleteKafkaById(instanceId,true).then(() => {
+      await apisService.deleteKafkaById(instanceId, true).then(() => {
         addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
         refresh();
       });
@@ -379,12 +394,6 @@ const StreamsTableView = ({
       addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
     }
   };
-
-  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
-    t,
-    selectedInstance?.status,
-    selectedInstance?.name
-  );
 
   const getParameterForSortIndex = (index: number) => {
     switch (index) {
@@ -447,18 +456,7 @@ const StreamsTableView = ({
 
   return (
     <>
-      <StreamsToolbar
-        mainToggle={mainToggle}
-        createStreamsInstance={createStreamsInstance}
-        setCreateStreamsInstance={setCreateStreamsInstance}
-        // filterSelected={filterSelected}
-        // setFilterSelected={setFilterSelected}
-        // total={total}
-        page={page}
-        perPage={perPage}
-        // filteredValue={filteredValue}
-        // setFilteredValue={setFilteredValue}
-      />
+      <StreamsToolbar mainToggle={mainToggle} refresh={refresh} page={page} perPage={perPage} />
       <Table
         cells={tableColumns}
         rows={preparedTableCells()}
@@ -487,7 +485,7 @@ const StreamsTableView = ({
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
-      <DeleteInstanceModal
+      {/* <DeleteInstanceModal
         title={title}
         selectedInstance={selectedInstance}
         isModalOpen={isDeleteModalOpen}
@@ -496,7 +494,7 @@ const StreamsTableView = ({
         onConfirm={onDeleteInstance}
         description={description}
         confirmActionLabel={confirmActionLabel}
-      />
+      /> */}
     </>
   );
 };

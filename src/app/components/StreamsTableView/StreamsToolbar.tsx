@@ -24,21 +24,20 @@ import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './StreamsToolbar.css';
-import { useStoreContext, types } from '@app/context-state-reducer';
+import { useStoreContext, types, MODAL_TYPES } from '@app/context-state-reducer';
 
 type StreamsToolbarProps = {
-  createStreamsInstance: boolean;
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
+  refresh:()=>void;
   mainToggle: boolean;
   page: number;
   perPage: number;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
-  createStreamsInstance,
-  setCreateStreamsInstance,
+  refresh,
   page,
   perPage,
+  mainToggle
 }) => {
   const { state, dispatch } = useStoreContext();
   const { kafkaInstancesList, filteredValue, filterSelected } = state.openshift_state;
@@ -473,6 +472,18 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
+  const onCreate =()=>{
+    dispatch({
+      type: types.SHOW_MODAL,
+      modalType: MODAL_TYPES.CREATE_KAFKA,
+      modalProps: {
+        onCreate: onCreate,
+        refresh: refresh,
+        mainToggle: mainToggle,
+      },
+    });
+  }
+
   return (
     <Toolbar
       id="instance-toolbar"
@@ -485,7 +496,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           {toggleGroupItems}
         </ToolbarToggleGroup>
         <ToolbarItem>
-          <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
+          <Button variant="primary" onClick={onCreate}>
             {t('create_kafka_instance')}
           </Button>
         </ToolbarItem>

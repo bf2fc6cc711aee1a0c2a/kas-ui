@@ -13,7 +13,6 @@ import {
 } from '@patternfly/react-core';
 import { EmptyState } from '../components/EmptyState/EmptyState';
 import { StreamsTableView } from '../components/StreamsTableView/StreamsTableView';
-import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
 import { DefaultApi, KafkaRequest } from '../../openapi/api';
 import { AlertProvider } from '../components/Alerts/Alerts';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
@@ -25,6 +24,7 @@ import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 import './OpenshiftStreams.css';
 import { useStoreContext, types } from '@app/context-state-reducer';
+import { RootModal } from '@app/components/RootModal';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -40,15 +40,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { basePath } = useContext(ApiContext);
 
   const { state, dispatch } = useStoreContext();
-  const {
-    kafkaInstanceItems,
-    kafkaInstancesList,
-    cloudProviders,
-    expectedTotal,
-    filteredValue,
-    orderBy
-  } = state.openshift_state;
-
+  const { kafkaInstanceItems, kafkaInstancesList, cloudProviders, expectedTotal, filteredValue, orderBy } =
+    state && state.openshift_state;
+  const modal = state && state.modal;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
@@ -58,8 +52,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
 
-  // States
-  const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const drawerRef = React.createRef<any>();
@@ -108,11 +100,17 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return filters.join(' or ');
   };
 
+  const isModalOpen = () => {
+    if (modal.modalType != null) {
+      return true;
+    }
+    return false;
+  };
   // Functions
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
 
-    if (isValidToken(accessToken)) {
+    if (isValidToken(accessToken) && !isModalOpen()) {
       try {
         const apisService = new DefaultApi({
           accessToken,
@@ -198,27 +196,10 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     fetchKafkas(true);
   };
 
-  const onCreate = () => {
-    dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: false });
-    /*
-        increase the expected total by 1
-        as create operation will lead to adding a kafka in the list of response
-      */
-    dispatch({ type: types.UPDATE_EXPECTED_TOTAL, payload: kafkaInstancesList.total + 1 });
-  };
-
-  const onDelete = () => {
-    dispatch({ type: types.UPDATE_KAFKA_DATA_LOADED, payload: false });
-    /*
-        decrease the expected total by 1
-        as create operation will lead to removing a kafka in the list of response
-      */
-    dispatch({ type: types.UPDATE_EXPECTED_TOTAL, payload: kafkaInstancesList.total - 1 });
-  };
-  
   return (
     <>
       <AlertProvider>
+        <RootModal />
         <Drawer isExpanded={selectedInstance != null} onExpand={onExpand}>
           <DrawerContent
             panelContent={
@@ -246,11 +227,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
               </PageSection>
             ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
               <PageSection>
-                <EmptyState
-                  createStreamsInstance={createStreamsInstance}
-                  setCreateStreamsInstance={setCreateStreamsInstance}
-                  mainToggle={mainToggle}
-                />
+                <EmptyState refresh={refreshKafkas} mainToggle={mainToggle} />
               </PageSection>
             ) : (
               <PageSection
@@ -264,21 +241,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   onViewInstance={onViewInstance}
                   onConnectToInstance={onConnectToInstance}
                   refresh={refreshKafkas}
-                  onDelete={onDelete}
-                  createStreamsInstance={createStreamsInstance}
-                  setCreateStreamsInstance={setCreateStreamsInstance}
                   page={page}
                   perPage={perPage}
                 />
               </PageSection>
             )}
-            <CreateInstanceModal
-              createStreamsInstance={createStreamsInstance}
-              setCreateStreamsInstance={setCreateStreamsInstance}
-              onCreate={onCreate}
-              mainToggle={mainToggle}
-              refresh={refreshKafkas}
-            />
           </DrawerContent>
         </Drawer>
       </AlertProvider>

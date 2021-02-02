@@ -3,7 +3,6 @@
  */
 const CREATE_KAFKA = 'CREATE_KAFKA';
 const DELETE_KAFKA = 'DELETE_KAFKA';
-const GENERATE_CREDENTIAL = 'GENERATE_CREDENTIAL';
 
 /**
  * list kafkas
@@ -42,8 +41,7 @@ const types = {
 
 const MODAL_TYPES = {
   CREATE_KAFKA,
-  DELETE_KAFKA,
-  GENERATE_CREDENTIAL,
+  DELETE_KAFKA
 };
 
 export { MODAL_TYPES, types };
