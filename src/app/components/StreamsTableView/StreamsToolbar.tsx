@@ -8,9 +8,6 @@ import {
   Select,
   SelectVariant,
   SelectOption,
-  ToolbarToggleGroup,
-  Toolbar,
-  ToolbarContent,
   ToolbarGroup,
   SelectOptionObject,
   ToolbarChip,
@@ -19,7 +16,7 @@ import {
   ToolbarFilter,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
-import { Pagination } from '@app/sharedComponents';
+import { Pagination, Toolbar, ToolbarItemProps } from '@app/sharedComponents';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
@@ -473,41 +470,46 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
+  const toolbarItems: ToolbarItemProps[] = [
+    {
+      item: (
+        <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
+          {t('create_kafka_instance')}
+        </Button>
+      ),
+    },
+    {
+      item: (
+        <Pagination
+          widgetId="pagination-options-menu-top"
+          itemCount={kafkaInstancesList.total}
+          page={page}
+          perPage={perPage}
+          isCompact={true}
+          paginationTitle={t('minimal_pagination')}
+          perPageSuffix={t('per_page_suffix')}
+          toFirstPage={t('to_first_page')}
+          toPreviousPage={t('to_previous_page')}
+          toLastPage={t('to_last_page')}
+          toNextPage={t('to_next_page')}
+          optionsToggle={t('options_toggle')}
+          currPage={t('curr_page')}
+        />
+      ),
+      variant: 'pagination',
+      alignment: { default: 'alignRight' },
+    },
+  ];
   return (
     <Toolbar
-      id="instance-toolbar"
-      clearAllFilters={onClear}
-      inset={{ lg: 'insetLg' }}
+      toggleGroupItems={toggleGroupItems}
+      toolbarId="instance-toolbar"
+      toggleIcon={FilterIcon}
+      onClearAllFilter={onClear}
+      toolbarItems={toolbarItems}
       collapseListedFiltersBreakpoint="md"
-    >
-      <ToolbarContent>
-        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-          {toggleGroupItems}
-        </ToolbarToggleGroup>
-        <ToolbarItem>
-          <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
-            {t('create_kafka_instance')}
-          </Button>
-        </ToolbarItem>
-        <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
-          <Pagination
-            widgetId="pagination-options-menu-top"
-            itemCount={kafkaInstancesList.total}
-            page={page}
-            perPage={perPage}
-            isCompact={true}
-            paginationTitle={t('minimal_pagination')}
-            perPageSuffix={t('per_page_suffix')}
-            toFirstPage={t('to_first_page')}
-            toPreviousPage={t('to_previous_page')}
-            toLastPage={t('to_last_page')}
-            toNextPage={t('to_next_page')}
-            optionsToggle={t('options_toggle')}
-            currPage={t('curr_page')}
-          />
-        </ToolbarItem>
-      </ToolbarContent>
-    </Toolbar>
+      inset={{ lg: 'insetLg' }}
+    />
   );
 };
 
