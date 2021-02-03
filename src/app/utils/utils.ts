@@ -74,6 +74,13 @@ const capitalize = (s: string) => {
 
 const MAX_INSTANCE_NAME_LENGTH = 32;
 
+const isValidToken = (accessToken: string | undefined) => {
+  if (accessToken !== undefined && accessToken !== '') {
+    return true;
+  }
+  return false;
+};
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -83,5 +90,6 @@ export {
   capitalize,
   statusOptions,
   InstanceStatus,
-  MAX_INSTANCE_NAME_LENGTH
+  MAX_INSTANCE_NAME_LENGTH,
+  isValidToken
 };

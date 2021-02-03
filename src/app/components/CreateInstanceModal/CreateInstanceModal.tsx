@@ -28,6 +28,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
+import { isValidToken } from '@app/utils/utils';
 
 export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
@@ -64,6 +65,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
+  const [isCreationInProgress, setCreationInProgress] = useState(false);
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
@@ -117,6 +119,38 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     cloudProvider.name && setKafkaFormData({ ...kafkaFormData, cloud_provider: cloudProvider.name });
     fetchCloudRegions(cloudProvider);
   };
+  
+  const verifyNameIsNotDuplicate = async (accessToken?: string) => {
+    // const accessToken = await authContext?.getToken();
+    let isNameDuplicate = false;
+    try {
+      const apisService = new DefaultApi({
+        accessToken,
+        basePath,
+      });
+      await apisService.listKafkas('1', '1').then((res) => {
+        const kafkaInstances = res.data;
+        if (kafkaInstances.items.length > 0) {
+          setCreationInProgress(false);
+          setNameValidated({ fieldState: 'error', message: 'Invalid name' });
+          isNameDuplicate = true;
+        }
+      });
+      // only if we are not just polling the kafka
+    } catch (error) {
+      let reason: string | undefined;
+      if (isServiceApiError(error)) {
+        reason = error.response?.data.reason;
+      }
+      /**
+       * Todo: show user friendly message according to server code
+       * and translation for specific language
+       *
+       */
+      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    }
+    return isNameDuplicate;
+  };
 
   const validateCreateForm = () => {
     let isValid = true;
@@ -146,33 +180,44 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     let isValid = validateCreateForm();
 
     const accessToken = await authContext?.getToken();
-
-    if (isValid) {
-      try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
-        onCreate();
-        setCreateStreamsInstance(false);
-        await apisService.createKafka(true, kafkaFormData).then((res) => {
-          // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
-          refresh();
-        });
-      } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-      }
-    } else {
+    if (!isValid) {
       setIsFormValid(false);
+    } else {
+      if (isValidToken(accessToken)) {
+        try {
+          const apisService = new DefaultApi({
+            accessToken,
+            basePath,
+          });
+          onCreate();
+          await apisService.createKafka(true, kafkaFormData).then((res) => {
+            setCreationInProgress(false);
+            refresh();
+          });
+        } catch (error) {
+          let reason: string | undefined;
+          let toShowAlert = true;
+          if (isServiceApiError(error)) {
+            if (error.response?.data.code === 'MGD-SERV-API-36') {
+              setIsFormValid(false);
+              toShowAlert = false;
+              setNameValidated({
+                fieldState: 'error',
+                message: t('the_name_already_exists_please_enter_a_unique_name', kafkaFormData.name),
+              });
+            } else {
+              reason = error.response?.data.reason;
+            }
+          }
+          /**
+           * Todo: show user friendly message according to server code
+           * and translation for specific language
+           *
+           */
+          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        }
+        setCreationInProgress(false);
+      }
     }
   };
 
@@ -347,7 +392,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
         actions={[
-          <Button key="create" variant="primary" onClick={onCreateInstance} isDisabled={!isFormValid}>
+          <Button
+            key="create"
+            variant="primary"
+            onClick={onCreateInstance}
+            isDisabled={!isFormValid || isCreationInProgress}
+            spinnerAriaValueText={t("submitting_request")}
+            isLoading={isCreationInProgress}
+          >
             {t('create_instance')}
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle}>

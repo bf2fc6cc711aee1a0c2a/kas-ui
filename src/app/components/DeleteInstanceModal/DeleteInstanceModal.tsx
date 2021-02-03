@@ -35,6 +35,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   const selectedInstanceName: string = selectedInstance?.name || '';
 
   const handleModalToggle = () => {
+    setInstanceNameInput(undefined);
     setIsModalOpen(!isModalOpen);
   };
 
