@@ -64,7 +64,7 @@ export type TableProps = {
   perPage: number;
   total: number;
   kafkaDataLoaded: boolean;
-  onDelete:()=>void;
+  onDelete: () => void;
   expectedTotal: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
@@ -391,7 +391,7 @@ const StreamsTableView = ({
     onDelete();
     setIsDeleteModalOpen(false);
     try {
-      await apisService.deleteKafkaById(instanceId,true).then(() => {
+      await apisService.deleteKafkaById(instanceId, true).then(() => {
         addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
         refresh('delete');
       });
@@ -484,17 +484,16 @@ const StreamsTableView = ({
     }
   };
 
-  const customRowWrapper = ({ trRef, className, rowProps, row, ...props }) => {
+  const customRowWrapper = ({ className, rowProps, row, ...props }) => {
     const { rowIndex } = rowProps;
     const { isExpanded } = row;
     return (
       <tr
-        tabIndex="0"
-        {...props}
-        ref={trRef}
+        tabIndex={0}        
         className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
         hidden={isExpanded !== undefined && !isExpanded}
         onClick={(event: any) => onRowClick(event, rowIndex, row)}
+        {...props}
       />
     );
   };
