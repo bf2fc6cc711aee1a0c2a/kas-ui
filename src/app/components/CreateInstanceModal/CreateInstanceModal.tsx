@@ -31,7 +31,7 @@ import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  onCreate:()=>void;
+  onCreate: () => void;
   mainToggle: boolean;
   refresh: () => void;
   cloudProviders: Array<CloudProvider>;
@@ -127,7 +127,10 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
     }
-
+    if (kafkaFormData.name.length > 32) {
+      isValid = false;
+      setNameValidated({ fieldState: 'error', message: t('length_is_greater_than_expected') });
+    }
     if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
       isValid = false;
       setCloudRegionValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
@@ -148,7 +151,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh();
         });
       } catch (error) {
-        let reason:string|undefined;
+        let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
@@ -176,6 +179,11 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       isValid = false;
     }
     setKafkaFormData({ ...kafkaFormData, name: name || '' });
+
+    if (name && name.length > 32) {
+      setNameValidated({ fieldState: 'error', message: t('length_is_greater_than_expected') });
+    }
+    
     if (isValid) {
       if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
       if (nameValidated.fieldState === 'error') {
