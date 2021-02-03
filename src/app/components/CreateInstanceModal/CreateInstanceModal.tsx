@@ -71,6 +71,13 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
 
   const { addAlert } = useAlerts();
 
+  const resetForm = () => {
+    setKafkaFormData({ ...kafkaFormData, name: '', multi_az: true });
+    setIsFormValid(true);
+    setNameValidated({ fieldState: 'default' });
+    setCreationInProgress(false);
+  };
+
   // Function to fetch cloud Regions based on selected filter
   const fetchCloudRegions = async (provider: CloudProvider) => {
     const accessToken = await authContext?.getToken();
@@ -191,7 +198,8 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           });
           onCreate();
           await apisService.createKafka(true, kafkaFormData).then((res) => {
-            setCreationInProgress(false);
+            resetForm();
+            setCreateStreamsInstance(false);
             refresh();
           });
         } catch (error) {
@@ -203,7 +211,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               toShowAlert = false;
               setNameValidated({
                 fieldState: 'error',
-                message: t('the_name_already_exists_please_enter_a_unique_name', kafkaFormData.name),
+                message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
               });
             } else {
               reason = error.response?.data.reason;
@@ -222,6 +230,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   };
 
   const handleModalToggle = () => {
+    resetForm();
     setCreateStreamsInstance(!createStreamsInstance);
   };
 
@@ -397,7 +406,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             variant="primary"
             onClick={onCreateInstance}
             isDisabled={!isFormValid || isCreationInProgress}
-            spinnerAriaValueText={t("submitting_request")}
+            spinnerAriaValueText={t('submitting_request')}
             isLoading={isCreationInProgress}
           >
             {t('create_instance')}

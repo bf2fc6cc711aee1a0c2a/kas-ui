@@ -54,6 +54,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
   };
 
   const onConfirmDelete = () => {
+    setInstanceNameInput(undefined);
     onConfirm(selectedInstance);
   };
 
