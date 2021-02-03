@@ -226,5 +226,5 @@
   "filter_by_region": "日本語 Filter by region",
   "filter_by_cloud_provider": "日本語 Filter by cloud provider",
   "filter_by_status": "日本語 Filter by status",
-  "length_is_greater_than_expected": "日本語 Kafka instance name cannot exceed 32 characters."
+  "length_is_greater_than_expected": "日本語 Kafka instance name cannot exceed {{maxLength}} characters."
 }
