@@ -108,7 +108,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
     return filters.join(' or ');
   };
 
-  const setServerError = (error: any) => {
+  const handleServerError = (error: any) => {
     let reason: string | undefined;
     let errorCode: string | undefined;
     if (isServiceApiError(error)) {
@@ -116,7 +116,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       errorCode = error.response?.data?.code;
     }
     //check unauthorize user
-    if (errorCode === ErrorCodes.UNAUTHORIZE_USER) {
+    if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
       addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
@@ -134,7 +134,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           basePath,
         });
         await apisService
-          .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
+          .listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString())
           .then((res) => {
             const kafkaInstances = res.data;
             setKafkaInstancesList(kafkaInstances);
@@ -152,7 +152,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           });
         }
       } catch (error) {
-        setServerError(error);
+        handleServerError(error);
       }
     }
   };

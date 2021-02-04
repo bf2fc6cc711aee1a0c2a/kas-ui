@@ -13,7 +13,7 @@ const isServiceApiError = (error: Error): error is AxiosError<IApiErrorData> => 
 }
 
 enum ErrorCodes {
-  UNAUTHORIZE_USER = "MGD-SERV-API-4"
+  UNAUTHORIZED_USER = "MGD-SERV-API-4"
 }
 
 export {

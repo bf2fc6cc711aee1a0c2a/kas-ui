@@ -12,21 +12,21 @@ import {
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
 
-export type Size = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+export type TitleSize = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 export type FullPageErrorHandlerProps = {
-  pageTitles?: {
+  pageTitle?: {
     variant?: PageSectionVariants;
     headingLevel?: HeadingLevel;
-    size?: Size;
+    size?: TitleSize;
     title?: string;
   };
-  emptyStateTitles?: {
+  emptyStateTitle?: {
     variant?: EmptyStateVariant;
     icon?: React.ComponentType<any>;
     headingLevel?: HeadingLevel;
-    size?: Size;
+    size?: TitleSize;
     title?: string;
     body?: string;
   };
@@ -34,28 +34,28 @@ export type FullPageErrorHandlerProps = {
 };
 
 export const FullPageErrorHandler: React.FC<FullPageErrorHandlerProps> = ({
-  pageTitles,
-  emptyStateTitles,
+  pageTitle,
+  emptyStateTitle,
   children,
 }: FullPageErrorHandlerProps) => {
   return (
     <>
-      <PageSection variant={pageTitles?.variant || PageSectionVariants.light}>
+      <PageSection variant={pageTitle?.variant || PageSectionVariants.light}>
         <Level>
           <LevelItem>
-            <Title headingLevel={pageTitles?.headingLevel || 'h1'} size={pageTitles?.size || 'lg'}>
-              {pageTitles?.title}
+            <Title headingLevel={pageTitle?.headingLevel || 'h1'} size={pageTitle?.size || 'lg'}>
+              {pageTitle?.title}
             </Title>
           </LevelItem>
         </Level>
       </PageSection>
-      <EmptyState variant={emptyStateTitles?.variant || EmptyStateVariant.full}>
-        <EmptyStateIcon icon={emptyStateTitles?.icon || LockIcon} />
-        <Title headingLevel={emptyStateTitles?.headingLevel || 'h2'} size={emptyStateTitles?.size || 'lg'}>
-          {emptyStateTitles?.title}
+      <EmptyState variant={emptyStateTitle?.variant || EmptyStateVariant.full}>
+        <EmptyStateIcon icon={emptyStateTitle?.icon || LockIcon} />
+        <Title headingLevel={emptyStateTitle?.headingLevel || 'h2'} size={emptyStateTitle?.size || 'lg'}>
+          {emptyStateTitle?.title}
         </Title>
         <EmptyStateBody>
-          {emptyStateTitles?.body}
+          {emptyStateTitle?.body}
           {children}
         </EmptyStateBody>
       </EmptyState>
