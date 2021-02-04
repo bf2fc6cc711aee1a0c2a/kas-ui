@@ -16,6 +16,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerContentBody,
+  ToggleGroupItem,
 } from '@patternfly/react-core';
 import { FormDataValidationState, NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
@@ -228,12 +229,18 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         return;
     }
   };
-  const onChangeAvailabilty = (zone: string) => {
-    setKafkaFormData({ ...kafkaFormData, multi_az: zone === 'multi' });
+
+  const onChangeAvailabilty = (isSelected: boolean, event) => {
+    if (isSelected) {
+      const value = event.currentTarget.id;
+      setKafkaFormData({ ...kafkaFormData, multi_az: value === 'multi' });
+    }
   };
 
   const createInstanceForm = () => {
     const { message, fieldState } = nameValidated;
+    const { name, cloud_provider, multi_az, region } = kafkaFormData;
+    const isMultiSelected = multi_az;
     return (
       <Form>
         {!isFormValid && (
@@ -256,7 +263,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             type="text"
             id="form-instance-name"
             name="instance-name"
-            value={kafkaFormData?.name}
+            value={name}
             onChange={handleInstanceNameChange}
             autoFocus={true}
           />
@@ -269,7 +276,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
                   key={`tile-${provider.name}`}
                   title={provider.display_name ? t(provider.display_name) : ''}
                   icon={getTileIcon(provider?.name)}
-                  isSelected={kafkaFormData.cloud_provider === provider.name}
+                  isSelected={cloud_provider === provider.name}
                   onClick={() => onCloudProviderSelect(provider)}
                 />
               )
@@ -284,7 +291,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         >
           <FormSelect
             validated={cloudRegionValidated.fieldState}
-            value={kafkaFormData.region}
+            value={region}
             onChange={handleCloudRegionChange}
             id="cloud-region-select"
             name="cloud-region"
@@ -304,35 +311,21 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
           <ToggleGroup aria-label={t('availability_zone_selection')}>
-            {/*
-                  TODO: Currently using HTML version
-                  Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
-              */}
-            <div className="pf-c-toggle-group__item">
-              <button
-                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === false && 'pf-m-selected'}`}
-                type="button"
-                id="single"
-                disabled
-                onClick={() => {
-                  onChangeAvailabilty('single');
-                }}
-              >
-                <span className="pf-c-toggle-group__text"> {t('single')}</span>
-              </button>
-            </div>
-            <div className="pf-c-toggle-group__item">
-              <button
-                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === true && 'pf-m-selected'}`}
-                type="button"
-                onClick={() => {
-                  onChangeAvailabilty('multi');
-                }}
-                id="multi"
-              >
-                <span className="pf-c-toggle-group__text"> {t('multi')}</span>
-              </button>
-            </div>
+            <ToggleGroupItem
+              text={t('single')}
+              value={'single'}
+              isDisabled
+              buttonId="single"
+              isSelected={isMultiSelected}
+              onChange={onChangeAvailabilty}
+            />
+            <ToggleGroupItem
+              text={t('multi')}
+              value="multi"
+              buttonId="multi"
+              isSelected={isMultiSelected}
+              onChange={onChangeAvailabilty}
+            />
           </ToggleGroup>
         </FormGroup>
       </Form>
