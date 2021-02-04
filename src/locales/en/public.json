@@ -229,5 +229,6 @@
   "filter_by_cloud_provider": "Filter by cloud provider",
   "filter_by_status": "Filter by status",
   "you_do_not_have_access_of_openshift_streams":"You do not have access of Openshift Streams",
-  "contact_your_organization_administration_for_more_information":"Contact your organization administration(s) for more information."
+  "contact_your_organization_administration_for_more_information":"Contact your organization administration(s) for more information.",
+  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters."  
 }
