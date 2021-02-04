@@ -489,7 +489,6 @@ const StreamsTableView = ({
     const { isExpanded } = row;
     return (
       <tr
-        tabIndex={0}        
         className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
         hidden={isExpanded !== undefined && !isExpanded}
         onClick={(event: any) => onRowClick(event, rowIndex, row)}
