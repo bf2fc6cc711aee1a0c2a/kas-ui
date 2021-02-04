@@ -126,38 +126,6 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     cloudProvider.name && setKafkaFormData({ ...kafkaFormData, cloud_provider: cloudProvider.name });
     fetchCloudRegions(cloudProvider);
   };
-  
-  const verifyNameIsNotDuplicate = async (accessToken?: string) => {
-    // const accessToken = await authContext?.getToken();
-    let isNameDuplicate = false;
-    try {
-      const apisService = new DefaultApi({
-        accessToken,
-        basePath,
-      });
-      await apisService.listKafkas('1', '1').then((res) => {
-        const kafkaInstances = res.data;
-        if (kafkaInstances.items.length > 0) {
-          setCreationInProgress(false);
-          setNameValidated({ fieldState: 'error', message: 'Invalid name' });
-          isNameDuplicate = true;
-        }
-      });
-      // only if we are not just polling the kafka
-    } catch (error) {
-      let reason: string | undefined;
-      if (isServiceApiError(error)) {
-        reason = error.response?.data.reason;
-      }
-      /**
-       * Todo: show user friendly message according to server code
-       * and translation for specific language
-       *
-       */
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-    }
-    return isNameDuplicate;
-  };
 
   const validateCreateForm = () => {
     let isValid = true;
