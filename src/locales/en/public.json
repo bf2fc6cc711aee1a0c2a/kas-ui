@@ -227,5 +227,6 @@
   "completed": "Ready",
   "filter_by_region": "Filter by region",
   "filter_by_cloud_provider": "Filter by cloud provider",
-  "filter_by_status": "Filter by status"
+  "filter_by_status": "Filter by status",
+  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters."
 }

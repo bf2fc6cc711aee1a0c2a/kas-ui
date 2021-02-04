@@ -26,12 +26,13 @@ import { DefaultApi, CloudProvider, CloudRegion } from '../../../openapi';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
+import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 
 export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  onCreate:()=>void;
+  onCreate: () => void;
   mainToggle: boolean;
   refresh: () => void;
   cloudProviders: Array<CloudProvider>;
@@ -117,21 +118,32 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     fetchCloudRegions(cloudProvider);
   };
 
-  const onCreateInstance = async () => {
+  const validateCreateForm = () => {
     let isValid = true;
-
-    if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
+    const { name, region } = kafkaFormData;
+    if (!name || name.trim() === '') {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
-    } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(kafkaFormData.name.trim())) {
+    } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
     }
-
-    if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
+    if (name.length > MAX_INSTANCE_NAME_LENGTH) {
+      isValid = false;
+      setNameValidated({
+        fieldState: 'error',
+        message: t('length_is_greater_than_expected', { maxLength: MAX_INSTANCE_NAME_LENGTH }),
+      });
+    }
+    if (!region || region.trim() === '') {
       isValid = false;
       setCloudRegionValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
     }
+    return isValid;
+  };
+
+  const onCreateInstance = async () => {
+    let isValid = validateCreateForm();
 
     const accessToken = await authContext?.getToken();
 
@@ -148,7 +160,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           refresh();
         });
       } catch (error) {
-        let reason:string|undefined;
+        let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
@@ -175,14 +187,22 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     } else if (name && !/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
     }
+
     setKafkaFormData({ ...kafkaFormData, name: name || '' });
-    if (isValid) {
-      if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
-      if (nameValidated.fieldState === 'error') {
-        setNameValidated({ fieldState: 'default', message: '' });
-      }
+    if (name && name.length > MAX_INSTANCE_NAME_LENGTH) {
+      setNameValidated({
+        fieldState: 'error',
+        message: t('length_is_greater_than_expected', { maxLength: MAX_INSTANCE_NAME_LENGTH }),
+      });
     } else {
-      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
+      if (isValid) {
+        if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
+        if (nameValidated.fieldState === 'error') {
+          setNameValidated({ fieldState: 'default', message: '' });
+        }
+      } else {
+        setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
+      }
     }
   };
 
