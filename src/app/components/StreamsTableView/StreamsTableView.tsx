@@ -12,7 +12,6 @@ import {
   ISortBy,
   SortByDirection,
   IExtraColumnData,
-  RowWrapperProps,
 } from '@patternfly/react-table';
 import {
   AlertVariant,
@@ -536,14 +535,16 @@ const StreamsTableView = ({
         variant={PaginationVariant.bottom}
         page={page}
         perPage={perPage}
-        paginationTitle={t('full_pagination')}
-        perPageSuffix={t('per_page_suffix')}
-        toFirstPage={t('to_first_page')}
-        toPreviousPage={t('to_previous_page')}
-        toLastPage={t('to_last_page')}
-        toNextPage={t('to_next_page')}
-        optionsToggle={t('options_toggle')}
-        currPage={t('curr_page')}
+        titles={{
+          paginationTitle: t('full_pagination'),
+          perPageSuffix: t('per_page_suffix'),
+          toFirstPage: t('to_first_page'),
+          toPreviousPage: t('to_previous_page'),
+          toLastPage: t('to_last_page'),
+          toNextPage: t('to_next_page'),
+          optionsToggle: t('options_toggle'),
+          currPage: t('curr_page'),
+        }}
       />
       <DeleteInstanceModal
         title={title}

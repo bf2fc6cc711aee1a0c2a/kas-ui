@@ -5,37 +5,21 @@ import {
   PaginationProps as PFPaginationProps,
   PaginationTitles as PFPaginationTitles,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 
-interface PaginationProps extends PFPaginationProps, Pick<PFPaginationTitles, 'paginationTitle'> {
-  perPageSuffix?: string;
-  toFirstPage?: string;
-  toPreviousPage?: string;
-  toLastPage?: string;
-  toNextPage?: string;
-  optionsToggle?: string;
-  currPage?: string;
-}
+interface PaginationProps extends Omit<PFPaginationProps, 'children' | 'ref'> {}
 
 const Pagination: FunctionComponent<PaginationProps> = ({
   page,
   perPage = 10,
   itemCount,
-  variant,
+  variant = 'top',
   isCompact,
-  paginationTitle,
-  perPageSuffix,
-  toFirstPage,
-  toPreviousPage,
-  toLastPage,
-  toNextPage,
-  optionsToggle,
-  currPage,
+  titles,
+  ...restProps
 }) => {
   const history = useHistory();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const { t } = useTranslation();
 
   const setSearchParam = useCallback(
     (name: string, value: string) => {
@@ -72,24 +56,15 @@ const Pagination: FunctionComponent<PaginationProps> = ({
         perPage={perPage}
         page={page}
         onSetPage={onSetPage}
-        variant={variant || 'top'}
+        variant={variant}
         onPerPageSelect={onPerPageSelect}
         isCompact={isCompact}
-        titles={{
-          paginationTitle,
-          perPageSuffix: perPageSuffix || t('per_page_suffix'),
-          toFirstPage: toFirstPage || t('to_first_page'),
-          toPreviousPage: toPreviousPage || t('to_previous_page'),
-          toLastPage: toLastPage || t('to_last_page'),
-          toNextPage: toNextPage || t('to_next_page'),
-          optionsToggle: optionsToggle || t('options_toggle'),
-          currPage: currPage || t('curr_page'),
-        }}
+        {...restProps}
+        titles={titles}
       />
     );
   }
   return null;
 };
 
-
-export {Pagination};
+export { Pagination };

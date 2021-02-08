@@ -488,14 +488,16 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           page={page}
           perPage={perPage}
           isCompact={true}
-          paginationTitle={t('minimal_pagination')}
-          perPageSuffix={t('per_page_suffix')}
-          toFirstPage={t('to_first_page')}
-          toPreviousPage={t('to_previous_page')}
-          toLastPage={t('to_last_page')}
-          toNextPage={t('to_next_page')}
-          optionsToggle={t('options_toggle')}
-          currPage={t('curr_page')}
+          titles={{
+            paginationTitle: t('minimal_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
+          }}
         />
       ),
       variant: 'pagination',
