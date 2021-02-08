@@ -203,7 +203,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   };
 
   const onCreate = () => {
-    setKafkaDataLoaded(false);
     /*
         increase the expected total by 1
         as create operation will lead to adding a kafka in the list of response

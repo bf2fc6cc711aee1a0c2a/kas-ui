@@ -230,5 +230,7 @@
   "filter_by_status": "Filter by status",
   "you_do_not_have_access_to_openshift_streams":"You do not have access to Openshift Streams",
   "contact_your_organization_administration_for_more_information":"Contact your organization administration(s) for more information.",
-  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters."  
+  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters.", 
+  "the_name_already_exists_please_enter_a_unique_name": "The name {{name}} already exists. Please enter a unique name.",
+  "submitting_request": "Submitting request"
 }
