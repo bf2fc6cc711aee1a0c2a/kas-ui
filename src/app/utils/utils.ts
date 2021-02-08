@@ -12,12 +12,12 @@ type KeyValueOptions = {
   label: string;
 };
 
-enum InstanceStatus{
-  READY="ready",
-  ACCEPTED="accepted",
-  PREPARING="preparing",
-  PROVISIONING="provisioning",
-  FAILED="failed"
+enum InstanceStatus {
+  READY = "ready",
+  ACCEPTED = "accepted",
+  PREPARING = "preparing",
+  PROVISIONING = "provisioning",
+  FAILED = "failed"
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
@@ -36,7 +36,7 @@ const statusOptions: KeyValueOptions[] = [
   { value: 'failed', label: 'Failed' },
   { value: 'accepted', label: 'Creation pending' },
   { value: 'provisioning', label: 'Creation in progress' },
-  { value: 'preparing', label: 'Creation in progress' }, 
+  { value: 'preparing', label: 'Creation in progress' },
 ];
 
 const getCloudProviderDisplayName = (value: string) => {
@@ -73,6 +73,7 @@ const capitalize = (s: string) => {
 };
 
 const MAX_INSTANCE_NAME_LENGTH = 32;
+const MAX_FILTER_LIMIT = 10;
 
 const isValidToken = (accessToken: string | undefined) => {
   if (accessToken !== undefined && accessToken !== '') {
@@ -91,5 +92,6 @@ export {
   statusOptions,
   InstanceStatus,
   MAX_INSTANCE_NAME_LENGTH,
-  isValidToken
+  isValidToken,
+  MAX_FILTER_LIMIT
 };

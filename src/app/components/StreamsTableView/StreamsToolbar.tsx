@@ -22,7 +22,7 @@ import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { TablePagination } from './TablePagination';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils/utils';
 import './StreamsToolbar.css';
 
 type StreamsToolbarProps = {
@@ -57,6 +57,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
+  const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
+
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
   const { t } = useTranslation();
@@ -112,6 +114,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onClear = () => {
     setFilteredValue([]);
+    setIsMaxFilter(false);
   };
 
   const updateFilter = (key: string, filter: FilterValue, removeIfPresent: boolean) => {
@@ -143,6 +146,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       newFilterValue.push({ filterKey: key, filterValue: [filter] });
     }
     setFilteredValue(newFilterValue);
+    handleMaxFilters();
   };
 
   const isInputValid = (value?: string) => {
@@ -229,7 +233,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onInputPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !isMaxFilter) {
       if (event?.target?.name === 'filter names') {
         onFilter('name');
       } else if (event.target?.name === 'filter owners') {
@@ -275,6 +279,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       newFilteredValue[filterIndex].filterValue.splice(chipIndex, 1);
     }
     setFilteredValue(newFilteredValue);
+    handleMaxFilters();
   };
 
   const onDeleteChipGroup = (category: string) => {
@@ -284,6 +289,46 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       newFilteredValue.splice(filterIndex, 1);
       setFilteredValue(newFilteredValue);
     }
+    handleMaxFilters();
+  };
+
+  const handleMaxFilters = () => {
+    let maxCount = 0;
+    filteredValue?.forEach((filter: any) => {
+      const { filterValue, filterKey } = filter;
+      const provisioningStatus = filterKey === 'status' && filterValue?.filter(({ value }) => value === 'provisioning');
+      if (provisioningStatus?.length > 0) {
+        maxCount += filterValue?.length + 1;
+      } else {
+        maxCount += filterValue?.length;
+      }
+    });
+
+    if (maxCount >= MAX_FILTER_LIMIT) {
+      setIsMaxFilter(true);
+    } else {
+      setIsMaxFilter(false);
+    }
+  };
+
+  const handleSelectOption = (key: string, optionValue: string) => {
+    let newFilterValue: FilterValue | undefined;
+    const newFilteredValue = filteredValue?.filter(({ filterKey }) => filterKey === key);
+    if (newFilteredValue && newFilteredValue?.length > 0) {
+      const { filterValue } = newFilteredValue[0];
+      newFilterValue = filterValue?.find(({ value }) => value === optionValue);
+    }
+    if (!newFilterValue) {
+      return true;
+    }
+    return false;
+  };
+
+  const tooltipContent = (fieldName: string) => {
+    if (isMaxFilter) {
+      return <div>{t('max_filter_message')}</div>;
+    }
+    return <div>{t('input_field_invalid_message', { name: fieldName })}</div>;
   };
 
   const toggleGroupItems = (
@@ -294,7 +339,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             variant={SelectVariant.single}
             aria-label="Select filter"
             onToggle={onFilterToggle}
-            selections={filterSelected && filterSelected}
+            selections={filterSelected}
             isOpen={isFilterExpanded}
             onSelect={onChangeSelect}
           >
@@ -319,7 +364,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   id="filterText"
                   type="search"
                   aria-label="Search filter input"
-                  validated={!isNameValid ? ValidatedOptions.error : ValidatedOptions.default}
+                  validated={!isNameValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
                   placeholder={t('filter_by_name_lower')}
                   onChange={onNameInputChange}
                   onKeyPress={onInputPress}
@@ -328,23 +373,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 />
                 <Button
                   variant={ButtonVariant.control}
-                  isDisabled={!isNameValid}
+                  isDisabled={!isNameValid || isMaxFilter}
                   onClick={() => onFilter('name')}
                   aria-label="Search instances"
                 >
                   <SearchIcon />
                 </Button>
-                {!isNameValid && (
-                  <Tooltip
-                    content={
-                      <div>
-                        Valid characters for name are lowercase letters from a to z, numbers from 0 to 9, underscore
-                        (_) hyphens (-) and percentage (%)
-                      </div>
-                    }
-                    reference={nameInputRef}
-                  />
-                )}
+                {(!isNameValid || isMaxFilter) && <Tooltip content={tooltipContent('name')} reference={nameInputRef} />}
               </InputGroup>
             </ToolbarItem>
           )}
@@ -393,7 +428,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholderText={t('filter_by_region')}
               >
                 {regionFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                  <SelectOption
+                    isDisabled={option.disabled || (isMaxFilter && handleSelectOption('region', option.value))}
+                    key={index}
+                    value={option.value}
+                  >
                     {option.label}
                   </SelectOption>
                 ))}
@@ -416,30 +455,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   type="search"
                   aria-label="Search filter input"
                   placeholder={t('filter_by_owner')}
-                  validated={!isOwnerValid ? ValidatedOptions.error : ValidatedOptions.default}
+                  validated={!isOwnerValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
                   onChange={onOwnerInputChange}
                   onKeyPress={onInputPress}
                   value={ownerInputValue}
                   ref={ownerInputRef as React.RefObject<HTMLInputElement>}
                 />
                 <Button
-                  isDisabled={!isOwnerValid}
+                  isDisabled={!isOwnerValid || isMaxFilter}
                   variant={ButtonVariant.control}
                   onClick={() => onFilter('owner')}
                   aria-label="Search owners"
                 >
                   <SearchIcon />
                 </Button>
-                {!isOwnerValid && (
-                  <Tooltip
-                    content={
-                      <div>
-                        Valid characters for owner are lowercase letters from a to z, numbers from 0 to 9, underscore
-                        (_) hyphens (-) and percentage (%)
-                      </div>
-                    }
-                    reference={ownerInputRef}
-                  />
+                {(!isOwnerValid || isMaxFilter) && (
+                  <Tooltip content={tooltipContent('owner')} reference={ownerInputRef} />
                 )}
               </InputGroup>
             </ToolbarItem>
@@ -463,7 +494,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholderText={t('filter_by_status')}
               >
                 {statusFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                  <SelectOption
+                    isDisabled={option.disabled || (isMaxFilter && handleSelectOption('status', option.value))}
+                    key={index}
+                    value={option.value}
+                  >
                     {option.label}
                   </SelectOption>
                 ))}
@@ -481,6 +516,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       clearAllFilters={onClear}
       inset={{ lg: 'insetLg' }}
       collapseListedFiltersBreakpoint="md"
+      clearFiltersButtonText={t('clear_all_filters')}
     >
       <ToolbarContent>
         <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
