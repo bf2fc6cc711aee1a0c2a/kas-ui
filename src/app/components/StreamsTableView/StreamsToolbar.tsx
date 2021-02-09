@@ -234,52 +234,39 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onInputPress = (event) => {
     if (event.key === 'Enter' && !isMaxFilter) {
-      if (event?.target?.name === 'filter names') {
-        onFilter('name');
-      } else if (event.target?.name === 'filter owners') {
-        onFilter('owner');
-      }
+      const fieldName = event?.target?.name;
+      onFilter(fieldName);
     }
   };
 
   const getSelectionForFilter = (key: string) => {
     const selectedFilters = filteredValue.filter((filter) => filter.filterKey === key);
     if (selectedFilters.length > 0) {
-      switch (key) {
-        case 'name':
-        case 'owner':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        case 'region':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        case 'cloud_provider':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        case 'status':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        default:
-          return [];
-      }
+      return selectedFilters[0].filterValue.map((val) => val.value);
     }
     return [];
   };
 
-  const onDeleteChip = (category: string, chip: string | ToolbarChip) => {
-    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+  const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
+    let newFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
     const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
     let filterChip: string | undefined = chip.toString();
-    if (category === 'status') {
-      filterChip = statusFilterOptions.find((option) => option.label === chip.toString())?.value;
-    } else if (category === 'region') {
-      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
-    } else if (category === 'cloud_provider') {
-      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
+    /**
+     * Filter chip from filter options
+     */
+    if (filterOptions && filterOptions?.length > 0) {
+      filterChip = filterOptions?.find((option) => option.label === chip.toString())?.value;
     }
-    const chipIndex = filterIndex >= 0 ? prevFilterValue.findIndex((val) => val.value === filterChip) : -1;
+    /**
+     * Delete selected chip from filter options
+     */
+    const chipIndex = prevFilterValue.findIndex((val) => val.value === filterChip);
     if (chipIndex >= 0) {
       newFilteredValue[filterIndex].filterValue.splice(chipIndex, 1);
+      setFilteredValue(newFilteredValue);
+      handleMaxFilters();
     }
-    setFilteredValue(newFilteredValue);
-    handleMaxFilters();
   };
 
   const onDeleteChipGroup = (category: string) => {
@@ -293,25 +280,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const handleMaxFilters = () => {
-    let maxCount = 0;
+    let maxFilterCount = 0;
     filteredValue?.forEach((filter: any) => {
       const { filterValue, filterKey } = filter;
       const provisioningStatus = filterKey === 'status' && filterValue?.filter(({ value }) => value === 'provisioning');
       if (provisioningStatus?.length > 0) {
-        maxCount += filterValue?.length + 1;
+        maxFilterCount += filterValue?.length + 1;
       } else {
-        maxCount += filterValue?.length;
+        maxFilterCount += filterValue?.length;
       }
     });
 
-    if (maxCount >= MAX_FILTER_LIMIT) {
+    if (maxFilterCount >= MAX_FILTER_LIMIT) {
       setIsMaxFilter(true);
     } else {
       setIsMaxFilter(false);
     }
   };
 
-  const handleSelectOption = (key: string, optionValue: string) => {
+  const isDisabledSelectOption = (key: string, optionValue: string) => {
     let newFilterValue: FilterValue | undefined;
     const newFilteredValue = filteredValue?.filter(({ filterKey }) => filterKey === key);
     if (newFilteredValue && newFilteredValue?.length > 0) {
@@ -360,7 +347,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             <ToolbarItem>
               <InputGroup className="mk--filter-instances__toolbar--text-input">
                 <TextInput
-                  name="filter names"
+                  name="name"
                   id="filterText"
                   type="search"
                   aria-label="Search filter input"
@@ -386,7 +373,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('cloud_provider')?.map((val) => t(val))}
-          deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip)}
+          deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip, cloudProviderFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
           categoryName={t('cloud_provider')}
         >
@@ -400,9 +387,17 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 isOpen={isCloudProviderFilterExpanded}
                 onSelect={onCloudProviderFilterSelect}
                 placeholderText={t('filter_by_cloud_provider')}
+                // Todo: remove isDisabled when it fixed in PF
+                isDisabled={isMaxFilter}
               >
                 {cloudProviderFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+                  <SelectOption
+                    isDisabled={
+                      option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
+                    }
+                    key={index}
+                    value={option.value}
+                  >
                     {option.label}
                   </SelectOption>
                 ))}
@@ -412,7 +407,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('region')?.map((val) => t(val))}
-          deleteChip={(_category, chip) => onDeleteChip('region', chip)}
+          deleteChip={(_category, chip) => onDeleteChip('region', chip, regionFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('region')}
           categoryName={t('region')}
         >
@@ -426,10 +421,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 isOpen={isRegionFilterExpanded}
                 onSelect={onRegionFilterSelect}
                 placeholderText={t('filter_by_region')}
+                // Todo: remove isDisabled when it fixed in PF
+                isDisabled={isMaxFilter}
               >
                 {regionFilterOptions.map((option, index) => (
                   <SelectOption
-                    isDisabled={option.disabled || (isMaxFilter && handleSelectOption('region', option.value))}
+                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
                     key={index}
                     value={option.value}
                   >
@@ -450,7 +447,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             <ToolbarItem>
               <InputGroup className="mk--filter-instances__toolbar--text-input">
                 <TextInput
-                  name="filter owners"
+                  name="owner"
                   id="filterOwners"
                   type="search"
                   aria-label="Search filter input"
@@ -478,7 +475,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('status')?.map((val) => t(val))}
-          deleteChip={(_category, chip) => onDeleteChip('status', chip)}
+          deleteChip={(_category, chip) => onDeleteChip('status', chip, statusFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('status')}
           categoryName={t('status')}
         >
@@ -492,10 +489,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 isOpen={isStatusFilterExpanded}
                 onSelect={onStatusFilterSelect}
                 placeholderText={t('filter_by_status')}
+                // Todo: remove isDisabled when it fixed in PF
+                isDisabled={isMaxFilter}
               >
                 {statusFilterOptions.map((option, index) => (
                   <SelectOption
-                    isDisabled={option.disabled || (isMaxFilter && handleSelectOption('status', option.value))}
+                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
                     key={index}
                     value={option.value}
                   >
