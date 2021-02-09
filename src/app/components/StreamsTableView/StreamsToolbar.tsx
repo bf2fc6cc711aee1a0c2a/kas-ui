@@ -387,8 +387,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 isOpen={isCloudProviderFilterExpanded}
                 onSelect={onCloudProviderFilterSelect}
                 placeholderText={t('filter_by_cloud_provider')}
-                // Todo: remove isDisabled when it fixed in PF
-                isDisabled={isMaxFilter}
               >
                 {cloudProviderFilterOptions.map((option, index) => (
                   <SelectOption
@@ -398,7 +396,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     key={index}
                     value={option.value}
                   >
-                    {option.label}
+                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
+                    <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
                 ))}
               </Select>
@@ -421,8 +420,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 isOpen={isRegionFilterExpanded}
                 onSelect={onRegionFilterSelect}
                 placeholderText={t('filter_by_region')}
-                // Todo: remove isDisabled when it fixed in PF
-                isDisabled={isMaxFilter}
               >
                 {regionFilterOptions.map((option, index) => (
                   <SelectOption
@@ -430,7 +427,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     key={index}
                     value={option.value}
                   >
-                    {option.label}
+                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
+                    <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
                 ))}
               </Select>
@@ -489,8 +487,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 isOpen={isStatusFilterExpanded}
                 onSelect={onStatusFilterSelect}
                 placeholderText={t('filter_by_status')}
-                // Todo: remove isDisabled when it fixed in PF
-                isDisabled={isMaxFilter}
               >
                 {statusFilterOptions.map((option, index) => (
                   <SelectOption
@@ -498,7 +494,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     key={index}
                     value={option.value}
                   >
-                    {option.label}
+                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
+                    <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
                 ))}
               </Select>
