@@ -31,7 +31,7 @@ import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import './InstanceDrawer.css';
 import { GenerateCredential } from './GenerateCredential';
-import { Loading } from '@app/components/Loading/Loading';
+import { Loading } from '@app/common';
 import { KafkaRequest } from 'src/openapi';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';

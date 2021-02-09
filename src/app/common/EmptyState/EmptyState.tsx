@@ -26,6 +26,7 @@ export type EmptyStateProps = {
     title?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   };
+  children?: React.ReactNode;
 };
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
@@ -34,6 +35,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   emptyStateIconProps,
   emptyStateProps,
   emptyStateBodyProps,
+  children,
 }: EmptyStateProps) => {
   const { variant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
   const { icon = PlusCircleIcon, ...restEmptyStateIconProps } = emptyStateIconProps || {};
@@ -44,15 +46,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     <>
       <PFEmptyState {...emptyStateProps}>
         <EmptyStateIcon icon={icon} {...restEmptyStateIconProps} />
-        <Title headingLevel={headingLevel} size={size} {...restTitleProps}>
-          {title}
-        </Title>
+        {title && (
+          <Title headingLevel={headingLevel} size={size} {...restTitleProps}>
+            {title}
+          </Title>
+        )}
         <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>
         {buttonProps?.title && (
           <Button variant={variant} onClick={onClick} {...restButtonProps}>
             {buttonProps?.title}
           </Button>
         )}
+        {children}
       </PFEmptyState>
     </>
   );

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextInput } from '@patternfly/react-core';
-import { DeleteModal, DeleteModalProps } from '@app/components';
+import { DeleteModal, DeleteModalProps } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export type DeleteInstanceModalContainerProps = DeleteModalProps & {
+export type DeleteInstanceModalProps = DeleteModalProps & {
   instanceStatus?: string;
 };
 
-export const DeleteInstanceModalContainer: React.FC<DeleteInstanceModalContainerProps> = ({
+export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
   isModalOpen,
   modalProps,
   confirmButtonProps,
@@ -17,7 +17,7 @@ export const DeleteInstanceModalContainer: React.FC<DeleteInstanceModalContainer
   textProps,
   instanceStatus,
   selectedItemData,
-}: DeleteInstanceModalContainerProps) => {
+}: DeleteInstanceModalProps) => {
   const { t } = useTranslation();
   const selectedInstanceName = selectedItemData?.name;
 

@@ -53,7 +53,7 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
   } = modalProps || {};
 
   const {
-    id = 'mk--confirm__button',
+    id = 'mas--confirm__button',
     key = 'confirm-button',
     variant: buttonConfirmVariant = ButtonVariant.danger,
     onClick: onClickConfirmButton,
@@ -63,7 +63,7 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
   } = confirmButtonProps || {};
 
   const {
-    id: cancelButtonId = 'mk--cancel__button',
+    id: cancelButtonId = 'mas--cancel__button',
     key: cancelButtonKey = '"cancel-button',
     variant: cancelButtonVariant = ButtonVariant.link,
     onClick: onClickCancelButton,
@@ -72,7 +72,7 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
     ...restCancelButtonProps
   } = cancelButtonProps || {};
 
-  const { className = 'mk--delete-item__modal--text', description, ...restTextProps } = textProps || {};
+  const { className = 'mas--delete-item__modal--text', description, ...restTextProps } = textProps || {};
 
   return (
     <Modal
@@ -106,7 +106,9 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
       ]}
       {...restModalProps}
     >
-      <Text className={className} dangerouslySetInnerHTML={{ __html: description || '' }} {...restTextProps} />
+      {description && (
+        <Text className={className} dangerouslySetInnerHTML={{ __html: description || '' }} {...restTextProps} />
+      )}
       {children}
     </Modal>
   );

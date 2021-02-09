@@ -19,7 +19,7 @@ import {
 import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { useAlerts, EmptyState } from '@app/components';
+import { useAlerts,DeleteInstanceModal } from '@app/components';
 import { TablePagination } from './TablePagination';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -29,7 +29,7 @@ import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
-import { DeleteInstanceModalContainer } from '@app/containers';
+import {EmptyState} from '@app/common';
 
 export type FilterValue = {
   value: string;
@@ -504,7 +504,7 @@ const StreamsTableView = ({
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
-      <DeleteInstanceModalContainer
+      <DeleteInstanceModal
         isModalOpen={isDeleteModalOpen}
         instanceStatus={selectedInstance?.status}
         selectedItemData={selectedInstance}

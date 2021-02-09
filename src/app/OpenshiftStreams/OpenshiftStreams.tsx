@@ -11,15 +11,7 @@ import {
   Title,
   AlertVariant,
 } from '@patternfly/react-core';
-import {
-  EmptyState,
-  StreamsTableView,
-  FilterType,
-  CreateInstanceModal,
-  AlertProvider,
-  Loading,
-  useAlerts,
-} from '@app/components';
+import { StreamsTableView, FilterType, CreateInstanceModal, AlertProvider, useAlerts } from '@app/components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
 import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -27,6 +19,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 import './OpenshiftStreams.css';
+import { Loading, EmptyState } from '@app/common';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
