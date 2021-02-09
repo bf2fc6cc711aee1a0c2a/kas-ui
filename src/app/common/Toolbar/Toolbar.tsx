@@ -41,10 +41,10 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = ({
             {toggleGroupItems}
           </ToolbarToggleGroup>
           {toolbarItems.map((toolbarItem, index) => {
-            const { key = 'mas-', variant, className, id, alignment, item, ...restItemProps } = toolbarItem;
+            const { key = 'mas', variant, className, id, alignment, item, ...restItemProps } = toolbarItem;
             return (
               <ToolbarItem
-                key={index}
+                key={`${key}-${index}`}
                 variant={variant}
                 className={className}
                 id={id}
