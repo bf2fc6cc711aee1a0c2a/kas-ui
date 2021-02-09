@@ -1,5 +1,4 @@
 import React from 'react';
-import { SVGIconProps } from '@patternfly/react-icons/dist/js/createIcon';
 import {
   ToolbarContent,
   Toolbar as PFToolbar,

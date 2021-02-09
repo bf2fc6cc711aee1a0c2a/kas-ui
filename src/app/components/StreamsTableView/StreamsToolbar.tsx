@@ -480,7 +480,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </Button>
       ),
     },
-    {
+  ];
+  if (total && total > 0 && toolbarItems.length === 1) {
+    toolbarItems.push({
       item: (
         <Pagination
           widgetId="pagination-options-menu-top"
@@ -502,8 +504,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       ),
       variant: 'pagination',
       alignment: { default: 'alignRight' },
-    },
-  ];
+    });
+  }
   return (
     <Toolbar
       toolbarProps={{

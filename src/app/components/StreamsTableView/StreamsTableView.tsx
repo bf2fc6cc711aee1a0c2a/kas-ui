@@ -529,23 +529,25 @@ const StreamsTableView = ({
           <EmptyStateBody>{t('no_results_match_the_filter_criteria')}</EmptyStateBody>
         </EmptyState>
       )}
-      <Pagination
-        widgetId="pagination-options-menu-bottom"
-        itemCount={total}
-        variant={PaginationVariant.bottom}
-        page={page}
-        perPage={perPage}
-        titles={{
-          paginationTitle: t('full_pagination'),
-          perPageSuffix: t('per_page_suffix'),
-          toFirstPage: t('to_first_page'),
-          toPreviousPage: t('to_previous_page'),
-          toLastPage: t('to_last_page'),
-          toNextPage: t('to_next_page'),
-          optionsToggle: t('options_toggle'),
-          currPage: t('curr_page'),
-        }}
-      />
+      {total && total > 0 && (
+        <Pagination
+          widgetId="pagination-options-menu-bottom"
+          itemCount={total}
+          variant={PaginationVariant.bottom}
+          page={page}
+          perPage={perPage}
+          titles={{
+            paginationTitle: t('full_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
+          }}
+        />
+      )}
       <DeleteInstanceModal
         title={title}
         selectedInstance={selectedInstance}

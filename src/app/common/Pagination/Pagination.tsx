@@ -3,16 +3,16 @@ import { useHistory, useLocation } from 'react-router';
 import {
   Pagination as PFPagination,
   PaginationProps as PFPaginationProps,
-  PaginationTitles as PFPaginationTitles,
+  PaginationVariant,
 } from '@patternfly/react-core';
 
-interface PaginationProps extends Omit<PFPaginationProps, 'children' | 'ref'> {}
+export interface PaginationProps extends Omit<PFPaginationProps, 'children' | 'ref'> {}
 
 const Pagination: FunctionComponent<PaginationProps> = ({
   page,
   perPage = 10,
   itemCount,
-  variant = 'top',
+  variant = PaginationVariant.top,
   isCompact,
   titles,
   ...restProps
@@ -49,22 +49,19 @@ const Pagination: FunctionComponent<PaginationProps> = ({
     [setSearchParam, history, searchParams]
   );
 
-  if (itemCount && itemCount > 0) {
-    return (
-      <PFPagination
-        itemCount={itemCount}
-        perPage={perPage}
-        page={page}
-        onSetPage={onSetPage}
-        variant={variant}
-        onPerPageSelect={onPerPageSelect}
-        isCompact={isCompact}
-        {...restProps}
-        titles={titles}
-      />
-    );
-  }
-  return null;
+  return (
+    <PFPagination
+      itemCount={itemCount}
+      perPage={perPage}
+      page={page}
+      onSetPage={onSetPage}
+      variant={variant}
+      onPerPageSelect={onPerPageSelect}
+      isCompact={isCompact}
+      {...restProps}
+      titles={titles}
+    />
+  );
 };
 
 export { Pagination };
