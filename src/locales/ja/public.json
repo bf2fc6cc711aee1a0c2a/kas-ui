@@ -223,6 +223,7 @@
   "ago": "日本語 ago",
   "preparing": "日本語 Resource preparing",
   "completed": "日本語 Ready",
+  "deprovision": "日本語 Deletion in progress",
   "filter_by_region": "日本語 Filter by region",
   "filter_by_cloud_provider": "日本語 Filter by cloud provider",
   "filter_by_status": "日本語 Filter by status",

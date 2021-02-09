@@ -260,6 +260,9 @@ const StreamsTableView = ({
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
+    if (originalData.status === InstanceStatus.DEPROVISION) {
+      return [];
+    }
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     let additionalProps: any;
     if (!isUserSameAsLoggedIn) {
@@ -332,11 +335,14 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title: (
-              <Link to="" onClick={() => onConnectToInstance(row as KafkaRequest)}>
-                {name}
-              </Link>
-            ),
+            title:
+              status === InstanceStatus.DEPROVISION ? (
+                name
+              ) : (
+                <Link to="" onClick={() => onConnectToInstance(row as KafkaRequest)}>
+                  {name}
+                </Link>
+              ),
           },
           cloudProviderDisplayName,
           regionDisplayName,
