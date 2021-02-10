@@ -59,7 +59,7 @@ export type TableProps = {
   onViewConnection: (instance: KafkaRequest) => void;
   onConnectToInstance: (data: KafkaRequest) => void;
   mainToggle: boolean;
-  refresh: (operation: string) => void;
+  refresh: () => void;
   page: number;
   perPage: number;
   total: number;
@@ -297,7 +297,6 @@ const StreamsTableView = ({
     ];
     return resolver;
   };
-
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount();
@@ -343,7 +342,7 @@ const StreamsTableView = ({
           regionDisplayName,
           owner,
           {
-            title: <StatusColumn status={status} />,
+            title: <StatusColumn status={status} instanceName={name} />,
           },
           {
             title: formatDate(created_at),
@@ -393,7 +392,7 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
-        refresh('delete');
+        refresh();
       });
     } catch (error) {
       let reason: string | undefined;
@@ -541,18 +540,16 @@ const StreamsTableView = ({
         perPage={perPage}
         paginationTitle={t('full_pagination')}
       />
-      {isDeleteModalOpen && (
-        <DeleteInstanceModal
-          title={title}
-          selectedInstance={selectedInstance}
-          isModalOpen={isDeleteModalOpen}
-          instanceStatus={selectedInstance?.status}
-          setIsModalOpen={setIsDeleteModalOpen}
-          onConfirm={onDeleteInstance}
-          description={description}
-          confirmActionLabel={confirmActionLabel}
-        />
-      )}
+      <DeleteInstanceModal
+        title={title}
+        selectedInstance={selectedInstance}
+        isModalOpen={isDeleteModalOpen}
+        instanceStatus={selectedInstance?.status}
+        setIsModalOpen={setIsDeleteModalOpen}
+        onConfirm={onDeleteInstance}
+        description={description}
+        confirmActionLabel={confirmActionLabel}
+      />
     </>
   );
 };

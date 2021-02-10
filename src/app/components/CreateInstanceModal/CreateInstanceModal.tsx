@@ -16,6 +16,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerContentBody,
+  ToggleGroupItem,
 } from '@patternfly/react-core';
 import { FormDataValidationState, NewKafka } from '../../models/models';
 import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
@@ -26,14 +27,16 @@ import { DefaultApi, CloudProvider, CloudRegion } from '../../../openapi';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
+import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
+import { isValidToken } from '@app/utils/utils';
 
 export type CreateInstanceModalProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
-  onCreate:()=>void;
+  onCreate: () => void;
   mainToggle: boolean;
-  refresh: (operation: string) => void;
+  refresh: () => void;
   cloudProviders: Array<CloudProvider>;
 };
 
@@ -63,10 +66,18 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
+  const [isCreationInProgress, setCreationInProgress] = useState(false);
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
   const { addAlert } = useAlerts();
+
+  const resetForm = () => {
+    setKafkaFormData({ ...kafkaFormData, name: '', multi_az: true });
+    setIsFormValid(true);
+    setNameValidated({ fieldState: 'default' });
+    setCreationInProgress(false);
+  };
 
   // Function to fetch cloud Regions based on selected filter
   const fetchCloudRegions = async (provider: CloudProvider) => {
@@ -117,54 +128,78 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     fetchCloudRegions(cloudProvider);
   };
 
-  const onCreateInstance = async () => {
+  const validateCreateForm = () => {
     let isValid = true;
-
-    if (kafkaFormData.name === undefined || kafkaFormData.name.trim() === '') {
+    const { name, region } = kafkaFormData;
+    if (!name || name.trim() === '') {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
-    } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(kafkaFormData.name.trim())) {
+    } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
     }
-
-    if (kafkaFormData.region === undefined || kafkaFormData.region.trim() === '') {
+    if (name.length > MAX_INSTANCE_NAME_LENGTH) {
+      isValid = false;
+      setNameValidated({
+        fieldState: 'error',
+        message: t('length_is_greater_than_expected', { maxLength: MAX_INSTANCE_NAME_LENGTH }),
+      });
+    }
+    if (!region || region.trim() === '') {
       isValid = false;
       setCloudRegionValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
     }
+    return isValid;
+  };
+
+  const onCreateInstance = async () => {
+    let isValid = validateCreateForm();
 
     const accessToken = await authContext?.getToken();
-
-    if (isValid) {
-      try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
-        onCreate();
-        setCreateStreamsInstance(false);
-        await apisService.createKafka(true, kafkaFormData).then((res) => {
-          // addAlert(t('kafka_creation_accepted'), AlertVariant.info);
-          refresh('create');
-        });
-      } catch (error) {
-        let reason:string|undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-      }
-    } else {
+    if (!isValid) {
       setIsFormValid(false);
+    } else {
+      if (isValidToken(accessToken)) {
+        try {
+          const apisService = new DefaultApi({
+            accessToken,
+            basePath,
+          });
+          onCreate();
+          await apisService.createKafka(true, kafkaFormData).then((res) => {
+            resetForm();
+            setCreateStreamsInstance(false);
+            refresh();
+          });
+        } catch (error) {
+          let reason: string | undefined;
+          let toShowAlert = true;
+          if (isServiceApiError(error)) {
+            if (error.response?.data.code === 'MGD-SERV-API-36') {
+              setIsFormValid(false);
+              toShowAlert = false;
+              setNameValidated({
+                fieldState: 'error',
+                message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
+              });
+            } else {
+              reason = error.response?.data.reason;
+            }
+          }
+          /**
+           * Todo: show user friendly message according to server code
+           * and translation for specific language
+           *
+           */
+          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        }
+        setCreationInProgress(false);
+      }
     }
   };
 
   const handleModalToggle = () => {
+    resetForm();
     setCreateStreamsInstance(!createStreamsInstance);
   };
 
@@ -175,14 +210,22 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
     } else if (name && !/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
     }
+
     setKafkaFormData({ ...kafkaFormData, name: name || '' });
-    if (isValid) {
-      if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
-      if (nameValidated.fieldState === 'error') {
-        setNameValidated({ fieldState: 'default', message: '' });
-      }
+    if (name && name.length > MAX_INSTANCE_NAME_LENGTH) {
+      setNameValidated({
+        fieldState: 'error',
+        message: t('length_is_greater_than_expected', { maxLength: MAX_INSTANCE_NAME_LENGTH }),
+      });
     } else {
-      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
+      if (isValid) {
+        if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
+        if (nameValidated.fieldState === 'error') {
+          setNameValidated({ fieldState: 'default', message: '' });
+        }
+      } else {
+        setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
+      }
     }
   };
 
@@ -208,12 +251,18 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         return;
     }
   };
-  const onChangeAvailabilty = (zone: string) => {
-    setKafkaFormData({ ...kafkaFormData, multi_az: zone === 'multi' });
+
+  const onChangeAvailabilty = (isSelected: boolean, event) => {
+    if (isSelected) {
+      const value = event.currentTarget.id;
+      setKafkaFormData({ ...kafkaFormData, multi_az: value === 'multi' });
+    }
   };
 
   const createInstanceForm = () => {
     const { message, fieldState } = nameValidated;
+    const { name, cloud_provider, multi_az, region } = kafkaFormData;
+    const isMultiSelected = multi_az;
     return (
       <Form>
         {!isFormValid && (
@@ -236,7 +285,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
             type="text"
             id="form-instance-name"
             name="instance-name"
-            value={kafkaFormData?.name}
+            value={name}
             onChange={handleInstanceNameChange}
             autoFocus={true}
           />
@@ -249,7 +298,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
                   key={`tile-${provider.name}`}
                   title={provider.display_name ? t(provider.display_name) : ''}
                   icon={getTileIcon(provider?.name)}
-                  isSelected={kafkaFormData.cloud_provider === provider.name}
+                  isSelected={cloud_provider === provider.name}
                   onClick={() => onCloudProviderSelect(provider)}
                 />
               )
@@ -264,7 +313,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         >
           <FormSelect
             validated={cloudRegionValidated.fieldState}
-            value={kafkaFormData.region}
+            value={region}
             onChange={handleCloudRegionChange}
             id="cloud-region-select"
             name="cloud-region"
@@ -284,35 +333,21 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
           <ToggleGroup aria-label={t('availability_zone_selection')}>
-            {/*
-                  TODO: Currently using HTML version
-                  Issue: https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/24
-              */}
-            <div className="pf-c-toggle-group__item">
-              <button
-                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === false && 'pf-m-selected'}`}
-                type="button"
-                id="single"
-                disabled
-                onClick={() => {
-                  onChangeAvailabilty('single');
-                }}
-              >
-                <span className="pf-c-toggle-group__text"> {t('single')}</span>
-              </button>
-            </div>
-            <div className="pf-c-toggle-group__item">
-              <button
-                className={`pf-c-toggle-group__button ${kafkaFormData.multi_az === true && 'pf-m-selected'}`}
-                type="button"
-                onClick={() => {
-                  onChangeAvailabilty('multi');
-                }}
-                id="multi"
-              >
-                <span className="pf-c-toggle-group__text"> {t('multi')}</span>
-              </button>
-            </div>
+            <ToggleGroupItem
+              text={t('single')}
+              value={'single'}
+              isDisabled
+              buttonId="single"
+              isSelected={isMultiSelected}
+              onChange={onChangeAvailabilty}
+            />
+            <ToggleGroupItem
+              text={t('multi')}
+              value="multi"
+              buttonId="multi"
+              isSelected={isMultiSelected}
+              onChange={onChangeAvailabilty}
+            />
           </ToggleGroup>
         </FormGroup>
       </Form>
@@ -327,7 +362,14 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
         isOpen={createStreamsInstance}
         onClose={handleModalToggle}
         actions={[
-          <Button key="create" variant="primary" onClick={onCreateInstance} isDisabled={!isFormValid}>
+          <Button
+            key="create"
+            variant="primary"
+            onClick={onCreateInstance}
+            isDisabled={!isFormValid || isCreationInProgress}
+            spinnerAriaValueText={t('submitting_request')}
+            isLoading={isCreationInProgress}
+          >
             {t('create_instance')}
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle}>

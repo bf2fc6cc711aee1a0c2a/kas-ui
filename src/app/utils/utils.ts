@@ -72,6 +72,15 @@ const capitalize = (s: string) => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
+const MAX_INSTANCE_NAME_LENGTH = 32;
+
+const isValidToken = (accessToken: string | undefined) => {
+  if (accessToken !== undefined && accessToken !== '') {
+    return true;
+  }
+  return false;
+};
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -80,5 +89,7 @@ export {
   getCloudRegionDisplayName,
   capitalize,
   statusOptions,
-  InstanceStatus
+  InstanceStatus,
+  MAX_INSTANCE_NAME_LENGTH,
+  isValidToken
 };
