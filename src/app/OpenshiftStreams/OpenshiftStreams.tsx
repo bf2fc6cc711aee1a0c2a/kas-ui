@@ -59,7 +59,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {

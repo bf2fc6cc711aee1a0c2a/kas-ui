@@ -150,7 +150,9 @@ const StreamsTableView = ({
   const removeKafkaFromDeleted = (name: string) => {
     const index = deletedKafkas.findIndex((k) => k === name);
     if (index > -1) {
-      setDeletedKafkas((prev) => prev.splice(index, 1));
+      const prev = Object.assign([], deletedKafkas);
+      prev.splice(index, 1);
+      setDeletedKafkas(prev);
     }
   };
 
@@ -270,7 +272,6 @@ const StreamsTableView = ({
     addAlertAfterSuccessDeletion();
     // handle success alert for creation
     addAlertAfterSuccessCreation();
-    
   }, [page, perPage, kafkaInstanceItems]);
 
   const onSelectKebabDropdownOption = (
@@ -434,7 +435,7 @@ const StreamsTableView = ({
     setIsDeleteModalOpen(false);
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
-        // addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
+        setActiveRow(undefined);
         refresh();
       });
     } catch (error) {
@@ -529,11 +530,13 @@ const StreamsTableView = ({
   const customRowWrapper = ({ className, rowProps, row, ...props }) => {
     const { rowIndex } = rowProps;
     const { isExpanded } = row;
+    const status: string = row?.originalData?.status || '';
+    const isRowDeleted = status === InstanceStatus.DEPROVISION;
     return (
       <tr
         className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
         hidden={isExpanded !== undefined && !isExpanded}
-        onClick={(event: any) => onRowClick(event, rowIndex, row)}
+        onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
         {...props}
       />
     );
