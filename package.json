@@ -21,7 +21,7 @@
     "api:generate": "openapi-generator-cli generate -i mas-mock/managed-services-api.yaml -g typescript-axios -o src/openapi --additional-properties=ngVersion=6.1.7,npmName=restClient,supportsES6=true,npmVersion=6.9.0,withInterfaces=true",
     "start": "node server.js",
     "start:dev": "webpack serve --https --hot --color --progress --config webpack.dev.js",
-    "start:federate": "HOST=localhost PORT=9000 PROTOCOL=http webpack serve --hot --color --progress --config webpack.dev.js",
+    "start:federate": "HOST=localhost PORT=9000 PROTOCOL=http webpack serve --hot --color --progress --open=false --config webpack.dev.js",
     "test": "jest",
     "eslint": "eslint --ext .tsx,.js ./src/",
     "lint": "npm run eslint",
@@ -91,6 +91,7 @@
     "webpack-merge": "^5.2.0"
   },
   "dependencies": {
+    "@patternfly/react-charts": "^6.13.8",
     "@patternfly/react-core": "^4.87.2",
     "@patternfly/react-icons": "^4.7.11",
     "@patternfly/react-styles": "^4.7.8",
@@ -99,6 +100,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/user-event": "^12.6.0",
     "axios": "^0.21.0",
+    "date-fns": "^2.17.0",
     "dayjs": "^1.9.6",
     "express": "^4.17.1",
     "i18next": "^19.8.3",
