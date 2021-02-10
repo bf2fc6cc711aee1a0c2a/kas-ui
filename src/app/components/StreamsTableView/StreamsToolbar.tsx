@@ -16,7 +16,7 @@ import {
   ToolbarFilter,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
-import { Pagination, Toolbar, ToolbarItemProps } from '@app/common';
+import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
@@ -484,7 +484,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   if (total && total > 0 && toolbarItems.length === 1) {
     toolbarItems.push({
       item: (
-        <Pagination
+        <MASPagination
           widgetId="pagination-options-menu-top"
           itemCount={total}
           page={page}
@@ -507,7 +507,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     });
   }
   return (
-    <Toolbar
+    <MASToolbar
       toolbarProps={{
         id: 'instance-toolbar',
         clearAllFilters: onClear,

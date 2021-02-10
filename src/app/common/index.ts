@@ -1,3 +1,3 @@
-export * from './Pagination';
-export * from './Table';
-export * from './Toolbar';
+export * from './MASPagination';
+export * from './MASTable';
+export * from './MASToolbar';

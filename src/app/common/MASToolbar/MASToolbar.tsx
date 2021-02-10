@@ -19,7 +19,7 @@ interface ToolbarProps {
   toolbarItems: ToolbarItemProps[];
 }
 
-const Toolbar: React.FunctionComponent<ToolbarProps> = ({
+const MASToolbar: React.FunctionComponent<ToolbarProps> = ({
   toolbarProps,
   toggleGroupProps,
   toolbarItems,
@@ -61,4 +61,4 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = ({
   );
 };
 
-export { Toolbar };
+export { MASToolbar };

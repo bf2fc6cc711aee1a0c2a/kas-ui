@@ -8,14 +8,14 @@ import {
   TableBodyProps,
 } from '@patternfly/react-table';
 
-export interface MKTableProps {
+export interface MASTableProps {
   tableProps: Omit<PFTableProps, 'children'>;
   tableHeaderProps?: Omit<HeaderProps, 'children'>;
   tableBodyProps?: Omit<TableBodyProps, 'children'>;
   children?: React.ReactNode;
 }
 
-const Table: FunctionComponent<MKTableProps> = ({ tableProps, tableHeaderProps, tableBodyProps, children }) => {
+const MASTable: FunctionComponent<MASTableProps> = ({ tableProps, tableHeaderProps, tableBodyProps, children }) => {
   const {
     cells,
     rows,
@@ -49,4 +49,4 @@ const Table: FunctionComponent<MKTableProps> = ({ tableProps, tableHeaderProps, 
   );
 };
 
-export { Table };
+export { MASTable };

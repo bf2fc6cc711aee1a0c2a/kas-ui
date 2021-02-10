@@ -23,7 +23,7 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
 } from '@patternfly/react-core';
-import { Pagination, Table } from '@app/common';
+import { MASPagination, MASTable } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
@@ -508,7 +508,7 @@ const StreamsTableView = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
       />
-      <Table
+      <MASTable
         tableProps={{
           className: 'mk--streams-table-view__table',
           cells: tableColumns,
@@ -530,7 +530,7 @@ const StreamsTableView = ({
         </EmptyState>
       )}
       {total && total > 0 && (
-        <Pagination
+        <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}
           variant={PaginationVariant.bottom}
