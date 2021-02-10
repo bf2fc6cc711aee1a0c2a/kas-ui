@@ -39,9 +39,10 @@ const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
     }
   };
 
+  const icon = getStatusIcon();
   return (
     <Flex>
-      <FlexItem spacer={{ default: 'spacerSm' }}>{getStatusIcon()}</FlexItem>
+      {icon && <FlexItem spacer={{ default: 'spacerSm' }}>{icon}</FlexItem>}
       <FlexItem>{getStatus()}</FlexItem>
     </Flex>
   );

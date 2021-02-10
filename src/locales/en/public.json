@@ -225,7 +225,7 @@
   "ago": "ago",
   "preparing": "Resource preparing",
   "completed": "Ready",
-  "deprovision": "Deletion in progress",
+  "deprovision": "Deleting",
   "filter_by_region": "Filter by region",
   "filter_by_cloud_provider": "Filter by cloud provider",
   "filter_by_status": "Filter by status",
