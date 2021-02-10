@@ -1,8 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
-import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
-import './InstanceDrawer.css';
 import { KafkaRequest } from 'src/openapi';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';

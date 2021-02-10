@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { StreamsTableView, FilterType, CreateInstanceModal, AlertProvider, useAlerts } from '@app/components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
-import { InstanceDrawer } from '../Drawer/InstanceDrawer';
+import { InstanceDrawer } from '@app/components';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';

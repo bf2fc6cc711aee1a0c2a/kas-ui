@@ -17,6 +17,8 @@ import {
   TextProps,
   TitleProps,
 } from '@patternfly/react-core';
+import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
+import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import { Loading } from '@app/common';
 import { DetailsTab, DetailsTabProps } from './DetailsTab';
 import { ConnectionTab, ConnectionTabProps } from './ConnectionTab';

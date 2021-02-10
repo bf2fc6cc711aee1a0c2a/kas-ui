@@ -1,8 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { PageSection, Title, Button, EmptyState, EmptyStateIcon, EmptyStateBody } from '@patternfly/react-core';
+import { PageSection, Button, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
 import { useHistory } from 'react-router-dom';
+import { EmptyState } from '@app/common';
 
 const NotFound: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -17,12 +18,14 @@ const NotFound: React.FunctionComponent = () => {
 
   return (
     <PageSection>
-      <EmptyState variant="full">
-        <EmptyStateIcon icon={ExclamationTriangleIcon} />
-        <Title headingLevel="h1" size="lg">
-          {t('404_page_not_found')}
-        </Title>
-        <EmptyStateBody>{t('we_did_not_find_a_page_that_matches_the_address_you_navigated_to')}</EmptyStateBody>
+      <EmptyState
+        emptyStateProps={{ variant: EmptyStateVariant.full }}
+        emptyStateIconProps={{ icon: ExclamationTriangleIcon }}
+        titleProps={{ title: t('404_page_not_found'), headingLevel: 'h1', size: TitleSizes.lg }}
+        emptyStateBodyProps={{
+          body: t('we_did_not_find_a_page_that_matches_the_address_you_navigated_to'),
+        }}
+      >
         <GoHomeBtn />
       </EmptyState>
     </PageSection>
