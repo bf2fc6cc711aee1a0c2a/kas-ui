@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { DeleteModal, DeleteModalProps } from './DeleteModal';
+import React from 'react';
+import { MASDeleteModal, MASDeleteModalProps } from './MASDeleteModal';
 
 import { render, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +21,7 @@ const selectedInstance: KafkaRequest = {
 const onConfirm = jest.fn();
 const setIsModalOpen = jest.fn();
 
-const props: DeleteModalProps = {
+const props: MASDeleteModalProps = {
   isModalOpen: true,
   selectedItemData: selectedInstance,
   handleModalToggle: setIsModalOpen,
@@ -41,8 +41,8 @@ const props: DeleteModalProps = {
   },
 };
 
-const setup = (args: DeleteModalProps) => {
-  return render(<DeleteModal {...args} />);
+const setup = (args: MASDeleteModalProps) => {
+  return render(<MASDeleteModal {...args} />);
 };
 describe('Delete Instance Modal', () => {
   it('should render modal with props text', () => {

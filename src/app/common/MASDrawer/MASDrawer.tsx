@@ -19,12 +19,12 @@ import {
 } from '@patternfly/react-core';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
-import { Loading } from '@app/common';
+import { MASLoading } from '@app/common';
 import { DetailsTab, DetailsTabProps } from './DetailsTab';
 import { ConnectionTab, ConnectionTabProps } from './ConnectionTab';
-import './Drawer.css';
+import './MASDrawer.css';
 
-export type DrawerProps = DetailsTabProps &
+export type MASDrawerProps = DetailsTabProps &
   ConnectionTabProps & {
     mainToggle?: boolean;
     activeTab?: string;
@@ -46,7 +46,7 @@ export type DrawerProps = DetailsTabProps &
     };
   };
 
-export const Drawer: React.FC<DrawerProps> = ({
+export const MASDrawer: React.FC<MASDrawerProps> = ({
   mainToggle,
   activeTab,
   onClose,
@@ -59,7 +59,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   tabTitle2,
   instanceName,
   externalServer,
-}: DrawerProps) => {
+}: MASDrawerProps) => {
   const { hidden = false, widths, ...restDrawerPanelContentProps } = drawerPanelContentProps || {};
   const { text, title } = drawerHeaderProps || {};
 
@@ -81,7 +81,7 @@ export const Drawer: React.FC<DrawerProps> = ({
   return (
     <DrawerPanelContent widths={widths || { default: 'width_50' }} hidden={hidden} {...restDrawerPanelContentProps}>
       {isLoading ? (
-        <Loading />
+        <MASLoading />
       ) : (
         <>
           <DrawerHead>

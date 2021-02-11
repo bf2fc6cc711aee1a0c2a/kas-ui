@@ -19,7 +19,9 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 import './OpenshiftStreams.css';
-import { Loading, EmptyState } from '@app/common';
+import { MASLoading, MASEmptyState,MASDrawer } from '@app/common';
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -31,6 +33,8 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
+  dayjs.extend(localizedFormat);
+
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
@@ -205,18 +209,51 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
       */
     setExpectedTotal(kafkaInstancesList.total - 1);
   };
+
+  const { activeTab, instanceDetail } = selectedInstance || {};
+  const { id, created_at, updated_at, owner, name } = instanceDetail || {};
+
+  const getExternalServer = () => {
+    const { bootstrapServerHost } = instanceDetail || {};
+    return bootstrapServerHost?.endsWith(':443') ? bootstrapServerHost : `${bootstrapServerHost}:443`;
+  };
+
   return (
     <>
       <AlertProvider>
         <Drawer isExpanded={selectedInstance != null} onExpand={onExpand}>
           <DrawerContent
             panelContent={
-              <InstanceDrawer
-                mainToggle={mainToggle}
+              <MASDrawer                
+                activeTab={activeTab}
+                tabTitle1={t('details')}
+                tabTitle2={t('connection')}
                 onClose={onCloseClick}
-                isExpanded={selectedInstance != null}
-                activeTab={selectedInstance?.activeTab}
-                instanceDetail={selectedInstance?.instanceDetail}
+                isLoading={instanceDetail === undefined}
+                drawerHeaderProps={{
+                  text: { label: t('instance_name') },
+                  title: { value: name },
+                }}
+                detailsTabProps={{
+                  textList: [
+                    { label: t('cloud_provider'), value: t('amazon_web_services') },
+                    { label: t('region'), value: t('us_east_north_virginia') },
+                    { label: t('id'), value: id },
+                    { label: t('owner'), value: owner },
+                    { label: t('created'), value: dayjs(created_at).format('LLLL') },
+                    { label: t('updated'), value: dayjs(updated_at).format('LLLL') },
+                  ],
+                  cardDetails: [
+                    { title: t('topics'), value: 10 },
+                    { title: t('consumer_groups'), value: 10 },
+                  ],
+                }}
+                connectionTabProps={{
+                  tabTitle1: t('resources'),
+                  tabTitle2: t('sample_code'),
+                }}
+                instanceName={instanceDetail?.name}
+                externalServer={getExternalServer()}
               />
             }
           >
@@ -231,11 +268,11 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
             </PageSection>
             {kafkaInstanceItems === undefined ? (
               <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-                <Loading />
+                <MASLoading />
               </PageSection>
             ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
               <PageSection>
-                <EmptyState
+                <MASEmptyState
                   titleProps={{
                     title: t('you_do_not_have_any_kafka_instances_yet'),
                     headingLevel: 'h4',

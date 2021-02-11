@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextInput } from '@patternfly/react-core';
-import { DeleteModal, DeleteModalProps } from '@app/common';
+import { MASDeleteModal, MASDeleteModalProps } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export type DeleteInstanceModalProps = DeleteModalProps & {
+export type DeleteInstanceModalProps = MASDeleteModalProps & {
   instanceStatus?: string;
 };
 
@@ -38,7 +38,7 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
   };
 
   return (
-    <DeleteModal
+    <MASDeleteModal
       isModalOpen={isModalOpen}
       modalProps={modalProps}
       confirmButtonProps={{
@@ -65,6 +65,6 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
           />
         </>
       )}
-    </DeleteModal>
+    </MASDeleteModal>
   );
 };

@@ -9,9 +9,9 @@ import {
   ButtonProps,
   TextProps,
 } from '@patternfly/react-core';
-import './DeleteModal.css';
+import './MASDeleteModal.css';
 
-export type DeleteModalProps = {
+export type MASDeleteModalProps = {
   isModalOpen: boolean;
   modalProps: Omit<ModalProps, 'children' | 'ref'>;
   handleModalToggle: () => void;
@@ -33,7 +33,7 @@ export type DeleteModalProps = {
   };
 };
 
-export const DeleteModal: React.FC<DeleteModalProps> = ({
+export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   isModalOpen,
   modalProps,
   confirmButtonProps,
@@ -42,7 +42,7 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({
   textProps,
   children,
   selectedItemData = '',
-}: DeleteModalProps) => {
+}: MASDeleteModalProps) => {
   const {
     variant = ModalVariant.small,
     titleIconVariant = 'warning',

@@ -3,7 +3,7 @@ import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { PageSection, Button, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
 import { useHistory } from 'react-router-dom';
-import { EmptyState } from '@app/common';
+import { MASEmptyState } from '@app/common';
 
 const NotFound: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ const NotFound: React.FunctionComponent = () => {
 
   return (
     <PageSection>
-      <EmptyState
+      <MASEmptyState
         emptyStateProps={{ variant: EmptyStateVariant.full }}
         emptyStateIconProps={{ icon: ExclamationTriangleIcon }}
         titleProps={{ title: t('404_page_not_found'), headingLevel: 'h1', size: TitleSizes.lg }}
@@ -27,7 +27,7 @@ const NotFound: React.FunctionComponent = () => {
         }}
       >
         <GoHomeBtn />
-      </EmptyState>
+      </MASEmptyState>
     </PageSection>
   );
 };

@@ -15,8 +15,8 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 
-export type EmptyStateProps = {
-  titleProps: Omit<TitleProps, 'children'>;
+export type MASEmptyStateProps = {
+  titleProps?: Omit<TitleProps, 'children'>;
   emptyStateProps?: Omit<PFEmptyStateProps, 'children'>;
   emptyStateIconProps?: EmptyStateIconProps;
   emptyStateBodyProps?: Omit<EmptyStateBodyProps, 'children'> & {
@@ -29,17 +29,17 @@ export type EmptyStateProps = {
   children?: React.ReactNode;
 };
 
-export const EmptyState: React.FC<EmptyStateProps> = ({
+export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   titleProps,
   buttonProps,
   emptyStateIconProps,
   emptyStateProps,
   emptyStateBodyProps,
   children,
-}: EmptyStateProps) => {
+}: MASEmptyStateProps) => {
   const { variant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
   const { icon = PlusCircleIcon, ...restEmptyStateIconProps } = emptyStateIconProps || {};
-  const { title, size = TitleSizes.lg, headingLevel, ...restTitleProps } = titleProps || {};
+  const { title, size = TitleSizes.lg, headingLevel = 'h1', ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
 
   return (
@@ -51,7 +51,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             {title}
           </Title>
         )}
-        <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>
+        {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
         {buttonProps?.title && (
           <Button variant={variant} onClick={onClick} {...restButtonProps}>
             {buttonProps?.title}
