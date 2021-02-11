@@ -77,6 +77,8 @@ const capitalize = (s: string) => {
 const MAX_INSTANCE_NAME_LENGTH = 32;
 const MAX_FILTER_LIMIT = 10;
 
+const MIN_POLL_INTERVAL = 1000;
+const MAX_POLL_INTERVAL = 5000;
 const isValidToken = (accessToken: string | undefined) => {
   if (accessToken !== undefined && accessToken !== '') {
     return true;
@@ -95,5 +97,7 @@ export {
   InstanceStatus,
   MAX_INSTANCE_NAME_LENGTH,
   isValidToken,
-  MAX_FILTER_LIMIT
+  MAX_FILTER_LIMIT,
+  MIN_POLL_INTERVAL,
+  MAX_POLL_INTERVAL,
 };

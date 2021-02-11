@@ -19,6 +19,7 @@ import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
+import { InstanceStatus, MIN_POLL_INTERVAL, MAX_POLL_INTERVAL } from '@app/utils';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -56,6 +57,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
+  const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+
+  const drawerRef = React.createRef<any>();
 
   const { activeTab, instanceDetail } = selectedInstance || {};
 
@@ -183,7 +187,32 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     fetchKafkas(false);
   }, []);
 
-  useTimeout(() => fetchKafkas(true), 5000);
+  useEffect(() => {
+    if (kafkaInstanceItems) {
+      let allAreReady = true;
+      for (let i = 0; i < kafkaInstanceItems.length; i++) {
+        const item = kafkaInstanceItems[i];
+        if (
+          item.status === InstanceStatus.ACCEPTED ||
+          item.status === InstanceStatus.PREPARING ||
+          item.status === InstanceStatus.PROVISIONING
+        ) {
+          allAreReady = false;
+          break;
+        }
+      }
+
+      if (!allAreReady) {
+        // Decrease the poll interval if any instance is not in ready or failed state
+        setPollInterval(MIN_POLL_INTERVAL);
+      } else {
+        // Increase the poll interval if all instances are in ready or failed state
+        setPollInterval(MAX_POLL_INTERVAL);
+      }
+    }
+  }, [kafkaInstanceItems]);
+
+  useTimeout(() => fetchKafkas(true), pollInterval);
 
   const refreshKafkas = () => {
     //set the page to laoding state

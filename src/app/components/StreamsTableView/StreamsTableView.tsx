@@ -26,6 +26,12 @@ import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
+<<<<<<< HEAD
+=======
+import './StreamsTableView.css';
+import { css } from '@patternfly/react-styles';
+import StreamsToolbar from './StreamsToolbar';
+>>>>>>> speed up the polling after the kafka just made
 
 export type FilterValue = {
   value: string;
