@@ -7,9 +7,6 @@ import {
   IExtraData,
   IRowData,
   ISeparator,
-  Table,
-  TableBody,
-  TableHeader,
   IRowCell,
   sortable,
   ISortBy,
@@ -26,10 +23,10 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
 } from '@patternfly/react-core';
+import { MASPagination, MASTable } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
-import { TablePagination } from './TablePagination';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -46,12 +43,13 @@ export type FilterValue = {
   value: string;
   isExact: boolean;
 };
+
 export type FilterType = {
   filterKey: string;
   filterValue: FilterValue[];
 };
 
-export type TableProps = {
+export type StreamsTableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
@@ -123,13 +121,13 @@ const StreamsTableView = ({
   filterSelected,
   orderBy,
   setOrderBy,
-}: TableProps) => {
+}: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const [activeRow, setActiveRow] = useState();
+  const [activeRow, setActiveRow] = useState<number>();
 
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
@@ -476,7 +474,7 @@ const StreamsTableView = ({
   const onRowClick = (event: any, rowIndex: number, row: IRowData) => {
     const { originalData } = row;
     const clickedEventType = event?.target?.type;
-    //Open modal on row click except kebab button click
+    // Open modal on row click except kebab button click
     if (clickedEventType !== 'button') {
       onViewInstance(originalData);
       setActiveRow(rowIndex);
@@ -510,19 +508,18 @@ const StreamsTableView = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
       />
-      <Table
-        className="mk--streams-table-view__table"
-        cells={tableColumns}
-        rows={preparedTableCells()}
-        aria-label={t('cluster_instance_list')}
-        actionResolver={actionResolver}
-        onSort={onSort}
-        sortBy={getSortBy()}
-        rowWrapper={customRowWrapper}
-      >
-        <TableHeader />
-        <TableBody />
-      </Table>
+      <MASTable
+        tableProps={{
+          className: 'mk--streams-table-view__table',
+          cells: tableColumns,
+          rows: preparedTableCells(),
+          'aria-label': t('cluster_instance_list'),
+          actionResolver: actionResolver,
+          onSort: onSort,
+          sortBy: getSortBy(),
+          rowWrapper: customRowWrapper,
+        }}
+      />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <EmptyState variant={EmptyStateVariant.small}>
           <EmptyStateIcon icon={SearchIcon} />
@@ -532,14 +529,25 @@ const StreamsTableView = ({
           <EmptyStateBody>{t('no_results_match_the_filter_criteria')}</EmptyStateBody>
         </EmptyState>
       )}
-      <TablePagination
-        widgetId="pagination-options-menu-bottom"
-        itemCount={total}
-        variant={PaginationVariant.bottom}
-        page={page}
-        perPage={perPage}
-        paginationTitle={t('full_pagination')}
-      />
+      {total && total > 0 && (
+        <MASPagination
+          widgetId="pagination-options-menu-bottom"
+          itemCount={total}
+          variant={PaginationVariant.bottom}
+          page={page}
+          perPage={perPage}
+          titles={{
+            paginationTitle: t('full_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
+          }}
+        />
+      )}
       <DeleteInstanceModal
         title={title}
         selectedInstance={selectedInstance}
