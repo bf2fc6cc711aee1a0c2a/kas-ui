@@ -56,6 +56,7 @@ export type StreamsTableProps = {
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
   onConnectToInstance: (data: KafkaRequest) => void;
+  getConnectToInstancePath: (data: KafkaRequest) => string;
   mainToggle: boolean;
   refresh: () => void;
   page: number;
@@ -106,6 +107,7 @@ const StreamsTableView = ({
   onViewInstance,
   onViewConnection,
   onConnectToInstance,
+  getConnectToInstancePath,
   refresh,
   createStreamsInstance,
   setCreateStreamsInstance,
@@ -331,7 +333,7 @@ const StreamsTableView = ({
         cells: [
           {
             title: (
-              <Link to="" onClick={() => onConnectToInstance(row as KafkaRequest)}>
+              <Link to={() => getConnectToInstancePath(row as KafkaRequest)} onClick={(e) => {e.preventDefault(); onConnectToInstance(row as KafkaRequest)}}>
                 {name}
               </Link>
             ),
