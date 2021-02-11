@@ -534,7 +534,12 @@ const StreamsTableView = ({
     const isRowDeleted = status === InstanceStatus.DEPROVISION;
     return (
       <tr
-        className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
+        className={css(
+          className,
+          'pf-c-table-row__item',
+          isRowDeleted ? 'pf-m-disabled' : 'pf-m-selectable',
+          activeRow === rowIndex && 'pf-m-selected'
+        )}
         hidden={isExpanded !== undefined && !isExpanded}
         onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
         {...props}
