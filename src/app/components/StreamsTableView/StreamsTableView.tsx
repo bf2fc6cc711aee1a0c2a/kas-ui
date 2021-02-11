@@ -7,9 +7,6 @@ import {
   IExtraData,
   IRowData,
   ISeparator,
-  Table,
-  TableBody,
-  TableHeader,
   IRowCell,
   sortable,
   ISortBy,
@@ -17,10 +14,10 @@ import {
   IExtraColumnData,
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
+import { MASPagination, MASTable, EmptyState } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { useAlerts,DeleteInstanceModal } from '@app/components';
-import { TablePagination } from './TablePagination';
+import { useAlerts, DeleteInstanceModal } from '@app/components';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
@@ -29,18 +26,20 @@ import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
-import {EmptyState} from '@app/common';
+import './StreamsTableView.css';
+import { css } from '@patternfly/react-styles';
 
 export type FilterValue = {
   value: string;
   isExact: boolean;
 };
+
 export type FilterType = {
   filterKey: string;
   filterValue: FilterValue[];
 };
 
-export type TableProps = {
+export type StreamsTableProps = {
   createStreamsInstance: boolean;
   setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
@@ -112,12 +111,14 @@ const StreamsTableView = ({
   filterSelected,
   orderBy,
   setOrderBy,
-}: TableProps) => {
+}: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
+  const [activeRow, setActiveRow] = useState<number>();
+
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
     { title: t('cloud_provider'), transforms: [sortable] },
@@ -223,7 +224,12 @@ const StreamsTableView = ({
     setItems(incompleteKafkas);
   }, [page, perPage, kafkaInstanceItems]);
 
-  const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
+  const onSelectKebabDropdownOption = (
+    event: any,
+    originalData: KafkaRequest,
+    selectedOption: string,
+    rowIndex: number | undefined
+  ) => {
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
     } else if (selectedOption === 'connect-instance') {
@@ -233,9 +239,11 @@ const StreamsTableView = ({
     }
     // Set focus back on previous selected element i.e. kebab button
     event?.target?.parentElement?.parentElement?.previousSibling?.focus();
+    setActiveRow(rowIndex);
   };
 
-  const getActionResolver = (rowData: IRowData) => {
+  const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
+    const { rowIndex } = extraData;
     if (!kafkaDataLoaded) {
       return [];
     }
@@ -260,18 +268,18 @@ const StreamsTableView = ({
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance', rowIndex),
       },
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
-        onClick: () => onViewConnection(originalData),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance', rowIndex),
       },
       {
         title: t('delete_instance'),
         id: 'delete-instance',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance', rowIndex),
         ...additionalProps,
       },
     ];
@@ -335,7 +343,7 @@ const StreamsTableView = ({
   };
 
   const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData);
+    return getActionResolver(rowData, _extraData);
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
@@ -453,6 +461,29 @@ const StreamsTableView = ({
     return;
   };
 
+  const onRowClick = (event: any, rowIndex: number, row: IRowData) => {
+    const { originalData } = row;
+    const clickedEventType = event?.target?.type;
+    // Open modal on row click except kebab button click
+    if (clickedEventType !== 'button') {
+      onViewInstance(originalData);
+      setActiveRow(rowIndex);
+    }
+  };
+
+  const customRowWrapper = ({ className, rowProps, row, ...props }) => {
+    const { rowIndex } = rowProps;
+    const { isExpanded } = row;
+    return (
+      <tr
+        className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
+        hidden={isExpanded !== undefined && !isExpanded}
+        onClick={(event: any) => onRowClick(event, rowIndex, row)}
+        {...props}
+      />
+    );
+  };
+
   return (
     <>
       <StreamsToolbar
@@ -467,17 +498,18 @@ const StreamsTableView = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
       />
-      <Table
-        cells={tableColumns}
-        rows={preparedTableCells()}
-        aria-label={t('cluster_instance_list')}
-        actionResolver={actionResolver}
-        onSort={onSort}
-        sortBy={getSortBy()}
-      >
-        <TableHeader />
-        <TableBody />
-      </Table>
+      <MASTable
+        tableProps={{
+          className: 'mk--streams-table-view__table',
+          cells: tableColumns,
+          rows: preparedTableCells(),
+          'aria-label': t('cluster_instance_list'),
+          actionResolver: actionResolver,
+          onSort: onSort,
+          sortBy: getSortBy(),
+          rowWrapper: customRowWrapper,
+        }}
+      />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <EmptyState
           emptyStateProps={{
@@ -496,14 +528,25 @@ const StreamsTableView = ({
           }}
         />
       )}
-      <TablePagination
-        widgetId="pagination-options-menu-bottom"
-        itemCount={total}
-        variant={PaginationVariant.bottom}
-        page={page}
-        perPage={perPage}
-        paginationTitle={t('full_pagination')}
-      />
+      {total && total > 0 && (
+        <MASPagination
+          widgetId="pagination-options-menu-bottom"
+          itemCount={total}
+          variant={PaginationVariant.bottom}
+          page={page}
+          perPage={perPage}
+          titles={{
+            paginationTitle: t('full_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
+          }}
+        />
+      )}
       <DeleteInstanceModal
         isModalOpen={isDeleteModalOpen}
         instanceStatus={selectedInstance?.status}

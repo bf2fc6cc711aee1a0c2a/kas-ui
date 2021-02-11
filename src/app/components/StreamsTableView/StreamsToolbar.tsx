@@ -8,9 +8,6 @@ import {
   Select,
   SelectVariant,
   SelectOption,
-  ToolbarToggleGroup,
-  Toolbar,
-  ToolbarContent,
   ToolbarGroup,
   SelectOptionObject,
   ToolbarChip,
@@ -19,7 +16,7 @@ import {
   ToolbarFilter,
 } from '@patternfly/react-core';
 import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
-import { TablePagination } from './TablePagination';
+import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
@@ -268,7 +265,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     } else if (category === 'region') {
       filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
     } else if (category === 'cloud_provider') {
-      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
+      filterChip = cloudProviderFilterOptions.find((option) => option.label === chip.toString())?.value;
     }
     const chipIndex = filterIndex >= 0 ? prevFilterValue.findIndex((val) => val.value === filterChip) : -1;
     if (chipIndex >= 0) {
@@ -338,8 +335,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   <Tooltip
                     content={
                       <div>
-                        Valid characters for name are lowercase letters from a to z, numbers from 0 to 9, underscore
-                        (_) hyphens (-) and percentage (%)
+                        Valid characters for name are lowercase letters from a to z, numbers from 0 to 9, underscore (_)
+                        hyphens (-) and percentage (%)
                       </div>
                     }
                     reference={nameInputRef}
@@ -475,34 +472,52 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
+  const toolbarItems: ToolbarItemProps[] = [
+    {
+      item: (
+        <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
+          {t('create_kafka_instance')}
+        </Button>
+      ),
+    },
+  ];
+  if (total && total > 0 && toolbarItems.length === 1) {
+    toolbarItems.push({
+      item: (
+        <MASPagination
+          widgetId="pagination-options-menu-top"
+          itemCount={total}
+          page={page}
+          perPage={perPage}
+          isCompact={true}
+          titles={{
+            paginationTitle: t('minimal_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
+          }}
+        />
+      ),
+      variant: 'pagination',
+      alignment: { default: 'alignRight' },
+    });
+  }
   return (
-    <Toolbar
-      id="instance-toolbar"
-      clearAllFilters={onClear}
-      inset={{ lg: 'insetLg' }}
-      collapseListedFiltersBreakpoint="md"
-    >
-      <ToolbarContent>
-        <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="md">
-          {toggleGroupItems}
-        </ToolbarToggleGroup>
-        <ToolbarItem>
-          <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
-            {t('create_kafka_instance')}
-          </Button>
-        </ToolbarItem>
-        <ToolbarItem variant="pagination" alignment={{ default: 'alignRight' }}>
-          <TablePagination
-            widgetId="pagination-options-menu-top"
-            itemCount={total}
-            page={page}
-            perPage={perPage}
-            isCompact={true}
-            paginationTitle={t('minimal_pagination')}
-          />
-        </ToolbarItem>
-      </ToolbarContent>
-    </Toolbar>
+    <MASToolbar
+      toolbarProps={{
+        id: 'instance-toolbar',
+        clearAllFilters: onClear,
+        collapseListedFiltersBreakpoint: 'md',
+        inset: { lg: 'insetLg' },
+      }}
+      toggleGroupProps={{ toggleIcon: FilterIcon, breakpoint: 'md' }}
+      toggleGroupItems={toggleGroupItems}
+      toolbarItems={toolbarItems}
+    />
   );
 };
 
