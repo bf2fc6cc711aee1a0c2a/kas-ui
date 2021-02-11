@@ -223,7 +223,7 @@
   "curr_page": "Current page",
   "time_created": "Time created",
   "ago": "ago",
-  "preparing": "Resource preparing",
+  "preparing": "Creation in progress",
   "completed": "Ready",
   "filter_by_region": "Filter by region",
   "filter_by_cloud_provider": "Filter by cloud provider",
