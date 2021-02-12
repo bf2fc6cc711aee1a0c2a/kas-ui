@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   ToolbarItem,
   InputGroup,
@@ -19,7 +19,7 @@ import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
 import './StreamsToolbar.css';
 
 type StreamsToolbarProps = {
@@ -58,6 +58,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
+
   const { t } = useTranslation();
 
   // Options for server-side filtering
@@ -68,6 +69,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     { label: t('owner'), value: 'owner', disabled: false },
     { label: t('status'), value: 'status', disabled: false },
   ];
+
+  useEffect(() => {
+    handleMaxFilters();
+  }, [filteredValue]);
 
   const cloudProviderFilterOptions = cloudProviderOptions.map((cloudProvider) => {
     return { label: t(cloudProvider.value), value: cloudProvider.value, disabled: false };
@@ -143,7 +148,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       newFilterValue.push({ filterKey: key, filterValue: [filter] });
     }
     setFilteredValue(newFilterValue);
-    handleMaxFilters();
   };
 
   const isInputValid = (value?: string) => {
@@ -262,7 +266,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     if (chipIndex >= 0) {
       newFilteredValue[filterIndex].filterValue.splice(chipIndex, 1);
       setFilteredValue(newFilteredValue);
-      handleMaxFilters();
     }
   };
 
@@ -273,7 +276,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       newFilteredValue.splice(filterIndex, 1);
       setFilteredValue(newFilteredValue);
     }
-    handleMaxFilters();
   };
 
   const handleMaxFilters = () => {
@@ -308,7 +310,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     return false;
   };
 
-  const tooltipContent = (fieldName: string) => {
+  const tooltipContent = (fieldName?: string) => {
     if (isMaxFilter) {
       return <div>{t('max_filter_message')}</div>;
     }
@@ -377,6 +379,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           {filterSelected === 'cloud_provider' && (
             <ToolbarItem>
               <Select
+                id="cloud-provider-select"
                 variant={SelectVariant.checkbox}
                 aria-label="Select cloud provider"
                 onToggle={onCloudProviderFilterToggle}
@@ -393,6 +396,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     key={index}
                     value={option.value}
                   >
+                    {isMaxFilter && (
+                      <Tooltip
+                        content={tooltipContent()}
+                        reference={() => document.getElementById('cloud-provider-select')}
+                      />
+                    )}
                     {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
                     <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
@@ -410,6 +419,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           {filterSelected === 'region' && (
             <ToolbarItem>
               <Select
+                id="region-select"
                 variant={SelectVariant.checkbox}
                 aria-label="Select region"
                 onToggle={onRegionFilterToggle}
@@ -424,6 +434,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     key={index}
                     value={option.value}
                   >
+                    {isMaxFilter && (
+                      <Tooltip content={tooltipContent()} reference={() => document.getElementById('region-select')} />
+                    )}
                     {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
                     <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
@@ -477,6 +490,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           {filterSelected === 'status' && (
             <ToolbarItem>
               <Select
+                id="status-select"
                 variant={SelectVariant.checkbox}
                 aria-label="Select status"
                 onToggle={onStatusFilterToggle}
@@ -491,6 +505,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     key={index}
                     value={option.value}
                   >
+                    {isMaxFilter && (
+                      <Tooltip content={tooltipContent()} reference={() => document.getElementById('status-select')} />
+                    )}
                     {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
                     <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
