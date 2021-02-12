@@ -7,48 +7,34 @@ import {
   EmptyStateVariant,
   PageSection,
   PageSectionVariants,
-  Level,
-  LevelItem,
+  TitleSizes,
+  PageSectionProps,
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
 
-export type TitleSize = 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
-export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+export type HeadingLevel = 'h1' | 'h2' | 'h3';
 
-export type FullPageErrorHandlerProps = {
-  pageTitle?: {
-    variant?: PageSectionVariants;
-    headingLevel?: HeadingLevel;
-    size?: TitleSize;
-    title?: string;
-  };
+export type MASFullPageErrorHandlerProps = {
+  pageSection?: Omit<PageSectionProps, 'children'>;
   emptyStateTitle?: {
     variant?: EmptyStateVariant;
     icon?: React.ComponentType<any>;
     headingLevel?: HeadingLevel;
-    size?: TitleSize;
+    size?: TitleSizes;
     title?: string;
     body?: string;
   };
   children?: React.ReactNode;
 };
 
-export const FullPageErrorHandler: React.FC<FullPageErrorHandlerProps> = ({
-  pageTitle,
+export const MASFullPageErrorHandler: React.FC<MASFullPageErrorHandlerProps> = ({
+  pageSection,
   emptyStateTitle,
   children,
-}: FullPageErrorHandlerProps) => {
+}: MASFullPageErrorHandlerProps) => {
+  const { variant = PageSectionVariants.light, ...restPageSectionProps } = pageSection || {};
   return (
-    <>
-      <PageSection variant={pageTitle?.variant || PageSectionVariants.light}>
-        <Level>
-          <LevelItem>
-            <Title headingLevel={pageTitle?.headingLevel || 'h1'} size={pageTitle?.size || 'lg'}>
-              {pageTitle?.title}
-            </Title>
-          </LevelItem>
-        </Level>
-      </PageSection>
+    <PageSection variant={variant} {...restPageSectionProps}>
       <EmptyState variant={emptyStateTitle?.variant || EmptyStateVariant.full}>
         <EmptyStateIcon icon={emptyStateTitle?.icon || LockIcon} />
         <Title headingLevel={emptyStateTitle?.headingLevel || 'h2'} size={emptyStateTitle?.size || 'lg'}>
@@ -59,6 +45,6 @@ export const FullPageErrorHandler: React.FC<FullPageErrorHandlerProps> = ({
           {children}
         </EmptyStateBody>
       </EmptyState>
-    </>
+    </PageSection>
   );
 };

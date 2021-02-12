@@ -22,9 +22,9 @@ import { Loading } from '@app/components/Loading/Loading';
 import { ApiContext } from '@app/api/ApiContext';
 import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError, ErrorCodes } from '@app/utils/error';
+import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
-import { FullPageErrorHandler } from '@app/components';
+import { MASFullPageErrorHandler } from '@app/common';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -133,17 +133,15 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
           accessToken,
           basePath,
         });
-        await apisService
-          .listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString())
-          .then((res) => {
-            const kafkaInstances = res.data;
-            setKafkaInstancesList(kafkaInstances);
-            setKafkaInstanceItems(kafkaInstances.items);
-            kafkaInstancesList?.total !== undefined &&
-              kafkaInstancesList.total > expectedTotal &&
-              setExpectedTotal(kafkaInstancesList.total);
-            setKafkaDataLoaded(true);
-          });
+        await apisService.listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
+          const kafkaInstances = res.data;
+          setKafkaInstancesList(kafkaInstances);
+          setKafkaInstanceItems(kafkaInstances.items);
+          kafkaInstancesList?.total !== undefined &&
+            kafkaInstancesList.total > expectedTotal &&
+            setExpectedTotal(kafkaInstancesList.total);
+          setKafkaDataLoaded(true);
+        });
         // only if we are not just polling the kafka
         if (!justPoll) {
           // Check to see if at least 1 kafka is present
@@ -224,12 +222,9 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
    */
   if (isUserUnauthorized) {
     return (
-      <FullPageErrorHandler
-        pageTitles={{
-          title: t('openshift_streams'),
-        }}
-        emptyStateTitles={{
-          title: t('you_do_not_have_access_of_openshift_streams'),
+      <MASFullPageErrorHandler
+        emptyStateTitle={{
+          title: t('you_do_not_have_access_to_openshift_streams'),
           body: t('contact_your_organization_administration_for_more_information'),
         }}
       />
