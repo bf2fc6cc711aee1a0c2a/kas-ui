@@ -273,6 +273,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   // listOfOwners={listOfOwners}
                   orderBy={orderBy}
                   setOrderBy={setOrderBy}
+                  isDrawerOpen={selectedInstance!==null}
                 />
               </PageSection>
             )}
