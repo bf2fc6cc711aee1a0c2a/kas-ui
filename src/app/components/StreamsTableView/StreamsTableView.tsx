@@ -14,7 +14,7 @@ import {
   IExtraColumnData,
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
-import { MASPagination, MASTable, EmptyState } from '@app/common';
+import { MASPagination, MASTable, MASEmptyState } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { useAlerts, DeleteInstanceModal } from '@app/components';
@@ -511,7 +511,7 @@ const StreamsTableView = ({
         }}
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
-        <EmptyState
+        <MASEmptyState
           emptyStateProps={{
             variant: EmptyStateVariant.full,
           }}

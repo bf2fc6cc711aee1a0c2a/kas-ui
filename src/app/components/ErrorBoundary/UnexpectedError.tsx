@@ -1,9 +1,10 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { PageSection, Title, Button, EmptyState, EmptyStateIcon, EmptyStateBody } from '@patternfly/react-core';
+import { PageSection, TitleSizes, Button, EmptyStateVariant } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import './UnexpectedError.css';
+import { MASEmptyState } from '@app/common';
 
 type UnexpectedError = {
   updateState: (hasError: boolean) => void;
@@ -23,14 +24,25 @@ const UnexpectedError = ({ updateState }: UnexpectedError) => {
 
   return (
     <PageSection>
-      <EmptyState variant="full">
-        <EmptyStateIcon icon={ExclamationCircleIcon} className="icon-color" />
-        <Title headingLevel="h1" size="lg">
-          {t('something_went_wrong')}
-        </Title>
-        <EmptyStateBody>{t('unexpected_error')}</EmptyStateBody>
+      <MASEmptyState
+        emptyStateProps={{
+          variant: EmptyStateVariant.full,
+        }}
+        emptyStateIconProps={{
+          icon: ExclamationCircleIcon,
+          className: 'icon-color',
+        }}
+        titleProps={{
+          title: t('something_went_wrong'),
+          headingLevel: 'h1',
+          size: TitleSizes.lg,
+        }}
+        emptyStateBodyProps={{
+          body: t('unexpected_error'),
+        }}
+      >
         <GoHomeBtn />
-      </EmptyState>
+      </MASEmptyState>
     </PageSection>
   );
 };
