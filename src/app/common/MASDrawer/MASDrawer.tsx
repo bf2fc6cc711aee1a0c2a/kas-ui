@@ -17,10 +17,7 @@ import {
   TextProps,
   TitleProps,
 } from '@patternfly/react-core';
-import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
-import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import { MASLoading } from '@app/common';
-import './MASDrawer.css';
 
 export type MASDrawerProps = DrawerProps & {
   children: React.ReactNode;
