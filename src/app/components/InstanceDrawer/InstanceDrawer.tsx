@@ -1,65 +1,83 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KafkaRequest } from 'src/openapi';
+import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { Drawer } from '@app/common';
+import { MASDrawer, MASDrawerProps } from '@app/common';
+import { ConnectionTab } from './ConnectionTab';
+import { DetailsTab, DetailsTabProps } from './DetailsTab';
 
-export type InstanceDrawerProps = {
-  mainToggle?: boolean;
-  onClose: () => void;
-  isExpanded: boolean;
-  instanceDetail?: KafkaRequest;
-  activeTab?: 'Details' | 'Connection';
-};
+export type InstanceDrawerProps = Omit<MASDrawerProps, 'drawerHeaderProps' | 'panelBodyContent'> &
+  DetailsTabProps & {
+    activeTab?: string;
+  };
 const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   mainToggle,
   onClose,
   activeTab,
   instanceDetail,
+  isExpanded,
+  isLoading,
+  children,
 }) => {
-  const { t } = useTranslation();
-  const { id, created_at, updated_at, owner } = instanceDetail || {};
   dayjs.extend(localizedFormat);
+
+  const { t } = useTranslation();
+  const { name } = instanceDetail || {};
+
+  const [activeTab1Key, setActiveTab1Key] = useState<string | number>(0);
+  const [activeTab2Key, setActiveTab2Key] = useState<string | number>(0);
+
+  useEffect(() => {
+    const selectedTab = activeTab?.toLowerCase() === 'details' ? 0 : 1;
+    setActiveTab1Key(selectedTab);
+  }, [activeTab]);
+
+  const handleTab1Click = (_, eventKey: string | number) => {
+    setActiveTab1Key(eventKey);
+  };
+
+  const onSelectConnectionTab = (_, eventKey: string | number) => {
+    setActiveTab2Key(eventKey);
+  };
 
   const getExternalServer = () => {
     const { bootstrapServerHost } = instanceDetail || {};
     return bootstrapServerHost?.endsWith(':443') ? bootstrapServerHost : `${bootstrapServerHost}:443`;
   };
 
+  const panelBodyContent = () => {
+    return (
+      <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
+        <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
+          <DetailsTab mainToggle={mainToggle} instanceDetail={instanceDetail} />
+        </Tab>
+        <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
+          <ConnectionTab
+            mainToggle={mainToggle}
+            activeKey={activeTab2Key}
+            instanceName={name}
+            externalServer={getExternalServer()}
+            onSelect={onSelectConnectionTab}
+          />
+        </Tab>
+      </Tabs>
+    );
+  };
+
   return (
-    <Drawer
-      mainToggle={mainToggle}
-      activeTab={activeTab}
-      tabTitle1={t('details')}
-      tabTitle2={t('connection')}
+    <MASDrawer
+      isExpanded={isExpanded}
+      isLoading={isLoading}
       onClose={onClose}
-      isLoading={instanceDetail === undefined}
+      panelBodyContent={panelBodyContent()}
       drawerHeaderProps={{
         text: { label: t('instance_name') },
-        title: { value: instanceDetail?.name },
+        title: { value: name, headingLevel: 'h1' },
       }}
-      detailsTabProps={{
-        textList: [
-          { label: t('cloud_provider'), value: t('amazon_web_services') },
-          { label: t('region'), value: t('us_east_north_virginia') },
-          { label: t('id'), value: id },
-          { label: t('owner'), value: owner },
-          { label: t('created'), value: dayjs(created_at).format('LLLL') },
-          { label: t('updated'), value: dayjs(updated_at).format('LLLL') },
-        ],
-        cardDetails: [
-          { title: t('topics'), value: 10 },
-          { title: t('consumer_groups'), value: 10 },
-        ],
-      }}
-      connectionTabProps={{
-        tabTitle1: t('resources'),
-        tabTitle2: t('sample_code'),
-      }}
-      instanceName={instanceDetail?.name}
-      externalServer={getExternalServer()}
-    />
+    >
+      {children}
+    </MASDrawer>
   );
 };
 

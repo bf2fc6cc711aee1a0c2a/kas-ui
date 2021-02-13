@@ -8,7 +8,7 @@ export const SampleCodeTab = () => {
 
   return (
     <>
-      <div className="mas-details__drawer--tab-content">
+      <div className="mas--details__drawer--tab-content">
         <TextContent className="pf-u-pb-sm">
           <Text component={TextVariants.h5}>{t('sample_connection_code')}</Text>
           <Text component={TextVariants.small}>
