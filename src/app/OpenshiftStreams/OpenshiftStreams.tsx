@@ -190,13 +190,15 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   useEffect(() => {
     if (kafkaInstanceItems) {
       let allAreReady = true;
+      const statuses: string[] = [
+        InstanceStatus.ACCEPTED,
+        InstanceStatus.PREPARING,
+        InstanceStatus.PROVISIONING,
+        InstanceStatus.DEPROVISION,
+      ];
       for (let i = 0; i < kafkaInstanceItems.length; i++) {
         const item = kafkaInstanceItems[i];
-        if (
-          item.status === InstanceStatus.ACCEPTED ||
-          item.status === InstanceStatus.PREPARING ||
-          item.status === InstanceStatus.PROVISIONING
-        ) {
+        if (item.status && statuses.includes(item.status)) {
           allAreReady = false;
           break;
         }
