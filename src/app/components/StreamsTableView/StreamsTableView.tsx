@@ -131,6 +131,7 @@ const StreamsTableView = ({
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const [activeRow, setActiveRow] = useState<number>();
 
+  const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
     { title: t('cloud_provider'), transforms: [sortable] },
@@ -145,6 +146,15 @@ const StreamsTableView = ({
   const history = useHistory();
 
   const { addAlert } = useAlerts();
+
+  const removeKafkaFromDeleted = (name: string) => {
+    const index = deletedKafkas.findIndex((k) => k === name);
+    if (index > -1) {
+      const prev = Object.assign([], deletedKafkas);
+      prev.splice(index, 1);
+      setDeletedKafkas(prev);
+    }
+  };
 
   const setSearchParam = useCallback(
     (name: string, value: string) => {
@@ -186,21 +196,29 @@ const StreamsTableView = ({
     return loadingRowCount !== 0 ? loadingRowCount : perPage;
   };
 
-  useEffect(() => {
-    /*
-      the logic is to redirect the user to previous page
-      if there are no content for the particular page number and page size
-    */
-    if (page > 1) {
-      if (kafkaInstanceItems.length === 0) {
-        setSearchParam('page', (page - 1).toString());
-        setSearchParam('perPage', perPage.toString());
-        history.push({
-          search: searchParams.toString(),
-        });
-      }
-    }
+  const addAlertAfterSuccessDeletion = () => {
+    // filter all kafkas with status as deprovision
+    const deprovisonedKafkas = kafkaInstanceItems.filter((kafka) => kafka.status === InstanceStatus.DEPROVISION);
 
+    // filter all new kafka which is not in deleteKafka state
+    const notPresentKafkas = deprovisonedKafkas
+      .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
+      .map((k) => k.name || '');
+    // create new array by merging old and new kafka with status as deprovion
+    const allDeletedKafkas: string[] = [...deletedKafkas, ...notPresentKafkas];
+    // update deleteKafka with new array
+    setDeletedKafkas(allDeletedKafkas);
+
+    // add alert for deleted kafkas which are completely deleted from the response
+    allDeletedKafkas.forEach((k) => {
+      if (kafkaInstanceItems.findIndex((item) => item.name === k) < 0) {
+        removeKafkaFromDeleted(k);
+        addAlert(t('kafka_successfully_deleted', { name: k }), AlertVariant.success);
+      }
+    });
+  };
+
+  const addAlertAfterSuccessCreation = () => {
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
@@ -234,6 +252,26 @@ const StreamsTableView = ({
       )
     );
     setItems(incompleteKafkas);
+  };
+
+  useEffect(() => {
+    /*
+      the logic is to redirect the user to previous page
+      if there are no content for the particular page number and page size
+    */
+    if (page > 1) {
+      if (kafkaInstanceItems.length === 0) {
+        setSearchParam('page', (page - 1).toString());
+        setSearchParam('perPage', perPage.toString());
+        history.push({
+          search: searchParams.toString(),
+        });
+      }
+    }
+    // handle success alert for deletion
+    addAlertAfterSuccessDeletion();
+    // handle success alert for creation
+    addAlertAfterSuccessCreation();
   }, [page, perPage, kafkaInstanceItems]);
 
   const onSelectKebabDropdownOption = (
@@ -260,6 +298,9 @@ const StreamsTableView = ({
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
+    if (originalData.status === InstanceStatus.DEPROVISION) {
+      return [];
+    }
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     let additionalProps: any;
     if (!isUserSameAsLoggedIn) {
@@ -349,7 +390,12 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title: <NameLink row={row} name={name} />,
+            title:
+              status === InstanceStatus.DEPROVISION ? (
+                name
+              ) : (
+                <NameLink row={row} name={name} />
+              ),
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -404,7 +450,7 @@ const StreamsTableView = ({
     setIsDeleteModalOpen(false);
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
-        addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
+        setActiveRow(undefined);
         refresh();
       });
     } catch (error) {
@@ -499,11 +545,18 @@ const StreamsTableView = ({
   const customRowWrapper = ({ className, rowProps, row, ...props }) => {
     const { rowIndex } = rowProps;
     const { isExpanded } = row;
+    const status: string = row?.originalData?.status || '';
+    const isRowDeleted = status === InstanceStatus.DEPROVISION;
     return (
       <tr
-        className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
+        className={css(
+          className,
+          'pf-c-table-row__item',
+          isRowDeleted ? 'pf-m-disabled' : 'pf-m-selectable',
+          activeRow === rowIndex && 'pf-m-selected'
+        )}
         hidden={isExpanded !== undefined && !isExpanded}
-        onClick={(event: any) => onRowClick(event, rowIndex, row)}
+        onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
         {...props}
       />
     );
