@@ -6,13 +6,6 @@ import { ApiContext } from '@app/api/ApiContext';
 
 declare const __BASE_PATH__: string;
 
-const onConnectInstance = async (event: KafkaRequest) => {
-  if (event.id === undefined) {
-    throw new Error();
-  }
-  console.log(event.id);
-};
-
 export const OpenshiftStreamsConnected = () => {
   return (
     <ApiContext.Provider value={
@@ -21,7 +14,7 @@ export const OpenshiftStreamsConnected = () => {
       }
     }>
       <AlertProvider>
-        <OpenshiftStreams onConnectToInstance={onConnectInstance} />
+        <OpenshiftStreams onConnectToInstance={() => {}} getConnectToInstancePath={() => ""} />
       </AlertProvider>
     </ApiContext.Provider>
   );

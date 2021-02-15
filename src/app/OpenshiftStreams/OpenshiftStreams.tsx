@@ -27,6 +27,7 @@ import './OpenshiftStreams.css';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
+  getConnectToInstancePath: (data: KafkaRequest) => string;
 };
 
 type SelectedInstance = {
@@ -34,7 +35,7 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
+const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
@@ -59,7 +60,6 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-
   const drawerRef = React.createRef<any>();
 
   const onExpand = () => {
@@ -257,6 +257,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   onViewConnection={onViewConnection}
                   onViewInstance={onViewInstance}
                   onConnectToInstance={onConnectToInstance}
+                  getConnectToInstancePath={getConnectToInstancePath}
                   refresh={refreshKafkas}
                   kafkaDataLoaded={kafkaDataLoaded}
                   onDelete={onDelete}

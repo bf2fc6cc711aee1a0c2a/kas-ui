@@ -54,3 +54,7 @@
   z-index: var(--pf-c-table-row__item--m-selected--ZIndex);
   box-shadow: var(--pf-c-table-row__item--m-selected--BoxShadow);
 }
+
+.pf-c-table-row__item.pf-m-disabled td {
+  color: var(--pf-global--Color--200)
+}

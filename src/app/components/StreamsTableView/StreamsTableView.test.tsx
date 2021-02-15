@@ -60,6 +60,7 @@ describe('<StreamsTableView/>', () => {
     kafkaInstanceItems,
     onViewInstance: jest.fn(),
     onViewConnection: jest.fn(),
+    getOnConnectToInstancePath: jest.fn(),
     onConnectToInstance: jest.fn(),
     mainToggle: false,
     refresh: jest.fn(),
