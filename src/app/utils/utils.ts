@@ -7,17 +7,18 @@ function accessibleRouteChangeHandler() {
   }, 50);
 }
 
-type KeyValueOptions = {
+type KeyValueOptions = {  
   value: string;
   label: string;
 };
 
-enum InstanceStatus{
-  READY="ready",
-  ACCEPTED="accepted",
-  PREPARING="preparing",
-  PROVISIONING="provisioning",
-  FAILED="failed"
+enum InstanceStatus {
+  READY = 'ready',
+  ACCEPTED = 'accepted',
+  PREPARING = 'preparing',
+  PROVISIONING = 'provisioning',
+  FAILED = 'failed',
+  DEPROVISION = 'deprovision',
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
@@ -36,7 +37,8 @@ const statusOptions: KeyValueOptions[] = [
   { value: 'failed', label: 'Failed' },
   { value: 'accepted', label: 'Creation pending' },
   { value: 'provisioning', label: 'Creation in progress' },
-  { value: 'preparing', label: 'Creation in progress' }, 
+  { value: 'preparing', label: 'Creation in progress' },
+  { value: 'deprovision', label: 'Deletion in progress' },
 ];
 
 const getCloudProviderDisplayName = (value: string) => {
@@ -91,5 +93,5 @@ export {
   statusOptions,
   InstanceStatus,
   MAX_INSTANCE_NAME_LENGTH,
-  isValidToken
+  isValidToken,
 };
