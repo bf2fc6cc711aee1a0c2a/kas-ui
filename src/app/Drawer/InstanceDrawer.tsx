@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Button,
   Card,
@@ -25,21 +25,211 @@ import {
   TextListItemVariants,
   Title,
   TitleSizes,
+  DataListItem,
+  DataListItemRow,
+  DataListCell,
+  DataListItemCells,
+  DataList,
+  DataListContent,
+  DataListToggle,
+  ButtonVariant,
+  InputGroup,
+  TextInput,
+  Toolbar,
+  ToolbarContent,
+  ToolbarExpandIconWrapper,
+  ToolbarGroup,
+  ToolbarItem,
+  Tooltip,
 } from '@patternfly/react-core';
-import { CopyIcon } from '@patternfly/react-icons';
+import { AngleRightIcon, CopyIcon, SearchIcon } from '@patternfly/react-icons';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import './InstanceDrawer.css';
 import { GenerateCredential } from './GenerateCredential';
 import { Loading } from '@app/components/Loading/Loading';
-import { KafkaRequest } from 'src/openapi';
+import { ApiContext } from '@app/api/ApiContext';
+import { Connector, ConnectorList, ConnectorType, DefaultApi, KafkaRequest } from 'src/openapi';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { useTranslation } from 'react-i18next';
+import { AuthContext } from '@app/auth/AuthContext';
+
+function renderTextListItemDetail(title: string, value?: string) {
+  return (
+    <>
+      {value && (
+        <>
+          <TextListItem component={TextListItemVariants.dt}>{title}</TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>{value}</TextListItem>
+        </>
+      )}
+    </>
+  );
+}
+
+const ConnectorType: React.FunctionComponent<{ connector: Connector }> = ({ connector }) => {
+  const { t } = useTranslation();
+  const { basePath } = useContext(ApiContext);
+  const authContext = useContext(AuthContext);
+  const [{ loading, type }, setType] = useState<{ loading: boolean; type?: ConnectorType }>({
+    loading: false,
+  });
+  const [showDetails, setShowDetails] = useState(false);
+  const toggleDetails = () => setShowDetails((v) => !v);
+
+  const loadType = useCallback(
+    async (type?: string) => {
+      if (type) {
+        setType({ loading: true, type: undefined });
+        const accessToken = await authContext?.getToken();
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        const res = await apisService.getConnectorTypeByID(type);
+        if (res.status === 200) {
+          setType({ loading: false, type: res.data });
+        } else {
+          setType({ loading: false, type: undefined });
+        }
+      } else {
+        setType({ loading: false, type: undefined });
+      }
+    },
+    [authContext, basePath]
+  );
+
+  useEffect(() => {
+    loadType(connector.connector_type_id);
+  }, [connector, loadType]);
+  return (
+    <DataListItem aria-labelledby="simple-item1" isExpanded={showDetails}>
+      <DataListItemRow>
+        <DataListToggle onClick={toggleDetails} isExpanded={showDetails} id="ex-toggle1" aria-controls="ex-expand1" />
+        <DataListItemCells
+          dataListCells={[
+            <DataListCell key="secondary content">
+              <TextContent>
+                <Grid hasGutter>
+                  <GridItem span={12}>
+                    <Text component={TextVariants.h4}>{connector.metadata?.name}</Text>
+                  </GridItem>
+                  <GridItem span={2}>
+                    <img src="https://placekitten.com/50/50" />
+                  </GridItem>
+                  <GridItem span={10}>
+                    <Text component={TextVariants.h5}>{type?.name}</Text>
+                    <Text>{type?.description}</Text>
+                  </GridItem>
+                </Grid>
+              </TextContent>
+            </DataListCell>,
+            <DataListCell isFilled={false} key="t content">
+              {connector.status}
+            </DataListCell>,
+          ]}
+        />
+      </DataListItemRow>
+      <DataListContent aria-label="Primary Content Details" id="ex-expand1" isHidden={!showDetails}>
+        <TextContent>
+          <TextList component={TextListVariants.dl}>
+            {renderTextListItemDetail(t('status'), connector.status)}
+            {renderTextListItemDetail(t('cloud_provider'), connector.deployment_location?.cloud_provider)}
+            {renderTextListItemDetail(t('region'), connector.deployment_location?.region)}
+            {renderTextListItemDetail(t('id'), connector.id)}
+            {renderTextListItemDetail(t('owner'), connector.metadata?.owner)}
+            {renderTextListItemDetail(t('created'), dayjs(connector.metadata?.created_at).format('LLLL'))}
+            {renderTextListItemDetail(t('updated'), dayjs(connector.metadata?.updated_at).format('LLLL'))}
+          </TextList>
+        </TextContent>
+      </DataListContent>
+    </DataListItem>
+  );
+};
+
+const Connectors: React.FunctionComponent<{ id?: string, createNewConnector: () => void }> = ({ id, createNewConnector }) => {
+  const { basePath } = useContext(ApiContext);
+  const authContext = useContext(AuthContext);
+  const [{ loading, connectors }, setConnectors] = useState<{ loading: boolean; connectors?: ConnectorList }>({
+    loading: false,
+  });
+
+  const loadConnectors = useCallback(
+    async (instanceId: string) => {
+      setConnectors({ loading: true, connectors: undefined });
+      const accessToken = await authContext?.getToken();
+      const apisService = new DefaultApi({
+        accessToken,
+        basePath,
+      });
+      const res = await apisService.listConnectors(instanceId);
+      if (res.status === 200) {
+        setConnectors({ loading: false, connectors: res.data });
+      } else {
+        setConnectors({ loading: false, connectors: undefined });
+      }
+    },
+    [authContext, basePath]
+  );
+
+  useEffect(() => {
+    if (id) {
+      loadConnectors(id);
+    }
+  }, [id, loadConnectors]);
+
+  return (
+    <div className="mk--instance-details__drawer--tab-content">
+      <TextContent>
+        <Text>
+          Something meaningful about connectors perhaps? Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          Commodi tempora necessitatibus libero consectetur quisquam!
+        </Text>
+      </TextContent>
+      <Toolbar inset={{
+          default: 'insetNone',
+          md: 'insetSm',
+          xl: 'inset2xl',
+          '2xl': 'insetLg'
+        }}>
+        <ToolbarContent>
+          <ToolbarGroup>
+            <ToolbarItem variant="expand-all" isAllExpanded={false}>
+              <Tooltip position="right" content={<div>Expand all rows</div>}>
+                <Button variant="plain" aria-label={'Expand all rows'}>
+                  <ToolbarExpandIconWrapper>
+                    <AngleRightIcon />
+                  </ToolbarExpandIconWrapper>
+                </Button>
+              </Tooltip>
+            </ToolbarItem>
+            <ToolbarItem>
+              <InputGroup>
+                <TextInput name="textInput1" id="textInput1" type="search" aria-label="search input example" />
+                <Button variant={ButtonVariant.control} aria-label="search button for search input">
+                  <SearchIcon />
+                </Button>
+              </InputGroup>
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button variant="secondary" onClick={createNewConnector}>Create new connector</Button>
+            </ToolbarItem>
+          </ToolbarGroup>
+        </ToolbarContent>
+      </Toolbar>
+      <br />
+      <DataList aria-label="Simple data list example">
+        {loading ? <Loading /> : connectors?.items.map((c) => <ConnectorType connector={c} key={c.id} />)}
+      </DataList>
+    </div>
+  );
+};
 
 export type InstanceDrawerProps = {
   mainToggle: boolean;
   onClose: () => void;
+  onCreateNewConnector: () => void;
   isExpanded: boolean;
   instanceDetail?: KafkaRequest;
   activeTab?: 'Details' | 'Connection';
@@ -47,6 +237,7 @@ export type InstanceDrawerProps = {
 const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   mainToggle,
   onClose,
+  onCreateNewConnector,
   activeTab,
   instanceDetail,
 }) => {
@@ -159,17 +350,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     </>
   );
 
-  const renderTextListItemDetail = (title: string, value?: string) => (
-    <>
-      {value && (
-        <>
-          <TextListItem component={TextListItemVariants.dt}>{title}</TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>{value}</TextListItem>
-        </>
-      )}
-    </>
-  );
-
   const detailsTab = (
     <>
       <div className="mk--instance-details__drawer--tab-content">
@@ -223,21 +403,11 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     if (mainToggle) {
       return (
         <div className="mk--instance-details__drawer--tab-content pf-m-secondary">
-          <Tabs
-            activeKey={activeTab2Key}
-            isSecondary
-            onSelect={handleTab2Click}
-          >
-            <Tab
-              eventKey={0}
-              title={<TabTitleText>{t('resources')}</TabTitleText>}
-            >
+          <Tabs activeKey={activeTab2Key} isSecondary onSelect={handleTab2Click}>
+            <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
               {resourcesTab}
             </Tab>
-            <Tab
-              eventKey={1}
-              title={<TabTitleText>{t('sample_code')}</TabTitleText>}
-            >
+            <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
               {sampleCodeTab}
             </Tab>
           </Tabs>
@@ -278,6 +448,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
               </Tab>
               <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
                 {renderConnectionTab()}
+              </Tab>
+              <Tab eventKey={2} title={<TabTitleText>Connectors</TabTitleText>}>
+                <Connectors id={instanceDetail?.id} createNewConnector={onCreateNewConnector} />
               </Tab>
             </Tabs>
           </DrawerPanelBody>

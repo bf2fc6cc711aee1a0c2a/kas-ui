@@ -24,6 +24,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError } from '@app/utils/error';
 import './OpenshiftStreams.css';
+import { CreateStreamConnectorModal } from '@app/components/CreateStreamConnectorModal/CreateStreamConnectorModal';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -50,6 +51,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
 
   // States
   const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
+  const [createStreamConnectorForInstanceId, setCreateStreamConnectorForInstanceId] = useState<string | false>(false);
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
@@ -69,6 +71,13 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const onCloseClick = () => {
     setSelectedInstance(null);
   };
+
+  const onCreateNewConnector = () => {
+    if (selectedInstance?.instanceDetail.id) {
+      setCreateStreamConnectorForInstanceId(selectedInstance?.instanceDetail.id);
+      setSelectedInstance(null);
+    }
+  }
 
   const onViewInstance = (instance: KafkaRequest) => {
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Details' });
@@ -218,6 +227,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
               <InstanceDrawer
                 mainToggle={mainToggle}
                 onClose={onCloseClick}
+                onCreateNewConnector={onCreateNewConnector}
                 isExpanded={selectedInstance != null}
                 activeTab={selectedInstance?.activeTab}
                 instanceDetail={selectedInstance?.instanceDetail}
@@ -284,6 +294,11 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
               cloudProviders={cloudProviders}
               mainToggle={mainToggle}
               refresh={refreshKafkas}
+            />
+            <CreateStreamConnectorModal
+              kafkaId={createStreamConnectorForInstanceId}
+              cloudProviders={cloudProviders}
+              onClose={() => setCreateStreamConnectorForInstanceId(false)}
             />
           </DrawerContent>
         </Drawer>

@@ -188,6 +188,526 @@ export interface CloudRegionListAllOf {
     items?: Array<CloudRegion>;
 }
 /**
+ * A connector holds the configuration to connect a Kafka topic to another system.
+ * @export
+ * @interface Connector
+ */
+export interface Connector {
+    /**
+     * 
+     * @type {string}
+     * @memberof Connector
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Connector
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Connector
+     */
+    href?: string;
+    /**
+     * 
+     * @type {ConnectorAllOfMetadata}
+     * @memberof Connector
+     */
+    metadata?: ConnectorAllOfMetadata;
+    /**
+     * 
+     * @type {ConnectorAllOfDeploymentLocation}
+     * @memberof Connector
+     */
+    deployment_location?: ConnectorAllOfDeploymentLocation;
+    /**
+     * 
+     * @type {string}
+     * @memberof Connector
+     */
+    connector_type_id?: string;
+    /**
+     * 
+     * @type {object}
+     * @memberof Connector
+     */
+    connector_spec?: object;
+    /**
+     * 
+     * @type {string}
+     * @memberof Connector
+     */
+    status?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorAllOf
+ */
+export interface ConnectorAllOf {
+    /**
+     * 
+     * @type {ConnectorAllOfMetadata}
+     * @memberof ConnectorAllOf
+     */
+    metadata?: ConnectorAllOfMetadata;
+    /**
+     * 
+     * @type {ConnectorAllOfDeploymentLocation}
+     * @memberof ConnectorAllOf
+     */
+    deployment_location?: ConnectorAllOfDeploymentLocation;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOf
+     */
+    connector_type_id?: string;
+    /**
+     * 
+     * @type {object}
+     * @memberof ConnectorAllOf
+     */
+    connector_spec?: object;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOf
+     */
+    status?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorAllOfDeploymentLocation
+ */
+export interface ConnectorAllOfDeploymentLocation {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOfDeploymentLocation
+     */
+    cloud_provider?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ConnectorAllOfDeploymentLocation
+     */
+    multi_az?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOfDeploymentLocation
+     */
+    region?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorAllOfMetadata
+ */
+export interface ConnectorAllOfMetadata {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOfMetadata
+     */
+    kafka_id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOfMetadata
+     */
+    owner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOfMetadata
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOfMetadata
+     */
+    created_at?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorAllOfMetadata
+     */
+    updated_at?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorList
+ */
+export interface ConnectorList {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorList
+     */
+    kind: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConnectorList
+     */
+    page: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConnectorList
+     */
+    size: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConnectorList
+     */
+    total: number;
+    /**
+     * 
+     * @type {Array<Connector>}
+     * @memberof ConnectorList
+     */
+    items: Array<Connector>;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorListAllOf
+ */
+export interface ConnectorListAllOf {
+    /**
+     * 
+     * @type {Array<Connector>}
+     * @memberof ConnectorListAllOf
+     */
+    items?: Array<Connector>;
+}
+/**
+ * Represents a connector type supported by the API
+ * @export
+ * @interface ConnectorType
+ */
+export interface ConnectorType {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorType
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorType
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorType
+     */
+    href?: string;
+    /**
+     * Name of the connector type.
+     * @type {string}
+     * @memberof ConnectorType
+     */
+    name: string;
+    /**
+     * Version of the connector type.
+     * @type {string}
+     * @memberof ConnectorType
+     */
+    version: string;
+    /**
+     * A description of the connector.
+     * @type {string}
+     * @memberof ConnectorType
+     */
+    description?: string;
+    /**
+     * A json schema that can be used to validate a connectors connector_spec field.
+     * @type {object}
+     * @memberof ConnectorType
+     */
+    json_schema?: object;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorTypeAllOf
+ */
+export interface ConnectorTypeAllOf {
+    /**
+     * Name of the connector type.
+     * @type {string}
+     * @memberof ConnectorTypeAllOf
+     */
+    name?: string;
+    /**
+     * Version of the connector type.
+     * @type {string}
+     * @memberof ConnectorTypeAllOf
+     */
+    version?: string;
+    /**
+     * A description of the connector.
+     * @type {string}
+     * @memberof ConnectorTypeAllOf
+     */
+    description?: string;
+    /**
+     * A json schema that can be used to validate a connectors connector_spec field.
+     * @type {object}
+     * @memberof ConnectorTypeAllOf
+     */
+    json_schema?: object;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorTypeList
+ */
+export interface ConnectorTypeList {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConnectorTypeList
+     */
+    kind: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConnectorTypeList
+     */
+    page: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConnectorTypeList
+     */
+    size: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConnectorTypeList
+     */
+    total: number;
+    /**
+     * 
+     * @type {Array<ConnectorType>}
+     * @memberof ConnectorTypeList
+     */
+    items: Array<ConnectorType>;
+}
+/**
+ * 
+ * @export
+ * @interface ConnectorTypeListAllOf
+ */
+export interface ConnectorTypeListAllOf {
+    /**
+     * 
+     * @type {Array<ConnectorType>}
+     * @memberof ConnectorTypeListAllOf
+     */
+    items?: Array<ConnectorType>;
+}
+/**
+ * Schema for the request to update a data plane cluster\'s status
+ * @export
+ * @interface DataPlaneClusterUpdateStatusRequest
+ */
+export interface DataPlaneClusterUpdateStatusRequest {
+    /**
+     * The cluster data plane conditions
+     * @type {Array<DataPlaneClusterUpdateStatusRequestConditions>}
+     * @memberof DataPlaneClusterUpdateStatusRequest
+     */
+    conditions?: Array<DataPlaneClusterUpdateStatusRequestConditions>;
+    /**
+     * 
+     * @type {DataPlaneClusterUpdateStatusRequestTotal}
+     * @memberof DataPlaneClusterUpdateStatusRequest
+     */
+    total?: DataPlaneClusterUpdateStatusRequestTotal;
+    /**
+     * 
+     * @type {DataPlaneClusterUpdateStatusRequestTotal}
+     * @memberof DataPlaneClusterUpdateStatusRequest
+     */
+    remaining?: DataPlaneClusterUpdateStatusRequestTotal;
+    /**
+     * 
+     * @type {DataPlaneClusterUpdateStatusRequestNodeInfo}
+     * @memberof DataPlaneClusterUpdateStatusRequest
+     */
+    nodeInfo?: DataPlaneClusterUpdateStatusRequestNodeInfo;
+    /**
+     * 
+     * @type {DataPlaneClusterUpdateStatusRequestResizeInfo}
+     * @memberof DataPlaneClusterUpdateStatusRequest
+     */
+    resizeInfo?: DataPlaneClusterUpdateStatusRequestResizeInfo;
+}
+/**
+ * 
+ * @export
+ * @interface DataPlaneClusterUpdateStatusRequestConditions
+ */
+export interface DataPlaneClusterUpdateStatusRequestConditions {
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestConditions
+     */
+    type?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestConditions
+     */
+    reason?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestConditions
+     */
+    message?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestConditions
+     */
+    status?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestConditions
+     */
+    lastTransitionTime?: string;
+}
+/**
+ * 
+ * @export
+ * @interface DataPlaneClusterUpdateStatusRequestNodeInfo
+ */
+export interface DataPlaneClusterUpdateStatusRequestNodeInfo {
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestNodeInfo
+     */
+    ceiling?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestNodeInfo
+     */
+    floor?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestNodeInfo
+     */
+    current?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestNodeInfo
+     */
+    currentWorkLoadMinimum?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DataPlaneClusterUpdateStatusRequestResizeInfo
+ */
+export interface DataPlaneClusterUpdateStatusRequestResizeInfo {
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestResizeInfo
+     */
+    nodeDelta?: number;
+    /**
+     * 
+     * @type {DataPlaneClusterUpdateStatusRequestResizeInfoDelta}
+     * @memberof DataPlaneClusterUpdateStatusRequestResizeInfo
+     */
+    delta?: DataPlaneClusterUpdateStatusRequestResizeInfoDelta;
+}
+/**
+ * 
+ * @export
+ * @interface DataPlaneClusterUpdateStatusRequestResizeInfoDelta
+ */
+export interface DataPlaneClusterUpdateStatusRequestResizeInfoDelta {
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestResizeInfoDelta
+     */
+    ingressEgressThroughputPerSec?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestResizeInfoDelta
+     */
+    connections?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestResizeInfoDelta
+     */
+    dataRetentionSize?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestResizeInfoDelta
+     */
+    maxPartitions?: number;
+}
+/**
+ * 
+ * @export
+ * @interface DataPlaneClusterUpdateStatusRequestTotal
+ */
+export interface DataPlaneClusterUpdateStatusRequestTotal {
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestTotal
+     */
+    ingressEgressThroughputPerSec?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestTotal
+     */
+    connections?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof DataPlaneClusterUpdateStatusRequestTotal
+     */
+    dataRetentionSize?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof DataPlaneClusterUpdateStatusRequestTotal
+     */
+    partitions?: number;
+}
+/**
  * 
  * @export
  * @interface ErrorAllOf
@@ -878,6 +1398,69 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
+         * @summary Create a new connector
+         * @param {string} id The id of record
+         * @param {boolean} async Perform the action in an asynchronous manner
+         * @param {Connector} connector Connector data
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createConnector: async (id: string, async: boolean, connector: Connector, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling createConnector.');
+            }
+            // verify required parameter 'async' is not null or undefined
+            if (async === null || async === undefined) {
+                throw new RequiredError('async','Required parameter async was null or undefined when calling createConnector.');
+            }
+            // verify required parameter 'connector' is not null or undefined
+            if (connector === null || connector === undefined) {
+                throw new RequiredError('connector','Required parameter connector was null or undefined when calling createConnector.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/connector-deployments`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (async !== undefined) {
+                localVarQueryParameter['async'] = async;
+            }
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            const needsSerialization = (typeof connector !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            localVarRequestOptions.data =  needsSerialization ? JSON.stringify(connector !== undefined ? connector : {}) : (connector || "");
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Create a new kafka Request
          * @param {boolean} async Perform the action in an asynchronous manner
          * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
@@ -983,6 +1566,51 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Delete a connector
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteConnector: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteConnector.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/connector-deployments/{cid}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Delete a kafka request by id
          * @param {string} id The id of record
          * @param {boolean} async Perform the action in an asynchronous manner
@@ -1055,6 +1683,102 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
             const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get a connector deployment
+         * @param {string} id The id of record
+         * @param {string} cid The id of the connector
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getConnector: async (id: string, cid: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getConnector.');
+            }
+            // verify required parameter 'cid' is not null or undefined
+            if (cid === null || cid === undefined) {
+                throw new RequiredError('cid','Required parameter cid was null or undefined when calling getConnector.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/connector-deployments/{cid}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"cid"}}`, encodeURIComponent(String(cid)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get a connector type by name and version
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getConnectorTypeByID: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getConnectorTypeByID.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/connector-types/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -1195,6 +1919,51 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary get service account by id
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getServiceAccountById: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getServiceAccountById.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/serviceaccounts/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Retrieves the list of supported regions of the supported cloud provider.
          * @param {string} id The id of record
          * @param {string} [page] Page index
@@ -1258,6 +2027,110 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          */
         listCloudProviders: async (page?: string, size?: string, options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/managed-services-api/v1/cloud_providers`;
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Returns a list of connector types
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listConnectorTypes: async (page?: string, size?: string, options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/managed-services-api/v1/connector-types`;
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Returns a list of connector types
+         * @param {string} id The id of record
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listConnectors: async (id: string, page?: string, size?: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling listConnectors.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/connector-deployments`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
             let baseOptions;
             if (configuration) {
@@ -1451,6 +2324,22 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @summary Create a new connector
+         * @param {string} id The id of record
+         * @param {boolean} async Perform the action in an asynchronous manner
+         * @param {Connector} connector Connector data
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createConnector(id: string, async: boolean, connector: Connector, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Connector>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).createConnector(id, async, connector, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
          * @summary Create a new kafka Request
          * @param {boolean} async Perform the action in an asynchronous manner
          * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
@@ -1480,6 +2369,20 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Delete a connector
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteConnector(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).deleteConnector(id, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
          * @summary Delete a kafka request by id
          * @param {string} id The id of record
          * @param {boolean} async Perform the action in an asynchronous manner
@@ -1502,6 +2405,35 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async deleteServiceAccount(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Error>> {
             const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).deleteServiceAccount(id, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Get a connector deployment
+         * @param {string} id The id of record
+         * @param {string} cid The id of the connector
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getConnector(id: string, cid: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Connector>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getConnector(id, cid, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Get a connector type by name and version
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getConnectorTypeByID(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectorType>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getConnectorTypeByID(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1540,6 +2472,20 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary get service account by id
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getServiceAccountById(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAccount>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getServiceAccountById(id, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
          * @summary Retrieves the list of supported regions of the supported cloud provider.
          * @param {string} id The id of record
          * @param {string} [page] Page index
@@ -1564,6 +2510,37 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          */
         async listCloudProviders(page?: string, size?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CloudProviderList>> {
             const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listCloudProviders(page, size, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Returns a list of connector types
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listConnectorTypes(page?: string, size?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectorTypeList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listConnectorTypes(page, size, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Returns a list of connector types
+         * @param {string} id The id of record
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async listConnectors(id: string, page?: string, size?: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ConnectorList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).listConnectors(id, page, size, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1624,6 +2601,18 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
+         * @summary Create a new connector
+         * @param {string} id The id of record
+         * @param {boolean} async Perform the action in an asynchronous manner
+         * @param {Connector} connector Connector data
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createConnector(id: string, async: boolean, connector: Connector, options?: any): AxiosPromise<Connector> {
+            return DefaultApiFp(configuration).createConnector(id, async, connector, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Create a new kafka Request
          * @param {boolean} async Perform the action in an asynchronous manner
          * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
@@ -1645,6 +2634,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary Delete a connector
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteConnector(id: string, options?: any): AxiosPromise<Error> {
+            return DefaultApiFp(configuration).deleteConnector(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Delete a kafka request by id
          * @param {string} id The id of record
          * @param {boolean} async Perform the action in an asynchronous manner
@@ -1663,6 +2662,27 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         deleteServiceAccount(id: string, options?: any): AxiosPromise<Error> {
             return DefaultApiFp(configuration).deleteServiceAccount(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get a connector deployment
+         * @param {string} id The id of record
+         * @param {string} cid The id of the connector
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getConnector(id: string, cid: string, options?: any): AxiosPromise<Connector> {
+            return DefaultApiFp(configuration).getConnector(id, cid, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get a connector type by name and version
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getConnectorTypeByID(id: string, options?: any): AxiosPromise<ConnectorType> {
+            return DefaultApiFp(configuration).getConnectorTypeByID(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1689,6 +2709,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary get service account by id
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getServiceAccountById(id: string, options?: any): AxiosPromise<ServiceAccount> {
+            return DefaultApiFp(configuration).getServiceAccountById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Retrieves the list of supported regions of the supported cloud provider.
          * @param {string} id The id of record
          * @param {string} [page] Page index
@@ -1709,6 +2739,29 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         listCloudProviders(page?: string, size?: string, options?: any): AxiosPromise<CloudProviderList> {
             return DefaultApiFp(configuration).listCloudProviders(page, size, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Returns a list of connector types
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listConnectorTypes(page?: string, size?: string, options?: any): AxiosPromise<ConnectorTypeList> {
+            return DefaultApiFp(configuration).listConnectorTypes(page, size, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Returns a list of connector types
+         * @param {string} id The id of record
+         * @param {string} [page] Page index
+         * @param {string} [size] Number of items in each page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        listConnectors(id: string, page?: string, size?: string, options?: any): AxiosPromise<ConnectorList> {
+            return DefaultApiFp(configuration).listConnectors(id, page, size, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1753,6 +2806,18 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export interface DefaultApiInterface {
     /**
      * 
+     * @summary Create a new connector
+     * @param {string} id The id of record
+     * @param {boolean} async Perform the action in an asynchronous manner
+     * @param {Connector} connector Connector data
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    createConnector(id: string, async: boolean, connector: Connector, options?: any): AxiosPromise<Connector>;
+
+    /**
+     * 
      * @summary Create a new kafka Request
      * @param {boolean} async Perform the action in an asynchronous manner
      * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
@@ -1774,6 +2839,16 @@ export interface DefaultApiInterface {
 
     /**
      * 
+     * @summary Delete a connector
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    deleteConnector(id: string, options?: any): AxiosPromise<Error>;
+
+    /**
+     * 
      * @summary Delete a kafka request by id
      * @param {string} id The id of record
      * @param {boolean} async Perform the action in an asynchronous manner
@@ -1792,6 +2867,27 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     deleteServiceAccount(id: string, options?: any): AxiosPromise<Error>;
+
+    /**
+     * 
+     * @summary Get a connector deployment
+     * @param {string} id The id of record
+     * @param {string} cid The id of the connector
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    getConnector(id: string, cid: string, options?: any): AxiosPromise<Connector>;
+
+    /**
+     * 
+     * @summary Get a connector type by name and version
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    getConnectorTypeByID(id: string, options?: any): AxiosPromise<ConnectorType>;
 
     /**
      * 
@@ -1818,6 +2914,16 @@ export interface DefaultApiInterface {
 
     /**
      * 
+     * @summary get service account by id
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    getServiceAccountById(id: string, options?: any): AxiosPromise<ServiceAccount>;
+
+    /**
+     * 
      * @summary Retrieves the list of supported regions of the supported cloud provider.
      * @param {string} id The id of record
      * @param {string} [page] Page index
@@ -1838,6 +2944,29 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     listCloudProviders(page?: string, size?: string, options?: any): AxiosPromise<CloudProviderList>;
+
+    /**
+     * 
+     * @summary Returns a list of connector types
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    listConnectorTypes(page?: string, size?: string, options?: any): AxiosPromise<ConnectorTypeList>;
+
+    /**
+     * 
+     * @summary Returns a list of connector types
+     * @param {string} id The id of record
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    listConnectors(id: string, page?: string, size?: string, options?: any): AxiosPromise<ConnectorList>;
 
     /**
      * 
@@ -1882,6 +3011,20 @@ export interface DefaultApiInterface {
 export class DefaultApi extends BaseAPI implements DefaultApiInterface {
     /**
      * 
+     * @summary Create a new connector
+     * @param {string} id The id of record
+     * @param {boolean} async Perform the action in an asynchronous manner
+     * @param {Connector} connector Connector data
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public createConnector(id: string, async: boolean, connector: Connector, options?: any) {
+        return DefaultApiFp(this.configuration).createConnector(id, async, connector, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Create a new kafka Request
      * @param {boolean} async Perform the action in an asynchronous manner
      * @param {KafkaRequestPayload} kafkaRequestPayload Kafka data
@@ -1907,6 +3050,18 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
 
     /**
      * 
+     * @summary Delete a connector
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteConnector(id: string, options?: any) {
+        return DefaultApiFp(this.configuration).deleteConnector(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Delete a kafka request by id
      * @param {string} id The id of record
      * @param {boolean} async Perform the action in an asynchronous manner
@@ -1928,6 +3083,31 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public deleteServiceAccount(id: string, options?: any) {
         return DefaultApiFp(this.configuration).deleteServiceAccount(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get a connector deployment
+     * @param {string} id The id of record
+     * @param {string} cid The id of the connector
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getConnector(id: string, cid: string, options?: any) {
+        return DefaultApiFp(this.configuration).getConnector(id, cid, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get a connector type by name and version
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getConnectorTypeByID(id: string, options?: any) {
+        return DefaultApiFp(this.configuration).getConnectorTypeByID(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1959,6 +3139,18 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
 
     /**
      * 
+     * @summary get service account by id
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getServiceAccountById(id: string, options?: any) {
+        return DefaultApiFp(this.configuration).getServiceAccountById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Retrieves the list of supported regions of the supported cloud provider.
      * @param {string} id The id of record
      * @param {string} [page] Page index
@@ -1982,6 +3174,33 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public listCloudProviders(page?: string, size?: string, options?: any) {
         return DefaultApiFp(this.configuration).listCloudProviders(page, size, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Returns a list of connector types
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public listConnectorTypes(page?: string, size?: string, options?: any) {
+        return DefaultApiFp(this.configuration).listConnectorTypes(page, size, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Returns a list of connector types
+     * @param {string} id The id of record
+     * @param {string} [page] Page index
+     * @param {string} [size] Number of items in each page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public listConnectors(id: string, page?: string, size?: string, options?: any) {
+        return DefaultApiFp(this.configuration).listConnectors(id, page, size, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
