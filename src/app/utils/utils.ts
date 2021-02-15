@@ -13,11 +13,12 @@ type KeyValueOptions = {
 };
 
 enum InstanceStatus {
-  READY = "ready",
-  ACCEPTED = "accepted",
-  PREPARING = "preparing",
-  PROVISIONING = "provisioning",
-  FAILED = "failed"
+  READY = 'ready',
+  ACCEPTED = 'accepted',
+  PREPARING = 'preparing',
+  PROVISIONING = 'provisioning',
+  FAILED = 'failed',
+  DEPROVISION = 'deprovision',
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
@@ -37,6 +38,7 @@ const statusOptions: KeyValueOptions[] = [
   { value: 'accepted', label: 'Creation pending' },
   { value: 'provisioning', label: 'Creation in progress' },
   { value: 'preparing', label: 'Creation in progress' },
+  { value: 'deprovision', label: 'Deletion in progress' },
 ];
 
 const getCloudProviderDisplayName = (value: string) => {
