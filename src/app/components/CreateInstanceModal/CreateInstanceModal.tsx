@@ -296,7 +296,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
               provider.enabled && (
                 <Tile
                   key={`tile-${provider.name}`}
-                  title={provider.display_name ? provider.display_name : ''}
+                  title={provider?.display_name || ''}
                   icon={getTileIcon(provider?.name)}
                   isSelected={cloud_provider === provider.name}
                   onClick={() => onCloudProviderSelect(provider)}
