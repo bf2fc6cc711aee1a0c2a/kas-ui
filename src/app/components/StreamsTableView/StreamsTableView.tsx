@@ -366,6 +366,23 @@ const StreamsTableView = ({
       );
     };
 
+    const NameLink = ({ name, row }) =>
+      mainToggle ? (
+        <a href="http://uxd-mk-data-plane-cmolloy.apps.uxd-os-research.shz4.p1.openshiftapps.com/openshiftstreams">
+          {name}
+        </a>
+      ) : (
+        <Link
+          to={() => getConnectToInstancePath(row as KafkaRequest)}
+          onClick={(e) => {
+            e.preventDefault();
+            onConnectToInstance(row as KafkaRequest);
+          }}
+        >
+          {name}
+        </Link>
+      );
+
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
@@ -377,9 +394,7 @@ const StreamsTableView = ({
               status === InstanceStatus.DEPROVISION ? (
                 name
               ) : (
-                <Link to={() => getConnectToInstancePath(row as KafkaRequest)} onClick={(e) => {e.preventDefault(); onConnectToInstance(row as KafkaRequest)}}>
-                  {name}
-                </Link>
+                <NameLink row={row} name={name} />
               ),
           },
           cloudProviderDisplayName,
