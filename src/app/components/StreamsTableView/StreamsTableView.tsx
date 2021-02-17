@@ -38,6 +38,7 @@ import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 import './StreamsTableView.css';
 import { css } from '@patternfly/react-styles';
+import StreamsActionResolver from './StreamsActionResolver';
 
 export type FilterValue = {
   value: string;
@@ -130,6 +131,7 @@ const StreamsTableView = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const [activeRow, setActiveRow] = useState<number>();
+  const [selectedActionInstanceName, setSelectedActionInstanceName] = useState<string>();
 
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const tableColumns = [
@@ -139,6 +141,7 @@ const StreamsTableView = ({
     { title: t('owner'), transforms: [sortable] },
     { title: t('status'), transforms: [sortable] },
     { title: t('time_created'), transforms: [sortable] },
+    '',
   ];
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
@@ -280,6 +283,7 @@ const StreamsTableView = ({
     selectedOption: string,
     rowIndex: number | undefined
   ) => {
+    setSelectedInstance(originalData);
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
     } else if (selectedOption === 'connect-instance') {
@@ -292,52 +296,6 @@ const StreamsTableView = ({
     setActiveRow(rowIndex);
   };
 
-  const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
-    const { rowIndex } = extraData;
-    if (!kafkaDataLoaded) {
-      return [];
-    }
-    const originalData: KafkaRequest = rowData.originalData;
-    if (originalData.status === InstanceStatus.DEPROVISION) {
-      return [];
-    }
-    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
-    let additionalProps: any;
-    if (!isUserSameAsLoggedIn) {
-      additionalProps = {
-        tooltip: true,
-        tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_delete_kafka'),
-        },
-        isDisabled: true,
-        style: {
-          pointerEvents: 'auto',
-          cursor: 'default',
-        },
-      };
-    }
-    const resolver: (IAction | ISeparator)[] = [
-      {
-        title: t('view_details'),
-        id: 'view-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance', rowIndex),
-      },
-      {
-        title: t('connect_to_instance'),
-        id: 'connect-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance', rowIndex),
-      },
-      {
-        title: t('delete_instance'),
-        id: 'delete-instance',
-        onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance', rowIndex),
-        ...additionalProps,
-      },
-    ];
-    return resolver;
-  };
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount();
@@ -383,19 +341,14 @@ const StreamsTableView = ({
         </Link>
       );
 
-    kafkaInstanceItems.forEach((row: IRowData) => {
+    kafkaInstanceItems.forEach((row: IRowData, index: number) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
       tableRow.push({
         cells: [
           {
-            title:
-              status === InstanceStatus.DEPROVISION ? (
-                name
-              ) : (
-                <NameLink row={row} name={name} />
-              ),
+            title: status === InstanceStatus.DEPROVISION ? name : <NameLink row={row} name={name} />,
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -406,15 +359,23 @@ const StreamsTableView = ({
           {
             title: formatDate(created_at),
           },
+          {
+            title: (
+              <StreamsActionResolver
+                selectedActionInstanceName={selectedActionInstanceName}
+                setSelectedActionInstanceName={setSelectedActionInstanceName}
+                rowData={row as KafkaRequest}
+                onSelect={onSelectKebabDropdownOption}
+                loggedInUser={loggedInUser}
+                rowIndex={index}
+              />
+            ),
+          },
         ],
         originalData: row,
       });
     });
     return tableRow;
-  };
-
-  const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData, _extraData);
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
@@ -582,7 +543,7 @@ const StreamsTableView = ({
           cells: tableColumns,
           rows: preparedTableCells(),
           'aria-label': t('cluster_instance_list'),
-          actionResolver: actionResolver,
+          // actionResolver: actionResolver,
           onSort: onSort,
           sortBy: getSortBy(),
           rowWrapper: customRowWrapper,
