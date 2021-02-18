@@ -285,17 +285,16 @@ const StreamsTableView = ({
   const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
+      //set selected row for view instance and connect instance
+      setActiveRow(originalData?.name);
     } else if (selectedOption === 'connect-instance') {
       onViewConnection(originalData);
+      setActiveRow(originalData?.name);
     } else if (selectedOption === 'delete-instance') {
       onSelectDeleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
     event?.target?.parentElement?.parentElement?.previousSibling?.focus();
-    //set selected row for view instance and connect instance
-    if (selectedOption === 'view-instance' || selectedOption === 'connect-instance') {
-      setActiveRow(originalData?.name);
-    }
   };
 
   const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
@@ -395,12 +394,7 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title:
-              status === InstanceStatus.DEPROVISION ? (
-                name
-              ) : (
-                <NameLink row={row} name={name} />
-              ),
+            title: status === InstanceStatus.DEPROVISION ? name : <NameLink row={row} name={name} />,
           },
           cloudProviderDisplayName,
           regionDisplayName,
