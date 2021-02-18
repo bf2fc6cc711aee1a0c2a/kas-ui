@@ -62,7 +62,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
                   {text?.label}
                 </Text>
                 <Title
-                  headingLevel={title?.headingLevel}
+                  headingLevel={title?.headingLevel || 'h2'}
                   size={title?.size || TitleSizes['xl']}
                   className={title?.className || 'pf-u-mt-0'}
                 >
