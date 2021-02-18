@@ -22,9 +22,9 @@ class ErrorBoundary extends Component<Props, State> {
     console.error('error:', error, errorInfo);
   }
 
-  updateState(hasError: boolean) {
+  updateState = (hasError: boolean) => {
     this.setState({ hasError });
-  }
+  };
 
   render() {
     if (this.state.hasError) {
