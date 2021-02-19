@@ -71,6 +71,7 @@ export type StreamsTableProps = {
   setFilterSelected: (filterSelected: string) => void;
   orderBy: string;
   setOrderBy: (order: string) => void;
+  isDrawerOpen?: boolean;
 };
 
 type ConfigDetail = {
@@ -123,13 +124,14 @@ const StreamsTableView = ({
   filterSelected,
   orderBy,
   setOrderBy,
+  isDrawerOpen,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const [activeRow, setActiveRow] = useState<number>();
+  const [activeRow, setActiveRow] = useState();
 
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const tableColumns = [
@@ -166,6 +168,12 @@ const StreamsTableView = ({
   useEffect(() => {
     authContext?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
+
+  useEffect(() => {
+    if (!isDrawerOpen) {
+      setActiveRow('');
+    }
+  }, [isDrawerOpen]);
 
   // function to get exact number of skeleton count required for the current page
   const getLoadingRowsCount = () => {
@@ -274,26 +282,22 @@ const StreamsTableView = ({
     addAlertAfterSuccessCreation();
   }, [page, perPage, kafkaInstanceItems]);
 
-  const onSelectKebabDropdownOption = (
-    event: any,
-    originalData: KafkaRequest,
-    selectedOption: string,
-    rowIndex: number | undefined
-  ) => {
+  const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
+      //set selected row for view instance and connect instance
+      setActiveRow(originalData?.name);
     } else if (selectedOption === 'connect-instance') {
       onViewConnection(originalData);
+      setActiveRow(originalData?.name);
     } else if (selectedOption === 'delete-instance') {
       onSelectDeleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
     event?.target?.parentElement?.parentElement?.previousSibling?.focus();
-    setActiveRow(rowIndex);
   };
 
   const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
-    const { rowIndex } = extraData;
     if (!kafkaDataLoaded) {
       return [];
     }
@@ -321,18 +325,18 @@ const StreamsTableView = ({
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance', rowIndex),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
       },
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance', rowIndex),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
       },
       {
         title: t('delete_instance'),
         id: 'delete-instance',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance', rowIndex),
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
       },
     ];
@@ -390,12 +394,7 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title:
-              status === InstanceStatus.DEPROVISION ? (
-                name
-              ) : (
-                <NameLink row={row} name={name} />
-              ),
+            title: status === InstanceStatus.DEPROVISION ? name : <NameLink row={row} name={name} />,
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -538,22 +537,22 @@ const StreamsTableView = ({
     // Open modal on row click except kebab button click
     if (clickedEventType !== 'button') {
       onViewInstance(originalData);
-      setActiveRow(rowIndex);
+      setActiveRow(originalData?.name);
     }
   };
 
-  const customRowWrapper = ({ className, rowProps, row, ...props }) => {
+  const customRowWrapper = ({ trRef, className, rowProps, row, ...props }) => {
     const { rowIndex } = rowProps;
-    const { isExpanded } = row;
-    const status: string = row?.originalData?.status || '';
-    const isRowDeleted = status === InstanceStatus.DEPROVISION;
+    const { isExpanded, originalData } = row;
+    const isRowDeleted = originalData?.status === InstanceStatus.DEPROVISION;
     return (
       <tr
+        ref={trRef}
         className={css(
           className,
           'pf-c-table-row__item',
           isRowDeleted ? 'pf-m-disabled' : 'pf-m-selectable',
-          activeRow === rowIndex && 'pf-m-selected'
+          activeRow === originalData?.name && 'pf-m-selected'
         )}
         hidden={isExpanded !== undefined && !isExpanded}
         onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
