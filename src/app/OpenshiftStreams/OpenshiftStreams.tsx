@@ -28,6 +28,7 @@ import { MASFullPageErrorHandler } from '@app/common';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
+  getConnectToInstancePath: (data: KafkaRequest) => string;
 };
 
 type SelectedInstance = {
@@ -35,7 +36,7 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
+const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
@@ -279,6 +280,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   onViewConnection={onViewConnection}
                   onViewInstance={onViewInstance}
                   onConnectToInstance={onConnectToInstance}
+                  getConnectToInstancePath={getConnectToInstancePath}
                   refresh={refreshKafkas}
                   kafkaDataLoaded={kafkaDataLoaded}
                   onDelete={onDelete}
@@ -295,6 +297,7 @@ const OpenshiftStreams = ({ onConnectToInstance }: OpenShiftStreamsProps) => {
                   // listOfOwners={listOfOwners}
                   orderBy={orderBy}
                   setOrderBy={setOrderBy}
+                  isDrawerOpen={selectedInstance!==null}
                 />
               </PageSection>
             )}

@@ -88,7 +88,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
             <ClipboardCopy>{externalServer}</ClipboardCopy>
           </FlexItem>
-          <GenerateCredential instanceName={instanceDetail?.name} mainToggle={mainToggle} />
+          <GenerateCredential instanceName={instanceDetail?.name} mainToggle={false} />
         </Flex>
         {mainToggle && (
           <>

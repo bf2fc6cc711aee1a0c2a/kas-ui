@@ -56,6 +56,7 @@ export type StreamsTableProps = {
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
   onConnectToInstance: (data: KafkaRequest) => void;
+  getConnectToInstancePath: (data: KafkaRequest) => string;
   mainToggle: boolean;
   refresh: () => void;
   page: number;
@@ -70,6 +71,7 @@ export type StreamsTableProps = {
   setFilterSelected: (filterSelected: string) => void;
   orderBy: string;
   setOrderBy: (order: string) => void;
+  isDrawerOpen?: boolean;
 };
 
 type ConfigDetail = {
@@ -106,6 +108,7 @@ const StreamsTableView = ({
   onViewInstance,
   onViewConnection,
   onConnectToInstance,
+  getConnectToInstancePath,
   refresh,
   createStreamsInstance,
   setCreateStreamsInstance,
@@ -121,14 +124,16 @@ const StreamsTableView = ({
   filterSelected,
   orderBy,
   setOrderBy,
+  isDrawerOpen,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
-  const [activeRow, setActiveRow] = useState<number>();
+  const [activeRow, setActiveRow] = useState();
 
+  const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
     { title: t('cloud_provider'), transforms: [sortable] },
@@ -144,6 +149,15 @@ const StreamsTableView = ({
 
   const { addAlert } = useAlerts();
 
+  const removeKafkaFromDeleted = (name: string) => {
+    const index = deletedKafkas.findIndex((k) => k === name);
+    if (index > -1) {
+      const prev = Object.assign([], deletedKafkas);
+      prev.splice(index, 1);
+      setDeletedKafkas(prev);
+    }
+  };
+
   const setSearchParam = useCallback(
     (name: string, value: string) => {
       searchParams.set(name, value.toString());
@@ -154,6 +168,12 @@ const StreamsTableView = ({
   useEffect(() => {
     authContext?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
+
+  useEffect(() => {
+    if (!isDrawerOpen) {
+      setActiveRow('');
+    }
+  }, [isDrawerOpen]);
 
   // function to get exact number of skeleton count required for the current page
   const getLoadingRowsCount = () => {
@@ -184,21 +204,29 @@ const StreamsTableView = ({
     return loadingRowCount !== 0 ? loadingRowCount : perPage;
   };
 
-  useEffect(() => {
-    /*
-      the logic is to redirect the user to previous page
-      if there are no content for the particular page number and page size
-    */
-    if (page > 1) {
-      if (kafkaInstanceItems.length === 0) {
-        setSearchParam('page', (page - 1).toString());
-        setSearchParam('perPage', perPage.toString());
-        history.push({
-          search: searchParams.toString(),
-        });
-      }
-    }
+  const addAlertAfterSuccessDeletion = () => {
+    // filter all kafkas with status as deprovision
+    const deprovisonedKafkas = kafkaInstanceItems.filter((kafka) => kafka.status === InstanceStatus.DEPROVISION);
 
+    // filter all new kafka which is not in deleteKafka state
+    const notPresentKafkas = deprovisonedKafkas
+      .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
+      .map((k) => k.name || '');
+    // create new array by merging old and new kafka with status as deprovion
+    const allDeletedKafkas: string[] = [...deletedKafkas, ...notPresentKafkas];
+    // update deleteKafka with new array
+    setDeletedKafkas(allDeletedKafkas);
+
+    // add alert for deleted kafkas which are completely deleted from the response
+    allDeletedKafkas.forEach((k) => {
+      if (kafkaInstanceItems.findIndex((item) => item.name === k) < 0) {
+        removeKafkaFromDeleted(k);
+        addAlert(t('kafka_successfully_deleted', { name: k }), AlertVariant.success);
+      }
+    });
+  };
+
+  const addAlertAfterSuccessCreation = () => {
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
@@ -232,32 +260,51 @@ const StreamsTableView = ({
       )
     );
     setItems(incompleteKafkas);
+  };
+
+  useEffect(() => {
+    /*
+      the logic is to redirect the user to previous page
+      if there are no content for the particular page number and page size
+    */
+    if (page > 1) {
+      if (kafkaInstanceItems.length === 0) {
+        setSearchParam('page', (page - 1).toString());
+        setSearchParam('perPage', perPage.toString());
+        history.push({
+          search: searchParams.toString(),
+        });
+      }
+    }
+    // handle success alert for deletion
+    addAlertAfterSuccessDeletion();
+    // handle success alert for creation
+    addAlertAfterSuccessCreation();
   }, [page, perPage, kafkaInstanceItems]);
 
-  const onSelectKebabDropdownOption = (
-    event: any,
-    originalData: KafkaRequest,
-    selectedOption: string,
-    rowIndex: number | undefined
-  ) => {
+  const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
+      //set selected row for view instance and connect instance
+      setActiveRow(originalData?.name);
     } else if (selectedOption === 'connect-instance') {
       onViewConnection(originalData);
+      setActiveRow(originalData?.name);
     } else if (selectedOption === 'delete-instance') {
       onSelectDeleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
     event?.target?.parentElement?.parentElement?.previousSibling?.focus();
-    setActiveRow(rowIndex);
   };
 
   const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
-    const { rowIndex } = extraData;
     if (!kafkaDataLoaded) {
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
+    if (originalData.status === InstanceStatus.DEPROVISION) {
+      return [];
+    }
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     let additionalProps: any;
     if (!isUserSameAsLoggedIn) {
@@ -278,18 +325,18 @@ const StreamsTableView = ({
       {
         title: t('view_details'),
         id: 'view-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance', rowIndex),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
       },
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance', rowIndex),
+        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
       },
       {
         title: t('delete_instance'),
         id: 'delete-instance',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance', rowIndex),
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
       },
     ];
@@ -323,6 +370,23 @@ const StreamsTableView = ({
       );
     };
 
+    const NameLink = ({ name, row }) =>
+      mainToggle ? (
+        <a href="http://uxd-mk-data-plane-cmolloy.apps.uxd-os-research.shz4.p1.openshiftapps.com/openshiftstreams">
+          {name}
+        </a>
+      ) : (
+        <Link
+          to={() => getConnectToInstancePath(row as KafkaRequest)}
+          onClick={(e) => {
+            e.preventDefault();
+            onConnectToInstance(row as KafkaRequest);
+          }}
+        >
+          {name}
+        </Link>
+      );
+
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
@@ -330,11 +394,7 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title: (
-              <Link to="" onClick={() => onConnectToInstance(row as KafkaRequest)}>
-                {name}
-              </Link>
-            ),
+            title: status === InstanceStatus.DEPROVISION ? name : <NameLink row={row} name={name} />,
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -389,7 +449,7 @@ const StreamsTableView = ({
     setIsDeleteModalOpen(false);
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
-        addAlert(t('kafka_successfully_deleted', { name: instance?.name }), AlertVariant.success);
+        setActiveRow(undefined);
         refresh();
       });
     } catch (error) {
@@ -477,18 +537,25 @@ const StreamsTableView = ({
     // Open modal on row click except kebab button click
     if (clickedEventType !== 'button') {
       onViewInstance(originalData);
-      setActiveRow(rowIndex);
+      setActiveRow(originalData?.name);
     }
   };
 
-  const customRowWrapper = ({ className, rowProps, row, ...props }) => {
+  const customRowWrapper = ({ trRef, className, rowProps, row, ...props }) => {
     const { rowIndex } = rowProps;
-    const { isExpanded } = row;
+    const { isExpanded, originalData } = row;
+    const isRowDeleted = originalData?.status === InstanceStatus.DEPROVISION;
     return (
       <tr
-        className={css(className, 'pf-c-table-row__item pf-m-selectable', activeRow === rowIndex && 'pf-m-selected')}
+        ref={trRef}
+        className={css(
+          className,
+          'pf-c-table-row__item',
+          isRowDeleted ? 'pf-m-disabled' : 'pf-m-selectable',
+          activeRow === originalData?.name && 'pf-m-selected'
+        )}
         hidden={isExpanded !== undefined && !isExpanded}
-        onClick={(event: any) => onRowClick(event, rowIndex, row)}
+        onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
         {...props}
       />
     );
