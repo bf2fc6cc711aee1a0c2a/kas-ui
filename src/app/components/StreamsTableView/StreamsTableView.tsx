@@ -37,7 +37,7 @@ import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 import './StreamsTableView.css';
-import { css } from '@patternfly/react-styles';
+import { CustomRowWrapper, CustomRowWrapperProvider } from './CustomRowWrapper';
 
 export type FilterValue = {
   value: string;
@@ -342,6 +342,29 @@ const StreamsTableView = ({
     ];
     return resolver;
   };
+
+  const renderNameLink = ({ name, row }) => {
+    return (
+      <>
+        {mainToggle ? (
+          <a href="http://uxd-mk-data-plane-cmolloy.apps.uxd-os-research.shz4.p1.openshiftapps.com/openshiftstreams">
+            {name}
+          </a>
+        ) : (
+          <Link
+            to={() => getConnectToInstancePath(row as KafkaRequest)}
+            onClick={(e) => {
+              e.preventDefault();
+              onConnectToInstance(row as KafkaRequest);
+            }}
+          >
+            {name}
+          </Link>
+        )}
+      </>
+    );
+  };
+
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount();
@@ -370,23 +393,6 @@ const StreamsTableView = ({
       );
     };
 
-    const NameLink = ({ name, row }) =>
-      mainToggle ? (
-        <a href="http://uxd-mk-data-plane-cmolloy.apps.uxd-os-research.shz4.p1.openshiftapps.com/openshiftstreams">
-          {name}
-        </a>
-      ) : (
-        <Link
-          to={() => getConnectToInstancePath(row as KafkaRequest)}
-          onClick={(e) => {
-            e.preventDefault();
-            onConnectToInstance(row as KafkaRequest);
-          }}
-        >
-          {name}
-        </Link>
-      );
-
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
@@ -394,7 +400,7 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title: status === InstanceStatus.DEPROVISION ? name : <NameLink row={row} name={name} />,
+            title: status === InstanceStatus.DEPROVISION ? name : renderNameLink({ name, row }),
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -541,26 +547,6 @@ const StreamsTableView = ({
     }
   };
 
-  const customRowWrapper = ({ trRef, className, rowProps, row, ...props }) => {
-    const { rowIndex } = rowProps;
-    const { isExpanded, originalData } = row;
-    const isRowDeleted = originalData?.status === InstanceStatus.DEPROVISION;
-    return (
-      <tr
-        ref={trRef}
-        className={css(
-          className,
-          'pf-c-table-row__item',
-          isRowDeleted ? 'pf-m-disabled' : 'pf-m-selectable',
-          activeRow === originalData?.name && 'pf-m-selected'
-        )}
-        hidden={isExpanded !== undefined && !isExpanded}
-        onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
-        {...props}
-      />
-    );
-  };
-
   return (
     <>
       <StreamsToolbar
@@ -575,18 +561,25 @@ const StreamsTableView = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
       />
-      <MASTable
-        tableProps={{
-          className: 'mk--streams-table-view__table',
-          cells: tableColumns,
-          rows: preparedTableCells(),
-          'aria-label': t('cluster_instance_list'),
-          actionResolver: actionResolver,
-          onSort: onSort,
-          sortBy: getSortBy(),
-          rowWrapper: customRowWrapper,
+      <CustomRowWrapperProvider
+        value={{
+          activeRow,
+          onRowClick,
         }}
-      />
+      >
+        <MASTable
+          tableProps={{
+            className: 'mk--streams-table-view__table',
+            cells: tableColumns,
+            rows: preparedTableCells(),
+            'aria-label': t('cluster_instance_list'),
+            actionResolver: actionResolver,
+            onSort: onSort,
+            sortBy: getSortBy(),
+            rowWrapper: CustomRowWrapper,
+          }}
+        />
+      </CustomRowWrapperProvider>
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <EmptyState variant={EmptyStateVariant.small}>
           <EmptyStateIcon icon={SearchIcon} />
