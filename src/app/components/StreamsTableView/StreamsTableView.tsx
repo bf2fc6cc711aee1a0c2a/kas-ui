@@ -534,8 +534,10 @@ const StreamsTableView = ({
   const onRowClick = (event: any, rowIndex: number, row: IRowData) => {
     const { originalData } = row;
     const clickedEventType = event?.target?.type;
+    const tagName = event?.target?.tagName;
+
     // Open modal on row click except kebab button click
-    if (clickedEventType !== 'button') {
+    if (clickedEventType !== 'button' && tagName?.toLowerCase() !== 'a') {
       onViewInstance(originalData);
       setActiveRow(originalData?.name);
     }
