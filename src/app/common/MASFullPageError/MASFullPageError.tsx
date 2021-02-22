@@ -14,7 +14,7 @@ import { LockIcon } from '@patternfly/react-icons';
 
 export type HeadingLevel = 'h1' | 'h2' | 'h3';
 
-export type MASFullPageErrorHandlerProps = {
+export type MASFullPageErrorProps = {
   pageSection?: Omit<PageSectionProps, 'children'>;
   emptyStateTitle?: {
     variant?: EmptyStateVariant;
@@ -27,14 +27,14 @@ export type MASFullPageErrorHandlerProps = {
   children?: React.ReactNode;
 };
 
-export const MASFullPageErrorHandler: React.FC<MASFullPageErrorHandlerProps> = ({
+export const MASFullPageError: React.FC<MASFullPageErrorProps> = ({
   pageSection,
   emptyStateTitle,
   children,
-}: MASFullPageErrorHandlerProps) => {
-  const { variant = PageSectionVariants.light, ...restPageSectionProps } = pageSection || {};
+}: MASFullPageErrorProps) => {
+  const { variant = PageSectionVariants.default, ...restPageSectionProps } = pageSection || {};
   return (
-    <PageSection variant={variant} {...restPageSectionProps}>
+    <PageSection variant={variant} {...restPageSectionProps} padding={{ default: 'noPadding' }}>
       <EmptyState variant={emptyStateTitle?.variant || EmptyStateVariant.full}>
         <EmptyStateIcon icon={emptyStateTitle?.icon || LockIcon} />
         <Title headingLevel={emptyStateTitle?.headingLevel || 'h2'} size={emptyStateTitle?.size || 'lg'}>

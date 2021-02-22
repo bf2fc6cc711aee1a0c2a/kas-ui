@@ -24,7 +24,7 @@ import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
-import { MASFullPageErrorHandler } from '@app/common';
+import { MASFullPageError } from '@app/common';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -219,11 +219,11 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   };
 
   /**
-   * Show UnAthorize page in case user is not authorize
+   * Show Unathorize page in case user is not authorize
    */
   if (isUserUnauthorized) {
     return (
-      <MASFullPageErrorHandler
+      <MASFullPageError
         emptyStateTitle={{
           title: t('you_do_not_have_access_to_openshift_streams'),
           body: t('contact_your_organization_administration_for_more_information'),
@@ -297,7 +297,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                   // listOfOwners={listOfOwners}
                   orderBy={orderBy}
                   setOrderBy={setOrderBy}
-                  isDrawerOpen={selectedInstance!==null}
+                  isDrawerOpen={selectedInstance !== null}
                 />
               </PageSection>
             )}
