@@ -23,7 +23,7 @@ const UnexpectedError = ({ updateState }: UnexpectedError) => {
   };
 
   return (
-    <PageSection>
+    <PageSection padding={{ default: 'noPadding' }}>
       <MASEmptyState
         emptyStateProps={{
           variant: EmptyStateVariant.full,

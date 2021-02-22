@@ -17,7 +17,7 @@ const NotFound: React.FunctionComponent = () => {
   }
 
   return (
-    <PageSection>
+    <PageSection padding={{ default: 'noPadding' }}>
       <MASEmptyState
         emptyStateProps={{ variant: EmptyStateVariant.full }}
         emptyStateIconProps={{ icon: ExclamationTriangleIcon }}
