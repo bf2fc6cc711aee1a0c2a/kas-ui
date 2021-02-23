@@ -1,43 +1,27 @@
-import React, { FunctionComponent, useState } from 'react';
-import { Modal, Button, ButtonVariant, ModalVariant, ModalProps, TextInput, Text } from '@patternfly/react-core';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TextInput } from '@patternfly/react-core';
+import { MASDeleteModal, MASDeleteModalProps } from '@app/common';
 import { InstanceStatus } from '@app/utils';
-import './DeleteInstanceModal.css';
-import { KafkaRequest } from 'src/openapi';
 
-export interface DeleteInstanceModalProps extends Omit<ModalProps, 'children'> {
-  confirmActionLabel?: string;
-  cancelActionLabel?: string;
-  description?: string;
-  selectedInstance: KafkaRequest;
-  isModalOpen: boolean;
-  instanceStatus: string | undefined;
-  setIsModalOpen: (isModalOpen: boolean) => void;
-  onConfirm: (instance: KafkaRequest) => Promise<void>;
-}
+export type DeleteInstanceModalProps = MASDeleteModalProps & {
+  instanceStatus?: string;
+};
 
-const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
-  confirmActionLabel,
-  cancelActionLabel,
-  title,
-  onConfirm,
+export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
   isModalOpen,
-  setIsModalOpen,
-  description,
-  variant = ModalVariant.small,
-  titleIconVariant = 'warning',
+  modalProps,
+  confirmButtonProps,
+  cancelButtonProps,
+  handleModalToggle,
+  textProps,
   instanceStatus,
-  selectedInstance,
+  selectedItemData,
 }: DeleteInstanceModalProps) => {
   const { t } = useTranslation();
+  const selectedInstanceName = selectedItemData?.name;
+
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
-
-  const selectedInstanceName: string = selectedInstance?.name || '';
-
-  const handleModalToggle = () => {
-    setInstanceNameInput(undefined);
-    setIsModalOpen(!isModalOpen);
-  };
 
   const handleInstanceName = (value: string) => {
     setInstanceNameInput(value);
@@ -45,7 +29,7 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
 
   const isConfirmButtonDisabled = () => {
     if (instanceStatus === InstanceStatus.READY) {
-      if (instanceNameInput?.toLowerCase() === selectedInstanceName.toLowerCase()) {
+      if (instanceNameInput?.toLowerCase() === selectedInstanceName?.toLowerCase()) {
         return false;
       }
       return true;
@@ -53,36 +37,18 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
     return false;
   };
 
-  const onConfirmDelete = () => {
-    setInstanceNameInput(undefined);
-    onConfirm(selectedInstance);
-  };
-
   return (
-    <Modal
-      variant={variant}
-      isOpen={isModalOpen}
-      aria-label={t('delete_instance_modal')}
-      title={title}
-      titleIconVariant={titleIconVariant}
-      showClose={true}
-      onClose={handleModalToggle}
-      actions={[
-        <Button
-          key="confirm-button"
-          id="mk--confirm__button"
-          variant={ButtonVariant.danger}
-          onClick={onConfirmDelete}
-          isDisabled={isConfirmButtonDisabled()}
-        >
-          {confirmActionLabel || t('delete_instance')}
-        </Button>,
-        <Button key="cancel" variant="link" id="mk--cancel__button" onClick={handleModalToggle}>
-          {cancelActionLabel || t('cancel')}
-        </Button>,
-      ]}
+    <MASDeleteModal
+      isModalOpen={isModalOpen}
+      modalProps={modalProps}
+      confirmButtonProps={{
+        isDisabled: isConfirmButtonDisabled(),
+        ...confirmButtonProps,
+      }}
+      cancelButtonProps={cancelButtonProps}
+      handleModalToggle={handleModalToggle}
+      textProps={textProps}
     >
-      <Text className="mk--delete-instance__modal--text" dangerouslySetInnerHTML={{ __html: description || '' }} />
       {instanceStatus === InstanceStatus.READY && (
         <>
           <label
@@ -99,8 +65,6 @@ const DeleteInstanceModal: FunctionComponent<DeleteInstanceModalProps> = ({
           />
         </>
       )}
-    </Modal>
+    </MASDeleteModal>
   );
 };
-
-export { DeleteInstanceModal };

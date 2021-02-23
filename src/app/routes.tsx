@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
-import { NotFound } from '@app/NotFound/NotFound';
+import { NotFound } from '@app/components';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
 import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';

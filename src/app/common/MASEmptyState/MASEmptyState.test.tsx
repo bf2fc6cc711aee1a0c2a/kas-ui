@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EmptyState } from './EmptyState';
+import { MASEmptyState } from './MASEmptyState';
 import { render, fireEvent, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 jest.mock('react-i18next', () => {
@@ -13,7 +13,7 @@ jest.mock('react-i18next', () => {
 describe('Empty State Test', () => {
   test('should render empty state component', () => {
     const { getByText, getByRole } = render(
-      <EmptyState createStreamsInstance={false} setCreateStreamsInstance={jest.fn()} mainToggle={false} />
+      <MASEmptyState/>
     );
     expect(getByText('you_do_not_have_any_kafka_instances_yet')).toBeInTheDocument();
     expect(getByText('create_a_kafka_instance')).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe('Empty State Test', () => {
   test('should allow user to create instance', () => {
     const onCreate = jest.fn();
     const { getByRole } = render(
-      <EmptyState createStreamsInstance={false} setCreateStreamsInstance={onCreate} mainToggle={false} />
+      <MASEmptyState/>
     );
 
     act(() => {

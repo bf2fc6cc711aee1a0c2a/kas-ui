@@ -265,7 +265,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     } else if (category === 'region') {
       filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
     } else if (category === 'cloud_provider') {
-      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
+      filterChip = cloudProviderFilterOptions.find((option) => option.label === chip.toString())?.value;
     }
     const chipIndex = filterIndex >= 0 ? prevFilterValue.findIndex((val) => val.value === filterChip) : -1;
     if (chipIndex >= 0) {
