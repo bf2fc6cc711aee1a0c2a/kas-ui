@@ -400,6 +400,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   >
                     {isMaxFilter && (
                       <Tooltip
+                        isVisible={isMaxFilter}
                         content={tooltipContent()}
                         reference={() => document.getElementById('cloud-provider-select')}
                       />
@@ -437,7 +438,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     value={option.value}
                   >
                     {isMaxFilter && (
-                      <Tooltip content={tooltipContent()} reference={() => document.getElementById('region-select')} />
+                      <Tooltip
+                        isVisible={isMaxFilter}
+                        content={tooltipContent()}
+                        reference={() => document.getElementById('region-select')}
+                      />
                     )}
                     {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
                     <span tabIndex={0}>{option.label}</span>
@@ -508,7 +513,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     value={option.value}
                   >
                     {isMaxFilter && (
-                      <Tooltip content={tooltipContent()} reference={() => document.getElementById('status-select')} />
+                      <Tooltip
+                        isVisible={isMaxFilter}
+                        content={tooltipContent()}
+                        reference={() => document.getElementById('status-select')}
+                      />
                     )}
                     {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
                     <span tabIndex={0}>{option.label}</span>
