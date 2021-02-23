@@ -21,10 +21,9 @@ import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
 import './StreamsToolbar.css';
+import { useCreateInstanceModal } from '@app/components';
 
 type StreamsToolbarProps = {
-  createStreamsInstance: boolean;
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   mainToggle: boolean;
   filterSelected?: string;
   setFilterSelected: (value: string) => void;
@@ -36,8 +35,6 @@ type StreamsToolbarProps = {
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
-  createStreamsInstance,
-  setCreateStreamsInstance,
   setFilterSelected,
   filterSelected = 'name',
   total,
@@ -46,6 +43,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   filteredValue,
   setFilteredValue,
 }) => {
+  const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
+  const { t } = useTranslation();
+
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
   const [isRegionFilterExpanded, setIsRegionFilterExpanded] = useState(false);
@@ -54,9 +54,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
+
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
-  const { t } = useTranslation();
 
   // Options for server-side filtering
   const mainFilterOptions = [
@@ -291,7 +291,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             variant={SelectVariant.single}
             aria-label="Select filter"
             onToggle={onFilterToggle}
-            selections={filterSelected && filterSelected}
+            selections={filterSelected}
             isOpen={isFilterExpanded}
             onSelect={onChangeSelect}
           >
@@ -475,12 +475,13 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: (
-        <Button variant="primary" onClick={() => setCreateStreamsInstance(!createStreamsInstance)}>
+        <Button variant="primary" onClick={() => setIsModalOpen(!isModalOpen)}>
           {t('create_kafka_instance')}
         </Button>
       ),
     },
   ];
+  
   if (total && total > 0 && toolbarItems.length === 1) {
     toolbarItems.push({
       item: (
@@ -506,6 +507,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       alignment: { default: 'alignRight' },
     });
   }
+
   return (
     <MASToolbar
       toolbarProps={{
