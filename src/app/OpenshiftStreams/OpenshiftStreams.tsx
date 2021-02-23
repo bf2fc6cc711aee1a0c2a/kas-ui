@@ -16,7 +16,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
-import { MASLoading, MASEmptyState,MASFullPageError } from '@app/common';
+import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -212,8 +212,11 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   if (isUserUnauthorized) {
     return (
       <MASFullPageError
-        emptyStateTitle={{
+        titleProps={{
           title: t('you_do_not_have_access_to_openshift_streams'),
+          headingLevel: 'h2',
+        }}
+        emptyStateBodyProps={{
           body: t('contact_your_organization_administration_for_more_information'),
         }}
       />
