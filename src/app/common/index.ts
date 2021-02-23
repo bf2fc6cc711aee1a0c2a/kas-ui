@@ -5,3 +5,4 @@ export * from './MASDrawer';
 export * from './MASPagination';
 export * from './MASTable';
 export * from './MASToolbar';
+export * from './MASFullPageError';

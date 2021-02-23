@@ -14,9 +14,9 @@ import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../..
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError } from '@app/utils/error';
+import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
-import { MASLoading, MASEmptyState } from '@app/common';
+import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -53,6 +53,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
+  const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
   const { activeTab, instanceDetail } = selectedInstance || {};
 
@@ -96,6 +97,21 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     return filters.join(' or ');
   };
 
+  const handleServerError = (error: any) => {
+    let reason: string | undefined;
+    let errorCode: string | undefined;
+    if (isServiceApiError(error)) {
+      reason = error.response?.data.reason;
+      errorCode = error.response?.data?.code;
+    }
+    //check unauthorize user
+    if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
+      setIsUserUnauthorized(true);
+    } else {
+      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    }
+  };
+
   // Functions
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
@@ -106,17 +122,15 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
           accessToken,
           basePath,
         });
-        await apisService
-          .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
-          .then((res) => {
-            const kafkaInstances = res.data;
-            setKafkaInstancesList(kafkaInstances);
-            setKafkaInstanceItems(kafkaInstances.items);
-            kafkaInstancesList?.total !== undefined &&
-              kafkaInstancesList.total > expectedTotal &&
-              setExpectedTotal(kafkaInstancesList.total);
-            setKafkaDataLoaded(true);
-          });
+        await apisService.listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
+          const kafkaInstances = res.data;
+          setKafkaInstancesList(kafkaInstances);
+          setKafkaInstanceItems(kafkaInstances.items);
+          kafkaInstancesList?.total !== undefined &&
+            kafkaInstancesList.total > expectedTotal &&
+            setExpectedTotal(kafkaInstancesList.total);
+          setKafkaDataLoaded(true);
+        });
         // only if we are not just polling the kafka
         if (!justPoll) {
           // Check to see if at least 1 kafka is present
@@ -125,21 +139,11 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
           });
         }
       } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        handleServerError(error);
       }
     }
   };
 
-  // Functions
   const fetchCloudProviders = async () => {
     const accessToken = await authContext?.getToken();
     if (accessToken !== undefined && accessToken !== '') {
@@ -184,6 +188,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     setKafkaDataLoaded(false);
     fetchKafkas(false);
   };
+
   const onCreate = () => {
     /*
         increase the expected total by 1
@@ -191,6 +196,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
       */
     setExpectedTotal(kafkaInstancesList.total + 1);
   };
+
   const onDelete = () => {
     setKafkaDataLoaded(false);
     /*
@@ -199,6 +205,23 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
       */
     setExpectedTotal(kafkaInstancesList.total - 1);
   };
+
+  /**
+   * Show Unathorize page in case user is not authorize
+   */
+  if (isUserUnauthorized) {
+    return (
+      <MASFullPageError
+        titleProps={{
+          title: t('you_do_not_have_access_to_openshift_streams'),
+          headingLevel: 'h2',
+        }}
+        emptyStateBodyProps={{
+          body: t('contact_your_organization_administration_for_more_information'),
+        }}
+      />
+    );
+  }
 
   return (
     <>
