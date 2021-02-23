@@ -13,21 +13,11 @@ import {
   SortByDirection,
   IExtraColumnData,
 } from '@patternfly/react-table';
-import {
-  AlertVariant,
-  PaginationVariant,
-  Skeleton,
-  EmptyState,
-  EmptyStateBody,
-  Title,
-  EmptyStateIcon,
-  EmptyStateVariant,
-} from '@patternfly/react-core';
-import { MASPagination, MASTable } from '@app/common';
+import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
+import { MASPagination, MASTable, MASEmptyState } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { DeleteInstanceModal } from '@app/components/DeleteInstanceModal';
-import { useAlerts } from '@app/components/Alerts/Alerts';
+import { useAlerts, DeleteInstanceModal } from '@app/components';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
@@ -534,8 +524,10 @@ const StreamsTableView = ({
   const onRowClick = (event: any, rowIndex: number, row: IRowData) => {
     const { originalData } = row;
     const clickedEventType = event?.target?.type;
+    const tagName = event?.target?.tagName;
+
     // Open modal on row click except kebab button click
-    if (clickedEventType !== 'button') {
+    if (clickedEventType !== 'button' && tagName?.toLowerCase() !== 'a') {
       onViewInstance(originalData);
       setActiveRow(originalData?.name);
     }
@@ -588,13 +580,22 @@ const StreamsTableView = ({
         }}
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
-        <EmptyState variant={EmptyStateVariant.small}>
-          <EmptyStateIcon icon={SearchIcon} />
-          <Title headingLevel="h2" size="lg">
-            {t('no_results_found')}
-          </Title>
-          <EmptyStateBody>{t('no_results_match_the_filter_criteria')}</EmptyStateBody>
-        </EmptyState>
+        <MASEmptyState
+          emptyStateProps={{
+            variant: EmptyStateVariant.full,
+          }}
+          emptyStateIconProps={{
+            icon: SearchIcon,
+          }}
+          titleProps={{
+            title: t('you_do_not_have_any_kafka_instances_yet'),
+            headingLevel: 'h2',
+            size: TitleSizes.lg,
+          }}
+          emptyStateBodyProps={{
+            body: t('no_results_match_the_filter_criteria'),
+          }}
+        />
       )}
       {total && total > 0 && (
         <MASPagination
@@ -616,14 +617,20 @@ const StreamsTableView = ({
         />
       )}
       <DeleteInstanceModal
-        title={title}
-        selectedInstance={selectedInstance}
         isModalOpen={isDeleteModalOpen}
         instanceStatus={selectedInstance?.status}
-        setIsModalOpen={setIsDeleteModalOpen}
-        onConfirm={onDeleteInstance}
-        description={description}
-        confirmActionLabel={confirmActionLabel}
+        selectedItemData={selectedInstance}
+        handleModalToggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
+        modalProps={{
+          title,
+        }}
+        confirmButtonProps={{
+          onClick: onDeleteInstance,
+          label: confirmActionLabel,
+        }}
+        textProps={{
+          description,
+        }}
       />
     </>
   );

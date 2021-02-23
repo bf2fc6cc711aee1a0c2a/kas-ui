@@ -5,7 +5,7 @@ import { AppLayout } from '@app/AppLayout/AppLayout';
 import { AppRoutes } from '@app/routes';
 import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
-import { Loading } from './components/Loading/Loading';
+import { MASLoading } from '@app/common';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import '../i18n/i18n';
 import { ErrorBoundary } from '@app/components/ErrorBoundary';
@@ -24,7 +24,7 @@ const App: React.FunctionComponent = () => {
     init();
   }, []);
 
-  if (!initialized) return <Loading />;
+  if (!initialized) return <MASLoading />;
 
   // TODO - index doing router is not desired.
   // Split to App.tsx etc.
@@ -32,7 +32,7 @@ const App: React.FunctionComponent = () => {
     <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
       <KeycloakAuthProvider>
         <Router>
-          <React.Suspense fallback={<Loading />}>
+          <React.Suspense fallback={<MASLoading />}>
             <ErrorBoundary>
               <AppLayout>
                 <AppRoutes />
