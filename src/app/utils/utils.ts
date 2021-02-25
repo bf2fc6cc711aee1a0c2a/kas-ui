@@ -7,7 +7,7 @@ function accessibleRouteChangeHandler() {
   }, 50);
 }
 
-type KeyValueOptions = {  
+type KeyValueOptions = {
   value: string;
   label: string;
 };
@@ -75,6 +75,7 @@ const capitalize = (s: string) => {
 };
 
 const MAX_INSTANCE_NAME_LENGTH = 32;
+const MAX_FILTER_LIMIT = 10;
 
 const isValidToken = (accessToken: string | undefined) => {
   if (accessToken !== undefined && accessToken !== '') {
@@ -94,4 +95,5 @@ export {
   InstanceStatus,
   MAX_INSTANCE_NAME_LENGTH,
   isValidToken,
+  MAX_FILTER_LIMIT
 };
