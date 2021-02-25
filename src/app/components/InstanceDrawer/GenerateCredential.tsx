@@ -5,9 +5,6 @@ import {
   Button,
   ClipboardCopy,
   Checkbox,
-  EmptyState,
-  EmptyStateIcon,
-  EmptyStateBody,
   EmptyStateVariant,
   FlexItem,
   Form,
@@ -28,6 +25,7 @@ import {
   TextVariants,
   Wizard,
   WizardStep,
+  TitleSizes,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, KeyIcon } from '@patternfly/react-icons';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
@@ -38,7 +36,8 @@ import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { AuthContext } from '@app/auth/AuthContext';
 import { isServiceApiError } from '@app/utils/error';
-import { DefaultApi, ServiceAccountRequest } from '../../openapi/api';
+import { DefaultApi, ServiceAccountRequest } from '../../../openapi/api';
+import { MASEmptyState } from '@app/common';
 
 type GenerateCredential = {
   instanceName?: string;
@@ -446,22 +445,34 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
           title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please turn off the mock UI to generate credentials."
         />
       )}
-      <EmptyState variant={EmptyStateVariant.large}>
-        <EmptyStateIcon icon={KeyIcon} />
-        <Title headingLevel="h4" size="lg">
-          {t('credential_successfully_generated')}
-        </Title>
-        <EmptyStateBody>{t('clientid_empty_state_body')}</EmptyStateBody>
+      <MASEmptyState
+        emptyStateProps={{
+          variant: EmptyStateVariant.large,
+        }}
+        emptyStateIconProps={{
+          icon: KeyIcon,
+        }}
+        titleProps={{
+          title: t('credential_successfully_generated'),
+          headingLevel: 'h4',
+          size: TitleSizes.lg,
+        }}
+        emptyStateBodyProps={{
+          body: t('clientid_empty_state_body'),
+        }}
+      >
         <InputGroup className="pf-u-mt-lg">
-          <InputGroupText className="mk--generate-credential__empty-state--input-group">{t('client_id')}</InputGroupText>
+          <InputGroupText className="mk--generate-credential__empty-state--input-group">
+            {t('client_id')}
+          </InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            { mainToggle ? 'srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5' : credential?.clientID }
+            {mainToggle ? 'srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5' : credential?.clientID}
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
           <InputGroupText className="mk--generate-credential__empty-state--input-group">Client secret</InputGroupText>
           <ClipboardCopy isReadOnly className="pf-u-w-100">
-            { mainToggle ? '441cdf77-083c-41d1-9050-c27a3b4247ac' : credential?.clientSecret }
+            {mainToggle ? '441cdf77-083c-41d1-9050-c27a3b4247ac' : credential?.clientSecret}
           </ClipboardCopy>
         </InputGroup>
         <Bullseye className="pf-u-mt-lg">
@@ -476,7 +487,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         <Button variant="primary" isDisabled={!confirmationCheckbox} onClick={handleClose}>
           {t('close')}
         </Button>
-      </EmptyState>
+      </MASEmptyState>
     </>
   );
 
@@ -518,7 +529,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
           setIsOpen(false);
         }}
         isOpen={isOpen}
-        hideClose={stepNo === 5}
+        hideClose={true}
       />
       {error && (
         <FlexItem className="pf-m-grow">

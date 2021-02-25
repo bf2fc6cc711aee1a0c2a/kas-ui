@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   ToolbarItem,
   InputGroup,
@@ -19,7 +19,7 @@ import { SearchIcon, FilterIcon } from '@patternfly/react-icons';
 import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions } from '@app/utils/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
 import './StreamsToolbar.css';
 
 type StreamsToolbarProps = {
@@ -54,8 +54,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
+  const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
+
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
+
   const { t } = useTranslation();
 
   // Options for server-side filtering
@@ -66,6 +69,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     { label: t('owner'), value: 'owner', disabled: false },
     { label: t('status'), value: 'status', disabled: false },
   ];
+
+  useEffect(() => {
+    handleMaxFilters();
+  }, [filteredValue]);
 
   const cloudProviderFilterOptions = cloudProviderOptions.map((cloudProvider) => {
     return { label: t(cloudProvider.value), value: cloudProvider.value, disabled: false };
@@ -109,6 +116,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const onClear = () => {
     setFilteredValue([]);
+    setIsMaxFilter(false);
   };
 
   const updateFilter = (key: string, filter: FilterValue, removeIfPresent: boolean) => {
@@ -226,52 +234,39 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onInputPress = (event) => {
-    if (event.key === 'Enter') {
-      if (event?.target?.name === 'filter names') {
-        onFilter('name');
-      } else if (event.target?.name === 'filter owners') {
-        onFilter('owner');
-      }
+    if (event.key === 'Enter' && !isMaxFilter) {
+      const fieldName = event?.target?.name;
+      onFilter(fieldName);
     }
   };
 
   const getSelectionForFilter = (key: string) => {
     const selectedFilters = filteredValue.filter((filter) => filter.filterKey === key);
     if (selectedFilters.length > 0) {
-      switch (key) {
-        case 'name':
-        case 'owner':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        case 'region':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        case 'cloud_provider':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        case 'status':
-          return selectedFilters[0].filterValue.map((val) => val.value);
-        default:
-          return [];
-      }
+      return selectedFilters[0].filterValue.map((val) => val.value);
     }
     return [];
   };
 
-  const onDeleteChip = (category: string, chip: string | ToolbarChip) => {
-    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+  const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
+    let newFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
     const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
     let filterChip: string | undefined = chip.toString();
-    if (category === 'status') {
-      filterChip = statusFilterOptions.find((option) => option.label === chip.toString())?.value;
-    } else if (category === 'region') {
-      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
-    } else if (category === 'cloud_provider') {
-      filterChip = regionFilterOptions.find((option) => option.label === chip.toString())?.value;
+    /**
+     * Filter chip from filter options
+     */
+    if (filterOptions && filterOptions?.length > 0) {
+      filterChip = filterOptions?.find((option) => option.label === chip.toString())?.value;
     }
-    const chipIndex = filterIndex >= 0 ? prevFilterValue.findIndex((val) => val.value === filterChip) : -1;
+    /**
+     * Delete selected chip from filter options
+     */
+    const chipIndex = prevFilterValue.findIndex((val) => val.value === filterChip);
     if (chipIndex >= 0) {
       newFilteredValue[filterIndex].filterValue.splice(chipIndex, 1);
+      setFilteredValue(newFilteredValue);
     }
-    setFilteredValue(newFilteredValue);
   };
 
   const onDeleteChipGroup = (category: string) => {
@@ -283,6 +278,45 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     }
   };
 
+  const handleMaxFilters = () => {
+    let maxFilterCount = 0;
+    filteredValue?.forEach((filter: any) => {
+      const { filterValue, filterKey } = filter;
+      const provisioningStatus = filterKey === 'status' && filterValue?.filter(({ value }) => value === 'provisioning');
+      if (provisioningStatus?.length > 0) {
+        maxFilterCount += filterValue?.length + 1;
+      } else {
+        maxFilterCount += filterValue?.length;
+      }
+    });
+
+    if (maxFilterCount >= MAX_FILTER_LIMIT) {
+      setIsMaxFilter(true);
+    } else {
+      setIsMaxFilter(false);
+    }
+  };
+
+  const isDisabledSelectOption = (key: string, optionValue: string) => {
+    let newFilterValue: FilterValue | undefined;
+    const newFilteredValue = filteredValue?.filter(({ filterKey }) => filterKey === key);
+    if (newFilteredValue && newFilteredValue?.length > 0) {
+      const { filterValue } = newFilteredValue[0];
+      newFilterValue = filterValue?.find(({ value }) => value === optionValue);
+    }
+    if (!newFilterValue) {
+      return true;
+    }
+    return false;
+  };
+
+  const tooltipContent = (fieldName?: string) => {
+    if (isMaxFilter) {
+      return <div>{t('max_filter_message')}</div>;
+    }
+    return <div>{t('input_field_invalid_message', { name: fieldName })}</div>;
+  };
+
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
@@ -291,7 +325,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             variant={SelectVariant.single}
             aria-label="Select filter"
             onToggle={onFilterToggle}
-            selections={filterSelected && filterSelected}
+            selections={filterSelected}
             isOpen={isFilterExpanded}
             onSelect={onChangeSelect}
           >
@@ -312,11 +346,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             <ToolbarItem>
               <InputGroup className="mk--filter-instances__toolbar--text-input">
                 <TextInput
-                  name="filter names"
+                  name="name"
                   id="filterText"
                   type="search"
                   aria-label="Search filter input"
-                  validated={!isNameValid ? ValidatedOptions.error : ValidatedOptions.default}
+                  validated={!isNameValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
                   placeholder={t('filter_by_name_lower')}
                   onChange={onNameInputChange}
                   onKeyPress={onInputPress}
@@ -325,22 +359,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 />
                 <Button
                   variant={ButtonVariant.control}
-                  isDisabled={!isNameValid}
+                  isDisabled={!isNameValid || isMaxFilter}
                   onClick={() => onFilter('name')}
                   aria-label="Search instances"
                 >
                   <SearchIcon />
                 </Button>
-                {!isNameValid && (
-                  <Tooltip
-                    content={
-                      <div>
-                        Valid characters for name are lowercase letters from a to z, numbers from 0 to 9, underscore (_)
-                        hyphens (-) and percentage (%)
-                      </div>
-                    }
-                    reference={nameInputRef}
-                  />
+                {(!isNameValid || isMaxFilter) && (
+                  <Tooltip isVisible={isMaxFilter} content={tooltipContent('name')} reference={nameInputRef} />
                 )}
               </InputGroup>
             </ToolbarItem>
@@ -348,13 +374,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('cloud_provider')?.map((val) => t(val))}
-          deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip)}
+          deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip, cloudProviderFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
           categoryName={t('cloud_provider')}
         >
           {filterSelected === 'cloud_provider' && (
             <ToolbarItem>
               <Select
+                id="cloud-provider-select"
                 variant={SelectVariant.checkbox}
                 aria-label="Select cloud provider"
                 onToggle={onCloudProviderFilterToggle}
@@ -364,8 +391,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholderText={t('filter_by_cloud_provider')}
               >
                 {cloudProviderFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                    {option.label}
+                  <SelectOption
+                    isDisabled={
+                      option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
+                    }
+                    key={index}
+                    value={option.value}
+                  >
+                    {isMaxFilter && (
+                      <Tooltip
+                        isVisible={isMaxFilter}
+                        content={tooltipContent()}
+                        reference={() => document.getElementById('cloud-provider-select')}
+                      />
+                    )}
+                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
+                    <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
                 ))}
               </Select>
@@ -374,13 +415,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('region')?.map((val) => t(val))}
-          deleteChip={(_category, chip) => onDeleteChip('region', chip)}
+          deleteChip={(_category, chip) => onDeleteChip('region', chip, regionFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('region')}
           categoryName={t('region')}
         >
           {filterSelected === 'region' && (
             <ToolbarItem>
               <Select
+                id="region-select"
                 variant={SelectVariant.checkbox}
                 aria-label="Select region"
                 onToggle={onRegionFilterToggle}
@@ -390,8 +432,20 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholderText={t('filter_by_region')}
               >
                 {regionFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                    {option.label}
+                  <SelectOption
+                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
+                    key={index}
+                    value={option.value}
+                  >
+                    {isMaxFilter && (
+                      <Tooltip
+                        isVisible={isMaxFilter}
+                        content={tooltipContent()}
+                        reference={() => document.getElementById('region-select')}
+                      />
+                    )}
+                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
+                    <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
                 ))}
               </Select>
@@ -408,35 +462,27 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
             <ToolbarItem>
               <InputGroup className="mk--filter-instances__toolbar--text-input">
                 <TextInput
-                  name="filter owners"
+                  name="owner"
                   id="filterOwners"
                   type="search"
                   aria-label="Search filter input"
                   placeholder={t('filter_by_owner')}
-                  validated={!isOwnerValid ? ValidatedOptions.error : ValidatedOptions.default}
+                  validated={!isOwnerValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
                   onChange={onOwnerInputChange}
                   onKeyPress={onInputPress}
                   value={ownerInputValue}
                   ref={ownerInputRef as React.RefObject<HTMLInputElement>}
                 />
                 <Button
-                  isDisabled={!isOwnerValid}
+                  isDisabled={!isOwnerValid || isMaxFilter}
                   variant={ButtonVariant.control}
                   onClick={() => onFilter('owner')}
                   aria-label="Search owners"
                 >
                   <SearchIcon />
                 </Button>
-                {!isOwnerValid && (
-                  <Tooltip
-                    content={
-                      <div>
-                        Valid characters for owner are lowercase letters from a to z, numbers from 0 to 9, underscore
-                        (_) hyphens (-) and percentage (%)
-                      </div>
-                    }
-                    reference={ownerInputRef}
-                  />
+                {(!isOwnerValid || isMaxFilter) && (
+                  <Tooltip isVisible={isMaxFilter} content={tooltipContent('owner')} reference={ownerInputRef} />
                 )}
               </InputGroup>
             </ToolbarItem>
@@ -444,13 +490,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </ToolbarFilter>
         <ToolbarFilter
           chips={getSelectionForFilter('status')?.map((val) => t(val))}
-          deleteChip={(_category, chip) => onDeleteChip('status', chip)}
+          deleteChip={(_category, chip) => onDeleteChip('status', chip, statusFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('status')}
           categoryName={t('status')}
         >
           {filterSelected === 'status' && (
             <ToolbarItem>
               <Select
+                id="status-select"
                 variant={SelectVariant.checkbox}
                 aria-label="Select status"
                 onToggle={onStatusFilterToggle}
@@ -460,8 +507,20 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                 placeholderText={t('filter_by_status')}
               >
                 {statusFilterOptions.map((option, index) => (
-                  <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                    {option.label}
+                  <SelectOption
+                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
+                    key={index}
+                    value={option.value}
+                  >
+                    {isMaxFilter && (
+                      <Tooltip
+                        isVisible={isMaxFilter}
+                        content={tooltipContent()}
+                        reference={() => document.getElementById('status-select')}
+                      />
+                    )}
+                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
+                    <span tabIndex={0}>{option.label}</span>
                   </SelectOption>
                 ))}
               </Select>

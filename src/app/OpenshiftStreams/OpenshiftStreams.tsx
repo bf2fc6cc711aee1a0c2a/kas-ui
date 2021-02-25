@@ -1,29 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { Level, LevelItem, PageSection, PageSectionVariants, Title, AlertVariant } from '@patternfly/react-core';
 import {
-  Drawer,
-  DrawerContent,
-  Level,
-  LevelItem,
-  PageSection,
-  PageSectionVariants,
-  Title,
-  AlertVariant,
-} from '@patternfly/react-core';
-import { EmptyState } from '../components/EmptyState/EmptyState';
-import { StreamsTableView, FilterType } from '../components/StreamsTableView/StreamsTableView';
-import { CreateInstanceModal } from '../components/CreateInstanceModal/CreateInstanceModal';
+  StreamsTableView,
+  FilterType,
+  CreateInstanceModal,
+  AlertProvider,
+  useAlerts,
+  InstanceDrawer,
+} from '@app/components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
-import { AlertProvider } from '../components/Alerts/Alerts';
-import { InstanceDrawer } from '../Drawer/InstanceDrawer';
 import { AuthContext } from '@app/auth/AuthContext';
-import { Loading } from '@app/components/Loading/Loading';
 import { ApiContext } from '@app/api/ApiContext';
-import { useAlerts } from '@app/components/Alerts/Alerts';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError } from '@app/utils/error';
+import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
+import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -60,13 +53,11 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [rawKafkaDataLength, setRawKafkaDataLength] = useState<number>(0);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const drawerRef = React.createRef<any>();
+  const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
-  const onExpand = () => {
-    drawerRef.current && drawerRef.current.focus();
-  };
+  const { activeTab, instanceDetail } = selectedInstance || {};
 
-  const onCloseClick = () => {
+  const onCloseDrawer = () => {
     setSelectedInstance(null);
   };
 
@@ -106,6 +97,21 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     return filters.join(' or ');
   };
 
+  const handleServerError = (error: any) => {
+    let reason: string | undefined;
+    let errorCode: string | undefined;
+    if (isServiceApiError(error)) {
+      reason = error.response?.data.reason;
+      errorCode = error.response?.data?.code;
+    }
+    //check unauthorize user
+    if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
+      setIsUserUnauthorized(true);
+    } else {
+      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    }
+  };
+
   // Functions
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
@@ -116,17 +122,15 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
           accessToken,
           basePath,
         });
-        await apisService
-          .listKafkas(page?.toString(), perPage?.toString(), orderBy && orderBy, getFilterString())
-          .then((res) => {
-            const kafkaInstances = res.data;
-            setKafkaInstancesList(kafkaInstances);
-            setKafkaInstanceItems(kafkaInstances.items);
-            kafkaInstancesList?.total !== undefined &&
-              kafkaInstancesList.total > expectedTotal &&
-              setExpectedTotal(kafkaInstancesList.total);
-            setKafkaDataLoaded(true);
-          });
+        await apisService.listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
+          const kafkaInstances = res.data;
+          setKafkaInstancesList(kafkaInstances);
+          setKafkaInstanceItems(kafkaInstances.items);
+          kafkaInstancesList?.total !== undefined &&
+            kafkaInstancesList.total > expectedTotal &&
+            setExpectedTotal(kafkaInstancesList.total);
+          setKafkaDataLoaded(true);
+        });
         // only if we are not just polling the kafka
         if (!justPoll) {
           // Check to see if at least 1 kafka is present
@@ -135,21 +139,11 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
           });
         }
       } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        handleServerError(error);
       }
     }
   };
 
-  // Functions
   const fetchCloudProviders = async () => {
     const accessToken = await authContext?.getToken();
     if (accessToken !== undefined && accessToken !== '') {
@@ -194,6 +188,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     setKafkaDataLoaded(false);
     fetchKafkas(false);
   };
+
   const onCreate = () => {
     /*
         increase the expected total by 1
@@ -201,6 +196,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
       */
     setExpectedTotal(kafkaInstancesList.total + 1);
   };
+
   const onDelete = () => {
     setKafkaDataLoaded(false);
     /*
@@ -209,85 +205,104 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
       */
     setExpectedTotal(kafkaInstancesList.total - 1);
   };
+
+  /**
+   * Show Unathorize page in case user is not authorize
+   */
+  if (isUserUnauthorized) {
+    return (
+      <MASFullPageError
+        titleProps={{
+          title: t('you_do_not_have_access_to_openshift_streams'),
+          headingLevel: 'h2',
+        }}
+        emptyStateBodyProps={{
+          body: t('contact_your_organization_administration_for_more_information'),
+        }}
+      />
+    );
+  }
+
   return (
     <>
       <AlertProvider>
-        <Drawer isExpanded={selectedInstance != null} onExpand={onExpand}>
-          <DrawerContent
-            panelContent={
-              <InstanceDrawer
-                mainToggle={mainToggle}
-                onClose={onCloseClick}
-                isExpanded={selectedInstance != null}
-                activeTab={selectedInstance?.activeTab}
-                instanceDetail={selectedInstance?.instanceDetail}
-              />
-            }
-          >
-            <PageSection variant={PageSectionVariants.light}>
-              <Level>
-                <LevelItem>
-                  <Title headingLevel="h1" size="lg">
-                    {t('openshift_streams')}
-                  </Title>
-                </LevelItem>
-              </Level>
+        <InstanceDrawer
+          mainToggle={mainToggle}
+          isExpanded={selectedInstance != null}
+          activeTab={activeTab}
+          isLoading={instanceDetail === undefined}
+          instanceDetail={instanceDetail}
+          onClose={onCloseDrawer}
+        >
+          <PageSection variant={PageSectionVariants.light}>
+            <Level>
+              <LevelItem>
+                <Title headingLevel="h1" size="lg">
+                  {t('openshift_streams')}
+                </Title>
+              </LevelItem>
+            </Level>
+          </PageSection>
+          {kafkaInstanceItems === undefined ? (
+            <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+              <MASLoading />
             </PageSection>
-            {kafkaInstanceItems === undefined ? (
-              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-                <Loading />
-              </PageSection>
-            ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
-              <PageSection>
-                <EmptyState
-                  createStreamsInstance={createStreamsInstance}
-                  setCreateStreamsInstance={setCreateStreamsInstance}
-                  mainToggle={mainToggle}
-                />
-              </PageSection>
-            ) : (
-              <PageSection
-                className="mk--main-page__page-section--table"
-                variant={PageSectionVariants.light}
-                padding={{ default: 'noPadding' }}
-              >
-                <StreamsTableView
-                  kafkaInstanceItems={kafkaInstanceItems}
-                  mainToggle={mainToggle}
-                  onViewConnection={onViewConnection}
-                  onViewInstance={onViewInstance}
-                  onConnectToInstance={onConnectToInstance}
-                  getConnectToInstancePath={getConnectToInstancePath}
-                  refresh={refreshKafkas}
-                  kafkaDataLoaded={kafkaDataLoaded}
-                  onDelete={onDelete}
-                  createStreamsInstance={createStreamsInstance}
-                  setCreateStreamsInstance={setCreateStreamsInstance}
-                  page={page}
-                  perPage={perPage}
-                  total={kafkaInstancesList?.total}
-                  expectedTotal={expectedTotal}
-                  filteredValue={filteredValue}
-                  setFilteredValue={setFilteredValue}
-                  setFilterSelected={setFilterSelected}
-                  filterSelected={filterSelected}
-                  // listOfOwners={listOfOwners}
-                  orderBy={orderBy}
-                  setOrderBy={setOrderBy}
-                  isDrawerOpen={selectedInstance!==null}
-                />
-              </PageSection>
-            )}
-            <CreateInstanceModal
-              createStreamsInstance={createStreamsInstance}
-              setCreateStreamsInstance={setCreateStreamsInstance}
-              onCreate={onCreate}
-              cloudProviders={cloudProviders}
-              mainToggle={mainToggle}
-              refresh={refreshKafkas}
-            />
-          </DrawerContent>
-        </Drawer>
+          ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
+            <PageSection>
+              <MASEmptyState
+                titleProps={{
+                  title: t('you_do_not_have_any_kafka_instances_yet'),
+                  headingLevel: 'h4',
+                }}
+                emptyStateBodyProps={{
+                  body: t('create_a_kafka_instance_to_get_started'),
+                }}
+                buttonProps={{
+                  title: t('create_a_kafka_instance'),
+                  onClick: () => setCreateStreamsInstance(!createStreamsInstance),
+                }}
+              />
+            </PageSection>
+          ) : (
+            <PageSection
+              className="mk--main-page__page-section--table"
+              variant={PageSectionVariants.light}
+              padding={{ default: 'noPadding' }}
+            >
+              <StreamsTableView
+                kafkaInstanceItems={kafkaInstanceItems}
+                mainToggle={mainToggle}
+                onViewConnection={onViewConnection}
+                onViewInstance={onViewInstance}
+                onConnectToInstance={onConnectToInstance}
+                getConnectToInstancePath={getConnectToInstancePath}
+                refresh={refreshKafkas}
+                kafkaDataLoaded={kafkaDataLoaded}
+                onDelete={onDelete}
+                createStreamsInstance={createStreamsInstance}
+                setCreateStreamsInstance={setCreateStreamsInstance}
+                page={page}
+                perPage={perPage}
+                total={kafkaInstancesList?.total}
+                expectedTotal={expectedTotal}
+                filteredValue={filteredValue}
+                setFilteredValue={setFilteredValue}
+                setFilterSelected={setFilterSelected}
+                filterSelected={filterSelected}
+                orderBy={orderBy}
+                setOrderBy={setOrderBy}
+              />
+            </PageSection>
+          )}
+          <CreateInstanceModal
+            createStreamsInstance={createStreamsInstance}
+            setCreateStreamsInstance={setCreateStreamsInstance}
+            onCreate={onCreate}
+            cloudProviders={cloudProviders}
+            mainToggle={mainToggle}
+            refresh={refreshKafkas}
+          />
+        </InstanceDrawer>
       </AlertProvider>
     </>
   );
