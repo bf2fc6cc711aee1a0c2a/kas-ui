@@ -529,7 +529,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
           setIsOpen(false);
         }}
         isOpen={isOpen}
-        hideClose={stepNo === 5}
+        hideClose={true}
       />
       {error && (
         <FlexItem className="pf-m-grow">
