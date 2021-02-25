@@ -1,8 +1,9 @@
 import React, { createContext, useContext } from 'react';
 import { InstanceStatus } from '@app/utils';
 import { css } from '@patternfly/react-styles';
+import './CustomRowWrapper.css';
 
-type CustomRowWrapperContextProps = {
+export type CustomRowWrapperContextProps = {
   activeRow: string;
   onRowClick: (event: any, rowIndex: number, row: any) => void;
 };

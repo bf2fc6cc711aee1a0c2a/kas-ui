@@ -232,7 +232,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
           activeTab={activeTab}
           isLoading={instanceDetail === undefined}
           instanceDetail={instanceDetail}
-          onClose={onCloseDrawer}
+          onClose={onCloseDrawer}          
         >
           <PageSection variant={PageSectionVariants.light}>
             <Level>
@@ -291,6 +291,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                 filterSelected={filterSelected}
                 orderBy={orderBy}
                 setOrderBy={setOrderBy}
+                isDrawerOpen={selectedInstance!==null}
               />
             </PageSection>
           )}

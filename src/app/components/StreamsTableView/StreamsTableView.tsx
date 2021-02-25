@@ -26,8 +26,6 @@ import { InstanceStatus, isServiceApiError } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
-import './StreamsTableView.css';
-import { CustomRowWrapper, CustomRowWrapperProvider } from './CustomRowWrapper';
 
 export type FilterValue = {
   value: string;
@@ -553,25 +551,18 @@ const StreamsTableView = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
       />
-      <CustomRowWrapperProvider
-        value={{
-          activeRow,
-          onRowClick,
+      <MASTable
+        tableProps={{
+          cells: tableColumns,
+          rows: preparedTableCells(),
+          'aria-label': t('cluster_instance_list'),
+          actionResolver: actionResolver,
+          onSort: onSort,
+          sortBy: getSortBy(),
         }}
-      >
-        <MASTable
-          tableProps={{
-            className: 'mk--streams-table-view__table',
-            cells: tableColumns,
-            rows: preparedTableCells(),
-            'aria-label': t('cluster_instance_list'),
-            actionResolver: actionResolver,
-            onSort: onSort,
-            sortBy: getSortBy(),
-            rowWrapper: CustomRowWrapper,
-          }}
-        />
-      </CustomRowWrapperProvider>
+        activeRow={activeRow}
+        onRowClick={onRowClick}
+      />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <MASEmptyState
           emptyStateProps={{
