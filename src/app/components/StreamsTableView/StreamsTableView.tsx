@@ -588,7 +588,7 @@ const StreamsTableView = ({
             icon: SearchIcon,
           }}
           titleProps={{
-            title: t('you_do_not_have_any_kafka_instances_yet'),
+            title: t('no_results_found'),
             headingLevel: 'h2',
             size: TitleSizes.lg,
           }}
