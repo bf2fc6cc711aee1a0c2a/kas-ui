@@ -366,7 +366,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   <SearchIcon />
                 </Button>
                 {(!isNameValid || isMaxFilter) && (
-                  <Tooltip isVisible={isMaxFilter} content={tooltipContent('name')} reference={nameInputRef} />
+                  <Tooltip
+                    isVisible={isMaxFilter || !isNameValid}
+                    content={tooltipContent('name')}
+                    reference={nameInputRef}
+                  />
                 )}
               </InputGroup>
             </ToolbarItem>
@@ -482,7 +486,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                   <SearchIcon />
                 </Button>
                 {(!isOwnerValid || isMaxFilter) && (
-                  <Tooltip isVisible={isMaxFilter} content={tooltipContent('owner')} reference={ownerInputRef} />
+                  <Tooltip
+                    isVisible={isMaxFilter || !isOwnerValid}
+                    content={tooltipContent('owner')}
+                    reference={ownerInputRef}
+                  />
                 )}
               </InputGroup>
             </ToolbarItem>
