@@ -156,6 +156,7 @@ module.exports = (env, argv, useContentHash) => {
         filename: "remoteEntry.js",
         exposes: {
           "./OpenshiftStreams": "./src/app/OpenshiftStreams/OpenshiftStreamsFederated",
+          "./ServiceRegistry":"./src/app/ServiceRegistry/ServiceRegistryFederated"
         },
         shared: {
           ...dependencies,
