@@ -407,8 +407,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                         reference={() => document.getElementById('cloud-provider-select')}
                       />
                     )}
-                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
-                    <span tabIndex={0}>{option.label}</span>
+                    {option.label}
                   </SelectOption>
                 ))}
               </Select>
@@ -446,8 +445,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                         reference={() => document.getElementById('region-select')}
                       />
                     )}
-                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
-                    <span tabIndex={0}>{option.label}</span>
+                    {option.label}
                   </SelectOption>
                 ))}
               </Select>
@@ -525,8 +523,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                         reference={() => document.getElementById('status-select')}
                       />
                     )}
-                    {/* Todo: remove span tag and tabIndex when issue fixed in PF select*/}
-                    <span tabIndex={0}>{option.label}</span>
+                    {option.label}
                   </SelectOption>
                 ))}
               </Select>

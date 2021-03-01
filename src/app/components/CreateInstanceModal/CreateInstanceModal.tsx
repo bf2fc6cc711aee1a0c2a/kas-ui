@@ -29,7 +29,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { isValidToken } from '@app/utils/utils';
+import { isValidToken, ErrorCodes } from '@app/utils';
 
 export type CreateInstanceModalProps = {
   isModalOpen: boolean;
@@ -182,7 +182,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           let reason: string | undefined;
           let toShowAlert = true;
           if (isServiceApiError(error)) {
-            if (error.response?.data.code === 'MGD-SERV-API-36') {
+            if (error.response?.data.code === ErrorCodes.DUPLICATE_INSTANCE_NAME) {
               setIsFormValid(false);
               toShowAlert = false;
               setNameValidated({
