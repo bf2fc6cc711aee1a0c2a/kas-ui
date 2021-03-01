@@ -267,9 +267,10 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   };
 
   const onFormSubmit = (event) => {
-    onCreateInstance();
     event.preventDefault();
+    onCreateInstance();
   };
+
   const createInstanceForm = () => {
     const { message, fieldState } = nameValidated;
     const { name, cloud_provider, multi_az, region } = kafkaFormData;
