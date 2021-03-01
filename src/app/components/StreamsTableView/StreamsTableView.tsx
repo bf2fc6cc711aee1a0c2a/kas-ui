@@ -17,7 +17,7 @@ import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSize
 import { MASPagination, MASTable, MASEmptyState } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { useAlerts, DeleteInstanceModal } from '@app/components';
+import { useAlerts, DeleteInstanceModal, CreateInstanceModal } from '@app/components';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
@@ -40,8 +40,6 @@ export type FilterType = {
 };
 
 export type StreamsTableProps = {
-  createStreamsInstance: boolean;
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
@@ -100,8 +98,6 @@ const StreamsTableView = ({
   onConnectToInstance,
   getConnectToInstancePath,
   refresh,
-  createStreamsInstance,
-  setCreateStreamsInstance,
   page,
   perPage,
   total,
@@ -556,9 +552,7 @@ const StreamsTableView = ({
   return (
     <>
       <StreamsToolbar
-        mainToggle={mainToggle}
-        createStreamsInstance={createStreamsInstance}
-        setCreateStreamsInstance={setCreateStreamsInstance}
+        mainToggle={mainToggle}      
         filterSelected={filterSelected}
         setFilterSelected={setFilterSelected}
         total={total}
@@ -632,6 +626,7 @@ const StreamsTableView = ({
           description,
         }}
       />
+      <CreateInstanceModal />  
     </>
   );
 };
