@@ -9,6 +9,7 @@ import {
   AlertProvider,
   useAlerts,
   InstanceDrawer,
+  CreateInstanceModalProvider,
 } from '@app/components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -42,7 +43,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const { addAlert } = useAlerts();
 
   // States
-  const [createStreamsInstance, setCreateStreamsInstance] = useState(false);
+  const [isOpenCreateInstanceModal, setIsOpenCreateInstanceModal] = useState(false);
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
@@ -226,84 +227,86 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   return (
     <>
       <AlertProvider>
-        <InstanceDrawer
-          mainToggle={mainToggle}
-          isExpanded={selectedInstance != null}
-          activeTab={activeTab}
-          isLoading={instanceDetail === undefined}
-          instanceDetail={instanceDetail}
-          onClose={onCloseDrawer}          
+        <CreateInstanceModalProvider
+          value={{
+            isModalOpen: isOpenCreateInstanceModal,
+            setIsModalOpen: setIsOpenCreateInstanceModal,
+            onCreate,
+            cloudProviders,
+            mainToggle,
+            refresh: refreshKafkas,
+          }}
         >
-          <PageSection variant={PageSectionVariants.light}>
-            <Level>
-              <LevelItem>
-                <Title headingLevel="h1" size="lg">
-                  {t('openshift_streams')}
-                </Title>
-              </LevelItem>
-            </Level>
-          </PageSection>
-          {kafkaInstanceItems === undefined ? (
-            <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-              <MASLoading />
-            </PageSection>
-          ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
-            <PageSection>
-              <MASEmptyState
-                titleProps={{
-                  title: t('you_do_not_have_any_kafka_instances_yet'),
-                  headingLevel: 'h4',
-                }}
-                emptyStateBodyProps={{
-                  body: t('create_a_kafka_instance_to_get_started'),
-                }}
-                buttonProps={{
-                  title: t('create_a_kafka_instance'),
-                  onClick: () => setCreateStreamsInstance(!createStreamsInstance),
-                }}
-              />
-            </PageSection>
-          ) : (
-            <PageSection
-              className="mk--main-page__page-section--table"
-              variant={PageSectionVariants.light}
-              padding={{ default: 'noPadding' }}
-            >
-              <StreamsTableView
-                kafkaInstanceItems={kafkaInstanceItems}
-                mainToggle={mainToggle}
-                onViewConnection={onViewConnection}
-                onViewInstance={onViewInstance}
-                onConnectToInstance={onConnectToInstance}
-                getConnectToInstancePath={getConnectToInstancePath}
-                refresh={refreshKafkas}
-                kafkaDataLoaded={kafkaDataLoaded}
-                onDelete={onDelete}
-                createStreamsInstance={createStreamsInstance}
-                setCreateStreamsInstance={setCreateStreamsInstance}
-                page={page}
-                perPage={perPage}
-                total={kafkaInstancesList?.total}
-                expectedTotal={expectedTotal}
-                filteredValue={filteredValue}
-                setFilteredValue={setFilteredValue}
-                setFilterSelected={setFilterSelected}
-                filterSelected={filterSelected}
-                orderBy={orderBy}
-                setOrderBy={setOrderBy}
-                isDrawerOpen={selectedInstance!==null}
-              />
-            </PageSection>
-          )}
-          <CreateInstanceModal
-            createStreamsInstance={createStreamsInstance}
-            setCreateStreamsInstance={setCreateStreamsInstance}
-            onCreate={onCreate}
-            cloudProviders={cloudProviders}
+          <InstanceDrawer
             mainToggle={mainToggle}
-            refresh={refreshKafkas}
-          />
-        </InstanceDrawer>
+            isExpanded={selectedInstance != null}
+            activeTab={activeTab}
+            isLoading={instanceDetail === undefined}
+            instanceDetail={instanceDetail}
+            onClose={onCloseDrawer}
+          >
+            <PageSection variant={PageSectionVariants.light}>
+              <Level>
+                <LevelItem>
+                  <Title headingLevel="h1" size="lg">
+                    {t('openshift_streams')}
+                  </Title>
+                </LevelItem>
+              </Level>
+            </PageSection>
+            {kafkaInstanceItems === undefined ? (
+              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+                <MASLoading />
+              </PageSection>
+            ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
+              <PageSection>
+                <MASEmptyState
+                  titleProps={{
+                    title: t('you_do_not_have_any_kafka_instances_yet'),
+                    headingLevel: 'h4',
+                  }}
+                  emptyStateBodyProps={{
+                    body: t('create_a_kafka_instance_to_get_started'),
+                  }}
+                  buttonProps={{
+                    title: t('create_a_kafka_instance'),
+                    onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModal),
+                  }}
+                />
+                <CreateInstanceModal />
+              </PageSection>
+            ) : (
+              <PageSection
+                className="mk--main-page__page-section--table"
+                variant={PageSectionVariants.light}
+                padding={{ default: 'noPadding' }}
+              >
+                <StreamsTableView
+                  kafkaInstanceItems={kafkaInstanceItems}
+                  mainToggle={mainToggle}
+                  onViewConnection={onViewConnection}
+                  onViewInstance={onViewInstance}
+                  onConnectToInstance={onConnectToInstance}
+                  getConnectToInstancePath={getConnectToInstancePath}
+                  refresh={refreshKafkas}
+                  kafkaDataLoaded={kafkaDataLoaded}
+                  onDelete={onDelete}
+                  page={page}
+                  perPage={perPage}
+                  total={kafkaInstancesList?.total}
+                  expectedTotal={expectedTotal}
+                  filteredValue={filteredValue}
+                  setFilteredValue={setFilteredValue}
+                  setFilterSelected={setFilterSelected}
+                  filterSelected={filterSelected}
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
+                  isDrawerOpen={selectedInstance !== null}
+                />
+              </PageSection>
+            )}
+          </InstanceDrawer>
+        </CreateInstanceModalProvider>
       </AlertProvider>
     </>
   );

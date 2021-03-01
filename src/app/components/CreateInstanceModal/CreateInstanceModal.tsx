@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, createContext } from 'react';
 import {
   Alert,
   AlertVariant,
@@ -32,13 +32,25 @@ import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { isValidToken } from '@app/utils/utils';
 
 export type CreateInstanceModalProps = {
-  createStreamsInstance: boolean;
-  setCreateStreamsInstance: (createStreamsInstance: boolean) => void;
+  isModalOpen: boolean;
+  setIsModalOpen: (isModalOpen: boolean) => void;
   onCreate: () => void;
   mainToggle: boolean;
   refresh: () => void;
   cloudProviders: Array<CloudProvider>;
 };
+
+const CreateInstanceModalContext = createContext<CreateInstanceModalProps>({
+  isModalOpen: false,
+  setIsModalOpen: () => {},
+  onCreate: () => {},
+  mainToggle: false,
+  refresh: () => {},
+  cloudProviders: [],
+});
+
+export const CreateInstanceModalProvider = CreateInstanceModalContext.Provider;
+export const useCreateInstanceModal = () => useContext(CreateInstanceModalContext);
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -47,30 +59,25 @@ const emptyProvider: CloudProvider = {
   enabled: true,
 };
 
-const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = ({
-  createStreamsInstance,
-  setCreateStreamsInstance,
-  onCreate,
-  cloudProviders,
-  refresh,
-  mainToggle,
-}: CreateInstanceModalProps) => {
+const CreateInstanceModal: React.FunctionComponent = () => {
   const { t } = useTranslation();
+  const { isModalOpen, setIsModalOpen, onCreate, cloudProviders, refresh, mainToggle } = useCreateInstanceModal();
+  const authContext = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
+  const { addAlert } = useAlerts();
+
   const newKafka: NewKafka = new NewKafka();
   newKafka.name = '';
   newKafka.cloud_provider = '';
   newKafka.region = '';
   newKafka.multi_az = true;
+
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegionValidated, setCloudRegionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-
-  const { addAlert } = useAlerts();
 
   const resetForm = () => {
     setKafkaFormData({ ...kafkaFormData, name: '', multi_az: true });
@@ -168,7 +175,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
           onCreate();
           await apisService.createKafka(true, kafkaFormData).then((res) => {
             resetForm();
-            setCreateStreamsInstance(false);
+            setIsModalOpen(false);
             refresh();
           });
         } catch (error) {
@@ -200,7 +207,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
 
   const handleModalToggle = () => {
     resetForm();
-    setCreateStreamsInstance(!createStreamsInstance);
+    setIsModalOpen(!isModalOpen);
   };
 
   const handleInstanceNameChange = (name?: string) => {
@@ -359,7 +366,7 @@ const CreateInstanceModal: React.FunctionComponent<CreateInstanceModalProps> = (
       <Modal
         variant={ModalVariant.medium}
         title={t('create_a_kafka_instance')}
-        isOpen={createStreamsInstance}
+        isOpen={isModalOpen}
         onClose={handleModalToggle}
         actions={[
           <Button
