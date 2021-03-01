@@ -6,6 +6,7 @@ import { NotFound } from '@app/components';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
 import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';
+import { ServiceRegistryConnected } from '@app/ServiceRegistry';
 
 let routeFocusTimer: number;
 
@@ -36,6 +37,14 @@ const routes: AppRouteConfig[] = [
     label: 'OpenShift Streams',
     path: '/',
     title: 'OpenShift Streams',
+  },
+  {
+    component: ServiceRegistryConnected,
+    exact: true,
+    // t('service_registry')
+    label: 'Service Registry',
+    path: '/serviceregistry',
+    title: 'Service Registry',
   },
 ];
 
