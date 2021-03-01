@@ -37,6 +37,11 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
     return false;
   };
 
+  const onKeyPress = (event) => {
+    if (event.key === 'Enter' && !isConfirmButtonDisabled()) {
+      confirmButtonProps?.onClick && confirmButtonProps.onClick(selectedItemData);
+    }
+  };
   return (
     <MASDeleteModal
       isModalOpen={isModalOpen}
@@ -61,6 +66,7 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
             type="text"
             value={instanceNameInput}
             onChange={handleInstanceName}
+            onKeyPress={onKeyPress}
             autoFocus={true}
           />
         </>

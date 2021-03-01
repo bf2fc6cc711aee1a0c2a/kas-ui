@@ -266,12 +266,16 @@ const CreateInstanceModal: React.FunctionComponent = () => {
     }
   };
 
+  const onFormSubmit = (event) => {
+    onCreateInstance();
+    event.preventDefault();
+  };
   const createInstanceForm = () => {
     const { message, fieldState } = nameValidated;
     const { name, cloud_provider, multi_az, region } = kafkaFormData;
     const isMultiSelected = multi_az;
     return (
-      <Form>
+      <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
           <FormAlert>
             <Alert variant="danger" title={t('create_instance_invalid_alert')} aria-live="polite" isInline />
@@ -372,6 +376,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           <Button
             key="create"
             variant="primary"
+            type="submit"
             onClick={onCreateInstance}
             isDisabled={!isFormValid || isCreationInProgress}
             spinnerAriaValueText={t('submitting_request')}
