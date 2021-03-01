@@ -24,6 +24,7 @@ export const CustomRowWrapper = (rowWrapperProps) => {
 
   return (
     <tr
+      tabIndex={0}
       ref={trRef}
       className={css(
         className,
