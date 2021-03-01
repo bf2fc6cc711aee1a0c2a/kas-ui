@@ -1,4 +1,4 @@
-.mk--streams-table-view__table {
+.mas--streams-table-view__table {
   --pf-c-table-row__item--m-selected--ZIndex: var(--pf-global--ZIndex--xs);
   --pf-c-table-row__item--m-selected--BoxShadow: var(--pf-global--BoxShadow--sm-top), var(--pf-global--BoxShadow--sm-bottom);
   --pf-c-table-row__item--m-selectable--focus--BoxShadow: var(--pf-global--BoxShadow--sm-top), var(--pf-global--BoxShadow--sm-bottom);

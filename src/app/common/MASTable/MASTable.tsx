@@ -7,15 +7,24 @@ import {
   HeaderProps,
   TableBodyProps,
 } from '@patternfly/react-table';
+import { css } from '@patternfly/react-styles';
+import { CustomRowWrapper, CustomRowWrapperProvider, CustomRowWrapperContextProps } from './CustomRowWrapper';
 
-export interface MASTableProps {
+export type MASTableProps = CustomRowWrapperContextProps & {
   tableProps: Omit<PFTableProps, 'children'>;
   tableHeaderProps?: Omit<HeaderProps, 'children'>;
   tableBodyProps?: Omit<TableBodyProps, 'children'>;
   children?: React.ReactNode;
-}
+};
 
-const MASTable: FunctionComponent<MASTableProps> = ({ tableProps, tableHeaderProps, tableBodyProps, children }) => {
+const MASTable: FunctionComponent<MASTableProps> = ({
+  tableProps,
+  tableHeaderProps,
+  tableBodyProps,
+  children,
+  activeRow,
+  onRowClick,
+}) => {
   const {
     cells,
     rows,
@@ -30,22 +39,29 @@ const MASTable: FunctionComponent<MASTableProps> = ({ tableProps, tableHeaderPro
   } = tableProps;
 
   return (
-    <PFTable
-      className={className}
-      rowWrapper={rowWrapper}
-      cells={cells}
-      variant={variant}
-      rows={rows}
-      aria-label={ariaLabel}
-      actionResolver={actionResolver}
-      onSort={onSort}
-      sortBy={sortBy}
-      {...restProps}
+    <CustomRowWrapperProvider
+      value={{
+        activeRow,
+        onRowClick,
+      }}
     >
-      <TableHeader {...tableHeaderProps} />
-      <TableBody {...tableBodyProps} />
-      {children}
-    </PFTable>
+      <PFTable
+        className={css('mas--streams-table-view__table', className)}
+        rowWrapper={rowWrapper || CustomRowWrapper}
+        cells={cells}
+        variant={variant}
+        rows={rows}
+        aria-label={ariaLabel}
+        actionResolver={actionResolver}
+        onSort={onSort}
+        sortBy={sortBy}
+        {...restProps}
+      >
+        <TableHeader {...tableHeaderProps} />
+        <TableBody {...tableBodyProps} />
+        {children}
+      </PFTable>
+    </CustomRowWrapperProvider>
   );
 };
 

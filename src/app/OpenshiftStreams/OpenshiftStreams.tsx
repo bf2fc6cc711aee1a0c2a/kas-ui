@@ -301,6 +301,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                   filterSelected={filterSelected}
                   orderBy={orderBy}
                   setOrderBy={setOrderBy}
+                  isDrawerOpen={selectedInstance !== null}
                 />
               </PageSection>
             )}
