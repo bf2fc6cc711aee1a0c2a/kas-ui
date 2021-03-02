@@ -13,16 +13,9 @@ export type ServiceRegistryFederatedProps = {
   getUsername: () => Promise<string>;
   addAlert: (message: string, variant?: AlertVariant) => void;
   basePath: string;
-  children?: React.ReactNode;
 };
 
-const ServiceRegistryFederated = ({
-  getUsername,
-  getToken,
-  addAlert,
-  basePath,
-  children,
-}: ServiceRegistryFederatedProps) => {
+const ServiceRegistryFederated = ({ getUsername, getToken, addAlert, basePath }: ServiceRegistryFederatedProps) => {
   const authContext = {
     getToken,
     getUsername,
@@ -40,7 +33,7 @@ const ServiceRegistryFederated = ({
     >
       <AlertContext.Provider value={alertContext}>
         <AuthContext.Provider value={authContext}>
-          <ServiceRegistry>{children}</ServiceRegistry>
+          <ServiceRegistry />
         </AuthContext.Provider>
       </AlertContext.Provider>
     </ApiContext.Provider>
