@@ -1,12 +1,8 @@
 import React from 'react';
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { ServiceRegistryHeader } from './ServiceRegistryHeader';
+import { ServiceRegistryHeader } from '@app/components';
 
-export type ServiceRegistryProps = {
-  children?: React.ReactNode;
-};
-
-export const ServiceRegistry = ({ children }: ServiceRegistryProps) => {
+export const ServiceRegistry = () => {
   const onConnectToRegistry = () => {};
 
   const onDeleteRegistry = () => {};
@@ -14,7 +10,6 @@ export const ServiceRegistry = ({ children }: ServiceRegistryProps) => {
   return (
     <PageSection variant={PageSectionVariants.light}>
       <ServiceRegistryHeader name={''} onConnectToRegistry={onConnectToRegistry} onDeleteRegistry={onDeleteRegistry} />
-      {children}
     </PageSection>
   );
 };
