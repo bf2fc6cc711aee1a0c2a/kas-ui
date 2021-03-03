@@ -465,13 +465,13 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
           <InputGroupText className="mk--generate-credential__empty-state--input-group">
             {t('client_id')}
           </InputGroupText>
-          <ClipboardCopy isReadOnly className="pf-u-w-100">
+          <ClipboardCopy isReadOnly className="pf-u-w-100" data-testid="modalCredentials-copyClientID">
             {mainToggle ? 'srvc-acct-962bc96e-4339-4aee-9505-040d5069c6a5' : credential?.clientID}
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
           <InputGroupText className="mk--generate-credential__empty-state--input-group">Client secret</InputGroupText>
-          <ClipboardCopy isReadOnly className="pf-u-w-100">
+          <ClipboardCopy isReadOnly className="pf-u-w-100" data-testid="modalCredentials-copyClientSecret">
             {mainToggle ? '441cdf77-083c-41d1-9050-c27a3b4247ac' : credential?.clientSecret}
           </ClipboardCopy>
         </InputGroup>
@@ -484,7 +484,12 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
             name="check1"
           />
         </Bullseye>
-        <Button variant="primary" isDisabled={!confirmationCheckbox} onClick={handleClose}>
+        <Button
+          variant="primary"
+          isDisabled={!confirmationCheckbox}
+          onClick={handleClose}
+          data-testid="modalCredentials-buttonClose"
+        >
           {t('close')}
         </Button>
       </MASEmptyState>
@@ -515,6 +520,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
           className="pf-u-ml-md"
           spinnerAriaValueText={isLoading ? 'Loading' : undefined}
           isLoading={isLoading}
+          data-testid="drawerStreams-buttonCreateServiceAccount"
         >
           {t('generate_credential')}
         </Button>

@@ -309,11 +309,13 @@ const StreamsTableView = ({
       {
         title: t('view_details'),
         id: 'view-instance',
+        ['data-testid']: 'tableStreams-actionDetails',
         onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
       },
       {
         title: t('connect_to_instance'),
         id: 'connect-instance',
+        ['data-testid']: 'tableStreams-actionConnection',
         onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
       },
       {
@@ -536,7 +538,7 @@ const StreamsTableView = ({
   return (
     <>
       <StreamsToolbar
-        mainToggle={mainToggle}      
+        mainToggle={mainToggle}
         filterSelected={filterSelected}
         setFilterSelected={setFilterSelected}
         total={total}
@@ -610,7 +612,7 @@ const StreamsTableView = ({
           description,
         }}
       />
-      <CreateInstanceModal />  
+      <CreateInstanceModal />
     </>
   );
 };

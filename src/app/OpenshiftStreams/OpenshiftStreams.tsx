@@ -244,6 +244,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
             isLoading={instanceDetail === undefined}
             instanceDetail={instanceDetail}
             onClose={onCloseDrawer}
+            data-ouia-app-id="controlPlane-streams"
           >
             <PageSection variant={PageSectionVariants.light}>
               <Level>

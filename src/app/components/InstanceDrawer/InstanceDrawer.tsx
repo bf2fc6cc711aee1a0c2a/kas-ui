@@ -10,7 +10,10 @@ import { ConnectionTab } from './ConnectionTab';
 import { DetailsTab, DetailsTabProps } from './DetailsTab';
 import './InstanceDrawer.css';
 
-export type InstanceDrawerProps = Omit<MASDrawerProps, 'drawerHeaderProps' | 'panelBodyContent'> &
+export type InstanceDrawerProps = Omit<
+  MASDrawerProps,
+  'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'
+> &
   DetailsTabProps & {
     activeTab?: string;
   };
@@ -22,6 +25,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   isExpanded,
   isLoading,
   children,
+  'data-ouia-app-id': dataOuiaAppId,
 }) => {
   dayjs.extend(localizedFormat);
 
@@ -56,7 +60,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
           <DetailsTab mainToggle={mainToggle} instanceDetail={instanceDetail} />
         </Tab>
-        <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>}>
+        <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>} data-testid="drawerStreams-tabConnect">
           <ConnectionTab
             mainToggle={mainToggle}
             activeKey={activeTab2Key}
@@ -79,6 +83,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         text: { label: t('instance_name') },
         title: { value: name, headingLevel: 'h1' },
       }}
+      data-ouia-app-id={dataOuiaAppId}
     >
       {children}
     </MASDrawer>

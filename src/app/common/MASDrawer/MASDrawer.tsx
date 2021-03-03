@@ -34,6 +34,7 @@ export type MASDrawerProps = DrawerProps & {
       value: string | undefined;
     };
   };
+  ['data-ouia-app-id']?: string;
 };
 
 export const MASDrawer: React.FC<MASDrawerProps> = ({
@@ -45,6 +46,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
   children,
   panelBodyContent,
   onExpand,
+  'data-ouia-app-id': dataOuiaAppId,
 }: MASDrawerProps) => {
   const { hidden = false, widths, ...restDrawerPanelContentProps } = drawerPanelContentProps || {};
   const { text, title } = drawerHeaderProps || {};
@@ -81,7 +83,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
   };
 
   return (
-    <Drawer isExpanded={isExpanded} onExpand={onExpand}>
+    <Drawer isExpanded={isExpanded} onExpand={onExpand} data-ouia-app-id={dataOuiaAppId}>
       <DrawerContent panelContent={panelContent()}>{children}</DrawerContent>
     </Drawer>
   );

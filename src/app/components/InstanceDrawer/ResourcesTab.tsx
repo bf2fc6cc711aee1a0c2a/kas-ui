@@ -28,7 +28,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
       </TextContent>
       <Flex>
         <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-          <ClipboardCopy>{externalServer}</ClipboardCopy>
+          <ClipboardCopy data-testid="drawerStreams-copyBootstrapURL">{externalServer}</ClipboardCopy>
         </FlexItem>
         <GenerateCredential instanceName={instanceName} mainToggle={mainToggle} />
       </Flex>
