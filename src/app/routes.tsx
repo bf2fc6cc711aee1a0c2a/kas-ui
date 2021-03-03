@@ -42,7 +42,7 @@ const routes: AppRouteConfig[] = [
     component: ServiceRegistryConnected,
     exact: true,
     label: 'Service Registry',
-    path: '/service-reistry',
+    path: '/service-registry',
     title: 'Service Registry',
   },
 ];
