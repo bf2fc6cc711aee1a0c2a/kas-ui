@@ -57,7 +57,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+  // const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
 
   const drawerRef = React.createRef<any>();
 
@@ -187,34 +187,35 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     fetchKafkas(false);
   }, []);
 
-  useEffect(() => {
-    if (kafkaInstanceItems) {
-      let allAreReady = true;
-      const statuses: string[] = [
-        InstanceStatus.ACCEPTED,
-        InstanceStatus.PREPARING,
-        InstanceStatus.PROVISIONING,
-        InstanceStatus.DEPROVISION,
-      ];
-      for (let i = 0; i < kafkaInstanceItems.length; i++) {
-        const item = kafkaInstanceItems[i];
-        if (item.status && statuses.includes(item.status)) {
-          allAreReady = false;
-          break;
-        }
-      }
+  // uncomment if changing the poll interval is required for incomplete kafkas
+  // useEffect(() => {
+  //   if (kafkaInstanceItems) {
+  //     let allAreReady = true;
+  //     const statuses: string[] = [
+  //       InstanceStatus.ACCEPTED,
+  //       InstanceStatus.PREPARING,
+  //       InstanceStatus.PROVISIONING,
+  //       InstanceStatus.DEPROVISION,
+  //     ];
+  //     for (let i = 0; i < kafkaInstanceItems.length; i++) {
+  //       const item = kafkaInstanceItems[i];
+  //       if (item.status && statuses.includes(item.status)) {
+  //         allAreReady = false;
+  //         break;
+  //       }
+  //     }
 
-      if (!allAreReady) {
-        // Decrease the poll interval if any instance is not in ready or failed state
-        setPollInterval(MIN_POLL_INTERVAL);
-      } else {
-        // Increase the poll interval if all instances are in ready or failed state
-        setPollInterval(MAX_POLL_INTERVAL);
-      }
-    }
-  }, [kafkaInstanceItems]);
+  //     if (!allAreReady) {
+  //       // Decrease the poll interval if any instance is not in ready or failed state
+  //       setPollInterval(MIN_POLL_INTERVAL);
+  //     } else {
+  //       // Increase the poll interval if all instances are in ready or failed state
+  //       setPollInterval(MAX_POLL_INTERVAL);
+  //     }
+  //   }
+  // }, [kafkaInstanceItems]);
 
-  useTimeout(() => fetchKafkas(true), pollInterval);
+  useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
 
   const refreshKafkas = () => {
     //set the page to laoding state
