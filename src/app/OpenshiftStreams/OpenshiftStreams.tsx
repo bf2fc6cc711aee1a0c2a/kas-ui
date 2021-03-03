@@ -272,6 +272,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                   buttonProps={{
                     title: t('create_a_kafka_instance'),
                     onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModal),
+                    ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
                   }}
                 />
                 <CreateInstanceModal />

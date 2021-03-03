@@ -26,6 +26,7 @@ export type MASEmptyStateProps = {
   buttonProps?: Omit<ButtonProps, 'children'> & {
     title?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    'data-testid'?: string;
   };
   children?: React.ReactNode;
 };

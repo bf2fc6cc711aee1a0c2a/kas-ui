@@ -537,13 +537,17 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: (
-        <Button variant="primary" onClick={() => setIsModalOpen(!isModalOpen)}>
+        <Button
+          variant="primary"
+          onClick={() => setIsModalOpen(!isModalOpen)}
+          data-testid={'tableStreams-buttonCreateKafka'}
+        >
           {t('create_kafka_instance')}
         </Button>
       ),
     },
   ];
-  
+
   if (total && total > 0 && toolbarItems.length === 1) {
     toolbarItems.push({
       item: (
