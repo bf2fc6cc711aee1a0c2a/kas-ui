@@ -4,7 +4,7 @@ import { css } from '@patternfly/react-styles';
 import './CustomRowWrapper.css';
 
 export type CustomRowWrapperContextProps = {
-  activeRow: string;
+  activeRow?: string;
   onRowClick: (event: any, rowIndex: number, row: any) => void;
 };
 

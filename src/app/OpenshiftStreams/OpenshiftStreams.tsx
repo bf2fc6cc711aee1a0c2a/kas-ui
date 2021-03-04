@@ -18,6 +18,8 @@ import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
+import { usePageVisibility } from '@app/hooks/usePageVisibility';
+import { InstanceStatus, MIN_POLL_INTERVAL, MAX_POLL_INTERVAL } from '@app/utils';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -32,7 +34,7 @@ type SelectedInstance = {
 const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-
+  const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
@@ -55,6 +57,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
+  // const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+
+  const drawerRef = React.createRef<any>();
 
   const { activeTab, instanceDetail } = selectedInstance || {};
 
@@ -117,7 +122,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
 
-    if (isValidToken(accessToken)) {
+    if (isValidToken(accessToken) && isVisible) {
       try {
         const apisService = new DefaultApi({
           accessToken,
@@ -175,14 +180,42 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas(true);
-  }, [authContext, page, perPage, filteredValue, orderBy]);
+  }, [authContext, page, perPage, filteredValue, orderBy, isVisible]);
 
   useEffect(() => {
     fetchCloudProviders();
     fetchKafkas(false);
   }, []);
 
-  useTimeout(() => fetchKafkas(true), 5000);
+  // uncomment if changing the poll interval is required for incomplete kafkas
+  // useEffect(() => {
+  //   if (kafkaInstanceItems) {
+  //     let allAreReady = true;
+  //     const statuses: string[] = [
+  //       InstanceStatus.ACCEPTED,
+  //       InstanceStatus.PREPARING,
+  //       InstanceStatus.PROVISIONING,
+  //       InstanceStatus.DEPROVISION,
+  //     ];
+  //     for (let i = 0; i < kafkaInstanceItems.length; i++) {
+  //       const item = kafkaInstanceItems[i];
+  //       if (item.status && statuses.includes(item.status)) {
+  //         allAreReady = false;
+  //         break;
+  //       }
+  //     }
+
+  //     if (!allAreReady) {
+  //       // Decrease the poll interval if any instance is not in ready or failed state
+  //       setPollInterval(MIN_POLL_INTERVAL);
+  //     } else {
+  //       // Increase the poll interval if all instances are in ready or failed state
+  //       setPollInterval(MAX_POLL_INTERVAL);
+  //     }
+  //   }
+  // }, [kafkaInstanceItems]);
+
+  useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
 
   const refreshKafkas = () => {
     //set the page to laoding state

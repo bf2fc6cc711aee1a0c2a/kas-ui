@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
-import { StreamsTableView, TableProps } from './StreamsTableView';
+import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../test-utils/i18n';
@@ -54,7 +54,7 @@ describe('<StreamsTableView/>', () => {
     );
   };
 
-  const props: TableProps = {
+  const props = {
     createStreamsInstance: false,
     setCreateStreamsInstance: jest.fn(),
     kafkaInstanceItems,

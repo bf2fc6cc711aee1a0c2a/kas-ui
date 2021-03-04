@@ -543,7 +543,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       ),
     },
   ];
-  
+
   if (total && total > 0 && toolbarItems.length === 1) {
     toolbarItems.push({
       item: (
