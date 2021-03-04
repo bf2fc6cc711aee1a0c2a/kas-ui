@@ -30,7 +30,7 @@ export const CustomRowWrapper = (rowWrapperProps) => {
         className,
         'pf-c-table-row__item',
         isRowDeleted ? 'pf-m-disabled' : 'pf-m-selectable',
-        activeRow === originalData?.name && 'pf-m-selected'
+        activeRow && activeRow === originalData?.name && 'pf-m-selected'
       )}
       hidden={isExpanded !== undefined && !isExpanded}
       onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
