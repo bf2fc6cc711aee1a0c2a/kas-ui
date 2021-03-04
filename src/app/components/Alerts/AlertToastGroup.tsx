@@ -5,7 +5,8 @@ export type AlertType = {
   key: number;
   title: string;
   variant: AlertVariant;
-  body?: string|React.ReactElement;
+  body?: string | React.ReactElement;
+  dataTestId?: string;
 };
 
 type AlertToastGroupProps = {
@@ -16,7 +17,7 @@ type AlertToastGroupProps = {
 export function AlertToastGroup({ alerts, onCloseAlert }: AlertToastGroupProps) {
   return (
     <AlertGroup isToast>
-      {alerts.map(({ key, variant, title, body }) => (
+      {alerts.map(({ key, variant, title, body, dataTestId }) => (
         <Alert
           key={key}
           isLiveRegion
@@ -24,6 +25,7 @@ export function AlertToastGroup({ alerts, onCloseAlert }: AlertToastGroupProps) 
           variantLabel=""
           title={title}
           actionClose={<AlertActionCloseButton title={title} onClose={() => onCloseAlert(key)} />}
+          data-testid={dataTestId}
         >
           {body}
         </Alert>

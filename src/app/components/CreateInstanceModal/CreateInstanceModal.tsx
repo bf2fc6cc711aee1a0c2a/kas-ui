@@ -198,7 +198,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
            * and translation for specific language
            *
            */
-          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
         }
         setCreationInProgress(false);
       }
@@ -369,6 +369,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   return (
     <>
       <Modal
+        data-testid="modalCreateKafka"
         variant={ModalVariant.medium}
         title={t('create_a_kafka_instance')}
         isOpen={isModalOpen}

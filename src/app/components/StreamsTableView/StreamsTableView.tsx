@@ -225,19 +225,15 @@ const StreamsTableView = ({
             addAlert(
               t('kafka_successfully_created'),
               AlertVariant.success,
-              <span
-                dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }}
-                data-testid="toastCreateKafka-success"
-              />
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />,
+              'toastCreateKafka-success'
             );
           } else if (instances[0].status === InstanceStatus.FAILED) {
             addAlert(
               t('kafka_not_created'),
               AlertVariant.danger,
-              <span
-                dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }}
-                data-testid="toastCreateKafka-failed"
-              />
+              <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />,
+              'toastCreateKafka-failed'
             );
           }
         }
