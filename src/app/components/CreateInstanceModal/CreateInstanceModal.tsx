@@ -369,7 +369,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   return (
     <>
       <Modal
-        data-testid="modalCreateKafka"
+        id="modalCreateKafka"
         variant={ModalVariant.medium}
         title={t('create_a_kafka_instance')}
         isOpen={isModalOpen}
