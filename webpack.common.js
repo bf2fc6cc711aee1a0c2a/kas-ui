@@ -162,6 +162,7 @@ module.exports = (env, argv, useContentHash) => {
         filename: `${federatedModuleName}${useContentHash ? '.[chunkhash]' : ''}.js`,
         exposes: {
           "./OpenshiftStreams": "./src/app/OpenshiftStreams/OpenshiftStreamsFederated",
+          "./ServiceRegistry":"./src/app/ServiceRegistry/ServiceRegistryFederated"
         },
         shared: {
           ...dependencies,

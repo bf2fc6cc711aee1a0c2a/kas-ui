@@ -5,4 +5,5 @@ export * from './StreamsTableView';
 export * from './DeleteInstanceModal';
 export * from './InstanceDrawer';
 export * from './NotFound';
+export * from './ServiceRegistryHeader';
 
