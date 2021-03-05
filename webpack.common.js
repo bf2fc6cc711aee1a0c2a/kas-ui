@@ -8,6 +8,7 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 const {dependencies, federatedModuleName} = require("./package.json");
 delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
+const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
 module.exports = (env, argv, useContentHash) => {
 
   return {
@@ -149,6 +150,11 @@ module.exports = (env, argv, useContentHash) => {
       new CopyPlugin({
         patterns: [
           {from: './src/locales', to: 'locales'},
+        ]
+      }),
+      new ChunkMapper({
+        modules: [
+          federatedModuleName
         ]
       }),
       new webpack.container.ModuleFederationPlugin({
