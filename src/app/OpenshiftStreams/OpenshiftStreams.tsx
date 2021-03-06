@@ -277,6 +277,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
             isLoading={instanceDetail === undefined}
             instanceDetail={instanceDetail}
             onClose={onCloseDrawer}
+            data-ouia-app-id="controlPlane-streams"
           >
             <PageSection variant={PageSectionVariants.light}>
               <Level>
@@ -304,6 +305,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                   buttonProps={{
                     title: t('create_a_kafka_instance'),
                     onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModal),
+                    ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
                   }}
                 />
                 <CreateInstanceModal />

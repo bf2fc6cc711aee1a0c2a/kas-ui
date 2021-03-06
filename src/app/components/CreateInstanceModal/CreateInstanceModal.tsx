@@ -198,7 +198,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
            * and translation for specific language
            *
            */
-          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
         }
         setCreationInProgress(false);
       }
@@ -369,6 +369,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   return (
     <>
       <Modal
+        id="modalCreateKafka"
         variant={ModalVariant.medium}
         title={t('create_a_kafka_instance')}
         isOpen={isModalOpen}
@@ -382,10 +383,11 @@ const CreateInstanceModal: React.FunctionComponent = () => {
             isDisabled={!isFormValid || isCreationInProgress}
             spinnerAriaValueText={t('submitting_request')}
             isLoading={isCreationInProgress}
+            data-testid="modalCreateKafka-buttonSubmit"
           >
             {t('create_instance')}
           </Button>,
-          <Button key="cancel" variant="link" onClick={handleModalToggle}>
+          <Button key="cancel" variant="link" onClick={handleModalToggle} data-testid="modalCreateKafka-buttonCancel">
             {t('cancel')}
           </Button>,
         ]}
