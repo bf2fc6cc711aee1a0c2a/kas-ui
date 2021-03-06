@@ -12,7 +12,6 @@ import 'dayjs/locale/ja';
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
-declare const __PUBLIC_PATH__: string;
 declare const window: Window & {
   windowError: string;
 };
@@ -32,7 +31,7 @@ i18n
   .init(
     {
       backend: {
-        loadPath: `${__PUBLIC_PATH__}locales/{{lng}}/{{ns}}.json`,
+        loadPath: `${__webpack_public_path__}locales/{{lng}}/{{ns}}.json`,
       },
       fallbackLng: 'en',
       load: 'all',

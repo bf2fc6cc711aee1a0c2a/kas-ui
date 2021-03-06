@@ -4,13 +4,12 @@ const CopyPlugin = require('copy-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const BG_IMAGES_DIRNAME = 'bgimages';
-const ASSET_PATH = process.env.ASSET_PATH || '/';
 const {dependencies, federatedModuleName} = require("./package.json");
 delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
-module.exports = (env, argv, useContentHash) => {
-
+module.exports = (env, argv) => {
+  const isProduction = argv && argv.mode === 'production';
   return {
     entry: {
       app: path.resolve(__dirname, 'src', 'index.tsx')
@@ -46,7 +45,7 @@ module.exports = (env, argv, useContentHash) => {
               // Limit at 50k. larger files emited into separate files
               limit: 5000,
               outputPath: 'fonts',
-              name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+              name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
             }
           }
         },
@@ -59,7 +58,7 @@ module.exports = (env, argv, useContentHash) => {
               options: {
                 limit: 5000,
                 outputPath: 'svgs',
-                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+                name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -107,7 +106,7 @@ module.exports = (env, argv, useContentHash) => {
               options: {
                 limit: 5000,
                 outputPath: 'images',
-                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+                name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -123,7 +122,7 @@ module.exports = (env, argv, useContentHash) => {
               options: {
                 limit: 5000,
                 outputPath: 'locales',
-                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+                name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -132,7 +131,8 @@ module.exports = (env, argv, useContentHash) => {
     },
     output: {
       filename: '[name].bundle.js',
-      path: path.resolve(__dirname, 'dist')
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: "auto"
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -159,7 +159,7 @@ module.exports = (env, argv, useContentHash) => {
       }),
       new webpack.container.ModuleFederationPlugin({
         name: federatedModuleName,
-        filename: `${federatedModuleName}${useContentHash ? '.[chunkhash]' : ''}.js`,
+        filename: `${federatedModuleName}${isProduction ? '[chunkhash:8]' : ''}.js`,
         exposes: {
           "./OpenshiftStreams": "./src/app/OpenshiftStreams/OpenshiftStreamsFederated",
           "./ServiceRegistry":"./src/app/ServiceRegistry/ServiceRegistryFederated"
