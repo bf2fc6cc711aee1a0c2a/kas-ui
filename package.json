@@ -1,10 +1,6 @@
 {
   "name": "kas-ui",
   "federatedModuleName": "kas",
-  "crc": {
-    "name": "rhosak-control-plane-ui-build",
-    "beta": true
-  },
   "version": "0.0.2",
   "description": "The Control Plane UI for Red Hat OpenShift Streams for Apache Kafka",
   "main": "server.js",

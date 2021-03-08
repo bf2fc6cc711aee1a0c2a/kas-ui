@@ -8,15 +8,9 @@ const HOST = process.env.HOST || "prod.foo.redhat.com";
 const PORT = process.env.PORT || port;
 const PROTOCOL = process.env.PROTOCOL || "https";
 
-const publicPath = `${PROTOCOL}://${HOST}:${PORT}/`;
-
 module.exports = merge(common('development'), {
   mode: "development",
   devtool: "eval-source-map",
-  output: {
-    // This must be set explicitly for module federation
-    publicPath
-  },
   devServer: {
     contentBase: "./dist",
     host: HOST,
@@ -62,7 +56,6 @@ module.exports = merge(common('development'), {
     }),
     new webpack.DefinePlugin({
       "__BASE_PATH__": JSON.stringify(process.env.BASE_PATH || 'https://api.stage.openshift.com'),
-      "__PUBLIC_PATH__": JSON.stringify(publicPath)
     }),
   ]
 });
