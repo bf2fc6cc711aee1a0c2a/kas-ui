@@ -15,9 +15,9 @@ export const MASFullPageError: React.FC<MASFullPageErrorProps> = ({
   emptyStateBodyProps,
   buttonProps,
 }: MASFullPageErrorProps) => {
-  const { variant = PageSectionVariants.default, ...restPageSectionProps } = pageSection || {};
+  const { variant = PageSectionVariants.default, padding, ...restPageSectionProps } = pageSection || {};
   return (
-    <PageSection variant={variant} {...restPageSectionProps} padding={{ default: 'noPadding' }}>
+    <PageSection variant={variant} {...restPageSectionProps} padding={padding || { default: 'noPadding' }}>
       <MASEmptyState
         titleProps={titleProps}
         emptyStateProps={emptyStateProps}

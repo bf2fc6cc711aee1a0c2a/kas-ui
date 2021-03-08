@@ -1,38 +1,80 @@
-import * as React from 'react';
-import { MASEmptyState } from './MASEmptyState';
-import { render, fireEvent, act } from '@testing-library/react';
+import React from 'react';
+import { MinusCircleIcon } from '@patternfly/react-icons';
+import { ButtonVariant, Button } from '@patternfly/react-core';
+import { MASEmptyState, MASEmptyStateProps } from './MASEmptyState';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-jest.mock('react-i18next', () => {
-  const reactI18next = jest.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key, i18n: { changeLanguage: jest.fn() } }),
-  };
-});
 
-describe('Empty State Test', () => {
-  test('should render empty state component', () => {
-    const { getByText, getByRole } = render(
-      <MASEmptyState/>
-    );
-    expect(getByText('you_do_not_have_any_kafka_instances_yet')).toBeInTheDocument();
-    expect(getByText('create_a_kafka_instance')).toBeInTheDocument();
-    expect(getByText('create_a_kafka_instance_to_get_started')).toBeInTheDocument();
-    expect(getByText('you_do_not_have_any_kafka_instances_yet')).toBeInTheDocument();
-    expect(getByRole('button', { name: /create_a_kafka/i })).toBeInTheDocument();
+describe('<MASEmptyState/>', () => {
+  const renderSetup = (props = {}) => {
+    return render(<MASEmptyState {...props} />);
+  };
+
+  it('should render dafault MASEmptyState', () => {
+    //arrange
+    const { container } = renderSetup();
+
+    //assert
+    expect(container.getElementsByClassName('pf-c-empty-state pf-u-pt-2xl').length).toBe(1);
+    expect(container.getElementsByClassName('pf-c-empty-state__icon').length).toBe(1);
+    //title
+    expect(container.getElementsByClassName('pf-c-title').length).toBe(0);
+    //empty state body
+    expect(container.getElementsByClassName('pf-c-empty-state__body').length).toBe(0);
+    //button
+    expect(container.getElementsByClassName('pf-c-button').length).toBe(0);
   });
 
-  test('should allow user to create instance', () => {
-    const onCreate = jest.fn();
-    const { getByRole } = render(
-      <MASEmptyState/>
-    );
+  it('should render MASEmptyState with props', () => {
+    //arrange
+    const onClick = jest.fn();
+    const props: MASEmptyStateProps = {
+      titleProps: { title: 'empty state', headingLevel: 'h1', size: '2xl' },
+      emptyStateProps: { className: 'empty-state-class', variant: 'large', isFullHeight: true },
+      emptyStateIconProps: { className: 'icon-class', icon: MinusCircleIcon, variant: 'icon' },
+      emptyStateBodyProps: { className: 'empty-body-class', body: 'This is empty state body' },
+      buttonProps: { title: 'create instance', variant: ButtonVariant.primary, onClick },
+    };
 
+    const { container } = renderSetup(props);
+
+    //act
     act(() => {
-      const button = getByRole('button', { name: /create_a_kafka/i });
+      const button = screen.getByRole('button', { name: /create instance/i });
       userEvent.click(button);
     });
 
-    expect(onCreate).toBeCalledTimes(1);
+    //assert
+    expect(container.getElementsByClassName('empty-state-class').length).toBe(1);
+    expect(container.getElementsByClassName('icon-class').length).toBe(1);
+    expect(container.getElementsByClassName('empty-body-class').length).toBe(1);
+    //check height css
+    expect(container.getElementsByClassName('pf-m-full-height').length).toBe(1);
+    screen.getAllByText(/empty state/);
+    screen.getAllByText(/This is empty state body/);
+    screen.getAllByText(/create instance/);
+    expect(onClick).toHaveBeenCalled();
+  });
+
+  it('should render MASEmptyState with children', () => {
+    //arrange
+    const onClick = jest.fn();
+    render(
+      <MASEmptyState>
+        <Button type="button" variant={ButtonVariant.secondary} onClick={onClick}>
+          Home Page
+        </Button>
+      </MASEmptyState>
+    );
+
+    //act
+    act(() => {
+      const button = screen.getByRole('button', { name: /Home Page/i });
+      userEvent.click(button);
+    });
+
+    //assert
+    screen.getAllByText(/Home Page/);
+    expect(onClick).toHaveBeenCalled();
   });
 });
