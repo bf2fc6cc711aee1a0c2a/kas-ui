@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import ExclamationTriangleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon';
 import { useTranslation } from 'react-i18next';
 import { PageSection, Button, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
 import { useHistory } from 'react-router-dom';

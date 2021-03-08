@@ -8,6 +8,8 @@ const {dependencies, federatedModuleName} = require("./package.json");
 delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = (env, argv) => {
   const isProduction = argv && argv.mode === 'production';
   return {
@@ -27,6 +29,11 @@ module.exports = (env, argv) => {
               }
             }
           ]
+        },
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          sideEffects: true
         },
         {
           test: /\.(svg|ttf|eot|woff|woff2)$/,
@@ -152,6 +159,10 @@ module.exports = (env, argv) => {
           {from: './src/locales', to: 'locales'},
         ]
       }),
+      new MiniCssExtractPlugin({
+        filename: '[name].[contenthash:8].css',
+        chunkFilename: '[contenthash:8].css'
+      }),
       new ChunkMapper({
         modules: [
           federatedModuleName
@@ -188,6 +199,18 @@ module.exports = (env, argv) => {
       ],
       symlinks: false,
       cacheWithContext: false
+    },
+    optimization: {
+      runtimeChunk: true,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          pfVendor: {
+            test: /[\\/]node_modules[\\/](@patternfly)[\\/]/,
+            name: 'pfVendor'
+          },
+        }
+      }
     }
   }
 };

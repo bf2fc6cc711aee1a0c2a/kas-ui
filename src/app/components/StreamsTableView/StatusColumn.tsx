@@ -1,5 +1,7 @@
 import React from 'react';
-import { CheckCircleIcon, PendingIcon, ExclamationCircleIcon, IconSize } from '@patternfly/react-icons';
+import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import PendingIcon from '@patternfly/react-icons/dist/js/icons/pending-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
 import './StatusColumn.css';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +33,7 @@ const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
         return <PendingIcon />;
       case statusOptions[3].value: // 'provisioning'
       case statusOptions[4].value: // 'preparing'
-        return <Spinner size={IconSize.md} aria-label={instanceName} aria-valuetext="Creation in progress" />;
+        return <Spinner size="md" aria-label={instanceName} aria-valuetext="Creation in progress" />;
       case statusOptions[5].value: // 'deprovision'
         return;
       default:
