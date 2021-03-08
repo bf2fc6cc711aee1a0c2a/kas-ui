@@ -200,17 +200,5 @@ module.exports = (env, argv) => {
       symlinks: false,
       cacheWithContext: false
     },
-    optimization: {
-      runtimeChunk: true,
-      splitChunks: {
-        chunks: 'all',
-        cacheGroups: {
-          pfVendor: {
-            test: /[\\/]node_modules[\\/](@patternfly)[\\/]/,
-            name: 'pfVendor'
-          },
-        }
-      }
-    }
   }
 };
