@@ -582,7 +582,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         collapseListedFiltersBreakpoint: 'md',
         inset: { lg: 'insetLg' },
       }}
-      toggleGroupProps={{ toggleIcon: FilterIcon, breakpoint: 'md' }}
+      toggleGroupProps={{ toggleIcon: <FilterIcon />, breakpoint: 'md' }}
       toggleGroupItems={toggleGroupItems}
       toolbarItems={toolbarItems}
     />

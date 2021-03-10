@@ -19,7 +19,7 @@ import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
-import { InstanceStatus, MIN_POLL_INTERVAL, MAX_POLL_INTERVAL } from '@app/utils';
+import { MAX_POLL_INTERVAL } from '@app/utils';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -180,40 +180,12 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas(true);
-  }, [authContext, page, perPage, filteredValue, orderBy, isVisible]);
+  }, [authContext, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
     fetchKafkas(false);
   }, []);
-
-  // uncomment if changing the poll interval is required for incomplete kafkas
-  // useEffect(() => {
-  //   if (kafkaInstanceItems) {
-  //     let allAreReady = true;
-  //     const statuses: string[] = [
-  //       InstanceStatus.ACCEPTED,
-  //       InstanceStatus.PREPARING,
-  //       InstanceStatus.PROVISIONING,
-  //       InstanceStatus.DEPROVISION,
-  //     ];
-  //     for (let i = 0; i < kafkaInstanceItems.length; i++) {
-  //       const item = kafkaInstanceItems[i];
-  //       if (item.status && statuses.includes(item.status)) {
-  //         allAreReady = false;
-  //         break;
-  //       }
-  //     }
-
-  //     if (!allAreReady) {
-  //       // Decrease the poll interval if any instance is not in ready or failed state
-  //       setPollInterval(MIN_POLL_INTERVAL);
-  //     } else {
-  //       // Increase the poll interval if all instances are in ready or failed state
-  //       setPollInterval(MAX_POLL_INTERVAL);
-  //     }
-  //   }
-  // }, [kafkaInstanceItems]);
 
   useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
 
