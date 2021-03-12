@@ -13,7 +13,7 @@ import {
   EmptyStateBodyProps,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
 import { css } from '@patternfly/react-styles';
 
 export type MASEmptyStateProps = {

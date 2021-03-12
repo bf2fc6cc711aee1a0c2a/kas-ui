@@ -19,7 +19,8 @@ import {
   ToggleGroupItem,
 } from '@patternfly/react-core';
 import { FormDataValidationState, NewKafka } from '../../models/models';
-import { AwsIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import './CreateInstanceModal.css';
 import { useAlerts } from '../Alerts/Alerts';
 import { AuthContext } from '@app/auth/AuthContext';

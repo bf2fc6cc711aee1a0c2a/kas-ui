@@ -27,7 +27,8 @@ import {
   WizardStep,
   TitleSizes,
 } from '@patternfly/react-core';
-import { PlusCircleIcon, KeyIcon } from '@patternfly/react-icons';
+import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
+import KeyIcon from '@patternfly/react-icons/dist/js/icons/key-icon';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Flex/flex.css';
 import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';

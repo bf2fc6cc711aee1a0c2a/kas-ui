@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageSection, PageSectionVariants, PageSectionProps } from '@patternfly/react-core';
-import { LockIcon } from '@patternfly/react-icons';
+import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import { MASEmptyState, MASEmptyStateProps } from '@app/common';
 
 export type MASFullPageErrorProps = MASEmptyStateProps & {
