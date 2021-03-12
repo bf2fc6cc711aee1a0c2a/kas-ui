@@ -40,7 +40,7 @@ describe('<MASDeleteModal/>', () => {
         showClose: true,
       },
       handleModalToggle,
-      selectedItemData: { slectedItem: 'test-item' },
+      selectedItemData: { selectedItem: 'test-item' },
       confirmButtonProps: {
         id: 'delete-button',
         key: 'delete-button',

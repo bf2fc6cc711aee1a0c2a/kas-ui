@@ -39,7 +39,7 @@ describe('<MASDrawer/>', () => {
           <div>Details tab content</div>
         </Tab>
         <Tab eventKey={1} title={<TabTitleText>Connection</TabTitleText>}>
-          <div>Connection tan content</div>
+          <div>Connection tab content</div>
         </Tab>
       </Tabs>
     );
@@ -72,7 +72,7 @@ describe('<MASDrawer/>', () => {
     screen.getByText('Details');
     screen.getByText('Details tab content');
     screen.getByText('Connection');
-    screen.getByText('Connection tan content');
+    screen.getByText('Connection tab content');
     expect(container.getElementsByClassName('pf-m-expanded').length).toBe(1);
     expect(onClose).toHaveBeenCalled();
   });

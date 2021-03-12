@@ -112,13 +112,13 @@ describe('<MASToolbar/>', () => {
     };
 
     render(<MASToolbar {...props} />);
-    
+
     //act
     act(() => {
       const createButton: any = screen.getByRole('button', { name: /Create kafka instance/i });
       userEvent.click(createButton);
-      const filterSlect: any = screen.getByRole('listbox', { name: /Select filter/i });
-      userEvent.click(filterSlect);
+      const filterSelect: any = screen.getByRole('listbox', { name: /Select filter/i });
+      userEvent.click(filterSelect);
       const searchButton: any = screen.getByRole('button', { name: /Search instances/i });
       userEvent.click(searchButton);
     });
