@@ -6,7 +6,7 @@ import {
   PaginationVariant,
 } from '@patternfly/react-core';
 
-export interface PaginationProps extends Omit<PFPaginationProps, 'children' | 'ref'> {}
+export type PaginationProps = Omit<PFPaginationProps, 'children' | 'ref'>;
 
 const MASPagination: FunctionComponent<PaginationProps> = ({
   page,

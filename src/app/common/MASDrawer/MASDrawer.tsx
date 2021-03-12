@@ -26,11 +26,11 @@ export type MASDrawerProps = DrawerProps & {
   drawerData?: any;
   isLoading: boolean;
   drawerPanelContentProps?: Omit<DrawerPanelContentProps, 'children'>;
-  drawerHeaderProps: {
-    text: Omit<TextProps, 'children' | 'ref'> & {
+  drawerHeaderProps?: {
+    text?: Omit<TextProps, 'children' | 'ref'> & {
       label: string | undefined;
     };
-    title: Omit<TitleProps, 'children'> & {
+    title?: Omit<TitleProps, 'children'> & {
       value: string | undefined;
     };
   };
@@ -60,16 +60,20 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
           <>
             <DrawerHead>
               <TextContent>
-                <Text component={text?.component || TextVariants.small} className={text?.className || 'pf-u-mb-0'}>
-                  {text?.label}
-                </Text>
-                <Title
-                  headingLevel={title?.headingLevel || 'h2'}
-                  size={title?.size || TitleSizes['xl']}
-                  className={title?.className || 'pf-u-mt-0'}
-                >
-                  {title?.value}
-                </Title>
+                {text?.label && (
+                  <Text component={text?.component || TextVariants.small} className={text?.className || 'pf-u-mb-0'}>
+                    {text?.label}
+                  </Text>
+                )}
+                {title?.value && (
+                  <Title
+                    headingLevel={title?.headingLevel || 'h2'}
+                    size={title?.size || TitleSizes['xl']}
+                    className={title?.className || 'pf-u-mt-0'}
+                  >
+                    {title?.value}
+                  </Title>
+                )}
               </TextContent>
               <DrawerActions>
                 <DrawerCloseButton onClick={onClose} />
