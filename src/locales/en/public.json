@@ -229,13 +229,39 @@
   "filter_by_region": "Filter by region",
   "filter_by_cloud_provider": "Filter by cloud provider",
   "filter_by_status": "Filter by status",
-  "you_do_not_have_access_to_openshift_streams":"You do not have access to OpenShift Streams",
-  "contact_your_organization_administration_for_more_information":"Contact your organization administration(s) for more information.",
-  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters.", 
+  "you_do_not_have_access_to_openshift_streams": "You do not have access to OpenShift Streams",
+  "contact_your_organization_administration_for_more_information": "Contact your organization administration(s) for more information.",
+  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters.",
   "the_name_already_exists_please_enter_a_unique_name": "The name {{name}} already exists. Please enter a unique name.",
   "submitting_request": "Submitting request",
   "clear_all_filters": "Clear all filters",
   "max_filter_message": "Maximum number of filters reached. Please clear a filter before adding another.",
   "input_field_invalid_message": "Valid characters for {{name}} are lowercase letters from a to z, numbers from 0 to 9, underscore (_) hyphens (-) and percentage (%)",
-  "service_registry":"Service Registry"
+  "common": {
+    "loding": "Loading",
+    "java": "JAVA",
+    "mvn": "MVN",
+    "cli": "CLI",
+    "curl": "CURL",
+    "client_key": "Client Key",
+    "client_secret": "Client Secret",
+    "resources": "Resources",
+    "sample_code": "Sample code"
+  },
+  "serviceRegistry": {
+    "service_registry": "Service Registry",
+    "connect_to_registry": "Connect to Registry",
+    "delete_registry": "Delete Registry",
+    "welcome_to_service_registry": "Welcome to Service Registry",
+    "welcome_epmty_state_body": "Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
+    "create_service_registry": "Create Service Registry",
+    "unauthorized_empty_state_title": "You don't have access to Service Registry",
+    "unauthorized_empty_state_body": "You can not set up a Service Registry because your account does not have the appropriate entitlements for accessing Service Registry.",
+    "get_access_to_service_registry": "Get access to Service Registry",
+    "connection_details": "Connection details",
+    "tab_sample_code_title_info": "Below are example configuration snippets for accessing Service Registry from different runtimes.",
+    "tab_resources_title_info": "To connect an application or tool to this service registry, you will need the infomration below.",
+    "tab_resources_content_1": "Registry REST API URL",
+    "tab_resources_content_2": "MAS-SSO Instance URL"
+  }
 }

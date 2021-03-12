@@ -8,30 +8,26 @@ export type ResourcesTabProps = {
 
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({ mainToggle }: ResourcesTabProps) => {
   const { t } = useTranslation();
+  const registriesInfo = [
+    { title: t('serviceRegistry.tab_resources_content_1'), code: 'https://registry.my-domain.com/api' },
+    { title: t('serviceRegistry.tab_resources_content_2'), code: 'https://mass-sso.url' },
+    { title: t('common.client_key'), code: 'srvc-reg-7f7f8f7f87f-3634-c2e-879877988787' },
+    { title: t('common.client_secret'), code: '2d668686876-8768786-8766686-8787jhjh88' },
+  ];
 
   return (
     <div className="mas--details__drawer--tab-content">
       <TextContent className="pf-u-pb-sm">
-        <Text component={TextVariants.p}>
-          To connect an application or tool to this service registry, you will need the infomration below.
-        </Text>
+        <Text component={TextVariants.p}>{t('serviceRegistry.tab_resources_title_info')}</Text>
       </TextContent>
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-        <Text component={TextVariants.h4}>Registry REST API URL</Text>
-      </TextContent>
-      <ClipboardCopy>https://registry.my-domain.com/api</ClipboardCopy>
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-        <Text component={TextVariants.h4}>MAS-SSO Instance URL</Text>
-      </TextContent>
-      <ClipboardCopy>https://mass-sso.url</ClipboardCopy>
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-        <Text component={TextVariants.h4}>Client Key</Text>
-      </TextContent>
-      <ClipboardCopy>srvc-reg-7f7f8f7f87f-3634-c2e-879877988787</ClipboardCopy>
-      <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-        <Text component={TextVariants.h4}>Client Secret</Text>
-      </TextContent>
-      <ClipboardCopy>2d668686876-8768786-8766686-8787jhjh88</ClipboardCopy>
+      {registriesInfo?.map(({ title, code }) => (
+        <>
+          <TextContent className="pf-u-pb-sm pf-u-pt-lg">
+            <Text component={TextVariants.h4}>{title}</Text>
+          </TextContent>
+          <ClipboardCopy>{code}</ClipboardCopy>
+        </>
+      ))}
     </div>
   );
 };

@@ -29,10 +29,18 @@ const ServiceRegistryDrawer: React.FC<ServiceRegistryDrawerProps> = ({
   const panelBodyContent = () => {
     return (
       <Tabs activeKey={activeKey} onSelect={handleTabClick}>
-        <Tab eventKey={0} title={<TabTitleText>Resources</TabTitleText>}>
+        <Tab
+          eventKey={0}
+          title={<TabTitleText>{t('common.resources')}</TabTitleText>}
+          data-testid="serviceRegustry-tabResources"
+        >
           <ResourcesTab />
         </Tab>
-        <Tab eventKey={1} title={<TabTitleText>Sample code</TabTitleText>} data-testid="drawerStreams-tabConnect">
+        <Tab
+          eventKey={1}
+          title={<TabTitleText>{t('common.sample_code')}</TabTitleText>}
+          data-testid="serviceRegistry-tabSampleCode"
+        >
           <SampleCodeTab />
         </Tab>
       </Tabs>
@@ -46,7 +54,7 @@ const ServiceRegistryDrawer: React.FC<ServiceRegistryDrawerProps> = ({
       onClose={onClose}
       panelBodyContent={panelBodyContent()}
       drawerHeaderProps={{
-        text: { label: 'Connection details', component: 'h1' },
+        text: { label: t('serviceRegistry.connection_details'), component: 'h1' },
         title: { value: name, headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}

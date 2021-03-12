@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageSection, PageSectionVariants, ButtonVariant, EmptyStateVariant } from '@patternfly/react-core';
 import SpaceShuttleIcon from '@patternfly/react-icons/dist/js/icons/space-shuttle-icon';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
@@ -10,6 +11,8 @@ export type ServiceRegistryProps = {
 };
 
 export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryProps) => {
+  const { t } = useTranslation();
+
   const [isExpandedDrawer, setIsExpandedDrawer] = useState<boolean>(false);
   const [isServiceRegistryLoading, setIsServiceRegistryLoading] = useState(false);
 
@@ -45,17 +48,16 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
         <MASEmptyState
           emptyStateProps={{ variant: EmptyStateVariant.xl }}
           emptyStateIconProps={{ icon: SpaceShuttleIcon }}
-          titleProps={{ title: 'Welcome to Service Registry', headingLevel: 'h1', size: '2xl' }}
+          titleProps={{ title: t('serviceRegistry.welcome_to_service_registry'), headingLevel: 'h1', size: '2xl' }}
           emptyStateBodyProps={{
-            body:
-              'Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.',
+            body: t('serviceRegistry.welcome_epmty_state_body'),
           }}
           buttonProps={{
-            title: 'Create Service Registry',
+            title: t('serviceRegistry.create_service_registry'),
             variant: ButtonVariant.primary,
             onClick: onCreateServiceRegistry,
             isLoading: isServiceRegistryLoading,
-            spinnerAriaValueText: isServiceRegistryLoading ? 'Loading' : undefined,
+            spinnerAriaValueText: isServiceRegistryLoading ? t('common.loading') : undefined,
           }}
         />
       </PageSection>
@@ -68,13 +70,12 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
         <MASEmptyState
           emptyStateProps={{ variant: EmptyStateVariant.xl }}
           emptyStateIconProps={{ icon: LockIcon }}
-          titleProps={{ title: "You don't have access to Service Registry", headingLevel: 'h1', size: '2xl' }}
+          titleProps={{ title: t('serviceRegistry.unauthorized_empty_state_title'), headingLevel: 'h1', size: '2xl' }}
           emptyStateBodyProps={{
-            body:
-              'You can not set up a Service Registry because your account does not have the appropriate entitlements for accessing Service Registry.',
+            body: t('serviceRegistry.unauthorized_empty_state_body'),
           }}
           buttonProps={{
-            title: 'Get access to Service Registry',
+            title: t('serviceRegistry.get_access_to_service_registry'),
             variant: ButtonVariant.primary,
             onClick: getAccessToServiceRegistry,
           }}
@@ -92,6 +93,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
           onDeleteRegistry={onDeleteRegistry}
         />
       </PageSection>
+      {renderUnauthorizedUserEmptyState()}
     </ServiceRegistryDrawer>
   );
 };
