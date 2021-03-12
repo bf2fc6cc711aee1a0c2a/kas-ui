@@ -93,7 +93,6 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
           onDeleteRegistry={onDeleteRegistry}
         />
       </PageSection>
-      {renderUnauthorizedUserEmptyState()}
     </ServiceRegistryDrawer>
   );
 };
