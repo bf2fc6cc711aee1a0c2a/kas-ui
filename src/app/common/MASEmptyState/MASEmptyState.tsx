@@ -15,6 +15,7 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { css } from '@patternfly/react-styles';
+import './MASEmptyState.css';
 
 export type MASEmptyStateProps = {
   titleProps?: Omit<TitleProps, 'children'>;
