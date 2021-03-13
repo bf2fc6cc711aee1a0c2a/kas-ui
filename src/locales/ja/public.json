@@ -244,7 +244,9 @@
     "client_key": "日本語 Client Key",
     "client_secret": "日本語 Client Secret",
     "resources": "日本語 Resources",
-    "sample_code": "日本語 Sample code"
+    "sample_code": "日本語 Sample code",
+    "copy_clipboard": "日本語 Copy to clipboard",
+    "copy_clipboard_successfully": "日本語 Successfully copied to clipboard!"
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",
@@ -253,12 +255,12 @@
     "welcome_to_service_registry": "日本語 Welcome to Service Registry",
     "welcome_epmty_state_body": "日本語 Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
     "create_service_registry": "日本語 Create Service Registry",
-    "unauthorized_empty_state_title": "日本語 You don't have access to Service Registry",
-    "unauthorized_empty_state_body": "日本語 You can not set up a Service Registry because your account does not have the appropriate entitlements for accessing Service Registry.",
+    "unauthorized_empty_state_title": "日本語 Access entitlements needed",
+    "unauthorized_empty_state_body": "日本語 To set up a Service Registry, your account needs the appropriate access entitlements",
     "get_access_to_service_registry": "日本語 Get access to Service Registry",
     "connection_details": "日本語 Connection details",
     "tab_sample_code_title_info": "日本語 Below are example configuration snippets for accessing Service Registry from different runtimes.",
-    "tab_resources_title_info": "日本語 To connect an application or tool to this service registry, you will need the infomration below.",
+    "tab_resources_title_info": "日本語 To connect an application or tool to this service registry, you will need the information below.",
     "tab_resources_content_1": "日本語 Registry REST API URL",
     "tab_resources_content_2": "日本語 MAS-SSO Instance URL"
   }

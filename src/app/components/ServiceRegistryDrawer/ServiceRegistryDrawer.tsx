@@ -54,7 +54,7 @@ const ServiceRegistryDrawer: React.FC<ServiceRegistryDrawerProps> = ({
       onClose={onClose}
       panelBodyContent={panelBodyContent()}
       drawerHeaderProps={{
-        text: { label: t('serviceRegistry.connection_details'), component: 'h1' },
+        text: { label: t('serviceRegistry.connection_details') },
         title: { value: name, headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}

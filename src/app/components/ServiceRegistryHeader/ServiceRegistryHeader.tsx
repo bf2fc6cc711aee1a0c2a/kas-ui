@@ -45,7 +45,7 @@ export const ServiceRegistryHeader: React.FC<ServiceRegistryHeaderProps> = ({
   return (
     <Level>
       <LevelItem>
-        <Title headingLevel="h1" size="2xl">
+        <Title headingLevel="h1" size="lg">
           {t('serviceRegistry.service_registry')}
         </Title>
       </LevelItem>

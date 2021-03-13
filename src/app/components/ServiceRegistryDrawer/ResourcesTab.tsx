@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextContent, Text, TextVariants, ClipboardCopy } from '@patternfly/react-core';
+import { TextContent, Text, TextVariants, ClipboardCopy, Form, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export type ResourcesTabProps = {
@@ -18,16 +18,23 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ mainToggle }: Resour
   return (
     <div className="mas--details__drawer--tab-content">
       <TextContent className="pf-u-pb-sm">
-        <Text component={TextVariants.p}>{t('serviceRegistry.tab_resources_title_info')}</Text>
+        <Text component={TextVariants.small}>{t('serviceRegistry.tab_resources_title_info')}</Text>
       </TextContent>
-      {registriesInfo?.map(({ title, code }) => (
-        <>
-          <TextContent className="pf-u-pb-sm pf-u-pt-lg">
-            <Text component={TextVariants.h4}>{title}</Text>
-          </TextContent>
-          <ClipboardCopy>{code}</ClipboardCopy>
-        </>
-      ))}
+      <Form>
+        {registriesInfo?.map(({ title, code }, index) => (
+          <FormGroup label={title} fieldId={`copy-clipboard-${index}`}>
+            <ClipboardCopy
+              id={`copy-clipboard-${index}`}
+              hoverTip={t('common.copy_clipboard')}
+              clickTip={t('common.copy_clipboard_successfully')}
+              textAriaLabel={title}
+              isReadOnly
+            >
+              {code}
+            </ClipboardCopy>
+          </FormGroup>
+        ))}
+      </Form>
     </div>
   );
 };

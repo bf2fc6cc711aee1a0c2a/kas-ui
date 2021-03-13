@@ -48,7 +48,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
         <MASEmptyState
           emptyStateProps={{ variant: EmptyStateVariant.xl }}
           emptyStateIconProps={{ icon: SpaceShuttleIcon }}
-          titleProps={{ title: t('serviceRegistry.welcome_to_service_registry'), headingLevel: 'h1', size: '2xl' }}
+          titleProps={{ title: t('serviceRegistry.welcome_to_service_registry'), headingLevel: 'h1', size: 'lg' }}
           emptyStateBodyProps={{
             body: t('serviceRegistry.welcome_epmty_state_body'),
           }}
@@ -68,9 +68,9 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
     return (
       <PageSection>
         <MASEmptyState
-          emptyStateProps={{ variant: EmptyStateVariant.xl }}
+          emptyStateProps={{ variant: EmptyStateVariant.large }}
           emptyStateIconProps={{ icon: LockIcon }}
-          titleProps={{ title: t('serviceRegistry.unauthorized_empty_state_title'), headingLevel: 'h1', size: '2xl' }}
+          titleProps={{ title: t('serviceRegistry.unauthorized_empty_state_title'), headingLevel: 'h1', size: 'lg' }}
           emptyStateBodyProps={{
             body: t('serviceRegistry.unauthorized_empty_state_body'),
           }}

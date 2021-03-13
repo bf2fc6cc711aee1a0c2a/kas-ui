@@ -246,7 +246,9 @@
     "client_key": "Client Key",
     "client_secret": "Client Secret",
     "resources": "Resources",
-    "sample_code": "Sample code"
+    "sample_code": "Sample code",
+    "copy_clipboard": "Copy to clipboard",
+    "copy_clipboard_successfully": "Successfully copied to clipboard!"
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",
@@ -255,12 +257,12 @@
     "welcome_to_service_registry": "Welcome to Service Registry",
     "welcome_epmty_state_body": "Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
     "create_service_registry": "Create Service Registry",
-    "unauthorized_empty_state_title": "You don't have access to Service Registry",
-    "unauthorized_empty_state_body": "You can not set up a Service Registry because your account does not have the appropriate entitlements for accessing Service Registry.",
+    "unauthorized_empty_state_title": "Access entitlements needed",
+    "unauthorized_empty_state_body": "To set up a Service Registry, your account needs the appropriate access entitlements",
     "get_access_to_service_registry": "Get access to Service Registry",
     "connection_details": "Connection details",
     "tab_sample_code_title_info": "Below are example configuration snippets for accessing Service Registry from different runtimes.",
-    "tab_resources_title_info": "To connect an application or tool to this service registry, you will need the infomration below.",
+    "tab_resources_title_info": "To connect an application or tool to this service registry, you will need the information below.",
     "tab_resources_content_1": "Registry REST API URL",
     "tab_resources_content_2": "MAS-SSO Instance URL"
   }
