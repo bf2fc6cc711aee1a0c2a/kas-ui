@@ -1,25 +1,25 @@
 import React from 'react';
 import {
   ToolbarContent,
-  Toolbar as PFToolbar,
-  ToolbarProps as PFToolbarProps,
+  Toolbar,
+  ToolbarProps,
   ToolbarItemProps as PFToolbarItemProps,
   ToolbarToggleGroup,
   ToolbarItem,
   ToolbarToggleGroupProps,
 } from '@patternfly/react-core';
 
-export interface ToolbarItemProps extends Omit<PFToolbarItemProps, 'children'> {
+export type ToolbarItemProps = Omit<PFToolbarItemProps, 'children'> & {
   item: JSX.Element;
-}
-interface ToolbarProps {
-  toolbarProps: Omit<PFToolbarProps, 'children' | 'ref'>;
+};
+export type MASToolbarProps = {
+  toolbarProps: Omit<ToolbarProps, 'children' | 'ref'>;
   toggleGroupProps: Omit<ToolbarToggleGroupProps, 'children'>;
-  toggleGroupItems: JSX.Element;
-  toolbarItems: ToolbarItemProps[];
-}
+  toggleGroupItems?: any;
+  toolbarItems?: ToolbarItemProps[];
+};
 
-const MASToolbar: React.FunctionComponent<ToolbarProps> = ({
+const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
   toolbarProps,
   toggleGroupProps,
   toolbarItems,
@@ -29,7 +29,7 @@ const MASToolbar: React.FunctionComponent<ToolbarProps> = ({
   const { toggleIcon, breakpoint = 'md', ...toolbarToggleGroupProps } = toggleGroupProps;
   return (
     <>
-      <PFToolbar
+      <Toolbar
         id={id}
         clearAllFilters={clearAllFilters}
         inset={inset}
@@ -40,7 +40,7 @@ const MASToolbar: React.FunctionComponent<ToolbarProps> = ({
           <ToolbarToggleGroup toggleIcon={toggleIcon} breakpoint={breakpoint} {...toolbarToggleGroupProps}>
             {toggleGroupItems}
           </ToolbarToggleGroup>
-          {toolbarItems.map((toolbarItem, index) => {
+          {toolbarItems?.map((toolbarItem, index) => {
             const { key = 'mas', variant, className, id, alignment, item, ...restItemProps } = toolbarItem;
             return (
               <ToolbarItem
@@ -56,7 +56,7 @@ const MASToolbar: React.FunctionComponent<ToolbarProps> = ({
             );
           })}
         </ToolbarContent>
-      </PFToolbar>
+      </Toolbar>
     </>
   );
 };

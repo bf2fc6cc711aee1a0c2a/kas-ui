@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextContent, Text, TextVariants, Button } from '@patternfly/react-core';
-import { CopyIcon } from '@patternfly/react-icons';
+import CopyIcon from '@patternfly/react-icons/dist/js/icons/copy-icon';
 import { useTranslation } from 'react-i18next';
 
 export const SampleCodeTab = () => {

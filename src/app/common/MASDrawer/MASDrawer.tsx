@@ -27,11 +27,11 @@ export type MASDrawerProps = DrawerProps & {
   drawerData?: any;
   isLoading: boolean;
   drawerPanelContentProps?: Omit<DrawerPanelContentProps, 'children'>;
-  drawerHeaderProps: {
-    text: Omit<TextProps, 'children' | 'ref'> & {
+  drawerHeaderProps?: {
+    text?: Omit<TextProps, 'children' | 'ref'> & {
       label: string | undefined;
     };
-    title: Omit<TitleProps, 'children'> & {
+    title?: Omit<TitleProps, 'children'> & {
       value: string | undefined;
     };
   };
