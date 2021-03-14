@@ -14,10 +14,12 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
   const { t } = useTranslation();
 
   const [isExpandedDrawer, setIsExpandedDrawer] = useState<boolean>(false);
-  const [isServiceRegistryLoading, setIsServiceRegistryLoading] = useState(false);
+  const [isServiceRegistryLoading, setIsServiceRegistryLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const onConnectToRegistry = () => {
     setIsExpandedDrawer(true);
+    setIsLoading(false);
   };
 
   const onCloseDrawer = () => {
@@ -85,7 +87,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
   };
 
   return (
-    <ServiceRegistryDrawer isExpanded={isExpandedDrawer} isLoading={false} onClose={onCloseDrawer}>
+    <ServiceRegistryDrawer isExpanded={isExpandedDrawer} isLoading={isLoading} onClose={onCloseDrawer}>
       <PageSection variant={PageSectionVariants.light}>
         <ServiceRegistryHeader
           name={''}

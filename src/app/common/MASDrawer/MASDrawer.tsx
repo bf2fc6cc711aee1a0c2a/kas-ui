@@ -16,6 +16,7 @@ import {
   DrawerPanelContentProps,
   TextProps,
   TitleProps,
+  DrawerContentBody,
 } from '@patternfly/react-core';
 import { MASLoading } from '@app/common';
 
@@ -48,47 +49,47 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
   onExpand,
   'data-ouia-app-id': dataOuiaAppId,
 }: MASDrawerProps) => {
-  const { hidden = false, widths, ...restDrawerPanelContentProps } = drawerPanelContentProps || {};
+  const { widths, ...restDrawerPanelContentProps } = drawerPanelContentProps || {};
   const { text, title } = drawerHeaderProps || {};
 
-  const panelContent = () => {
-    return (
-      <DrawerPanelContent widths={widths || { default: 'width_50' }} hidden={hidden} {...restDrawerPanelContentProps}>
-        {isLoading ? (
-          <MASLoading />
-        ) : (
-          <>
-            <DrawerHead>
-              <TextContent>
-                {text?.label && (
-                  <Text component={text?.component || TextVariants.small} className={text?.className || 'pf-u-mb-0'}>
-                    {text?.label}
-                  </Text>
-                )}
-                {title?.value && (
-                  <Title
-                    headingLevel={title?.headingLevel || 'h2'}
-                    size={title?.size || TitleSizes['xl']}
-                    className={title?.className || 'pf-u-mt-0'}
-                  >
-                    {title?.value}
-                  </Title>
-                )}
-              </TextContent>
-              <DrawerActions>
-                <DrawerCloseButton onClick={onClose} />
-              </DrawerActions>
-            </DrawerHead>
-            <DrawerPanelBody>{panelBodyContent}</DrawerPanelBody>
-          </>
-        )}
-      </DrawerPanelContent>
-    );
-  };
+  const panelContent = (
+    <DrawerPanelContent widths={widths || { default: 'width_50' }} {...restDrawerPanelContentProps}>
+      {isLoading ? (
+        <MASLoading />
+      ) : (
+        <>
+          <DrawerHead>
+            <TextContent>
+              {text?.label && (
+                <Text component={text?.component || TextVariants.small} className={text?.className || 'pf-u-mb-0'}>
+                  {text?.label}
+                </Text>
+              )}
+              {title?.value && (
+                <Title
+                  headingLevel={title?.headingLevel || 'h2'}
+                  size={title?.size || TitleSizes['xl']}
+                  className={title?.className || 'pf-u-mt-0'}
+                >
+                  {title?.value}
+                </Title>
+              )}
+            </TextContent>
+            <DrawerActions>
+              <DrawerCloseButton onClick={onClose} />
+            </DrawerActions>
+          </DrawerHead>
+          <DrawerPanelBody>{panelBodyContent}</DrawerPanelBody>
+        </>
+      )}
+    </DrawerPanelContent>
+  );
 
   return (
     <Drawer isExpanded={isExpanded} onExpand={onExpand} data-ouia-app-id={dataOuiaAppId}>
-      <DrawerContent panelContent={panelContent()}>{children}</DrawerContent>
+      <DrawerContent panelContent={panelContent}>
+        <DrawerContentBody> {children}</DrawerContentBody>
+      </DrawerContent>
     </Drawer>
   );
 };
