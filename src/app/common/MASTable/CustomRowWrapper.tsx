@@ -5,7 +5,7 @@ import './CustomRowWrapper.css';
 
 export type CustomRowWrapperContextProps = {
   activeRow?: string;
-  onRowClick: (event: any, rowIndex: number, row: any) => void;
+  onRowClick?: (event: any, rowIndex: number, row: any) => void;
 };
 
 const CustomRowWrapperContext = createContext<CustomRowWrapperContextProps>({
@@ -33,7 +33,7 @@ export const CustomRowWrapper = (rowWrapperProps) => {
         activeRow && activeRow === originalData?.name && 'pf-m-selected'
       )}
       hidden={isExpanded !== undefined && !isExpanded}
-      onClick={(event: any) => !isRowDeleted && onRowClick(event, rowIndex, row)}
+      onClick={(event: any) => !isRowDeleted && onRowClick && onRowClick(event, rowIndex, row)}
       {...props}
     />
   );

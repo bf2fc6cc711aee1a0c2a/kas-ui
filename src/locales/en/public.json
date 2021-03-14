@@ -229,13 +229,27 @@
   "filter_by_region": "Filter by region",
   "filter_by_cloud_provider": "Filter by cloud provider",
   "filter_by_status": "Filter by status",
-  "you_do_not_have_access_to_openshift_streams":"You do not have access to OpenShift Streams",
-  "contact_your_organization_administration_for_more_information":"Contact your organization administration(s) for more information.",
-  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters.", 
+  "you_do_not_have_access_to_openshift_streams": "You do not have access to OpenShift Streams",
+  "contact_your_organization_administration_for_more_information": "Contact your organization administration(s) for more information.",
+  "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters.",
   "the_name_already_exists_please_enter_a_unique_name": "The name {{name}} already exists. Please enter a unique name.",
   "submitting_request": "Submitting request",
   "clear_all_filters": "Clear all filters",
   "max_filter_message": "Maximum number of filters reached. Please clear a filter before adding another.",
   "input_field_invalid_message": "Valid characters for {{name}} are lowercase letters from a to z, numbers from 0 to 9, underscore (_) hyphens (-) and percentage (%)",
-  "service_registry":"Service Registry"
+  "service_registry": "Service Registry",
+  "common": {
+    "name": "Name",
+    "owner": "Owner",
+    "description": "Description",
+    "reset_credentials": "Reset credentials"
+  },
+  "serviceAccount": {
+    "service_accounts_title_header": "Service Accounts",
+    "service_accounts_title_header_info": "Use service accounts to connect and authenticate your applications with Kafka instances. The service accounts that you create can only access the Kafka instances that you create.",
+    "no_permission_to_delete_service_account": "Ask the service account owner or an administrator to delete this account",
+    "delete_service_account": "Delete service account",
+    "service_account_list": "Service account list",
+    "create_service_account": "Create service account"
+  }
 }

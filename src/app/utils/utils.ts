@@ -86,6 +86,35 @@ const isValidToken = (accessToken: string | undefined) => {
   return false;
 };
 
+// function to get exact number of skeleton count required for the current page
+const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: number) => {
+  // initiaise loadingRowCount by perPage
+  let loadingRowCount = perPage;
+  /*
+    if number of expected count is greater than 0
+      calculate the loadingRowCount
+    else
+      leave the loadingRowCount to perPage
+   */
+  if (expectedTotal && expectedTotal > 0) {
+    // get total number of pages
+    const totalPage =
+      expectedTotal % perPage !== 0 ? Math.floor(expectedTotal / perPage) + 1 : Math.floor(expectedTotal / perPage);
+    // check whether the current page is the last page
+    if (page === totalPage) {
+      // check whether to total expected count is greater than perPage count
+      if (expectedTotal > perPage) {
+        // assign the calculated skelton rows count to display the exact number of expected loading skelton rows
+        loadingRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
+      } else {
+        loadingRowCount = expectedTotal;
+      }
+    }
+  }
+  // return the exact number of skeleton expected at the time of loading
+  return loadingRowCount !== 0 ? loadingRowCount : perPage;
+};
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -100,4 +129,5 @@ export {
   MAX_FILTER_LIMIT,
   MIN_POLL_INTERVAL,
   MAX_POLL_INTERVAL,
+  getLoadingRowsCount
 };

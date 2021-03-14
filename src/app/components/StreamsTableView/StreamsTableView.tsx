@@ -22,7 +22,7 @@ import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
-import { InstanceStatus, isServiceApiError } from '@app/utils';
+import { InstanceStatus, isServiceApiError, getLoadingRowsCount } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
@@ -158,35 +158,6 @@ const StreamsTableView = ({
       setActiveRow('');
     }
   }, [isDrawerOpen]);
-
-  // function to get exact number of skeleton count required for the current page
-  const getLoadingRowsCount = () => {
-    // initiaise loadingRowCount by perPage
-    let loadingRowCount = perPage;
-    /*
-      if number of expected count is greater than 0
-        calculate the loadingRowCount
-      else
-        leave the loadingRowCount to perPage
-     */
-    if (expectedTotal && expectedTotal > 0) {
-      // get total number of pages
-      const totalPage =
-        expectedTotal % perPage !== 0 ? Math.floor(expectedTotal / perPage) + 1 : Math.floor(expectedTotal / perPage);
-      // check whether the current page is the last page
-      if (page === totalPage) {
-        // check whether to total expected count is greater than perPage count
-        if (expectedTotal > perPage) {
-          // assign the calculated skelton rows count to display the exact number of expected loading skelton rows
-          loadingRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
-        } else {
-          loadingRowCount = expectedTotal;
-        }
-      }
-    }
-    // return the exact number of skeleton expected at the time of loading
-    return loadingRowCount !== 0 ? loadingRowCount : perPage;
-  };
 
   const addAlertAfterSuccessDeletion = () => {
     // filter all kafkas with status as deprovision
@@ -355,7 +326,7 @@ const StreamsTableView = ({
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
-    const loadingCount: number = getLoadingRowsCount();
+    const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!kafkaDataLoaded) {
       // for loading state
       const cells: (React.ReactNode | IRowCell)[] = [];
