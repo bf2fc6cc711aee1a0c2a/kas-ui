@@ -58,7 +58,9 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
     { label: t('owner'), value: 'owner', disabled: false },
   ];
 
-  const onClear = () => {};
+  const onClearAllFilters = () => {
+    setFilteredValue([]);
+  };
 
   const onToggleFilter = () => {
     setIsFilterExpanded(!isFilterExpanded);
@@ -86,7 +88,8 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
       const filterValue = newFilterValue[filterIndex];
       if (filterValue.filterValue && filterValue.filterValue.length > 0) {
         // if some filters are already there in applied filter for same key
-        const filterValueIndex = filterValue.filterValue.findIndex((f) => f.value === filter.value); // index of current filter value in applied filter
+        // index of current filter value in applied filter
+        const filterValueIndex = filterValue.filterValue.findIndex((f) => f.value === filter.value);
         if (filterValueIndex > -1) {
           // filter value is already present
           if (removeIfPresent) {
@@ -214,7 +217,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
               <InputGroup className="mk--filter-instances__toolbar--text-input">
                 <TextInput
                   name="name"
-                  id="filterText"
+                  id="name-input"
                   type="search"
                   aria-label="Search filter input"
                   validated={!isNameValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
@@ -254,7 +257,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
               <InputGroup className="mk--filter-instances__toolbar--text-input">
                 <TextInput
                   name="owner"
-                  id="filterOwners"
+                  id="owner-input"
                   type="search"
                   aria-label="Search filter input"
                   placeholder={t('filter_by_owner')}
@@ -331,7 +334,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
     <MASToolbar
       toolbarProps={{
         id: 'instance-toolbar',
-        clearAllFilters: onClear,
+        clearAllFilters: onClearAllFilters,
         collapseListedFiltersBreakpoint: 'md',
         inset: { lg: 'insetLg' },
       }}

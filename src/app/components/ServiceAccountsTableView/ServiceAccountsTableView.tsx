@@ -11,16 +11,18 @@ import {
   SortByDirection,
   IExtraColumnData,
 } from '@patternfly/react-table';
-import { Skeleton } from '@patternfly/react-core';
+import { Skeleton, EmptyStateVariant, PaginationVariant, TitleSizes } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState } from '@app/common';
 import { getLoadingRowsCount } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../openapi/api';
 import { ServiceAccountsToolbar } from './ServiceAccountsToolbar';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 export type ServiceAccountsTableViewProps = {
   page: number;
   perPage: number;
   expectedTotal: number;
+  total: number;
   serviceAccountsDataLoaded?: boolean;
   serviceAccountItems?: ServiceAccountListItem[];
   orderBy?: string;
@@ -33,6 +35,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   page,
   perPage,
   expectedTotal,
+  total,
   serviceAccountsDataLoaded,
   serviceAccountItems,
   onResetCredentials,
@@ -96,7 +99,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     const originalData: ServiceAccountListItem = rowData.originalData;
-    const isUserSameAsLoggedIn = false; //originalData.owner === loggedInUser;
+    const isUserSameAsLoggedIn = true; //originalData.owner === loggedInUser;
     let additionalProps: any;
 
     if (!isUserSameAsLoggedIn) {
@@ -179,16 +182,55 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   };
 
   return (
-    <MASTable
-      tableProps={{
-        cells: tableColumns,
-        rows: preparedTableCells(),
-        'aria-label': t('serviceAccount.service_account_list'),
-        actionResolver: actionResolver,
-        onSort: onSort,
-        sortBy: sortBy(),
-      }}
-    />
+    <>
+      <MASTable
+        tableProps={{
+          cells: tableColumns,
+          rows: preparedTableCells(),
+          'aria-label': t('serviceAccount.service_account_list'),
+          actionResolver: actionResolver,
+          onSort: onSort,
+          sortBy: sortBy(),
+        }}
+      />
+      {serviceAccountItems && serviceAccountItems?.length < 1 && serviceAccountsDataLoaded && (
+        <MASEmptyState
+          emptyStateProps={{
+            variant: EmptyStateVariant.full,
+          }}
+          emptyStateIconProps={{
+            icon: SearchIcon,
+          }}
+          titleProps={{
+            title: t('no_results_found'),
+            headingLevel: 'h2',
+            size: TitleSizes.lg,
+          }}
+          emptyStateBodyProps={{
+            body: t('no_results_match_the_filter_criteria'),
+          }}
+        />
+      )}
+      {total && total > 0 && (
+        <MASPagination
+          widgetId="pagination-options-menu-bottom"
+          itemCount={total}
+          variant={PaginationVariant.bottom}
+          page={page}
+          perPage={perPage}
+          titles={{
+            paginationTitle: t('full_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
+          }}
+        />
+      )}
+    </>
   );
 };
 

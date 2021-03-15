@@ -250,6 +250,9 @@
     "no_permission_to_delete_service_account": "Ask the service account owner or an administrator to delete this account",
     "delete_service_account": "Delete service account",
     "service_account_list": "Service account list",
-    "create_service_account": "Create service account"
+    "create_service_account": "Create service account",
+    "you_do_not_have_any_service_accounts_yet": "You don't have any service accounts yet",
+    "create_service_account_to_get_started": "Create a service account to get started",
+    "you_do_not_have_access_to_service_accounts": "You do not have access to Service Accounts"
   }
 }
