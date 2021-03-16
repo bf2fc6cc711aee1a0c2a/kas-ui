@@ -15,6 +15,7 @@ import {
   FilterType,
 } from '@app/components';
 import { MASEmptyState, MASLoading, MASFullPageError } from '@app/common';
+import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
@@ -42,7 +43,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [orderBy, setOrderBy] = useState<string>('name');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const [isOpenCreateServiceAccountModal, setIsOpenCreateServiceAccountModal] = useState(false);
+  const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -86,6 +87,10 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
 
   const onDeleteServiceAccount = () => {};
 
+  const handleCreateModal = () => {
+    setIsCreateServiceAccountModalOpen(!isCreateServiceAccountModalOpen);
+  }
+
   const renderTableView = () => {
     if (serviceAccountItems === undefined) {
       return (
@@ -107,7 +112,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               }}
               buttonProps={{
                 title: t('serviceAccount.create_service_account'),
-                onClick: () => setIsOpenCreateServiceAccountModal(!isOpenCreateServiceAccountModal),
+                onClick: () => handleCreateModal(),
                 ['data-testid']: 'emptyStateStreams-buttonCreateServiceAccount',
               }}
             />
@@ -172,6 +177,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
             {t('serviceAccount.service_accounts_title_header')}
           </Title>
           <Text>{t('serviceAccount.service_accounts_title_header_info')}</Text>
+          <CreateServiceAccountModal isOpen={isCreateServiceAccountModalOpen} handleCreateModal={handleCreateModal}/>
         </PageSection>
         {renderTableView()}
       </AlertProvider>
