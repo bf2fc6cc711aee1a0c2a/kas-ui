@@ -3,7 +3,7 @@ import { OpenshiftStreams } from './OpenshiftStreams';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
 import { KafkaRequest } from '../../openapi';
 import { AlertVariant } from '@patternfly/react-core';
-import { AlertContext, AlertContextProps } from '@app/components/Alerts/Alerts';
+import { AlertContext, AlertContextProps } from '@app/common/MASAlerts/MASAlerts';
 import { ApiContext } from '@app/api/ApiContext';
 import { BrowserRouter } from 'react-router-dom';
 import '../../i18n/i18n';

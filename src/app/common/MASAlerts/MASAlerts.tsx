@@ -1,5 +1,5 @@
 import React, { useState, createContext, ReactNode, useContext, useEffect } from 'react';
-import { AlertType, AlertToastGroup } from './AlertToastGroup';
+import { MASAlertType, MASAlertToastGroup } from './MASAlertToastGroup';
 import { AlertVariant } from '@patternfly/react-core';
 
 export type AlertContextProps = {
@@ -18,7 +18,7 @@ type TimeOut = {
 };
 
 export const AlertProvider = ({ children }: { children: ReactNode }) => {
-  const [alerts, setAlerts] = useState<AlertType[]>([]);
+  const [alerts, setAlerts] = useState<MASAlertType[]>([]);
   const [timers, setTimers] = useState<TimeOut[]>([]);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AlertContext.Provider value={{ addAlert }}>
-      <AlertToastGroup alerts={alerts} onCloseAlert={hideAlert} />
+      <MASAlertToastGroup alerts={alerts} onCloseAlert={hideAlert} />
       {children}
     </AlertContext.Provider>
   );

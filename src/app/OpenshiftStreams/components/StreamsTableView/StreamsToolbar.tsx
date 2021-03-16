@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
 import './StreamsToolbar.css';
-import { useCreateInstanceModal } from '@app/components';
+import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
 
 type StreamsToolbarProps = {
   mainToggle: boolean;

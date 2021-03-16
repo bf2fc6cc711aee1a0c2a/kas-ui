@@ -8,7 +8,7 @@ interface State {
   hasError: boolean;
 }
 
-class ErrorBoundary extends Component<Props, State> {
+class MASErrorBoundary extends Component<Props, State> {
   state: State = {
     hasError: false,
   };
@@ -34,4 +34,4 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export { ErrorBoundary };
+export { MASErrorBoundary };

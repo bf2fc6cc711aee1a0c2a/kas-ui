@@ -3,7 +3,7 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstanceModal, CreateInstanceModalProps } from './CreateInstanceModal';
-import i18nForTest from '../../../../test-utils/i18n';
+import i18nForTest from '../../../../../test-utils/i18n';
 import { AuthContext } from '@app/auth/AuthContext';
 
 const listCloudProviderRegions: any = {

@@ -18,13 +18,13 @@ import {
   DrawerContentBody,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { FormDataValidationState, NewKafka } from '../../models/models';
+import { FormDataValidationState, NewKafka } from '../../../models/models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import './CreateInstanceModal.css';
-import { useAlerts } from '../Alerts/Alerts';
+import { useAlerts } from '../../../common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
-import { DefaultApi, CloudProvider, CloudRegion } from '../../../openapi';
+import { DefaultApi, CloudProvider, CloudRegion } from '../../../../openapi';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';

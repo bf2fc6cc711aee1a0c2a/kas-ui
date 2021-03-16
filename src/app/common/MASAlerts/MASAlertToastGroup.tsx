@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertGroup, Alert, AlertActionCloseButton, AlertVariant } from '@patternfly/react-core';
 
-export type AlertType = {
+export type MASAlertType = {
   key: number;
   title: string;
   variant: AlertVariant;
@@ -10,11 +10,11 @@ export type AlertType = {
 };
 
 type AlertToastGroupProps = {
-  alerts: AlertType[];
+  alerts: MASAlertType[];
   onCloseAlert: (key: number) => void;
 };
 
-export function AlertToastGroup({ alerts, onCloseAlert }: AlertToastGroupProps) {
+export function MASAlertToastGroup({ alerts, onCloseAlert }: AlertToastGroupProps) {
   return (
     <AlertGroup isToast>
       {alerts.map(({ key, variant, title, body, dataTestId }) => (

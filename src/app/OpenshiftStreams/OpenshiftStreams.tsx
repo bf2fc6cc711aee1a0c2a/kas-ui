@@ -6,11 +6,10 @@ import {
   StreamsTableView,
   FilterType,
   CreateInstanceModal,
-  AlertProvider,
-  useAlerts,
   InstanceDrawer,
   CreateInstanceModalProvider,
-} from '@app/components';
+} from './components';
+import { AlertProvider, useAlerts } from '../common/MASAlerts/MASAlerts';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
