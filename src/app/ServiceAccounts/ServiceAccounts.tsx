@@ -1,7 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { PageSection, PageSectionVariants, Title, Text, AlertVariant } from '@patternfly/react-core';
+import {
+  PageSection,
+  PageSectionVariants,
+  Title,
+  Text,
+  AlertVariant,
+  Level,
+  LevelItem,
+  TextContent,
+} from '@patternfly/react-core';
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
@@ -100,7 +109,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
             <MASEmptyState
               titleProps={{
                 title: t('serviceAccount.you_do_not_have_any_service_accounts_yet'),
-                headingLevel: 'h4',
+                headingLevel: 'h2',
               }}
               emptyStateBodyProps={{
                 body: t('serviceAccount.create_service_account_to_get_started'),
@@ -120,15 +129,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
             variant={PageSectionVariants.light}
             padding={{ default: 'noPadding' }}
           >
-            <ServiceAccountsToolbar
-              filterSelected={filterSelected}
-              setFilterSelected={setFilterSelected}
-              total={serviceAccountList?.total || 1}
-              page={page}
-              perPage={perPage}
-              filteredValue={filteredValue}
-              setFilteredValue={setFilteredValue}
-            />
             <ServiceAccountsTableView
               page={page}
               perPage={perPage}
@@ -138,6 +138,10 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               serviceAccountItems={serviceAccountItems}
               orderBy={orderBy}
               setOrderBy={setOrderBy}
+              filterSelected={filterSelected}
+              setFilterSelected={setFilterSelected}
+              filteredValue={filteredValue}
+              setFilteredValue={setFilteredValue}
               onResetCredentials={onResetCredentials}
               onDeleteServiceAccount={onDeleteServiceAccount}
             />
@@ -148,17 +152,17 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   };
 
   /**
-   * Show Unathorize page in case user is not authorize
+   *  Unauthorized page in case user is not authorized
    */
   if (isUserUnauthorized) {
     return (
       <MASFullPageError
         titleProps={{
-          title: t('serviceAccount.you_do_not_have_access_to_service_accounts'),
+          title: t('serviceAccount.unauthorized_access_to_service_accounts_title'),
           headingLevel: 'h2',
         }}
         emptyStateBodyProps={{
-          body: t('contact_your_organization_administration_for_more_information'),
+          body: t('serviceAccount.unauthorized_access_to_service_accounts_info'),
         }}
       />
     );
@@ -168,10 +172,16 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
     <>
       <AlertProvider>
         <PageSection variant={PageSectionVariants.light}>
-          <Title headingLevel="h1" size="lg">
-            {t('serviceAccount.service_accounts_title_header')}
-          </Title>
-          <Text>{t('serviceAccount.service_accounts_title_header_info')}</Text>
+          <Level>
+            <LevelItem>
+              <TextContent>
+                <Title headingLevel="h1" size="xl">
+                  {t('serviceAccount.service_accounts')}
+                </Title>
+                <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
+              </TextContent>
+            </LevelItem>
+          </Level>
         </PageSection>
         {renderTableView()}
       </AlertProvider>

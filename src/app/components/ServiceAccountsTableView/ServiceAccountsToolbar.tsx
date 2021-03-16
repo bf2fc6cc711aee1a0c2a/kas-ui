@@ -45,7 +45,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
 
-  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+  const [isFilterExpanded, setIsFilterExpanded] = useState<boolean>(false);
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
@@ -219,7 +219,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
                   name="name"
                   id="name-input"
                   type="search"
-                  aria-label="Search filter input"
+                  aria-label={t('filter_by_name_lower')}
                   validated={!isNameValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
                   placeholder={t('filter_by_name_lower')}
                   onChange={onNameInputChange}
@@ -231,7 +231,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
                   variant={ButtonVariant.control}
                   isDisabled={!isNameValid || isMaxFilter}
                   onClick={() => onFilter('name')}
-                  aria-label="Search instances"
+                  aria-label={t('filter_by_name_lower')}
                 >
                   <SearchIcon />
                 </Button>
@@ -259,7 +259,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
                   name="owner"
                   id="owner-input"
                   type="search"
-                  aria-label="Search filter input"
+                  aria-label={t('filter_by_owner')}
                   placeholder={t('filter_by_owner')}
                   validated={!isOwnerValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
                   onChange={onOwnerInputChange}
@@ -271,7 +271,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
                   isDisabled={!isOwnerValid || isMaxFilter}
                   variant={ButtonVariant.control}
                   onClick={() => onFilter('owner')}
-                  aria-label="Search owners"
+                  aria-label={t('filter_by_owner')}
                 >
                   <SearchIcon />
                 </Button>

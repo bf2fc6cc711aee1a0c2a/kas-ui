@@ -15,14 +15,12 @@ import { Skeleton, EmptyStateVariant, PaginationVariant, TitleSizes } from '@pat
 import { MASPagination, MASTable, MASEmptyState } from '@app/common';
 import { getLoadingRowsCount } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../openapi/api';
-import { ServiceAccountsToolbar } from './ServiceAccountsToolbar';
+import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import { FilterType } from '@app/components';
 
-export type ServiceAccountsTableViewProps = {
-  page: number;
-  perPage: number;
+export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
-  total: number;
   serviceAccountsDataLoaded?: boolean;
   serviceAccountItems?: ServiceAccountListItem[];
   orderBy?: string;
@@ -42,6 +40,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   onDeleteServiceAccount,
   orderBy,
   setOrderBy,
+  filteredValue,
+  setFilteredValue,
+  filterSelected,
+  setFilterSelected,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
 
@@ -183,6 +185,15 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 
   return (
     <>
+      <ServiceAccountsToolbar
+        filterSelected={filterSelected}
+        setFilterSelected={setFilterSelected}
+        total={total}
+        page={page}
+        perPage={perPage}
+        filteredValue={filteredValue}
+        setFilteredValue={setFilteredValue}
+      />
       <MASTable
         tableProps={{
           cells: tableColumns,
