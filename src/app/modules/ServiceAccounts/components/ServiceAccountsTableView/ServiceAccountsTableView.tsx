@@ -14,10 +14,9 @@ import {
 import { Skeleton, EmptyStateVariant, PaginationVariant, TitleSizes } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState } from '@app/common';
 import { getLoadingRowsCount } from '@app/utils';
-import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../openapi/api';
+import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
-import { FilterType } from '@app/components';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -27,6 +26,7 @@ export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   setOrderBy?: (order: string) => void;
   onResetCredentials?: (serviceAccount: ServiceAccountListItem) => void;
   onDeleteServiceAccount?: (serviceAccount: ServiceAccountListItem) => void;
+  handleCreateModal: () => void
 };
 
 const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
@@ -44,6 +44,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   setFilteredValue,
   filterSelected,
   setFilterSelected,
+  handleCreateModal
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
 
@@ -193,6 +194,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
+        handleCreateModal={handleCreateModal}
       />
       <MASTable
         tableProps={{

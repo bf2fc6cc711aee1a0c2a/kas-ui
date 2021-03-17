@@ -28,6 +28,7 @@ export type ServiceAccountsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
+  handleCreateModal: () => void
 };
 
 export type FilterValue = {
@@ -48,6 +49,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
+  handleCreateModal
 }: ServiceAccountsToolbarProps) => {
   const { t } = useTranslation();
 
@@ -299,12 +301,13 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
     </>
   );
 
+
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: (
         <Button
           variant="primary"
-          onClick={() => setIsModalOpen(!isModalOpen)}
+          onClick={handleCreateModal}
           data-testid={'tableServiceAccounts-buttonCreateServiceAccount'}
         >
           {t('serviceAccount.create_service_account')}

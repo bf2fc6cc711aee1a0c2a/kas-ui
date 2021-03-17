@@ -16,7 +16,8 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
-import { AlertProvider, useAlerts, MASEmptyState, MASLoading, MASFullPageError } from '@app/common';
+import { MASEmptyState, MASLoading, AlertProvider, useAlerts, MASFullPageError } from '@app/common';
+import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
@@ -44,7 +45,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [orderBy, setOrderBy] = useState<string>('name');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const [isOpenCreateServiceAccountModal, setIsOpenCreateServiceAccountModal] = useState(false);
+  const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -88,7 +89,12 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
 
   const onDeleteServiceAccount = () => {};
 
+  const handleCreateModal = () => {
+    setIsCreateServiceAccountModalOpen(!isCreateServiceAccountModalOpen);
+  }
+
   const renderTableView = () => {
+
     if (serviceAccountItems === undefined) {
       return (
         <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
@@ -109,7 +115,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               }}
               buttonProps={{
                 title: t('serviceAccount.create_service_account'),
-                onClick: () => setIsOpenCreateServiceAccountModal(!isOpenCreateServiceAccountModal),
+                onClick: () => handleCreateModal(),
                 ['data-testid']: 'emptyStateStreams-buttonCreateServiceAccount',
               }}
             />
@@ -137,6 +143,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               setFilteredValue={setFilteredValue}
               onResetCredentials={onResetCredentials}
               onDeleteServiceAccount={onDeleteServiceAccount}
+              handleCreateModal={handleCreateModal}
             />
           </PageSection>
         );
@@ -173,6 +180,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               </TextContent>
             </LevelItem>
           </Level>
+          <CreateServiceAccountModal isOpen={isCreateServiceAccountModalOpen} setIsOpen={setIsCreateServiceAccountModalOpen} handleCreateModal={handleCreateModal}/>
         </PageSection>
         {renderTableView()}
       </AlertProvider>
