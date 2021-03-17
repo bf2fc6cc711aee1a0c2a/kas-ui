@@ -253,7 +253,7 @@
     "connect_to_registry": "日本語 Connect to Registry",
     "delete_registry": "日本語 Delete Registry",
     "welcome_to_service_registry": "日本語 Welcome to Service Registry",
-    "welcome_epmty_state_body": "日本語 Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
+    "welcome_empty_state_body": "日本語 Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
     "create_service_registry": "日本語 Create Service Registry",
     "unauthorized_empty_state_title": "日本語 Access entitlements needed",
     "unauthorized_empty_state_body": "日本語 To set up a Service Registry, your account needs the appropriate access entitlements",

@@ -15,11 +15,15 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
 
   const [isExpandedDrawer, setIsExpandedDrawer] = useState<boolean>(false);
   const [isServiceRegistryLoading, setIsServiceRegistryLoading] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [serviceAccountDetails, setServiceAccountDetails] = useState<any>(undefined);
+  const [requiredDrawerContentBackground, setRequiredDrawerContentBackground] = useState<boolean>(false);
 
   const onConnectToRegistry = () => {
     setIsExpandedDrawer(true);
-    setIsLoading(false);
+    /**
+     * Todo: Dummy test-data will remove after integrate API
+     */
+    setServiceAccountDetails('test-data');
   };
 
   const onCloseDrawer = () => {
@@ -50,9 +54,9 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
         <MASEmptyState
           emptyStateProps={{ variant: EmptyStateVariant.xl }}
           emptyStateIconProps={{ icon: SpaceShuttleIcon }}
-          titleProps={{ title: t('serviceRegistry.welcome_to_service_registry'), headingLevel: 'h1', size: 'lg' }}
+          titleProps={{ title: t('serviceRegistry.welcome_to_service_registry'), headingLevel: 'h1', size: '3xl' }}
           emptyStateBodyProps={{
-            body: t('serviceRegistry.welcome_epmty_state_body'),
+            body: t('serviceRegistry.welcome_empty_state_body'),
           }}
           buttonProps={{
             title: t('serviceRegistry.create_service_registry'),
@@ -72,7 +76,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
         <MASEmptyState
           emptyStateProps={{ variant: EmptyStateVariant.large }}
           emptyStateIconProps={{ icon: LockIcon }}
-          titleProps={{ title: t('serviceRegistry.unauthorized_empty_state_title'), headingLevel: 'h1', size: 'lg' }}
+          titleProps={{ title: t('serviceRegistry.unauthorized_empty_state_title'), headingLevel: 'h2', size: 'lg' }}
           emptyStateBodyProps={{
             body: t('serviceRegistry.unauthorized_empty_state_body'),
           }}
@@ -87,14 +91,21 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
   };
 
   return (
-    <ServiceRegistryDrawer isExpanded={isExpandedDrawer} isLoading={isLoading} onClose={onCloseDrawer}>
-      <PageSection variant={PageSectionVariants.light}>
-        <ServiceRegistryHeader
-          name={''}
-          onConnectToRegistry={onConnectToRegistry}
-          onDeleteRegistry={onDeleteRegistry}
-        />
-      </PageSection>
-    </ServiceRegistryDrawer>
+    <>
+      <ServiceRegistryDrawer
+        isExpanded={isExpandedDrawer}
+        isLoading={serviceAccountDetails === undefined}
+        requiredDrawerContentBackground={requiredDrawerContentBackground}
+        onClose={onCloseDrawer}
+      >
+        <PageSection variant={PageSectionVariants.light}>
+          <ServiceRegistryHeader
+            name={''}
+            onConnectToRegistry={onConnectToRegistry}
+            onDeleteRegistry={onDeleteRegistry}
+          />
+        </PageSection>
+      </ServiceRegistryDrawer>
+    </>
   );
 };

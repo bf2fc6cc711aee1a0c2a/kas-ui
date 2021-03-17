@@ -18,6 +18,7 @@ const ServiceRegistryDrawer: React.FC<ServiceRegistryDrawerProps> = ({
   onClose,
   'data-ouia-app-id': dataOuiaAppId,
   children,
+  requiredDrawerContentBackground,
 }: ServiceRegistryDrawerProps) => {
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState<React.ReactText>(0);
@@ -56,6 +57,7 @@ const ServiceRegistryDrawer: React.FC<ServiceRegistryDrawerProps> = ({
         title: { value: name, headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}
+      requiredDrawerContentBackground={requiredDrawerContentBackground}
     >
       {children}
     </MASDrawer>

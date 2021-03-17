@@ -255,7 +255,7 @@
     "connect_to_registry": "Connect to Registry",
     "delete_registry": "Delete Registry",
     "welcome_to_service_registry": "Welcome to Service Registry",
-    "welcome_epmty_state_body": "Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
+    "welcome_empty_state_body": "Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
     "create_service_registry": "Create Service Registry",
     "unauthorized_empty_state_title": "Access entitlements needed",
     "unauthorized_empty_state_body": "To set up a Service Registry, your account needs the appropriate access entitlements",
