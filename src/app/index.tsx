@@ -8,7 +8,7 @@ import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { MASLoading } from '@app/common';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import '../i18n/i18n';
-import { ErrorBoundary } from '@app/components/ErrorBoundary';
+import { MASErrorBoundary } from '@app/common';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 
@@ -33,11 +33,11 @@ const App: React.FunctionComponent = () => {
       <KeycloakAuthProvider>
         <Router>
           <React.Suspense fallback={<MASLoading />}>
-            <ErrorBoundary>
+            <MASErrorBoundary>
               <AppLayout>
                 <AppRoutes />
               </AppLayout>
-            </ErrorBoundary>
+            </MASErrorBoundary>
           </React.Suspense>
         </Router>
       </KeycloakAuthProvider>
