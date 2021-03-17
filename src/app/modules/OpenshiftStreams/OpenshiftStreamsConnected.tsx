@@ -1,6 +1,5 @@
 import React from 'react';
-import { KafkaRequest } from '../../openapi';
-import { OpenshiftStreams } from '@app/OpenshiftStreams/OpenshiftStreams';
+import { OpenshiftStreams } from './OpenshiftStreams';
 import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
 import { ApiContext } from '@app/api/ApiContext';
 

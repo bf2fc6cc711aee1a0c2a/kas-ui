@@ -37,7 +37,7 @@ import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { AuthContext } from '@app/auth/AuthContext';
 import { isServiceApiError } from '@app/utils/error';
-import { DefaultApi, ServiceAccountRequest } from '../../../../openapi/api';
+import { DefaultApi, ServiceAccountRequest } from '../../../../../openapi/api';
 import { MASEmptyState } from '@app/common';
 
 type GenerateCredential = {

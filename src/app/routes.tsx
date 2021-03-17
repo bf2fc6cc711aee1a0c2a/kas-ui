@@ -5,8 +5,8 @@ import { accessibleRouteChangeHandler } from '@app/utils/utils';
 import { MASPageNotFound } from '@app/common/MASPageNotFound/MASPageNotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
-import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';
-import { ServiceRegistryConnected } from '@app/ServiceRegistry';
+import { OpenshiftStreamsConnected } from '@app/modules/OpenshiftStreams';
+import { ServiceRegistryConnected } from '@app/modules/ServiceRegistry';
 
 let routeFocusTimer: number;
 

@@ -9,8 +9,8 @@ import {
   InstanceDrawer,
   CreateInstanceModalProvider,
 } from './components';
-import { AlertProvider, useAlerts } from '../common/MASAlerts/MASAlerts';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
+import { AlertProvider, useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';

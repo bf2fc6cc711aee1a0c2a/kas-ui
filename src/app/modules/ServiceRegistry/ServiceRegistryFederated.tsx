@@ -1,10 +1,10 @@
 import React from 'react';
 import { AlertVariant } from '@patternfly/react-core';
-import { ServiceRegistry, ServiceRegistryProps } from './ServiceRegistry';
+import { ServiceRegistry, ServiceRegistryProps } from '@app/modules/ServiceRegistry/ServiceRegistry';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
-import { AlertContext, AlertContextProps } from '../common/MASAlerts';
+import { AlertContext, AlertContextProps } from '@app/common/MASAlerts';
 import { ApiContext } from '@app/api/ApiContext';
-import '../../i18n/i18n';
+import '../../../i18n/i18n';
 
 // Version of ServiceRegistry for federation
 
