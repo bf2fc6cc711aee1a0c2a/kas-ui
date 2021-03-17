@@ -14,15 +14,8 @@ import {
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
-import {
-  AlertProvider,
-  useAlerts,
-  ServiceAccountsTableView,
-  ServiceAccountsToolbar,
-  FilterType,
-} from '@app/components';
+import { AlertProvider, useAlerts, ServiceAccountsTableView, FilterType } from '@app/components';
 import { MASEmptyState, MASLoading, MASFullPageError } from '@app/common';
 
 export type ServiceAccountsProps = {
@@ -175,9 +168,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
           <Level>
             <LevelItem>
               <TextContent>
-                <Title headingLevel="h1" size="xl">
-                  {t('serviceAccount.service_accounts')}
-                </Title>
+                <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
                 <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
               </TextContent>
             </LevelItem>
