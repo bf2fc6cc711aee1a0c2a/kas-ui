@@ -268,7 +268,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                 <MASEmptyState
                   titleProps={{
                     title: t('you_do_not_have_any_kafka_instances_yet'),
-                    headingLevel: 'h4',
+                    headingLevel: 'h2',
                   }}
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),

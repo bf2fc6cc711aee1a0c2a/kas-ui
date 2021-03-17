@@ -173,7 +173,8 @@ module.exports = (env, argv) => {
         filename: `${federatedModuleName}${isProduction ? '[chunkhash:8]' : ''}.js`,
         exposes: {
           "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",
-          "./ServiceRegistry":"./src/app/modules/ServiceRegistry/ServiceRegistryFederated"
+          "./ServiceRegistry":"./src/app/modules/ServiceRegistry/ServiceRegistryFederated",
+          "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated"
         },
         shared: {
           ...dependencies,
