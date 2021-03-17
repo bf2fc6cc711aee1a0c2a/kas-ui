@@ -92,9 +92,20 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   }
 
   const renderTableView = () => {
+
     if (serviceAccountItems === undefined) {
       return (
         <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+           <ServiceAccountsToolbar
+              filterSelected={filterSelected}
+              setFilterSelected={setFilterSelected}
+              total={serviceAccountList?.total || 1}
+              page={page}
+              perPage={perPage}
+              filteredValue={filteredValue}
+              setFilteredValue={setFilteredValue}
+              handleCreateModal={handleCreateModal}
+            />
           <MASLoading />
         </PageSection>
       );
@@ -133,6 +144,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               perPage={perPage}
               filteredValue={filteredValue}
               setFilteredValue={setFilteredValue}
+              handleCreateModal={handleCreateModal}
             />
             <ServiceAccountsTableView
               page={page}
@@ -177,7 +189,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
             {t('serviceAccount.service_accounts_title_header')}
           </Title>
           <Text>{t('serviceAccount.service_accounts_title_header_info')}</Text>
-          <CreateServiceAccountModal isOpen={isCreateServiceAccountModalOpen} handleCreateModal={handleCreateModal}/>
+          <CreateServiceAccountModal isOpen={isCreateServiceAccountModalOpen} setIsOpen={setIsCreateServiceAccountModalOpen} handleCreateModal={handleCreateModal}/>
         </PageSection>
         {renderTableView()}
       </AlertProvider>
