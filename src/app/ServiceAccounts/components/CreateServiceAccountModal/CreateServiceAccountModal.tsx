@@ -15,7 +15,7 @@ import { isValidToken } from '@app/utils';
 
 export type CreateInstanceModalProps = {
   isOpen: boolean,
-  setIsOpen: (isOpen) => {};
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({isOpen, setIsOpen}: CreateInstanceModalProps) => {
