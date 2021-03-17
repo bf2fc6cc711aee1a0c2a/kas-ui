@@ -16,7 +16,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
   const [isExpandedDrawer, setIsExpandedDrawer] = useState<boolean>(false);
   const [isServiceRegistryLoading, setIsServiceRegistryLoading] = useState<boolean>(false);
   const [serviceAccountDetails, setServiceAccountDetails] = useState<any>(undefined);
-  const [requiredDrawerContentBackground, setRequiredDrawerContentBackground] = useState<boolean>(false);
+  const [notRequiredDrawerContentBackground, setNotRequiredDrawerContentBackground] = useState<boolean>(false);
 
   const onConnectToRegistry = () => {
     setIsExpandedDrawer(true);
@@ -95,7 +95,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
       <ServiceRegistryDrawer
         isExpanded={isExpandedDrawer}
         isLoading={serviceAccountDetails === undefined}
-        requiredDrawerContentBackground={requiredDrawerContentBackground}
+        notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
         onClose={onCloseDrawer}
       >
         <PageSection variant={PageSectionVariants.light}>

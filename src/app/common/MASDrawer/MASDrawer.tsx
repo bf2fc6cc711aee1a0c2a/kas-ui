@@ -36,7 +36,7 @@ export type MASDrawerProps = DrawerProps & {
     };
   };
   ['data-ouia-app-id']?: string;
-  requiredDrawerContentBackground?: boolean | undefined;
+  notRequiredDrawerContentBackground?: boolean | undefined;
 };
 
 export const MASDrawer: React.FC<MASDrawerProps> = ({
@@ -48,7 +48,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
   children,
   panelBodyContent,
   onExpand,
-  requiredDrawerContentBackground,
+  notRequiredDrawerContentBackground,
   'data-ouia-app-id': dataOuiaAppId,
 }: MASDrawerProps) => {
   const { widths, ...restDrawerPanelContentProps } = drawerPanelContentProps || {};
@@ -91,7 +91,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
     <Drawer isExpanded={isExpanded} onExpand={onExpand} data-ouia-app-id={dataOuiaAppId}>
       <DrawerContent
         panelContent={panelContent}
-        className={requiredDrawerContentBackground ? 'pf-m-no-background' : ''}
+        className={notRequiredDrawerContentBackground ? 'pf-m-no-background' : ''}
       >
         <DrawerContentBody> {children}</DrawerContentBody>
       </DrawerContent>
