@@ -15,9 +15,11 @@ import {
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState } from '@app/common';
-import { DefaultApi, KafkaRequest } from '../../../openapi/api';
+import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { useAlerts, DeleteInstanceModal, CreateInstanceModal } from '@app/components';
+import { CreateInstanceModal } from '../CreateInstanceModal';
+import { DeleteInstanceModal } from '../DeleteInstanceModal';
+import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';

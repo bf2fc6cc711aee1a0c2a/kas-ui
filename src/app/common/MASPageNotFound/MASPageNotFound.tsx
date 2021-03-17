@@ -5,7 +5,7 @@ import { PageSection, Button, EmptyStateVariant, TitleSizes } from '@patternfly/
 import { useHistory } from 'react-router-dom';
 import { MASEmptyState } from '@app/common';
 
-const NotFound: React.FunctionComponent = () => {
+const MASPageNotFound: React.FunctionComponent = () => {
   const { t } = useTranslation();
 
   function GoHomeBtn() {
@@ -32,4 +32,4 @@ const NotFound: React.FunctionComponent = () => {
   );
 };
 
-export { NotFound };
+export { MASPageNotFound };

@@ -6,12 +6,11 @@ import {
   StreamsTableView,
   FilterType,
   CreateInstanceModal,
-  AlertProvider,
-  useAlerts,
   InstanceDrawer,
   CreateInstanceModalProvider,
-} from '@app/components';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../openapi/api';
+} from './components';
+import { AlertProvider, useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';

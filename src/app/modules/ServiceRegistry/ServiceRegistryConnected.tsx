@@ -1,7 +1,7 @@
 import React from 'react';
 import { ServiceRegistry } from './ServiceRegistry';
 import { ApiContext } from '@app/api/ApiContext';
-import { AlertProvider } from '@app/components/Alerts/Alerts';
+import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
 
 declare const __BASE_PATH__: string;
 

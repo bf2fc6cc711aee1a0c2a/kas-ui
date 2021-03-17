@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { ServiceRegistryHeader } from '@app/components';
+import { ServiceRegistryHeader } from './components/ServiceRegistryHeader';
 
 export type ServiceRegistryProps = {
   getConnectToInstancePath?: (data: any) => string;
