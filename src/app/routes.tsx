@@ -2,11 +2,12 @@ import * as React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
-import { NotFound } from '@app/components';
+import { MASPageNotFound } from '@app/common/MASPageNotFound/MASPageNotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
-import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';
-import { ServiceRegistryConnected } from '@app/ServiceRegistry';
+import { OpenshiftStreamsConnected } from '@app/modules/OpenshiftStreams';
+import { ServiceRegistryConnected } from '@app/modules/ServiceRegistry';
+import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
 
 let routeFocusTimer: number;
 
@@ -45,6 +46,13 @@ const routes: AppRouteConfig[] = [
     path: '/service-registry',
     title: 'Service Registry',
   },
+  {
+    component: ServiceAccountsConnected,
+    exact: true,
+    label: 'Service Accounts',
+    path: '/service-accounts',
+    title: 'Service Accounts',
+  },
 ];
 
 // a custom hook for sending focus to the primary content container
@@ -75,7 +83,7 @@ const RouteWithTitleUpdates = ({ component: Component, isAsync = false, title, .
 
 const PageNotFound = ({ title }: { title: string }) => {
   useDocumentTitle(title);
-  return <Route component={NotFound} />;
+  return <Route component={MASPageNotFound} />;
 };
 
 const flattenedRoutes: IAppRoute[] = routes.reduce(

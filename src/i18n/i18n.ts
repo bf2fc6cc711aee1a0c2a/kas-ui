@@ -41,8 +41,8 @@ i18n
       // add any namespaces you're using here for loading purposes
       ns: ['public'],
       defaultNS: 'public',
-      nsSeparator: '~',
-      keySeparator: false,
+      nsSeparator: ':',
+      keySeparator: '.',
       postProcess: ['pseudo'],
       interpolation: {
         format: function (value, format, lng, options) {
