@@ -82,7 +82,11 @@ export const getDeleteInstanceModalConfig = (
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_complete', { instanceName });
-  } else if (status === InstanceStatus.ACCEPTED || status === InstanceStatus.PROVISIONING) {
+  } else if (
+    status === InstanceStatus.ACCEPTED ||
+    status === InstanceStatus.PROVISIONING ||
+    status === InstanceStatus.PREPARING
+  ) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete_instance');
     config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
