@@ -246,7 +246,11 @@
     "resources": "日本語 Resources",
     "sample_code": "日本語 Sample code",
     "copy_clipboard": "日本語 Copy to clipboard",
-    "copy_clipboard_successfully": "日本語 Successfully copied to clipboard!"
+    "copy_clipboard_successfully": "日本語 Successfully copied to clipboard!",
+    "name": "日本語 Name",
+    "owner": "日本語 Owner",
+    "description": "日本語 Description",
+    "reset_credentials": "日本語 Reset credentials"
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",
@@ -263,5 +267,17 @@
     "tab_resources_title_info": "日本語 To connect an application or tool to this service registry, you will need the information below.",
     "tab_resources_content_1": "日本語 Registry REST API URL",
     "tab_resources_content_2": "日本語 MAS-SSO Instance URL"
+  },
+  "serviceAccount": {
+    "service_accounts": "日本語 Service Accounts",
+    "service_accounts_title_header_info": "日本語 Use service accounts to connect and authenticate your applications with Kafka instances. The service accounts that you create can access only the Kafka instances that you create.",
+    "no_permission_to_delete_service_account": "日本語 Ask the service account owner or an administrator to delete this account",
+    "delete_service_account": "日本語 Delete service account",
+    "service_account_list": "日本語 Service account list",
+    "create_service_account": "日本語 Create service account",
+    "you_do_not_have_any_service_accounts_yet": "日本語 You don't have any service accounts yet",
+    "create_service_account_to_get_started": "日本語 Create a service account to get started",
+    "unauthorized_access_to_service_accounts_title": "日本語 Access permissions needed",
+    "unauthorized_access_to_service_accounts_info": "日本語 To access Service Accounts, contact your organization administrators."
   }
 }

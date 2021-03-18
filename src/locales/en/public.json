@@ -248,7 +248,11 @@
     "resources": "Resources",
     "sample_code": "Sample code",
     "copy_clipboard": "Copy to clipboard",
-    "copy_clipboard_successfully": "Successfully copied to clipboard!"
+    "copy_clipboard_successfully": "Successfully copied to clipboard!",
+    "name": "Name",
+    "owner": "Owner",
+    "description": "Description",
+    "reset_credentials": "Reset credentials"
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",
@@ -265,5 +269,17 @@
     "tab_resources_title_info": "To connect an application or tool to this service registry, you will need the information below.",
     "tab_resources_content_1": "Registry REST API URL",
     "tab_resources_content_2": "MAS-SSO Instance URL"
+  },
+  "serviceAccount": {
+    "service_accounts": "Service Accounts",
+    "service_accounts_title_header_info": "Use service accounts to connect and authenticate your applications with Kafka instances. The service accounts that you create can access only the Kafka instances that you create.",
+    "no_permission_to_delete_service_account": "Ask the service account owner or an administrator to delete this account",
+    "delete_service_account": "Delete service account",
+    "service_account_list": "Service account list",
+    "create_service_account": "Create service account",
+    "you_do_not_have_any_service_accounts_yet": "You don't have any service accounts yet",
+    "create_service_account_to_get_started": "Create a service account to get started",
+    "unauthorized_access_to_service_accounts_title": "Access permissions needed",
+    "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators."
   }
 }
