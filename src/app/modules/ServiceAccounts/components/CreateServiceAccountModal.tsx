@@ -1,9 +1,8 @@
 import React, {useState, useContext} from 'react';
 import {
-  Button,
-  Modal,
-  ModalVariant,
+  Alert,
   Form,
+  FormAlert,
   FormGroup,
   TextInput
 } from '@patternfly/react-core';
@@ -11,52 +10,72 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi, ServiceAccount } from './../../../../openapi/api';
 import { NewServiceAccount } from './../../../models/ServiceAccountsModel';
+import { FormDataValidationState } from './../../../models/SharedModels';
 import { isValidToken } from '@app/utils';
+import { MASCreateModal } from '../../../common/MASCreateModal/MASCreateModal';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import { useTranslation } from 'react-i18next';
 
 export type CreateInstanceModalProps = {
   isOpen: boolean,
   setIsOpen: (isOpen: boolean) => void;
+  fetchServiceAccounts: () => void;
 }
 
-const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({isOpen, setIsOpen}: CreateInstanceModalProps) => {
+const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({isOpen, setIsOpen, fetchServiceAccounts}: CreateInstanceModalProps) => {
 
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   newServiceAccount.name = '';
   newServiceAccount.description = '';
 
+  const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [textInputNameValue, setTextInputNameValue] = useState('');
   const [textInputDescriptionValue, setTextInputDescriptionValue] = useState('');
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
+  const [isCreationInProgress, setCreationInProgress] = useState(false);
 
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
+  const { t } = useTranslation();
 
   const resetForm = () => {
+    setTextInputNameValue('');
+    setTextInputDescriptionValue('');
     setServiceAccountFormData({ ...serviceAccountFormData, name: '', description: '' });
     setIsFormValid(true);
   }
 
-  const handleTextInputName = value => {
+  const handleTextInputName = (name) => {
+    let isValid = true;
+    if (name === undefined || name.trim() === '') {
+      isValid = true;
+      setNameValidated({ fieldState: 'default', message: '' });
+    }
+    if (isValid) {
+      if (nameValidated.fieldState === 'error') {
+        setNameValidated({ fieldState: 'default', message: '' });
+      }
+    } else {
+      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
+    }
+
     setIsFormValid(true);
-    setTextInputNameValue(value);
-    setServiceAccountFormData({ ...serviceAccountFormData, name: value });
+    setTextInputNameValue(name);
+    setServiceAccountFormData({ ...serviceAccountFormData, name: name || '' });
   };
 
   const handleTextInputDescription = value => {
-    setIsFormValid(true);
     setTextInputDescriptionValue(value);
     setServiceAccountFormData({ ...serviceAccountFormData, description: value });
   };
 
   const validateCreateForm = () => {
     let isValid = true;
-    const { name, description } = serviceAccountFormData;
+    const { name } = serviceAccountFormData;
     if (!name || name.trim() === '') {
       isValid = false;
-    }
-    if (!description || description.trim() === '') {
-      isValid = false;
+      setNameValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
     }
     return isValid;
   }
@@ -75,10 +94,12 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
             accessToken,
             basePath,
         });
+        setCreationInProgress(true);
         await apisService.createServiceAccount(serviceAccountFormData).then((response) => {
           if(response.status >= 200 ) {
             resetForm();
             setIsOpen(false);
+            fetchServiceAccounts();
           }
         });
         } catch (error) {
@@ -86,6 +107,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
           console.log(error);
         }
       }
+      setCreationInProgress(false);
     }
   }
 
@@ -95,12 +117,22 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   }
 
   const createForm = () => {
+    const { message, fieldState } = nameValidated;
+
     return (
       <Form>
+        {!isFormValid && (
+          <FormAlert>
+            <Alert variant="danger" title={t('common.create_instance_invalid_alert')} aria-live="polite" isInline />
+          </FormAlert>
+        )}
         <FormGroup
           label="Name"
           isRequired
           fieldId="form-group-name"
+          helperTextInvalid={message}
+          helperTextInvalidIcon={message != '' && <ExclamationCircleIcon />}
+          validated={fieldState}
         >
           <TextInput
             isRequired
@@ -110,6 +142,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
             aria-label="Input name"
             value={textInputNameValue}
             onChange={handleTextInputName}
+            validated={fieldState}
           />
         </FormGroup>
         <FormGroup
@@ -131,32 +164,17 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   }
   
   return (
-    <Modal
-      id="create-service-account-modal"
-      variant={ModalVariant.medium}
+    <MASCreateModal
+      isModalOpen={isOpen}
       title="Create a service account"
-      description="Enter a name and description for your service account"
-      isOpen={isOpen}
-      onClose={() => handleCreateModal()}
-      actions={[
-        <Button
-          key="create"
-          variant="primary"
-          type="submit"
-          onClick={() => createServiceAccount()}
-          isDisabled={isFormValid ? false : true}
-          spinnerAriaValueText='submitting_request'
-          isLoading={false}
-        >
-          Create
-        </Button>,
-        <Button key="cancel" variant="link" onClick={() => handleCreateModal()}>
-          Cancel
-        </Button>
-      ]}
+      handleModalToggle={handleCreateModal}
+      onCreate={() => createServiceAccount()}
+      isFormValid={isFormValid}
+      primaryButtonTitle="Create"
+      isCreationInProgress={isCreationInProgress}
     >
       {createForm()}
-    </Modal>
+    </MASCreateModal>
   )
 }
 

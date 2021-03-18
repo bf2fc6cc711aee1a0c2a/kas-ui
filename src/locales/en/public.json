@@ -3,12 +3,10 @@
   "global": "global",
   "skip_to_content": "Skip to Content",
   "something_went_wrong": "Something went wrong",
-  "this_is_a_required_field": "This is a required field",
   "create_instance_name_invalid_helper_text": "Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
   "create_a_kafka_instance": "Create a Kafka instance",
   "create_instance": "Create instance",
   "cancel": "Cancel",
-  "create_instance_invalid_alert": "Please address the errors in your form to proceed",
   "instance_name": "Instance name",
   "create_instance_name_helper_text": "Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
   "cloud_provider": "Cloud provider",
@@ -242,7 +240,9 @@
     "name": "Name",
     "owner": "Owner",
     "description": "Description",
-    "reset_credentials": "Reset credentials"
+    "reset_credentials": "Reset credentials",
+    "this_is_a_required_field": "This is a required field",
+    "create_instance_invalid_alert": "Please address the errors in your form to proceed"
   },
   "serviceAccount": {
     "service_accounts": "Service Accounts",
