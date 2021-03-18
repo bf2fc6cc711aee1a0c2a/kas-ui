@@ -26,19 +26,25 @@ export const ServiceRegistryHeader: React.FC<ServiceRegistryHeaderProps> = ({
   };
 
   const dropdownItems = [
-    <DropdownItem key="connect-registry" aria-label="connect to registry" onClick={() => onConnectToRegistry(name)}>
-      Connect to Registry
+    <DropdownItem
+      key="connect-registry"
+      onClick={() => onConnectToRegistry(name)}
+    >
+      {t('serviceRegistry.connect_to_registry')}
     </DropdownItem>,
-    <DropdownItem key="delete-registry" aria-label="delete registry" onClick={() => onDeleteRegistry(name)}>
-      Delete Registry
+    <DropdownItem
+      key="delete-registry"
+      onClick={() => onDeleteRegistry(name)}
+    >
+      {t('serviceRegistry.delete_registry')}
     </DropdownItem>,
   ];
 
   return (
     <Level>
       <LevelItem>
-        <Title headingLevel="h1" size="2xl">
-          {t('service_registry')}
+        <Title headingLevel="h1" size="lg">
+          {t('serviceRegistry.service_registry')}
         </Title>
       </LevelItem>
       <LevelItem>
