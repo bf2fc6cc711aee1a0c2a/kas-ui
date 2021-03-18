@@ -13,12 +13,12 @@ import { DefaultApi, ServiceAccount } from './../../../../openapi/api';
 import { NewServiceAccount } from './../../../models/ServiceAccountsModel';
 import { isValidToken } from '@app/utils';
 
-export type CreateInstanceModalProps = {
+export type CreateServiceAccountModalProps = {
   isOpen: boolean,
   setIsOpen: (isOpen: boolean) => void;
 }
 
-const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({isOpen, setIsOpen}: CreateInstanceModalProps) => {
+const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountModalProps> = ({isOpen, setIsOpen}: CreateServiceAccountModalProps) => {
 
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   newServiceAccount.name = '';

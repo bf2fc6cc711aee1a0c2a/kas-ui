@@ -118,7 +118,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
          * and translation for specific language
          *
          */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };
@@ -199,7 +199,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
            * and translation for specific language
            *
            */
-          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
+          toShowAlert && addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
         }
         setCreationInProgress(false);
       }
