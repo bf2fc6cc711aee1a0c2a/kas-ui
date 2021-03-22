@@ -74,7 +74,7 @@
   "topics_access": "Topics access",
   "consumer_groups_access": "Consumer groups access",
   "transaction_ids_access": "Transaction IDs access",
-  "generate_credential": "generate_credential",
+  "generate_credential": "Generate credential",
   "create_credential_wizard_description": "Generate credential for your application",
   "details": "Details",
   "connection": "Connection",
