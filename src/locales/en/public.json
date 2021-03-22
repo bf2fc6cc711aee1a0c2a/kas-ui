@@ -7,7 +7,6 @@
   "create_instance_name_invalid_helper_text": "Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
   "create_a_kafka_instance": "Create a Kafka instance",
   "create_instance": "Create instance",
-  "cancel": "Cancel",
   "create_instance_invalid_alert": "Please address the errors in your form to proceed",
   "instance_name": "Instance name",
   "create_instance_name_helper_text": "Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
@@ -252,7 +251,8 @@
     "name": "Name",
     "owner": "Owner",
     "description": "Description",
-    "reset_credentials": "Reset credentials"
+    "reset_credentials": "Reset credentials",
+    "cancel": "Cancel"
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",
@@ -280,6 +280,9 @@
     "you_do_not_have_any_service_accounts_yet": "You don't have any service accounts yet",
     "create_service_account_to_get_started": "Create a service account to get started",
     "unauthorized_access_to_service_accounts_title": "Access permissions needed",
-    "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators."
+    "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators.",
+    "client_secret_will_be_reset": "Client secret for {{serviceAccountId}} will be reset.",
+    "reset": "Reset",
+    "reset_service_account_credentials": "Reset service account credentials?"
   }
 }

@@ -389,7 +389,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
             {t('create_instance')}
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle} data-testid="modalCreateKafka-buttonCancel">
-            {t('cancel')}
+            {t('common.cancel')}
           </Button>,
         ]}
       >
