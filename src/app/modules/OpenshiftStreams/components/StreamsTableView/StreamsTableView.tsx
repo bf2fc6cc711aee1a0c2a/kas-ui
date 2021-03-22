@@ -534,6 +534,7 @@ const StreamsTableView = ({
           actionResolver: actionResolver,
           onSort: onSort,
           sortBy: getSortBy(),
+          hasDefaultCustomRowWrapper: true,
         }}
         activeRow={activeRow}
         onRowClick={onRowClick}

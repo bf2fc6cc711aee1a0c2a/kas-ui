@@ -11,7 +11,9 @@ import { css } from '@patternfly/react-styles';
 import { CustomRowWrapper, CustomRowWrapperProvider, CustomRowWrapperContextProps } from './CustomRowWrapper';
 
 export type MASTableProps = CustomRowWrapperContextProps & {
-  tableProps: Omit<PFTableProps, 'children'>;
+  tableProps: Omit<PFTableProps, 'children'> & {
+    hasDefaultCustomRowWrapper?: boolean;
+  };
   tableHeaderProps?: Omit<HeaderProps, 'children'>;
   tableBodyProps?: Omit<TableBodyProps, 'children'>;
   children?: React.ReactNode;
@@ -35,8 +37,16 @@ const MASTable: FunctionComponent<MASTableProps> = ({
     variant,
     className,
     rowWrapper,
+    hasDefaultCustomRowWrapper = false,
     ...restProps
   } = tableProps;
+
+  /**
+   * Handle CustomRowWrapper
+   */
+  if (hasDefaultCustomRowWrapper) {
+    restProps['rowWrapper'] = CustomRowWrapper;
+  }
 
   return (
     <CustomRowWrapperProvider
@@ -47,7 +57,6 @@ const MASTable: FunctionComponent<MASTableProps> = ({
     >
       <PFTable
         className={css('mas--streams-table-view__table', className)}
-        rowWrapper={rowWrapper || CustomRowWrapper}
         cells={cells}
         variant={variant}
         rows={rows}
