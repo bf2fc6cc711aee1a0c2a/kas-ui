@@ -10,6 +10,7 @@ import {
   ISortBy,
   SortByDirection,
   IExtraColumnData,
+  cellWidth,
 } from '@patternfly/react-table';
 import { Skeleton, EmptyStateVariant, PaginationVariant, TitleSizes } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState } from '@app/common';
@@ -26,7 +27,7 @@ export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   setOrderBy?: (order: string) => void;
   onResetCredentials?: (serviceAccount: ServiceAccountListItem) => void;
   onDeleteServiceAccount?: (serviceAccount: ServiceAccountListItem) => void;
-  handleCreateModal: () => void
+  handleCreateModal: () => void;
 };
 
 const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
@@ -44,7 +45,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   setFilteredValue,
   filterSelected,
   setFilterSelected,
-  handleCreateModal
+  handleCreateModal,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
 
@@ -52,7 +53,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 
   const tableColumns = [
     { title: t('common.name'), transforms: [sortable] },
-    { title: t('common.owner'), transforms: [sortable] },
+    { title: t('common.owner'), transforms: [sortable, cellWidth(20)] },
     { title: t('common.description') },
   ];
 
