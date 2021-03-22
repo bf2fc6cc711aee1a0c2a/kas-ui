@@ -18,8 +18,8 @@ import {
   DrawerContentBody,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { NewKafka } from '../../../../models/OpenshiftStreamsModel';
-import { FormDataValidationState } from '../../../../models/SharedModels';
+import { NewKafka } from '../../../../models/openshiftStreamsModel';
+import { FormDataValidationState } from '../../../../models/sharedModels';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import './CreateInstanceModal.css';
@@ -32,7 +32,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { isValidToken, ErrorCodes } from '@app/utils';
-import { MASCreateModal } from '../../../../common/MASCreateModal/MASCreateModal';
+import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
 
 export type CreateInstanceModalProps = {
   isModalOpen: boolean;
@@ -376,7 +376,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       isModalOpen={isModalOpen}
       title={t('create_a_kafka_instance')}
       handleModalToggle={handleModalToggle}
-      onCreate={() => onCreateInstance()}
+      onCreate={onCreateInstance}
       isFormValid={isFormValid}
       primaryButtonTitle={t('create_instance')}
       isCreationInProgress={isCreationInProgress}

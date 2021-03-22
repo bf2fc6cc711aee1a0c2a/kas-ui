@@ -9,12 +9,16 @@ import {
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi, ServiceAccount } from './../../../../openapi/api';
-import { NewServiceAccount } from './../../../models/ServiceAccountsModel';
-import { FormDataValidationState } from './../../../models/SharedModels';
-import { isValidToken } from '@app/utils';
-import { MASCreateModal } from '../../../common/MASCreateModal/MASCreateModal';
+import { NewServiceAccount } from './../../../models/serviceAccountsModel';
+import { FormDataValidationState } from './../../../models/sharedModels';
+import { isValidToken, ErrorCodes} from '@app/utils';
+import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { useTranslation } from 'react-i18next';
+import { isServiceApiError } from '@app/utils/error';
+import { MASFullPageError } from '@app/common';
+import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { AlertVariant } from '@patternfly/react-core';
 
 export type CreateInstanceModalProps = {
   isOpen: boolean,
@@ -34,15 +38,17 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
+  const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
+  const { addAlert } = useAlerts();
 
   const resetForm = () => {
     setTextInputNameValue('');
     setTextInputDescriptionValue('');
-    setServiceAccountFormData({ ...serviceAccountFormData, name: '', description: '' });
+    setServiceAccountFormData(newServiceAccount);
     setIsFormValid(true);
   }
 
@@ -65,6 +71,21 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
     setServiceAccountFormData({ ...serviceAccountFormData, name: name || '' });
   };
 
+  const handleServerError = (error: any) => {
+    let reason: string | undefined;
+    let errorCode: string | undefined;
+    if (isServiceApiError(error)) {
+      reason = error.response?.data.reason;
+      errorCode = error.response?.data?.code;
+    }
+    //check unauthorize user
+    if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
+      setIsUserUnauthorized(true);
+    } else {
+      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    }
+  };
+  
   const handleTextInputDescription = value => {
     setTextInputDescriptionValue(value);
     setServiceAccountFormData({ ...serviceAccountFormData, description: value });
@@ -103,8 +124,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
           }
         });
         } catch (error) {
-          // handleServerError(error);
-          console.log(error);
+          handleServerError(error);
         }
       }
       setCreationInProgress(false);
@@ -116,11 +136,33 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
     setIsOpen(!isOpen);
   }
 
+  /**
+   * Show Unathorize page in case user is not authorize
+   */
+  if (isUserUnauthorized) {
+    return (
+      <MASFullPageError
+        titleProps={{
+          title: t('you_do_not_have_access_to_openshift_streams'),
+          headingLevel: 'h2',
+        }}
+        emptyStateBodyProps={{
+          body: t('contact_your_organization_administration_for_more_information'),
+        }}
+      />
+    );
+  }
+
+  const onFormSubmit = (event) => {
+    event.preventDefault();
+    createServiceAccount();
+  };
+
   const createForm = () => {
     const { message, fieldState } = nameValidated;
 
     return (
-      <Form>
+      <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
           <FormAlert>
             <Alert variant="danger" title={t('common.create_instance_invalid_alert')} aria-live="polite" isInline />
@@ -129,9 +171,9 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
         <FormGroup
           label="Name"
           isRequired
-          fieldId="form-group-name"
+          fieldId="text-input-name"
           helperTextInvalid={message}
-          helperTextInvalidIcon={message != '' && <ExclamationCircleIcon />}
+          helperTextInvalidIcon={message && <ExclamationCircleIcon />}
           validated={fieldState}
         >
           <TextInput
@@ -147,7 +189,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
         </FormGroup>
         <FormGroup
           label="Description"
-          fieldId="form-group-name"
+          fieldId="text-input-description"
         >
           <TextInput
             isRequired
@@ -166,9 +208,9 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   return (
     <MASCreateModal
       isModalOpen={isOpen}
-      title="Create a service account"
+      title={t('create_a_service_account')}
       handleModalToggle={handleCreateModal}
-      onCreate={() => createServiceAccount()}
+      onCreate={createServiceAccount}
       isFormValid={isFormValid}
       primaryButtonTitle="Create"
       isCreationInProgress={isCreationInProgress}

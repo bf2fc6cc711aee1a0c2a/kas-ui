@@ -54,7 +54,7 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
         >
           {primaryButtonTitle}
         </Button>,
-        <Button key="cancel" variant="link" onClick={handleModalToggle} data-testid={dataTestIdCancel ? dataTestIdCancel : ""}>
+        <Button key="cancel" variant="link" onClick={handleModalToggle} data-testid={dataTestIdCancel}>
           {t('cancel')}
         </Button>,
       ]}
