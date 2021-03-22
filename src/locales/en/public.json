@@ -277,8 +277,8 @@
     "delete_service_account": "Delete service account",
     "service_account_list": "Service account list",
     "create_service_account": "Create service account",
-    "you_do_not_have_any_service_accounts_yet": "You don't have any service accounts yet",
-    "create_service_account_to_get_started": "Create a service account to get started",
+    "you_do_not_have_any_service_accounts_yet": "No service accounts yet",
+    "create_service_account_to_get_started": "To get started, create a service account.",
     "unauthorized_access_to_service_accounts_title": "Access permissions needed",
     "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators."
   }
