@@ -28,6 +28,7 @@ import { InstanceStatus, isServiceApiError, getLoadingRowsCount } from '@app/uti
 import { useHistory } from 'react-router-dom';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
+import { MIN_POLL_INTERVAL } from '@app/utils';
 
 export type FilterValue = {
   value: string;
@@ -60,6 +61,9 @@ export type StreamsTableProps = {
   orderBy: string;
   setOrderBy: (order: string) => void;
   isDrawerOpen?: boolean;
+  changePollIntervalOnDeleteKafka: () => void;
+  pollInterval: number;
+  setPollInterval: (pollInterval: number) => void;
 };
 
 type ConfigDetail = {
@@ -115,6 +119,8 @@ const StreamsTableView = ({
   orderBy,
   setOrderBy,
   isDrawerOpen,
+  changePollIntervalOnDeleteKafka,
+  setPollInterval
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -422,6 +428,8 @@ const StreamsTableView = ({
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         setActiveRow(undefined);
         refresh();
+        setPollInterval(MIN_POLL_INTERVAL);
+        changePollIntervalOnDeleteKafka();
       });
     } catch (error) {
       let reason: string | undefined;

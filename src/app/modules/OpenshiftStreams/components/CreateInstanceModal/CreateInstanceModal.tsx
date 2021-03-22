@@ -31,6 +31,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { isValidToken, ErrorCodes } from '@app/utils';
+import { MIN_POLL_INTERVAL } from '@app/utils';
 
 export type CreateInstanceModalProps = {
   isModalOpen: boolean;
@@ -39,6 +40,9 @@ export type CreateInstanceModalProps = {
   mainToggle: boolean;
   refresh: () => void;
   cloudProviders: Array<CloudProvider>;
+  pollInterval: Number;
+  setPollInterval: (pollInterval: Number) => void;
+  changePollIntervalOnCreateKafka: () => void;
 };
 
 const CreateInstanceModalContext = createContext<CreateInstanceModalProps>({
@@ -48,6 +52,9 @@ const CreateInstanceModalContext = createContext<CreateInstanceModalProps>({
   mainToggle: false,
   refresh: () => {},
   cloudProviders: [],
+  pollInterval: MAX_INSTANCE_NAME_LENGTH,
+  setPollInterval: () => {},
+  changePollIntervalOnCreateKafka: () => {}
 });
 
 export const CreateInstanceModalProvider = CreateInstanceModalContext.Provider;
@@ -62,7 +69,7 @@ const emptyProvider: CloudProvider = {
 
 const CreateInstanceModal: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { isModalOpen, setIsModalOpen, onCreate, cloudProviders, refresh, mainToggle } = useCreateInstanceModal();
+  const { isModalOpen, setIsModalOpen, onCreate, cloudProviders, refresh, mainToggle, setPollInterval, changePollIntervalOnCreateKafka } = useCreateInstanceModal();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { addAlert } = useAlerts();
@@ -176,8 +183,10 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           onCreate();
           await apisService.createKafka(true, kafkaFormData).then((res) => {
             resetForm();
+            setPollInterval(MIN_POLL_INTERVAL);
             setIsModalOpen(false);
             refresh();
+            changePollIntervalOnCreateKafka();
           });
         } catch (error) {
           let reason: string | undefined;

@@ -18,7 +18,7 @@ import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
-import { MAX_POLL_INTERVAL } from '@app/utils';
+import { AVG_LENGTH_OF_KAFKA_CREATION, AVG_LENGTH_OF_KAFKA_DELETION, MAX_POLL_INTERVAL } from '@app/utils';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -56,7 +56,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  // const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+  const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+
+  console.log('what is pollInterval' + pollInterval);
 
   const drawerRef = React.createRef<any>();
 
@@ -119,6 +121,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
 
   // Functions
   const fetchKafkas = async (justPoll: boolean) => {
+    console.log('it just fetched a kafka');
     const accessToken = await authContext?.getToken();
 
     if (isValidToken(accessToken) && isVisible) {
@@ -186,7 +189,20 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     fetchKafkas(false);
   }, []);
 
-  useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
+  // poll kafkas every x seconds depending on the value of pollInterval
+  useTimeout(() => fetchKafkas(true), pollInterval);
+
+  const changePollIntervalOnCreateKafka = () => {
+    setTimeout(function() {
+      setPollInterval(MAX_POLL_INTERVAL)
+    }, AVG_LENGTH_OF_KAFKA_CREATION)
+  }
+
+  const changePollIntervalOnDeleteKafka = () => {
+    setTimeout(function() {
+      setPollInterval(MAX_POLL_INTERVAL)
+    }, AVG_LENGTH_OF_KAFKA_DELETION)
+  }
 
   const refreshKafkas = () => {
     //set the page to laoding state
@@ -239,6 +255,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
             cloudProviders,
             mainToggle,
             refresh: refreshKafkas,
+            pollInterval: pollInterval,
+            setPollInterval: setPollInterval,
+            changePollIntervalOnCreateKafka: changePollIntervalOnCreateKafka
           }}
         >
           <InstanceDrawer
@@ -308,6 +327,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                   orderBy={orderBy}
                   setOrderBy={setOrderBy}
                   isDrawerOpen={selectedInstance !== null}
+                  changePollIntervalOnDeleteKafka={changePollIntervalOnDeleteKafka}
+                  pollInterval={pollInterval}
+                  setPollInterval={setPollInterval}
                 />
               </PageSection>
             )}

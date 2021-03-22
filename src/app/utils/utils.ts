@@ -77,8 +77,11 @@ const capitalize = (s: string) => {
 const MAX_INSTANCE_NAME_LENGTH = 32;
 const MAX_FILTER_LIMIT = 10;
 
-const MIN_POLL_INTERVAL = 1000;
-const MAX_POLL_INTERVAL = 5000;
+const MIN_POLL_INTERVAL = 3000; // 3 seconds
+const MAX_POLL_INTERVAL = 10000; // 10 seconds
+const AVG_LENGTH_OF_KAFKA_CREATION = 180000; // 3 min
+const AVG_LENGTH_OF_KAFKA_DELETION = 60000; // 1 min
+
 const isValidToken = (accessToken: string | undefined) => {
   if (accessToken !== undefined && accessToken !== '') {
     return true;
@@ -129,5 +132,7 @@ export {
   MAX_FILTER_LIMIT,
   MIN_POLL_INTERVAL,
   MAX_POLL_INTERVAL,
+  AVG_LENGTH_OF_KAFKA_CREATION,
+  AVG_LENGTH_OF_KAFKA_DELETION,
   getLoadingRowsCount
 };
