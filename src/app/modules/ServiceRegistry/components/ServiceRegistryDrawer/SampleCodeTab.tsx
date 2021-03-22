@@ -2,6 +2,7 @@ import React from 'react';
 import { TextContent, Text, TextVariants, Button } from '@patternfly/react-core';
 import { CopyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { CodeEditor, Language } from '@patternfly/react-code-editor';
 
 export const SampleCodeTab = () => {
   const { t } = useTranslation();
@@ -19,23 +20,32 @@ export const SampleCodeTab = () => {
           <Text component={TextVariants.small}>{t('serviceRegistry.tab_sample_code_title_info')}</Text>
         </TextContent>
         {editors?.map(({ type, code }) => (
-          <div className="pf-c-code-editor pf-m-read-only">
-            <div className="pf-c-code-editor__header pf-u-pt-lg">
-              <div className="pf-c-code-editor__controls">
-                <Button variant="control" aria-label="Action">
-                  <CopyIcon />
-                </Button>
-              </div>
-              <div className="pf-c-code-editor__tab">
-                <span className="pf-c-code-editor__tab-text">{type}</span>
-              </div>
-            </div>
-            <div className="pf-c-code-editor__main">
-              <div className="pf-c-code-editor__code">
-                <pre className="pf-c-code-editor__code-pre">{code}</pre>
-              </div>
-            </div>
-          </div>
+          <CodeEditor            
+            isLineNumbersVisible={true}
+            isReadOnly={true}
+            isMinimapVisible={true}
+            isLanguageLabelVisible
+            code="Some example content"         
+            language={Language.javascript}           
+            height="400px"
+          />
+          // <div className="pf-c-code-editor pf-m-read-only">
+          //   <div className="pf-c-code-editor__header pf-u-pt-lg">
+          //     <div className="pf-c-code-editor__controls">
+          //       <Button variant="control" aria-label="Action">
+          //         <CopyIcon />
+          //       </Button>
+          //     </div>
+          //     <div className="pf-c-code-editor__tab">
+          //       <span className="pf-c-code-editor__tab-text">{type}</span>
+          //     </div>
+          //   </div>
+          //   <div className="pf-c-code-editor__main">
+          //     <div className="pf-c-code-editor__code">
+          //       <pre className="pf-c-code-editor__code-pre">{code}</pre>
+          //     </div>
+          //   </div>
+          // </div>
         ))}
       </div>
     </>

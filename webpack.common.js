@@ -9,6 +9,7 @@ delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isProduction = argv && argv.mode === 'production';
@@ -142,6 +143,7 @@ module.exports = (env, argv) => {
       publicPath: "auto"
     },
     plugins: [
+      new MonacoWebpackPlugin(),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, 'src', 'index.html')
       }),
