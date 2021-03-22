@@ -372,7 +372,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       <Modal
         id="modalCreateKafka"
         variant={ModalVariant.medium}
-        title={t('create_a_kafka_instance')}
+        title={t('create_kafka_instance')}
         isOpen={isModalOpen}
         onClose={handleModalToggle}
         actions={[

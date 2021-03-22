@@ -34,10 +34,10 @@ const routes: AppRouteConfig[] = [
   {
     component: OpenshiftStreamsConnected,
     exact: true,
-    // t('openshift_streams')
-    label: 'OpenShift Streams',
+    // t('kafka_instances')
+    label: 'Kafka Instances',
     path: '/',
-    title: 'OpenShift Streams',
+    title: 'Kafka Instances',
   },
   {
     component: ServiceRegistryConnected,
@@ -106,7 +106,7 @@ const AppRoutes = (): React.ReactElement => {
             isAsync={isAsync}
           />
         ))}
-        <PageNotFound title={t('404_page_not_found')} />
+        <PageNotFound title={t('404_page_does_not_exist')} />
       </Switch>
     </LastLocationProvider>
   );

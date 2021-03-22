@@ -218,7 +218,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     return (
       <MASFullPageError
         titleProps={{
-          title: t('you_do_not_have_access_to_openshift_streams'),
+          title: t('access_permissions_needed'),
           headingLevel: 'h2',
         }}
         emptyStateBodyProps={{
@@ -254,7 +254,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
               <Level>
                 <LevelItem>
                   <Title headingLevel="h1" size="lg">
-                    {t('openshift_streams')}
+                    {t('kafka_instances')}
                   </Title>
                 </LevelItem>
               </Level>
@@ -267,14 +267,14 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
               <PageSection>
                 <MASEmptyState
                   titleProps={{
-                    title: t('you_do_not_have_any_kafka_instances_yet'),
+                    title: t('no_kafka_instances_yet'),
                     headingLevel: 'h2',
                   }}
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),
                   }}
                   buttonProps={{
-                    title: t('create_a_kafka_instance'),
+                    title: t('create_kafka_instance'),
                     onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModal),
                     ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
                   }}

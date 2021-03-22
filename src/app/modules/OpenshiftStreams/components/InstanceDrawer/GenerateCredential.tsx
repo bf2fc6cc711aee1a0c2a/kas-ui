@@ -443,7 +443,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         <Alert
           variant="danger"
           isInline
-          title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please turn off the mock UI to generate credentials."
+          title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please turn off the mock UI to generate a service account."
         />
       )}
       <MASEmptyState
