@@ -300,6 +300,7 @@ const StreamsTableView = ({
       {
         title: t('delete_instance'),
         id: 'delete-instance',
+        ['data-testid']: 'tableStreams-actionDelete',
         onClick: (event: any) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
@@ -322,6 +323,7 @@ const StreamsTableView = ({
               e.preventDefault();
               onConnectToInstance(row as KafkaRequest);
             }}
+            data-testid="tableStreams-linkKafka"
           >
             {name}
           </Link>
@@ -537,6 +539,7 @@ const StreamsTableView = ({
         }}
         activeRow={activeRow}
         onRowClick={onRowClick}
+        rowDataTestId="tableStreams-row"
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <MASEmptyState
