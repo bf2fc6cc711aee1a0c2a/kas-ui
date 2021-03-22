@@ -58,10 +58,6 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
 
-  console.log('what is pollInterval' + pollInterval);
-
-  const drawerRef = React.createRef<any>();
-
   const { activeTab, instanceDetail } = selectedInstance || {};
 
   const onCloseDrawer = () => {
@@ -121,7 +117,6 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
 
   // Functions
   const fetchKafkas = async (justPoll: boolean) => {
-    console.log('it just fetched a kafka');
     const accessToken = await authContext?.getToken();
 
     if (isValidToken(accessToken) && isVisible) {
