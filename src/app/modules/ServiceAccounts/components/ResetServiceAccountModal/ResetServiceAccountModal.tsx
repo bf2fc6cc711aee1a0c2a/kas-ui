@@ -3,9 +3,7 @@ import {
   Button,
   Modal,
   ModalVariant,
-  Form,
-  FormGroup,
-  TextInput
+  AlertVariant
 } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
@@ -13,6 +11,7 @@ import { DefaultApi, ServiceAccountListItem } from './../../../../../openapi/api
 import { isValidToken } from '@app/utils';
 import { useTranslation } from 'react-i18next';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { isServiceApiError, ErrorCodes } from '@app/utils';
 
 export type ResetServiceAccountModalProps = {
   isOpen: boolean,
@@ -30,6 +29,14 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
 
   const [isModalLoading, setIsModalLoading] = React.useState(false);
 
+  const handleServerError = (error: any) => {
+    let reason: string | undefined;
+    if (isServiceApiError(error)) {
+      reason = error.response?.data.reason;
+    }
+    addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+  };
+
   const resetServiceAccount = async (serviceAccount) => {
     const serviceAccountId = serviceAccount?.id;
     const accessToken = await authContext?.getToken();
@@ -42,15 +49,13 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
       });
       setIsModalLoading(true);
       await apisService.resetServiceAccountCreds(serviceAccountId).then((response) => {
-        if(response.status >= 200 ) {
-          setIsOpen(false);
-          setIsModalLoading(false);
-          // open generate credentials modal (when PR is merged)
-        }
+        setIsOpen(false);
+        setIsModalLoading(false);
+        // open generate credentials modal (when PR is merged)
       });
       } catch (error) {
-        // handleServerError(error);
-        console.log(error);
+        handleServerError(error);
+        setIsModalLoading(false);
       }
     }
   }
@@ -58,6 +63,8 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
   const handleModalToggle = () => {
     setIsOpen(!isOpen);
   }
+
+  const serviceAccountId = serviceAccountToReset?.name;
   
   return (
     <Modal
@@ -72,7 +79,7 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
           variant="primary"
           type="submit"
           onClick={() => resetServiceAccount(serviceAccountToReset)}
-          spinnerAriaValueText='submitting_request'
+          spinnerAriaValueText={t('common.submitting_request')}
           isLoading={isModalLoading}
         >
           {t('serviceAccount.reset')}
@@ -82,7 +89,7 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
         </Button>
       ]}
     >
-      <p>{t('serviceAccount.client_secret_will_be_reset', { serviceAccountId: serviceAccountToReset?.name })}</p>
+      <span dangerouslySetInnerHTML={{ __html: t('serviceAccount.client_secret_will_be_reset', { serviceAccountId }) }} />
     </Modal>
   )
 }

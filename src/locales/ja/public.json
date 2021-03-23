@@ -231,7 +231,6 @@
   "contact_your_organization_administration_for_more_information": "日本語 Contact your organization administration(s) for more information.",
   "length_is_greater_than_expected": "日本語 Kafka instance name cannot exceed {{maxLength}} characters.",
   "the_name_already_exists_please_enter_a_unique_name": "日本語 The name {{name}} already exists. Please enter a unique name.",
-  "submitting_request": "日本語 Submitting request",
   "clear_all_filters": "日本語 Clear all filters",
   "max_filter_message": "日本語 Maximum number of filters reached. Please clear a filter before adding another.",
   "input_field_invalid_message": "日本語 Valid characters for {{name}} are lowercase letters from a to z, numbers from 0 to 9, underscore (_) hyphens (-) and percentage (%)",
@@ -251,7 +250,8 @@
     "owner": "日本語 Owner",
     "description": "日本語 Description",
     "reset_credentials": "日本語 Reset credentials",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "submitting_request": "日本語 Submitting request"
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",

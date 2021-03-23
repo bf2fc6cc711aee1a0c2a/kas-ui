@@ -10,8 +10,9 @@ import {
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi, ServiceAccount } from './../../../../openapi/api';
-import { NewServiceAccount } from './../../../models/ServiceAccountsModel';
+import { NewServiceAccount } from './../../../models/serviceAccountsModel';
 import { isValidToken } from '@app/utils';
+import { useTranslation } from 'react-i18next';
 
 export type CreateInstanceModalProps = {
   isOpen: boolean,
@@ -29,6 +30,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
 
+  const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
@@ -145,7 +147,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
           type="submit"
           onClick={() => createServiceAccount()}
           isDisabled={isFormValid ? false : true}
-          spinnerAriaValueText='submitting_request'
+          spinnerAriaValueText={t('common.submitting_request')}
           isLoading={false}
         >
           Create

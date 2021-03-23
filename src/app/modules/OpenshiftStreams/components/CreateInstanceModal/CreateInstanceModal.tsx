@@ -382,7 +382,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
             type="submit"
             onClick={onCreateInstance}
             isDisabled={!isFormValid || isCreationInProgress}
-            spinnerAriaValueText={t('submitting_request')}
+            spinnerAriaValueText={t('common.submitting_request')}
             isLoading={isCreationInProgress}
             data-testid="modalCreateKafka-buttonSubmit"
           >
