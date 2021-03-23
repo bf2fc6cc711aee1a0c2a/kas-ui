@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextContent, Text, TextVariants, Flex, FlexItem, ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { GenerateCredential } from './GenerateCredential';
+import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;
@@ -30,7 +30,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
           <ClipboardCopy data-testid="drawerStreams-copyBootstrapURL">{externalServer}</ClipboardCopy>
         </FlexItem>
-        <GenerateCredential instanceName={instanceName} mainToggle={mainToggle} />
+        <MASGenerateCredentialsModal instanceName={instanceName} />
       </Flex>
       {mainToggle && (
         <>
