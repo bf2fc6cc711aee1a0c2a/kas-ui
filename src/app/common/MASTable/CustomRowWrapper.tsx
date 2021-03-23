@@ -6,6 +6,7 @@ import './CustomRowWrapper.css';
 export type CustomRowWrapperContextProps = {
   activeRow?: string;
   onRowClick?: (event: any, rowIndex: number, row: any) => void;
+  rowDataTestId?: string;
 };
 
 const CustomRowWrapperContext = createContext<CustomRowWrapperContextProps>({
@@ -16,7 +17,7 @@ const CustomRowWrapperContext = createContext<CustomRowWrapperContextProps>({
 export const CustomRowWrapperProvider = CustomRowWrapperContext.Provider;
 
 export const CustomRowWrapper = (rowWrapperProps) => {
-  const { activeRow, onRowClick } = useContext(CustomRowWrapperContext);
+  const { activeRow, onRowClick, rowDataTestId } = useContext(CustomRowWrapperContext);
   const { trRef, className, rowProps, row, ...props } = rowWrapperProps || {};
   const { rowIndex } = rowProps;
   const { isExpanded, originalData } = row;
@@ -24,6 +25,7 @@ export const CustomRowWrapper = (rowWrapperProps) => {
 
   return (
     <tr
+      data-testid={rowDataTestId}
       tabIndex={0}
       ref={trRef}
       className={css(
