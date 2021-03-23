@@ -365,7 +365,10 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title: status === InstanceStatus.DEPROVISION ? name : renderNameLink({ name, row }),
+            title:
+              status === InstanceStatus.DEPROVISION || status !== InstanceStatus.READY
+                ? name
+                : renderNameLink({ name, row }),
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -534,6 +537,7 @@ const StreamsTableView = ({
           actionResolver: actionResolver,
           onSort: onSort,
           sortBy: getSortBy(),
+          hasDefaultCustomRowWrapper: true,
         }}
         activeRow={activeRow}
         onRowClick={onRowClick}
