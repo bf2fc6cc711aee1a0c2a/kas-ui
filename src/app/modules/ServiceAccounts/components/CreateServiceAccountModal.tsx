@@ -78,12 +78,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
       reason = error.response?.data.reason;
       errorCode = error.response?.data?.code;
     }
-    //check unauthorize user
-    if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
-      setIsUserUnauthorized(true);
-    } else {
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-    }
   };
   
   const handleTextInputDescription = value => {
@@ -136,23 +130,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
     setIsOpen(!isOpen);
   }
 
-  /**
-   * Show Unathorize page in case user is not authorize
-   */
-  if (isUserUnauthorized) {
-    return (
-      <MASFullPageError
-        titleProps={{
-          title: t('you_do_not_have_access_to_openshift_streams'),
-          headingLevel: 'h2',
-        }}
-        emptyStateBodyProps={{
-          body: t('contact_your_organization_administration_for_more_information'),
-        }}
-      />
-    );
-  }
-
   const onFormSubmit = (event) => {
     event.preventDefault();
     createServiceAccount();
@@ -181,7 +158,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
             type="text"
             id="text-input-name"
             name="text-input-name"
-            aria-label="Input name"
             value={textInputNameValue}
             onChange={handleTextInputName}
             validated={fieldState}
