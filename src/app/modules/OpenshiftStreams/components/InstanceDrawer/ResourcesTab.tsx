@@ -1,5 +1,13 @@
-import React from 'react';
-import { TextContent, Text, TextVariants, Flex, FlexItem, ClipboardCopy } from '@patternfly/react-core';
+import React, {useState} from 'react';
+import {
+  Button,
+  TextContent,
+  Text,
+  TextVariants,
+  Flex,
+  FlexItem,
+  ClipboardCopy
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
 
@@ -14,7 +22,16 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   externalServer,
   instanceName,
 }: ResourcesTabProps) => {
+
   const { t } = useTranslation();
+
+  const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGenerateCredentialsModal = () => {
+    setIsLoading(true);
+    setIsGenerateCredentialsModalOpen(!isGenerateCredentialsModalOpen);
+  }
 
   return (
     <div className="mas--details__drawer--tab-content">
@@ -30,7 +47,18 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
           <ClipboardCopy data-testid="drawerStreams-copyBootstrapURL">{externalServer}</ClipboardCopy>
         </FlexItem>
-        <MASGenerateCredentialsModal instanceName={instanceName} />
+        <FlexItem className="pf-m-align-right">
+          <Button
+            variant="secondary"
+            onClick={handleGenerateCredentialsModal}
+            className="pf-u-ml-md"
+            spinnerAriaValueText={isLoading ? 'Loading' : undefined}
+            isLoading={isLoading}
+            data-testid="drawerStreams-buttonCreateServiceAccount"
+          >
+            {t('generate_credential')}
+          </Button>
+      </FlexItem>
       </Flex>
       {mainToggle && (
         <>
@@ -40,6 +68,14 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           </TextContent>
           <ClipboardCopy>https://:30123</ClipboardCopy>
         </>
+      )}
+      { isGenerateCredentialsModalOpen && (
+        <MASGenerateCredentialsModal
+          isOpen={isGenerateCredentialsModalOpen}
+          setIsOpen={setIsGenerateCredentialsModalOpen}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        /> 
       )}
     </div>
   );

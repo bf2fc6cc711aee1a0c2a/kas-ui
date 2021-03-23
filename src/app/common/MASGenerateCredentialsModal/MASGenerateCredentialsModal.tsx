@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent, useContext } from 'react';
+import React, { useState, FunctionComponent, useContext, useEffect } from 'react';
 import {
   Modal,
   ModalVariant,
@@ -25,23 +25,32 @@ import './MASGenerateCredentialsModal.css';
 
 type MASGenerateCredentialsModalProps = {
   instanceName?: string;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
 };
 
 const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModalProps> = ({
-  instanceName = ''
+  instanceName = '',
+  isOpen,
+  setIsOpen,
+  isLoading,
+  setIsLoading
 }: MASGenerateCredentialsModalProps) => {
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
   const [isCreated, setIsCreated] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [stepNo, setStepNo] = useState(1);
-
   const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
   const [credential, setCredential] = useState<any | undefined>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    generateCredential();
+  }, []);
+
 
   const generateCredential = async () => {
     const accessToken = await authContext?.getToken();
@@ -69,19 +78,18 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
     }
   };
 
-  const handleModalToggle = () => {
-      setIsLoading(true);
-      setError('');
-      setCredential(undefined);
-      generateCredential();
-  };
+  // const handleModalToggle = () => {
+  //     setIsLoading(true);
+  //     setError('');
+  //     setCredential(undefined);
+  //     generateCredential();
+  // };
 
   const handleClose = () => {
     setIsOpen(false);
     setIsCreated(!isCreated);
     setCredential(undefined);
     setConfirmationCheckbox(false);
-    setStepNo(1);
   };
 
   const handleChangeCheckbox = (confirmationCheckbox) => {
@@ -147,7 +155,7 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
       variant={ModalVariant.small}
       title="Create a service account"
       isOpen={isOpen}
-      onClose={handleModalToggle}
+      onClose={handleClose}
     >
       {generateCredentials}
     </Modal>
