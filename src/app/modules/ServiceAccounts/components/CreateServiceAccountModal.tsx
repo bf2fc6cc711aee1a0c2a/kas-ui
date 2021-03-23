@@ -10,7 +10,7 @@ import {
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi, ServiceAccount } from './../../../../openapi/api';
-import { NewServiceAccount } from './../../../models/ServiceAccountsModel';
+import { NewServiceAccount } from './../../../models/serviceAccountsModel';
 import { isValidToken } from '@app/utils';
 
 export type CreateServiceAccountModalProps = {
