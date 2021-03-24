@@ -3,7 +3,7 @@ export class NewServiceAccount {
   description: string;
 
   constructor() {
-    this.name;
-    this.description;
+    this.name = '';
+    this.description = '';
   }
 }

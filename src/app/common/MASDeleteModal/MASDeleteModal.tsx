@@ -22,6 +22,7 @@ export type MASDeleteModalProps = {
     key?: string;
     label?: string;
     onClick?: (data?: any) => Promise<void> | void;
+    'data-testid'?: string;
   };
   cancelButtonProps?: Omit<ButtonProps, 'children'> & {
     id?: string;
