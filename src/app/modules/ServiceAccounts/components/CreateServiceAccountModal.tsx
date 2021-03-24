@@ -32,9 +32,9 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
 
+  const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const { t } = useTranslation();
   const { addAlert } = useAlerts();
 
   const resetForm = () => {

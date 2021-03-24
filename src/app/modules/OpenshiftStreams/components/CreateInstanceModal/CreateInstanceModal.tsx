@@ -8,8 +8,6 @@ import {
   FormGroup,
   FormSelect,
   FormSelectOption,
-  Modal,
-  ModalVariant,
   TextInput,
   Tile,
   ToggleGroup,

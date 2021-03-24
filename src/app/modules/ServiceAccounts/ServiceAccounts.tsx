@@ -18,6 +18,7 @@ import { isServiceApiError, ErrorCodes } from '@app/utils';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { MASEmptyState, MASLoading, AlertProvider, useAlerts, MASFullPageError } from '@app/common';
 import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
+import { ResetServiceAccountModal } from './components/ResetServiceAccountModal/ResetServiceAccountModal';
 import { DeleteServiceAccountModal } from './components/DeleteServiceAccountModal';
 
 export type ServiceAccountsProps = {
@@ -47,6 +48,8 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
+  const [isResetServiceAccountModalOpen, setIsResetServiceAccountModalOpen] = useState(false);
+  const [serviceAccountToReset, setServiceAccountToReset] = useState<ServiceAccountListItem>();
   const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
   const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
 
@@ -88,7 +91,10 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
     fetchServiceAccounts();
   }, []);
 
-  const onResetCredentials = () => {};
+  const handleResetModal = (serviceAccount: ServiceAccountListItem) => {
+    setIsResetServiceAccountModalOpen(!isResetServiceAccountModalOpen)
+    setServiceAccountToReset(serviceAccount);
+  }
 
   const handleCreateModal = () => {
     setIsCreateServiceAccountModalOpen(!isCreateServiceAccountModalOpen);
@@ -147,7 +153,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               setFilterSelected={setFilterSelected}
               filteredValue={filteredValue}
               setFilteredValue={setFilteredValue}
-              onResetCredentials={onResetCredentials}
+              onResetCredentials={handleResetModal}
               onDeleteServiceAccount={handleDeleteModal}
               handleCreateModal={handleCreateModal}
             />
@@ -192,6 +198,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
             handleCreateModal={handleCreateModal}
             fetchServiceAccounts={fetchServiceAccounts}
           />
+          <ResetServiceAccountModal isOpen={isResetServiceAccountModalOpen} setIsOpen={setIsResetServiceAccountModalOpen} serviceAccountToReset={serviceAccountToReset}/>
           <DeleteServiceAccountModal isOpen={isDeleteServiceAccountModalOpen} setIsOpen={setIsDeleteServiceAccountModalOpen} serviceAccountToDelete={serviceAccountToDelete} fetchServiceAccounts={fetchServiceAccounts}/>
         </PageSection>
         {renderTableView()}
