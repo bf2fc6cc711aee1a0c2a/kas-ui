@@ -24,11 +24,8 @@ import { MASEmptyState } from '@app/common';
 import './MASGenerateCredentialsModal.css';
 
 type MASGenerateCredentialsModalProps = {
-  instanceName?: string;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
   credential: any | undefined;
   setCredential: (credential: any) => void;
 };

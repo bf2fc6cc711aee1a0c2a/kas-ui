@@ -277,6 +277,8 @@
     "you_do_not_have_any_service_accounts_yet": "日本語 No service accounts yet",
     "create_service_account_to_get_started": "日本語 To get started, create a service account.",
     "unauthorized_access_to_service_accounts_title": "日本語 Access permissions needed",
-    "unauthorized_access_to_service_accounts_info": "日本語 To access Service Accounts, contact your organization administrators."
+    "unauthorized_access_to_service_accounts_info": "日本語 To access Service Accounts, contact your organization administrators.",
+     "create_a_service_account": "日本語 Create a service account",
+    "service_account_creation_success_message": "日本語 Service account successfully created"
   }
 }

@@ -3,12 +3,10 @@
   "global": "global",
   "skip_to_content": "Skip to Content",
   "something_went_wrong": "Something went wrong",
-  "this_is_a_required_field": "This is a required field",
   "create_instance_name_invalid_helper_text": "Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
   "create_a_kafka_instance": "Create a Kafka instance",
   "create_instance": "Create instance",
   "cancel": "Cancel",
-  "create_instance_invalid_alert": "Please address the errors in your form to proceed",
   "instance_name": "Instance name",
   "create_instance_name_helper_text": "Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
   "cloud_provider": "Cloud provider",
@@ -251,7 +249,9 @@
     "name": "Name",
     "owner": "Owner",
     "description": "Description",
-    "reset_credentials": "Reset credentials"
+    "reset_credentials": "Reset credentials",
+    "this_is_a_required_field": "This is a required field",
+    "create_instance_invalid_alert": "Please address the errors in your form to proceed"
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",
@@ -279,6 +279,8 @@
     "you_do_not_have_any_service_accounts_yet": "No service accounts yet",
     "create_service_account_to_get_started": "To get started, create a service account.",
     "unauthorized_access_to_service_accounts_title": "Access permissions needed",
-    "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators."
+    "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators.",
+    "create_a_service_account": "Create a service account",  
+    "service_account_creation_success_message": "Service account successfully created"
   }
 }
