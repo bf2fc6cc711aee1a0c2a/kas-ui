@@ -73,7 +73,7 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
         }}
       >
         <TextContent>
-          <Text component={TextVariants.small}>
+          <Text component={TextVariants.small} className="pf-u-mt-lg">
             {t('connect_to_the_kafka_instance_using_this_clientID_and_secret')}
           </Text>
         </TextContent>
@@ -92,7 +92,7 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
           </ClipboardCopy>
         </InputGroup>
         <TextContent>
-          <Text component={TextVariants.small}>
+          <Text component={TextVariants.small} className="pf-u-mt-lg">
             {t('create_service_account_credentials_warning_message')}
           </Text>
         </TextContent>
@@ -120,7 +120,7 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
 
   return (
     <Modal
-      variant={ModalVariant.small}
+      variant={ModalVariant.medium}
       title="Create a service account"
       isOpen={isOpen}
       onClose={handleClose}
