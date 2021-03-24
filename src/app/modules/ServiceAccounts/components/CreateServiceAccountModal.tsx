@@ -2,14 +2,13 @@ import React, { useState, useContext } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccount } from './../../../../openapi/api';
+import { DefaultApi } from './../../../../openapi/api';
 import { NewServiceAccount, FormDataValidationState } from './../../../models';
-import { isValidToken, ErrorCodes } from '@app/utils';
+import { isValidToken } from '@app/utils';
 import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError } from '@app/utils/error';
-import { MASFullPageError } from '@app/common';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AlertVariant } from '@patternfly/react-core';
 
@@ -25,8 +24,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   fetchServiceAccounts,
 }: CreateInstanceModalProps) => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
-  newServiceAccount.name = '';
-  newServiceAccount.description = '';
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [textInputNameValue, setTextInputNameValue] = useState('');
@@ -34,7 +31,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -72,8 +68,8 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
     let errorCode: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
-      errorCode = error.response?.data?.code;
     }
+    addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
   };
 
   const handleTextInputDescription = (value) => {
@@ -109,6 +105,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
             if (response.status >= 200) {
               resetForm();
               setIsOpen(false);
+              addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
               fetchServiceAccounts();
             }
           });
