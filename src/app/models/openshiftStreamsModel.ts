@@ -11,8 +11,3 @@ export class NewKafka {
     this.name = '';
   }
 }
-
-export type FormDataValidationState = {
-  fieldState?: 'success' | 'warning' | 'error' | 'default';
-  message?: string;
-};

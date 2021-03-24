@@ -236,10 +236,37 @@
   "max_filter_message": "日本語 Maximum number of filters reached. Please clear a filter before adding another.",
   "input_field_invalid_message": "日本語 Valid characters for {{name}} are lowercase letters from a to z, numbers from 0 to 9, underscore (_) hyphens (-) and percentage (%)",
   "common": {
+    "loding": "日本語 Loading",
+    "java": "日本語 JAVA",
+    "mvn": "日本語 MVN",
+    "cli": "日本語 CLI",
+    "curl": "日本語 CURL",
+    "client_key": "日本語 Client Key",
+    "client_secret": "日本語 Client Secret",
+    "resources": "日本語 Resources",
+    "sample_code": "日本語 Sample code",
+    "copy_clipboard": "日本語 Copy to clipboard",
+    "copy_clipboard_successfully": "日本語 Successfully copied to clipboard!",
     "name": "日本語 Name",
     "owner": "日本語 Owner",
     "description": "日本語 Description",
     "reset_credentials": "日本語 Reset credentials"
+  },
+  "serviceRegistry": {
+    "service_registry": "日本語 Service Registry",
+    "connect_to_registry": "日本語 Connect to Registry",
+    "delete_registry": "日本語 Delete Registry",
+    "welcome_to_service_registry": "日本語 Welcome to Service Registry",
+    "welcome_empty_state_body": "日本語 Store and manage artifacts, like schemas and APIs, with Service Registry. To get started, create your Service Registry.",
+    "create_service_registry": "日本語 Create Service Registry",
+    "unauthorized_empty_state_title": "日本語 Access entitlements needed",
+    "unauthorized_empty_state_body": "日本語 To set up a Service Registry, your account needs the appropriate access entitlements",
+    "get_access_to_service_registry": "日本語 Get access to Service Registry",
+    "connection_details": "日本語 Connection details",
+    "tab_sample_code_title_info": "日本語 Below are example configuration snippets for accessing Service Registry from different runtimes.",
+    "tab_resources_title_info": "日本語 To connect an application or tool to this service registry, you will need the information below.",
+    "tab_resources_content_1": "日本語 Registry REST API URL",
+    "tab_resources_content_2": "日本語 MAS-SSO Instance URL"
   },
   "serviceAccount": {
     "service_accounts": "日本語 Service Accounts",
@@ -248,9 +275,11 @@
     "delete_service_account": "日本語 Delete service account",
     "service_account_list": "日本語 Service account list",
     "create_service_account": "日本語 Create service account",
-    "you_do_not_have_any_service_accounts_yet": "日本語 You don't have any service accounts yet",
-    "create_service_account_to_get_started": "日本語 Create a service account to get started",
+    "you_do_not_have_any_service_accounts_yet": "日本語 No service accounts yet",
+    "create_service_account_to_get_started": "日本語 To get started, create a service account.",
     "unauthorized_access_to_service_accounts_title": "日本語 Access permissions needed",
-    "unauthorized_access_to_service_accounts_info": "日本語 To access Service Accounts, contact your organization administrators."
+    "unauthorized_access_to_service_accounts_info": "日本語 To access Service Accounts, contact your organization administrators.",
+     "create_a_service_account": "日本語 Create a service account",
+    "service_account_creation_success_message": "日本語 Service account successfully created"
   }
 }

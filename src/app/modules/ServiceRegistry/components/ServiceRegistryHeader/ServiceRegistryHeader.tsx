@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Level, LevelItem, Title, Dropdown, DropdownItem, DropdownPosition, KebabToggle } from '@patternfly/react-core';
+import {
+  Level,
+  LevelItem,
+  TextContent,
+  Text,
+  Dropdown,
+  DropdownItem,
+  DropdownPosition,
+  KebabToggle,
+} from '@patternfly/react-core';
 
 export type ServiceRegistryHeaderProps = {
   name: string;
@@ -26,20 +35,20 @@ export const ServiceRegistryHeader: React.FC<ServiceRegistryHeaderProps> = ({
   };
 
   const dropdownItems = [
-    <DropdownItem key="connect-registry" aria-label="connect to registry" onClick={() => onConnectToRegistry(name)}>
-      Connect to Registry
+    <DropdownItem key="connect-registry" onClick={() => onConnectToRegistry(name)}>
+      {t('serviceRegistry.connect_to_registry')}
     </DropdownItem>,
-    <DropdownItem key="delete-registry" aria-label="delete registry" onClick={() => onDeleteRegistry(name)}>
-      Delete Registry
+    <DropdownItem key="delete-registry" onClick={() => onDeleteRegistry(name)}>
+      {t('serviceRegistry.delete_registry')}
     </DropdownItem>,
   ];
 
   return (
     <Level>
       <LevelItem>
-        <Title headingLevel="h1" size="2xl">
-          {t('service_registry')}
-        </Title>
+        <TextContent>
+          <Text component="h1"> {t('serviceRegistry.service_registry')}</Text>
+        </TextContent>
       </LevelItem>
       <LevelItem>
         <Dropdown

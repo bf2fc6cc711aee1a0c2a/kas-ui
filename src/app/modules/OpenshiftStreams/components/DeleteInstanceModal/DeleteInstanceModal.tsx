@@ -48,6 +48,7 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
       title={title}
       confirmButtonProps={{
         isDisabled: isConfirmButtonDisabled(),
+        'data-testid': 'modalDeleteKafka-buttonDelete',
         ...confirmButtonProps,
       }}
       cancelButtonProps={cancelButtonProps}

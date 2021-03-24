@@ -1,7 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Level, LevelItem, PageSection, PageSectionVariants, Title, AlertVariant } from '@patternfly/react-core';
+import {
+  Level,
+  LevelItem,
+  PageSection,
+  PageSectionVariants,
+  TextContent,
+  Text,
+  AlertVariant,
+} from '@patternfly/react-core';
 import {
   StreamsTableView,
   FilterType,
@@ -253,9 +261,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
             <PageSection variant={PageSectionVariants.light}>
               <Level>
                 <LevelItem>
-                  <Title headingLevel="h1" size="lg">
-                    {t('openshift_streams')}
-                  </Title>
+                  <TextContent>
+                    <Text component="h1"> {t('openshift_streams')}</Text>
+                  </TextContent>
                 </LevelItem>
               </Level>
             </PageSection>

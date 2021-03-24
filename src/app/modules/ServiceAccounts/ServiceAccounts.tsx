@@ -186,7 +186,12 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               </TextContent>
             </LevelItem>
           </Level>
-          <CreateServiceAccountModal isOpen={isCreateServiceAccountModalOpen} setIsOpen={setIsCreateServiceAccountModalOpen}/>
+          <CreateServiceAccountModal
+            isOpen={isCreateServiceAccountModalOpen}
+            setIsOpen={setIsCreateServiceAccountModalOpen}
+            handleCreateModal={handleCreateModal}
+            fetchServiceAccounts={fetchServiceAccounts}
+          />
           <DeleteServiceAccountModal isOpen={isDeleteServiceAccountModalOpen} setIsOpen={setIsDeleteServiceAccountModalOpen} serviceAccountToDelete={serviceAccountToDelete} fetchServiceAccounts={fetchServiceAccounts}/>
         </PageSection>
         {renderTableView()}
