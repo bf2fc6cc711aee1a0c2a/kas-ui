@@ -443,7 +443,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
         <Alert
           variant="danger"
           isInline
-          title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please turn off the mock UI to generate credentials."
+          title="These credentials were not actually generated from this flow as it is part of the mock UI. For now, please turn off the mock UI to generate a service account."
         />
       )}
       <MASEmptyState
@@ -510,7 +510,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
     return steps;
   };
 
-  const title = t('generate_credential');
+  const title = t('create_service_account');
 
   return (
     <>
@@ -523,7 +523,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
           isLoading={isLoading}
           data-testid="drawerStreams-buttonCreateServiceAccount"
         >
-          {t('generate_credential')}
+          {t('create_service_account')}
         </Button>
       </FlexItem>
       <Wizard

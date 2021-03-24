@@ -85,7 +85,7 @@ describe('<StreamsTableView/>', () => {
     expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
   });
 
-  it('should render the Delete Instance Modal component if isDeleteModalOpen is true', async () => {
+  it('should render the Delete Modal component if isDeleteModalOpen is true', async () => {
     //arrange
     setup(props);
 
@@ -97,18 +97,18 @@ describe('<StreamsTableView/>', () => {
     act(() => {
       userEvent.click(kebabDropdownButton);
     });
-    const deleteInstanceButton: any = screen.getByRole('button', { name: /Delete instance/i });
+    const deleteInstanceButton: any = screen.getByRole('button', { name: /Delete/i });
 
     //assert
-    expect(screen.getByText('Delete instance')).toBeInTheDocument();
+    expect(screen.getByText('Delete')).toBeInTheDocument();
     act(() => {
       userEvent.click(deleteInstanceButton);
     });
-    //check delete instance modal is open
-    expect(screen.getByRole('heading', { name: /Delete instance?/i })).toBeInTheDocument();
+    //check delete modal is open
+    expect(screen.getByRole('heading', { name: /Delete?/i })).toBeInTheDocument();
   });
 
-  it('should disable the delete instance kebab button if the ower and loggedInUser are not the same', () => {
+  it('should disable the delete kebab button if the ower and loggedInUser are not the same', () => {
     //arrange
     const newProps = Object.assign({}, props);
     newProps.kafkaInstanceItems[0].owner = 'test-user';
@@ -119,7 +119,7 @@ describe('<StreamsTableView/>', () => {
     act(() => {
       userEvent.click(kebabDropdownButton);
     });
-    const classList: string[] = screen.getByRole('button', { name: /Delete instance/i }).className.split(' ');
+    const classList: string[] = screen.getByRole('button', { name: /Delete/i }).className.split(' ');
 
     //assert
     expect(classList).toContain('pf-m-disabled');

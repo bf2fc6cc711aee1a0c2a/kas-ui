@@ -69,7 +69,7 @@ describe('<CreateInstanceModal/>', () => {
     setupRender(props);
 
     //assert
-    expect(screen.getByText('Create a Kafka instance')).toBeInTheDocument();
+    expect(screen.getByText('Create Kafka instance')).toBeInTheDocument();
   });
 
   it('should call listCloudProviderRegions api by default and set the data in state', async () => {
@@ -166,7 +166,7 @@ describe('<CreateInstanceModal/>', () => {
       expect(instanceNameInput).toHaveValue('@');
       expect(
         screen.getByText(
-          'Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.'
+          'Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).'
         )
       ).toBeInTheDocument();
     });
