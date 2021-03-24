@@ -16,10 +16,10 @@ import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Flex/flex.css';
 import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';
 import { useTranslation } from 'react-i18next';
-import { ApiContext } from '@app/api/ApiContext';
-import { AuthContext } from '@app/auth/AuthContext';
-import { isServiceApiError } from '@app/utils/error';
-import { DefaultApi, ServiceAccountRequest } from '../../../openapi/api';
+// import { ApiContext } from '@app/api/ApiContext';
+// import { AuthContext } from '@app/auth/AuthContext';
+// import { isServiceApiError } from '@app/utils/error';
+// import { DefaultApi, ServiceAccountRequest } from '../../../openapi/api';
 import { MASEmptyState } from '@app/common';
 import './MASGenerateCredentialsModal.css';
 
@@ -29,61 +29,22 @@ type MASGenerateCredentialsModalProps = {
   setIsOpen: (isOpen: boolean) => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
+  credential: any | undefined;
+  setCredential: (credential: any) => void;
 };
 
 const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModalProps> = ({
-  instanceName = '',
   isOpen,
   setIsOpen,
-  isLoading,
-  setIsLoading
+  credential,
+  setCredential
 }: MASGenerateCredentialsModalProps) => {
+
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
 
   const [isCreated, setIsCreated] = useState(false);
   const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
-  const [credential, setCredential] = useState<any | undefined>();
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    generateCredential();
-  }, []);
-
-
-  const generateCredential = async () => {
-    const accessToken = await authContext?.getToken();
-    const serviceAccountRequest: ServiceAccountRequest = {
-      name: instanceName,
-    };
-    const apisService = new DefaultApi({
-      accessToken,
-      basePath,
-    });
-
-    try {
-      await apisService.createServiceAccount(serviceAccountRequest).then((res) => {
-        setCredential(res?.data);
-        setIsLoading(false);
-        setIsOpen(true);
-      });
-    } catch (err) {
-      setIsLoading(false);
-      let reason;
-      if (isServiceApiError(err)) {
-        reason = err.response?.data.reason;
-      }
-      setError(reason);
-    }
-  };
-
-  // const handleModalToggle = () => {
-  //     setIsLoading(true);
-  //     setError('');
-  //     setCredential(undefined);
-  //     generateCredential();
-  // };
 
   const handleClose = () => {
     setIsOpen(false);
@@ -106,12 +67,12 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
           icon: KeyIcon,
         }}
         titleProps={{
-          title: t('credential_successfully_generated'),
+          title: t('credentials_successfully_generated'),
           headingLevel: 'h4',
           size: TitleSizes.lg,
         }}
         emptyStateBodyProps={{
-          body: t('clientid_empty_state_body'),
+          body: t('connect_to_the_kafka_instance_using_this_clientID_and_secret'),
         }}
       >
         <InputGroup className="pf-u-mt-lg">

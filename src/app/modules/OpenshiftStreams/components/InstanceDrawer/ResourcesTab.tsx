@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   Button,
   TextContent,
@@ -10,6 +10,10 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
+import { ApiContext } from '@app/api/ApiContext';
+import { AuthContext } from '@app/auth/AuthContext';
+import { isServiceApiError } from '@app/utils/error';
+import { DefaultApi, ServiceAccountRequest } from '../../../../../openapi/api';
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;
@@ -24,13 +28,48 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
 }: ResourcesTabProps) => {
 
   const { t } = useTranslation();
+  const { basePath } = useContext(ApiContext);
+  const authContext = useContext(AuthContext);
 
   const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [credential, setCredential] = useState<any | undefined>();
 
-  const handleGenerateCredentialsModal = () => {
+  const generateCredential = async () => {
+    const accessToken = await authContext?.getToken();
+    const serviceAccountRequest: ServiceAccountRequest = {
+      name: instanceName,
+    };
+    const apisService = new DefaultApi({
+      accessToken,
+      basePath,
+    });
+
+    try {
+      await apisService.createServiceAccount(serviceAccountRequest).then((res) => {
+        setCredential(res?.data);
+        setIsLoading(false);
+        setIsGenerateCredentialsModalOpen(true);
+      });
+    } catch (err) {
+      setIsLoading(false);
+      let reason;
+      if (isServiceApiError(err)) {
+        reason = err.response?.data.reason;
+      }
+      // TO DO: Add error - setError(reason);
+    }
+  };
+
+  const handleGenerateCredentialsModal = async () => {
     setIsLoading(true);
-    setIsGenerateCredentialsModalOpen(!isGenerateCredentialsModalOpen);
+    try {
+      await generateCredential();
+      setIsGenerateCredentialsModalOpen(!isGenerateCredentialsModalOpen);
+    }
+    catch {
+      // TO DO: Add error
+    }
   }
 
   return (
@@ -75,7 +114,9 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           setIsOpen={setIsGenerateCredentialsModalOpen}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
-        /> 
+          credential={credential}
+          setCredential={setCredential}
+        />
       )}
     </div>
   );
