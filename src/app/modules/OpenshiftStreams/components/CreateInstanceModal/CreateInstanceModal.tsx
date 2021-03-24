@@ -18,8 +18,7 @@ import {
   DrawerContentBody,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { NewKafka } from '../../../../models/openshiftStreamsModel';
-import { FormDataValidationState } from '../../../../models/sharedModels';
+import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import './CreateInstanceModal.css';
@@ -371,7 +370,6 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   };
 
   return (
-
     <MASCreateModal
       isModalOpen={isModalOpen}
       title={t('create_a_kafka_instance')}
@@ -384,13 +382,13 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       dataTestIdCancel="modalCreateKafka-buttonCancel"
     >
       {mainToggle === true ? (
-          <Drawer isStatic className="mk--create-instance-modal__drawer--content">
-            <DrawerContent panelContent={<DrawerPanelContentInfo />}>
-              <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
-            </DrawerContent>
-          </Drawer>
-        ) : (
-          createInstanceForm()
+        <Drawer isStatic className="mk--create-instance-modal__drawer--content">
+          <DrawerContent panelContent={<DrawerPanelContentInfo />}>
+            <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        createInstanceForm()
       )}
     </MASCreateModal>
   );

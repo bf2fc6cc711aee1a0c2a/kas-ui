@@ -1,17 +1,10 @@
-import React, {useState, useContext} from 'react';
-import {
-  Alert,
-  Form,
-  FormAlert,
-  FormGroup,
-  TextInput
-} from '@patternfly/react-core';
+import React, { useState, useContext } from 'react';
+import { Alert, Form, FormAlert, FormGroup, TextInput } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi, ServiceAccount } from './../../../../openapi/api';
-import { NewServiceAccount } from './../../../models/serviceAccountsModel';
-import { FormDataValidationState } from './../../../models/sharedModels';
-import { isValidToken, ErrorCodes} from '@app/utils';
+import { NewServiceAccount, FormDataValidationState } from './../../../models';
+import { isValidToken, ErrorCodes } from '@app/utils';
 import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { useTranslation } from 'react-i18next';
@@ -21,13 +14,16 @@ import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AlertVariant } from '@patternfly/react-core';
 
 export type CreateInstanceModalProps = {
-  isOpen: boolean,
+  isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   fetchServiceAccounts: () => void;
-}
+};
 
-const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({isOpen, setIsOpen, fetchServiceAccounts}: CreateInstanceModalProps) => {
-
+const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({
+  isOpen,
+  setIsOpen,
+  fetchServiceAccounts,
+}: CreateInstanceModalProps) => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   newServiceAccount.name = '';
   newServiceAccount.description = '';
@@ -50,7 +46,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
     setTextInputDescriptionValue('');
     setServiceAccountFormData(newServiceAccount);
     setIsFormValid(true);
-  }
+  };
 
   const handleTextInputName = (name) => {
     let isValid = true;
@@ -79,8 +75,8 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
       errorCode = error.response?.data?.code;
     }
   };
-  
-  const handleTextInputDescription = value => {
+
+  const handleTextInputDescription = (value) => {
     setTextInputDescriptionValue(value);
     setServiceAccountFormData({ ...serviceAccountFormData, description: value });
   };
@@ -93,42 +89,41 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
       setNameValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
     }
     return isValid;
-  }
+  };
 
   const createServiceAccount = async () => {
     let isValid = validateCreateForm();
     const accessToken = await authContext?.getToken();
 
-    if(!isValid) {
+    if (!isValid) {
       setIsFormValid(false);
-    }
-    else {
+    } else {
       if (isValidToken(accessToken)) {
         try {
           const apisService = new DefaultApi({
             accessToken,
             basePath,
-        });
-        setCreationInProgress(true);
-        await apisService.createServiceAccount(serviceAccountFormData).then((response) => {
-          if(response.status >= 200 ) {
-            resetForm();
-            setIsOpen(false);
-            fetchServiceAccounts();
-          }
-        });
+          });
+          setCreationInProgress(true);
+          await apisService.createServiceAccount(serviceAccountFormData).then((response) => {
+            if (response.status >= 200) {
+              resetForm();
+              setIsOpen(false);
+              fetchServiceAccounts();
+            }
+          });
         } catch (error) {
           handleServerError(error);
         }
       }
       setCreationInProgress(false);
     }
-  }
+  };
 
   const handleCreateModal = () => {
     resetForm();
     setIsOpen(!isOpen);
-  }
+  };
 
   const onFormSubmit = (event) => {
     event.preventDefault();
@@ -163,10 +158,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
             validated={fieldState}
           />
         </FormGroup>
-        <FormGroup
-          label="Description"
-          fieldId="text-input-description"
-        >
+        <FormGroup label="Description" fieldId="text-input-description">
           <TextInput
             isRequired
             type="text"
@@ -178,9 +170,9 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
           />
         </FormGroup>
       </Form>
-    )
-  }
-  
+    );
+  };
+
   return (
     <MASCreateModal
       isModalOpen={isOpen}
@@ -193,7 +185,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
     >
       {createForm()}
     </MASCreateModal>
-  )
-}
+  );
+};
 
 export { CreateServiceAccountModal };
