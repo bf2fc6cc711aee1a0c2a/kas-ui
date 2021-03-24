@@ -33,7 +33,7 @@ const UnexpectedError = ({ updateState }: UnexpectedError) => {
           className: 'icon-color',
         }}
         titleProps={{
-          title: t('something_went_wrong'),
+          title: t('common.something_went_wrong'),
           headingLevel: 'h1',
           size: TitleSizes.lg,
         }}

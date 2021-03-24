@@ -10,7 +10,7 @@ export type DeleteInstanceModalProps = MASDeleteModalProps & {
 
 export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
   isModalOpen,
-  modalProps,
+  title,
   confirmButtonProps,
   cancelButtonProps,
   handleModalToggle,
@@ -45,9 +45,10 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
   return (
     <MASDeleteModal
       isModalOpen={isModalOpen}
-      modalProps={modalProps}
+      title={title}
       confirmButtonProps={{
         isDisabled: isConfirmButtonDisabled(),
+        'data-testid': 'modalDeleteKafka-buttonDelete',
         ...confirmButtonProps,
       }}
       cancelButtonProps={cancelButtonProps}

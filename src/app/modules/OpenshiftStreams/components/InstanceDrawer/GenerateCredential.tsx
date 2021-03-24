@@ -510,7 +510,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
     return steps;
   };
 
-  const title = t('generate_credential');
+  const title = t('create_service_account');
 
   return (
     <>
@@ -523,7 +523,7 @@ const GenerateCredential: FunctionComponent<GenerateCredential> = ({
           isLoading={isLoading}
           data-testid="drawerStreams-buttonCreateServiceAccount"
         >
-          {t('generate_credential')}
+          {t('create_service_account')}
         </Button>
       </FlexItem>
       <Wizard

@@ -79,7 +79,7 @@ export const getDeleteInstanceModalConfig = (
     description: '',
   };
   if (status === InstanceStatus.READY) {
-    config.title = `${t('delete')}?`;
+    config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
     config.description = t('delete_instance_status_complete', { instanceName });
   } else if (
@@ -87,7 +87,7 @@ export const getDeleteInstanceModalConfig = (
     status === InstanceStatus.PROVISIONING ||
     status === InstanceStatus.PREPARING
   ) {
-    config.title = `${t('delete')}?`;
+    config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
     config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
@@ -298,8 +298,9 @@ const StreamsTableView = ({
         onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
       },
       {
-        title: t('delete'),
-        id: 'delete',
+        title: t('delete_instance'),
+        id: 'delete-instance',
+        ['data-testid']: 'tableStreams-actionDelete',
         onClick: (event: any) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
@@ -322,6 +323,7 @@ const StreamsTableView = ({
               e.preventDefault();
               onConnectToInstance(row as KafkaRequest);
             }}
+            data-testid="tableStreams-linkKafka"
           >
             {name}
           </Link>
@@ -365,7 +367,10 @@ const StreamsTableView = ({
       tableRow.push({
         cells: [
           {
-            title: status === InstanceStatus.DEPROVISION ? name : renderNameLink({ name, row }),
+            title:
+              status === InstanceStatus.DEPROVISION || status !== InstanceStatus.READY
+                ? name
+                : renderNameLink({ name, row }),
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -433,7 +438,7 @@ const StreamsTableView = ({
        * and translation for specific language
        *
        */
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -534,9 +539,11 @@ const StreamsTableView = ({
           actionResolver: actionResolver,
           onSort: onSort,
           sortBy: getSortBy(),
+          hasDefaultCustomRowWrapper: true,
         }}
         activeRow={activeRow}
         onRowClick={onRowClick}
+        rowDataTestId="tableStreams-row"
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <MASEmptyState
@@ -580,9 +587,7 @@ const StreamsTableView = ({
         instanceStatus={selectedInstance?.status}
         selectedItemData={selectedInstance}
         handleModalToggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
-        modalProps={{
-          title,
-        }}
+        title={title}
         confirmButtonProps={{
           onClick: onDeleteInstance,
           label: confirmActionLabel,

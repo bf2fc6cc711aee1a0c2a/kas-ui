@@ -1,7 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Level, LevelItem, PageSection, PageSectionVariants, Title, AlertVariant } from '@patternfly/react-core';
+import {
+  Level,
+  LevelItem,
+  PageSection,
+  PageSectionVariants,
+  TextContent,
+  Text,
+  AlertVariant,
+} from '@patternfly/react-core';
 import {
   StreamsTableView,
   FilterType,
@@ -113,7 +121,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -171,7 +179,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
          * and translation for specific language
          *
          */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };
@@ -222,7 +230,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
           headingLevel: 'h2',
         }}
         emptyStateBodyProps={{
-          body: t('contact_your_organization_administration_for_more_information'),
+          body: t('to_access_kafka_instances_contact_your_organization_administrators'),
         }}
       />
     );
@@ -253,9 +261,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
             <PageSection variant={PageSectionVariants.light}>
               <Level>
                 <LevelItem>
-                  <Title headingLevel="h1" size="lg">
-                    {t('kafka_instances')}
-                  </Title>
+                  <TextContent>
+                    <Text component="h1">{t('kafka_instances')}</Text>
+                  </TextContent>
                 </LevelItem>
               </Level>
             </PageSection>

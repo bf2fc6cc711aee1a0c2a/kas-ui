@@ -8,8 +8,6 @@ import {
   FormGroup,
   FormSelect,
   FormSelectOption,
-  Modal,
-  ModalVariant,
   TextInput,
   Tile,
   ToggleGroup,
@@ -18,7 +16,7 @@ import {
   DrawerContentBody,
   ToggleGroupItem,
 } from '@patternfly/react-core';
-import { FormDataValidationState, NewKafka } from '../../../../models/OpenshiftStreamsModel';
+import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import './CreateInstanceModal.css';
@@ -31,6 +29,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { isValidToken, ErrorCodes } from '@app/utils';
+import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
 
 export type CreateInstanceModalProps = {
   isModalOpen: boolean;
@@ -118,7 +117,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
          * and translation for specific language
          *
          */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };
@@ -141,7 +140,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
     const { name, region } = kafkaFormData;
     if (!name || name.trim() === '') {
       isValid = false;
-      setNameValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
+      setNameValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
     } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
@@ -155,7 +154,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
     }
     if (!region || region.trim() === '') {
       isValid = false;
-      setCloudRegionValidated({ fieldState: 'error', message: t('this_is_a_required_field') });
+      setCloudRegionValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
     }
     return isValid;
   };
@@ -174,6 +173,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
             basePath,
           });
           onCreate();
+          setCreationInProgress(true);
           await apisService.createKafka(true, kafkaFormData).then((res) => {
             resetForm();
             setIsModalOpen(false);
@@ -199,7 +199,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
            * and translation for specific language
            *
            */
-          toShowAlert && addAlert(t('something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
+          toShowAlert && addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
         }
         setCreationInProgress(false);
       }
@@ -280,7 +280,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
           <FormAlert>
-            <Alert variant="danger" title={t('create_instance_invalid_alert')} aria-live="polite" isInline />
+            <Alert variant="danger" title={t('common.create_instance_invalid_alert')} aria-live="polite" isInline />
           </FormAlert>
         )}
         <FormGroup
@@ -368,44 +368,27 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   };
 
   return (
-    <>
-      <Modal
-        id="modalCreateKafka"
-        variant={ModalVariant.medium}
-        title={t('create_kafka_instance')}
-        isOpen={isModalOpen}
-        onClose={handleModalToggle}
-        actions={[
-          <Button
-            key="create"
-            variant="primary"
-            type="submit"
-            onClick={onCreateInstance}
-            isDisabled={!isFormValid || isCreationInProgress}
-            spinnerAriaValueText={t('submitting_request')}
-            isLoading={isCreationInProgress}
-            data-testid="modalCreateKafka-buttonSubmit"
-          >
-            {t('create_instance')}
-          </Button>,
-          <Button key="cancel" variant="link" onClick={handleModalToggle} data-testid="modalCreateKafka-buttonCancel">
-            {t('cancel')}
-          </Button>,
-        ]}
-      >
-        {mainToggle === true ? (
-          <Drawer isStatic className="mk--create-instance-modal__drawer--content">
-            <DrawerContent panelContent={<DrawerPanelContentInfo />}>
-              <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
-            </DrawerContent>
-          </Drawer>
-        ) : (
-          createInstanceForm()
-        )}
-        <br />
-        <br />
-      </Modal>
-    </>
+    <MASCreateModal
+      isModalOpen={isModalOpen}
+      title={t('create_a_kafka_instance')}
+      handleModalToggle={handleModalToggle}
+      onCreate={onCreateInstance}
+      isFormValid={isFormValid}
+      primaryButtonTitle={t('create_instance')}
+      isCreationInProgress={isCreationInProgress}
+      dataTestIdSubmit="modalCreateKafka-buttonSubmit"
+      dataTestIdCancel="modalCreateKafka-buttonCancel"
+    >
+      {mainToggle === true ? (
+        <Drawer isStatic className="mk--create-instance-modal__drawer--content">
+          <DrawerContent panelContent={<DrawerPanelContentInfo />}>
+            <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        createInstanceForm()
+      )}
+    </MASCreateModal>
   );
 };
 
