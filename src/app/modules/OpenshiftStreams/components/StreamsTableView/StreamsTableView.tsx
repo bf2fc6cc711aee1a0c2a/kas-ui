@@ -438,7 +438,7 @@ const StreamsTableView = ({
        * and translation for specific language
        *
        */
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -587,9 +587,7 @@ const StreamsTableView = ({
         instanceStatus={selectedInstance?.status}
         selectedItemData={selectedInstance}
         handleModalToggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
-        modalProps={{
-          title,
-        }}
+        title={title}
         confirmButtonProps={{
           onClick: onDeleteInstance,
           label: confirmActionLabel,

@@ -121,7 +121,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -179,7 +179,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
          * and translation for specific language
          *
          */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };

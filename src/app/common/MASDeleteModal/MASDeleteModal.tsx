@@ -13,7 +13,8 @@ import './MASDeleteModal.css';
 
 export type MASDeleteModalProps = {
   isModalOpen: boolean;
-  modalProps: Omit<ModalProps, 'children' | 'ref'>;
+  title: string;
+  modalProps?: Omit<ModalProps, 'children' | 'ref'>;
   handleModalToggle: () => void;
   children?: React.ReactNode;
   selectedItemData?: any;
@@ -36,6 +37,7 @@ export type MASDeleteModalProps = {
 
 export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   isModalOpen,
+  title,
   modalProps,
   confirmButtonProps,
   cancelButtonProps,
@@ -48,7 +50,6 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
     variant = ModalVariant.small,
     titleIconVariant = 'warning',
     ['aria-label']: ariaLabel,
-    title,
     showClose = true,
     ...restModalProps
   } = modalProps || {};

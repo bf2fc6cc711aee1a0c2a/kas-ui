@@ -12,17 +12,17 @@ import { isServiceApiError } from '@app/utils/error';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AlertVariant } from '@patternfly/react-core';
 
-export type CreateInstanceModalProps = {
+export type CreateServiceAccountModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   fetchServiceAccounts: () => void;
 };
 
-const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({
+const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountModalProps> = ({
   isOpen,
   setIsOpen,
   fetchServiceAccounts,
-}: CreateInstanceModalProps) => {
+}: CreateServiceAccountModalProps) => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
