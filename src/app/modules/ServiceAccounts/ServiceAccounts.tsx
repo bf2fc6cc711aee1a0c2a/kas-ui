@@ -18,6 +18,7 @@ import { isServiceApiError, ErrorCodes } from '@app/utils';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { MASEmptyState, MASLoading, AlertProvider, useAlerts, MASFullPageError } from '@app/common';
 import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
+import { DeleteServiceAccountModal } from './components/DeleteServiceAccountModal';
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
@@ -46,6 +47,8 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
+  const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
+  const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -58,7 +61,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -87,10 +90,13 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
 
   const onResetCredentials = () => {};
 
-  const onDeleteServiceAccount = () => {};
-
   const handleCreateModal = () => {
     setIsCreateServiceAccountModalOpen(!isCreateServiceAccountModalOpen);
+  }
+
+  const handleDeleteModal = (serviceAccount: ServiceAccountListItem) => {
+    setIsDeleteServiceAccountModalOpen(!isDeleteServiceAccountModalOpen);
+    setServiceAccountToDelete(serviceAccount);
   }
 
   const renderTableView = () => {
@@ -142,7 +148,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               filteredValue={filteredValue}
               setFilteredValue={setFilteredValue}
               onResetCredentials={onResetCredentials}
-              onDeleteServiceAccount={onDeleteServiceAccount}
+              onDeleteServiceAccount={handleDeleteModal}
               handleCreateModal={handleCreateModal}
             />
           </PageSection>
@@ -186,6 +192,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
             handleCreateModal={handleCreateModal}
             fetchServiceAccounts={fetchServiceAccounts}
           />
+          <DeleteServiceAccountModal isOpen={isDeleteServiceAccountModalOpen} setIsOpen={setIsDeleteServiceAccountModalOpen} serviceAccountToDelete={serviceAccountToDelete} fetchServiceAccounts={fetchServiceAccounts}/>
         </PageSection>
         {renderTableView()}
       </AlertProvider>

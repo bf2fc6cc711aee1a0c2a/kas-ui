@@ -2,7 +2,7 @@
   "global_navigation": "Global navigation",
   "global": "global",
   "skip_to_content": "Skip to Content",
-  "something_went_wrong": "Something went wrong",
+  "this_is_a_required_field": "This is a required field",
   "create_instance_name_invalid_helper_text": "Valid characters for instance name are lowercase letters from a to z, numbers from 0 to 9, and hyphens (-). The name must start with a letter, and must end with a letter or number.",
   "create_a_kafka_instance": "Create a Kafka instance",
   "create_instance": "Create instance",
@@ -252,7 +252,8 @@
     "description": "Description",
     "reset_credentials": "Reset credentials",
     "this_is_a_required_field": "This is a required field",
-    "create_instance_invalid_alert": "Please address the errors in your form to proceed"
+    "create_instance_invalid_alert": "Please address the errors in your form to proceed",
+    "something_went_wrong": "Something went wrong"
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",
@@ -282,6 +283,7 @@
     "unauthorized_access_to_service_accounts_title": "Access permissions needed",
     "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators.",
     "create_a_service_account": "Create a service account",  
-    "service_account_creation_success_message": "Service account successfully created"
+    "service_account_creation_success_message": "Service account successfully created",
+    "will_be_deleted": "will be deleted."
   }
 }
