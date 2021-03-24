@@ -10,6 +10,9 @@ import {
   InputGroup,
   InputGroupText,
   TitleSizes,
+  TextContent,
+  Text,
+  TextVariants
 } from '@patternfly/react-core';
 import KeyIcon from '@patternfly/react-icons/dist/js/icons/key-icon';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
@@ -68,10 +71,12 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
           headingLevel: 'h4',
           size: TitleSizes.lg,
         }}
-        emptyStateBodyProps={{
-          body: t('connect_to_the_kafka_instance_using_this_clientID_and_secret'),
-        }}
       >
+        <TextContent>
+          <Text component={TextVariants.small}>
+            {t('connect_to_the_kafka_instance_using_this_clientID_and_secret')}
+          </Text>
+        </TextContent>
         <InputGroup className="pf-u-mt-lg">
           <InputGroupText className="mk--generate-credential__empty-state--input-group">
             {t('client_id')}
@@ -86,6 +91,11 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
             {credential?.clientSecret}
           </ClipboardCopy>
         </InputGroup>
+        <TextContent>
+          <Text component={TextVariants.small}>
+            {t('create_service_account_credentials_warning_message')}
+          </Text>
+        </TextContent>
         <Bullseye className="pf-u-mt-lg">
           <Checkbox
             label={t('client_id_confirmation_checkbox_label')}

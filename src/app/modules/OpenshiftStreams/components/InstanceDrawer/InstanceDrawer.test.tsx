@@ -170,7 +170,7 @@ describe('Drawer Connection Tab', () => {
     expect(getByText('drawer_resource_tab_body_description_1')).toBeInTheDocument();
     expect(getByText('kafka_listener_and_credentials')).toBeInTheDocument();
     expect(getByText('drawer_resource_tab_body_description_2')).toBeInTheDocument();
-    expect(getByText('external_server')).toBeInTheDocument();
+    expect(getByText('bootstrap_server')).toBeInTheDocument();
   });
 
   it('should render connection tab with resource and sample code tabs in toggle on', () => {
@@ -178,7 +178,7 @@ describe('Drawer Connection Tab', () => {
     expect(getByText('drawer_resource_tab_body_description_1')).toBeInTheDocument();
     expect(getByText('kafka_listener_and_credentials')).toBeInTheDocument();
     expect(getByText('drawer_resource_tab_body_description_2')).toBeInTheDocument();
-    expect(getByText('external_server')).toBeInTheDocument();
+    expect(getByText('bootstrap_server')).toBeInTheDocument();
 
     expect(getByText('resources')).toBeInTheDocument();
     expect(getByText('sample_code')).toBeInTheDocument();
@@ -197,7 +197,7 @@ describe('Drawer Connection Tab', () => {
     expect(getByText('drawer_resource_tab_body_description_1')).toBeDefined();
     expect(getByText('kafka_listener_and_credentials')).toBeDefined();
     expect(getByText('drawer_resource_tab_body_description_2')).toBeDefined();
-    expect(getByText('external_server')).toBeDefined();
+    expect(getByText('bootstrap_server')).toBeDefined();
 
     expect(getByText('resources')).toBeDefined();
     expect(getByText('sample_code')).toBeDefined();

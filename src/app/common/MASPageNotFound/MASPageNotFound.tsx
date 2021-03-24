@@ -13,7 +13,7 @@ const MASPageNotFound: React.FunctionComponent = () => {
     function handleClick() {
       history.push('/');
     }
-    return <Button onClick={handleClick}>{t('take_me_home')}</Button>;
+    return <Button onClick={handleClick}>{t('return_to_home_page')}</Button>;
   }
 
   return (
@@ -21,9 +21,9 @@ const MASPageNotFound: React.FunctionComponent = () => {
       <MASEmptyState
         emptyStateProps={{ variant: EmptyStateVariant.full }}
         emptyStateIconProps={{ icon: ExclamationTriangleIcon }}
-        titleProps={{ title: t('404_page_not_found'), headingLevel: 'h1', size: TitleSizes.lg }}
+        titleProps={{ title: t('404_page_does_not_exist'), headingLevel: 'h1', size: TitleSizes.lg }}
         emptyStateBodyProps={{
-          body: t('we_did_not_find_a_page_that_matches_the_address_you_navigated_to'),
+          body: t('we_cannot_find_the_page_you_are_looking_for'),
         }}
       >
         <GoHomeBtn />

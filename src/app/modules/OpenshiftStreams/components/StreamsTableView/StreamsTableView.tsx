@@ -80,7 +80,7 @@ export const getDeleteInstanceModalConfig = (
   };
   if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
-    config.confirmActionLabel = t('delete_instance');
+    config.confirmActionLabel = t('delete');
     config.description = t('delete_instance_status_complete', { instanceName });
   } else if (
     status === InstanceStatus.ACCEPTED ||
@@ -88,7 +88,7 @@ export const getDeleteInstanceModalConfig = (
     status === InstanceStatus.PREPARING
   ) {
     config.title = `${t('delete_instance')}?`;
-    config.confirmActionLabel = t('delete_instance');
+    config.confirmActionLabel = t('delete');
     config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
   return config;
@@ -292,7 +292,7 @@ const StreamsTableView = ({
         onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
       },
       {
-        title: t('connect_to_instance'),
+        title: t('view_connection_information'),
         id: 'connect-instance',
         ['data-testid']: 'tableStreams-actionConnection',
         onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
@@ -438,7 +438,7 @@ const StreamsTableView = ({
        * and translation for specific language
        *
        */
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -559,7 +559,7 @@ const StreamsTableView = ({
             size: TitleSizes.lg,
           }}
           emptyStateBodyProps={{
-            body: t('no_results_match_the_filter_criteria'),
+            body: t('adjust_your_filters_and_try_again'),
           }}
         />
       )}
@@ -587,9 +587,7 @@ const StreamsTableView = ({
         instanceStatus={selectedInstance?.status}
         selectedItemData={selectedInstance}
         handleModalToggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
-        modalProps={{
-          title,
-        }}
+        title={title}
         confirmButtonProps={{
           onClick: onDeleteInstance,
           label: confirmActionLabel,

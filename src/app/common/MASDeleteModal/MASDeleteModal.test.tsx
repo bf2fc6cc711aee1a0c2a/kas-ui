@@ -45,7 +45,7 @@ describe('<MASDeleteModal/>', () => {
         id: 'delete-button',
         key: 'delete-button',
         onClick: onDelete,
-        label: 'Delete instance',
+        label: 'Delete',
       },
       cancelButtonProps: {
         id: 'cancel-button',
@@ -61,7 +61,7 @@ describe('<MASDeleteModal/>', () => {
 
     //act
     act(() => {
-      const deleteButton: any = screen.getByRole('button', { name: /Delete instance/i });
+      const deleteButton: any = screen.getByRole('button', { name: /Delete/i });
       userEvent.click(deleteButton);
     });
 
@@ -69,7 +69,7 @@ describe('<MASDeleteModal/>', () => {
     expect(onDelete).toHaveBeenCalled();
     screen.getByText('test title');
     expect(container).toHaveAttribute('aria-hidden', 'true');
-    screen.getByRole('button', { name: /Delete instance/i });
+    screen.getByRole('button', { name: /Delete/i });
     screen.getByRole('button', { name: /Cancel instance/i });
     screen.getByText('This is test instance');
 
@@ -93,7 +93,7 @@ describe('<MASDeleteModal/>', () => {
         <>
           <label
             htmlFor="instance-name-input"
-            dangerouslySetInnerHTML={{ __html: `Please type <b>${selectedInstanceName}</b> to confirm` }}
+            dangerouslySetInnerHTML={{ __html: `Type <b>${selectedInstanceName}</b> to confirm` }}
           />
           <TextInput
             id="mk--instance-name__input"

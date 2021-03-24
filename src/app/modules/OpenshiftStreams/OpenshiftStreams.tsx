@@ -121,7 +121,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -179,7 +179,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
          * and translation for specific language
          *
          */
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };
@@ -226,11 +226,11 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
     return (
       <MASFullPageError
         titleProps={{
-          title: t('you_do_not_have_access_to_openshift_streams'),
+          title: t('access_permissions_needed'),
           headingLevel: 'h2',
         }}
         emptyStateBodyProps={{
-          body: t('contact_your_organization_administration_for_more_information'),
+          body: t('to_access_kafka_instances_contact_your_organization_administrators'),
         }}
       />
     );
@@ -262,7 +262,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
               <Level>
                 <LevelItem>
                   <TextContent>
-                    <Text component="h1"> {t('openshift_streams')}</Text>
+                    <Text component="h1">{t('kafka_instances')}</Text>
                   </TextContent>
                 </LevelItem>
               </Level>
@@ -275,14 +275,14 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
               <PageSection>
                 <MASEmptyState
                   titleProps={{
-                    title: t('you_do_not_have_any_kafka_instances_yet'),
+                    title: t('no_kafka_instances_yet'),
                     headingLevel: 'h2',
                   }}
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),
                   }}
                   buttonProps={{
-                    title: t('create_a_kafka_instance'),
+                    title: t('create_kafka_instance'),
                     onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModal),
                     ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
                   }}

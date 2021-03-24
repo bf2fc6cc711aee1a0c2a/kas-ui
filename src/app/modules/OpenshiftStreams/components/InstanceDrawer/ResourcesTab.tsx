@@ -61,15 +61,9 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
     }
   };
 
-  const handleGenerateCredentialsModal = async () => {
+  const handleGenerateCredentialsModal = () => {
     setIsLoading(true);
-    try {
-      await generateCredential();
-      setIsGenerateCredentialsModalOpen(!isGenerateCredentialsModalOpen);
-    }
-    catch {
-      // TO DO: Add error
-    }
+    generateCredential();
   }
 
   return (
@@ -79,7 +73,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <Text component={TextVariants.h5}>{t('kafka_listener_and_credentials')}</Text>
         <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_2')}</Text>
         <Text component={TextVariants.p} className="pf-u-mt-md">
-          {t('external_server')}
+          {t('bootstrap_server')}
         </Text>
       </TextContent>
       <Flex>
@@ -95,7 +89,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
             isLoading={isLoading}
             data-testid="drawerStreams-buttonCreateServiceAccount"
           >
-            {t('generate_credential')}
+            {t('serviceAccount.create_service_account')}
           </Button>
       </FlexItem>
       </Flex>

@@ -13,17 +13,17 @@ import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AlertVariant } from '@patternfly/react-core';
 import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
 
-export type CreateInstanceModalProps = {
+export type CreateServiceAccountModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   fetchServiceAccounts: () => void;
 };
 
-const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProps> = ({
+const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountModalProps> = ({
   isOpen,
   setIsOpen,
   fetchServiceAccounts,
-}: CreateInstanceModalProps) => {
+}: CreateServiceAccountModalProps) => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -35,9 +35,9 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateInstanceModalProp
   const [credential, setCredential] = useState("");
   const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
 
+  const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
-  const { t } = useTranslation();
   const { addAlert } = useAlerts();
 
   const resetForm = () => {

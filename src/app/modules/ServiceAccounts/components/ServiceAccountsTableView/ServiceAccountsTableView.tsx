@@ -221,7 +221,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
             size: TitleSizes.lg,
           }}
           emptyStateBodyProps={{
-            body: t('no_results_match_the_filter_criteria'),
+            body: t('adjust_your_filters_and_try_again'),
           }}
         />
       )}
