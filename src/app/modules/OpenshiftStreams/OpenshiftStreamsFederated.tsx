@@ -16,11 +16,13 @@ export type OpenshiftStreamsFederatedProps = {
   getUsername: () => Promise<string>;
   onConnectToInstance: (data: KafkaRequest) => void;
   getConnectToInstancePath: (data: KafkaRequest) => string;
+  preCreateInstance: (open: boolean) => Promise<boolean>;
+  createDialogOpen: () => boolean;
   addAlert: (message: string, variant?: AlertVariant) => void;
   basePath: string;
 };
 
-const OpenshiftStreamsFederated = ({ getUsername, getToken, onConnectToInstance,getConnectToInstancePath, addAlert, basePath }: OpenshiftStreamsFederatedProps) => {
+const OpenshiftStreamsFederated = ({ getUsername, getToken, onConnectToInstance,getConnectToInstancePath, addAlert, basePath, preCreateInstance, createDialogOpen }: OpenshiftStreamsFederatedProps) => {
 
   const authContext = {
     getToken,
@@ -42,7 +44,7 @@ const OpenshiftStreamsFederated = ({ getUsername, getToken, onConnectToInstance,
       }>
         <AlertContext.Provider value={alertContext}>
           <AuthContext.Provider value={authContext}>
-            <OpenshiftStreams onConnectToInstance={onConnectToInstance} getConnectToInstancePath={getConnectToInstancePath}></OpenshiftStreams>
+            <OpenshiftStreams onConnectToInstance={onConnectToInstance} getConnectToInstancePath={getConnectToInstancePath} preCreateInstance={preCreateInstance} createDialogOpen={createDialogOpen} />
           </AuthContext.Provider>
         </AlertContext.Provider>
       </ApiContext.Provider>

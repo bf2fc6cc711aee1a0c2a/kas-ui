@@ -13,7 +13,7 @@ export const OpenshiftStreamsConnected = () => {
       }
     }>
       <AlertProvider>
-        <OpenshiftStreams onConnectToInstance={() => {}} getConnectToInstancePath={() => ""} />
+        <OpenshiftStreams onConnectToInstance={() => {}} getConnectToInstancePath={() => "" } preCreateInstance={(open) => Promise.resolve(open)} createDialogOpen={() => false}/>
       </AlertProvider>
     </ApiContext.Provider>
   );
