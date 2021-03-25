@@ -81,13 +81,15 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
           <InputGroupText className="mk--generate-credential__empty-state--input-group">
             {t('client_id')}
           </InputGroupText>
-          <ClipboardCopy isReadOnly className="pf-u-w-100" data-testid="modalCredentials-copyClientID">
+          <ClipboardCopy isReadOnly className="pf-u-w-100" data-testid="modalCredentials-copyClientID" textAriaLabel={t('client_id')}>
             {credential?.clientID}
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
-          <InputGroupText className="mk--generate-credential__empty-state--input-group">Client secret</InputGroupText>
-          <ClipboardCopy isReadOnly className="pf-u-w-100" data-testid="modalCredentials-copyClientSecret">
+          <InputGroupText className="mk--generate-credential__empty-state--input-group">
+            {t('common.client_secret')}
+          </InputGroupText>
+          <ClipboardCopy isReadOnly className="pf-u-w-100" data-testid="modalCredentials-copyClientSecret" textAriaLabel={t('common.client_secret')}>
             {credential?.clientSecret}
           </ClipboardCopy>
         </InputGroup>
@@ -121,9 +123,10 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
   return (
     <Modal
       variant={ModalVariant.medium}
-      title="Create a service account"
+      title={t('create_a_service_account')}
       isOpen={isOpen}
       onClose={handleClose}
+      showClose={false}
     >
       {generateCredentials}
     </Modal>
