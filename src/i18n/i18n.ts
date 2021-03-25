@@ -8,6 +8,7 @@ import * as relativeTime from 'dayjs/plugin/relativeTime';
 
 // import locales for any languages you're supporting (English is included by default)
 import 'dayjs/locale/ja';
+let kasi18n = i18n.createInstance();
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
@@ -16,7 +17,7 @@ declare const window: Window & {
   windowError: string;
 };
 
-i18n
+kasi18n
   .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
   // fetch json files
   // learn more: https://github.com/i18next/i18next-http-backend
@@ -77,8 +78,8 @@ i18n
     }
   );
 
-i18n.on('languageChanged', function (lng) {
+kasi18n.on('languageChanged', function (lng) {
   dayjs.locale(lng);
 });
 
-export default i18n;
+export default kasi18n;
