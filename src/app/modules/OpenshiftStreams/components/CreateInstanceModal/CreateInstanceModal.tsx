@@ -142,7 +142,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       setNameValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
     } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
-      setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
+      setNameValidated({ fieldState: 'error', message: t('common.input_filed_invalid_helper_text') });
     }
     if (name.length > MAX_INSTANCE_NAME_LENGTH) {
       isValid = false;
@@ -198,7 +198,8 @@ const CreateInstanceModal: React.FunctionComponent = () => {
            * and translation for specific language
            *
            */
-          toShowAlert && addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
+          toShowAlert &&
+            addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
         }
         setCreationInProgress(false);
       }
@@ -231,7 +232,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           setNameValidated({ fieldState: 'default', message: '' });
         }
       } else {
-        setNameValidated({ fieldState: 'error', message: t('create_instance_name_invalid_helper_text') });
+        setNameValidated({ fieldState: 'error', message: t('common.input_filed_invalid_helper_text') });
       }
     }
   };
@@ -279,7 +280,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
           <FormAlert>
-            <Alert variant="danger" title={t('common.create_instance_invalid_alert')} aria-live="polite" isInline />
+            <Alert variant="danger" title={t('common.form_invalid_alert')} aria-live="polite" isInline />
           </FormAlert>
         )}
         <FormGroup
