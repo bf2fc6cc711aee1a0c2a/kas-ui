@@ -32,7 +32,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [credential, setCredential] = useState("");
+  const [credential, setCredential] = useState();
   const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
 
   const { t } = useTranslation();
@@ -89,32 +89,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
     }
     return isValid;
   };
-
-  // const generateCredential = async () => {
-  //   const accessToken = await authContext?.getToken();
-  //   const serviceAccountRequest: ServiceAccountRequest = {
-  //     name: instanceName,
-  //   };
-  //   const apisService = new DefaultApi({
-  //     accessToken,
-  //     basePath,
-  //   });
-
-  //   try {
-  //     await apisService.createServiceAccount(serviceAccountRequest).then((res) => {
-  //       setCredential(res?.data);
-  //       setIsLoading(false);
-  //       setIsGenerateCredentialsModalOpen(true);
-  //     });
-  //   } catch (err) {
-  //     setIsLoading(false);
-  //     let reason;
-  //     if (isServiceApiError(err)) {
-  //       reason = err.response?.data.reason;
-  //     }
-  //     // TO DO: Add error - setError(reason);
-  //   }
-  // };
 
   const createServiceAccount = async () => {
     let isValid = validateCreateForm();
@@ -212,14 +186,12 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
       >
         {createForm()}
       </MASCreateModal>
-      { isGenerateCredentialsModalOpen && (
-        <MASGenerateCredentialsModal
-          isOpen={isGenerateCredentialsModalOpen}
-          setIsOpen={setIsGenerateCredentialsModalOpen}
-          credential={credential}
-          setCredential={setCredential}
-        />
-      )}
+      <MASGenerateCredentialsModal
+        isOpen={isGenerateCredentialsModalOpen}
+        setIsOpen={setIsGenerateCredentialsModalOpen}
+        credential={credential}
+        setCredential={setCredential}
+      />
     </>
   );
 };

@@ -1,13 +1,5 @@
-import React, {useState, useContext} from 'react';
-import {
-  Button,
-  TextContent,
-  Text,
-  TextVariants,
-  Flex,
-  FlexItem,
-  ClipboardCopy
-} from '@patternfly/react-core';
+import React, { useState, useContext } from 'react';
+import { Button, TextContent, Text, TextVariants, Flex, FlexItem, ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
 import { ApiContext } from '@app/api/ApiContext';
@@ -24,9 +16,8 @@ export type ResourcesTabProps = {
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   mainToggle,
   externalServer,
-  instanceName,
+  instanceName = '',
 }: ResourcesTabProps) => {
-
   const { t } = useTranslation();
   const { basePath } = useContext(ApiContext);
   const authContext = useContext(AuthContext);
@@ -64,7 +55,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   const handleGenerateCredentialsModal = () => {
     setIsLoading(true);
     generateCredential();
-  }
+  };
 
   return (
     <div className="mas--details__drawer--tab-content">
@@ -91,7 +82,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           >
             {t('serviceAccount.create_service_account')}
           </Button>
-      </FlexItem>
+        </FlexItem>
       </Flex>
       {mainToggle && (
         <>
@@ -102,16 +93,13 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           <ClipboardCopy>https://:30123</ClipboardCopy>
         </>
       )}
-      { isGenerateCredentialsModalOpen && (
-        <MASGenerateCredentialsModal
-          isOpen={isGenerateCredentialsModalOpen}
-          setIsOpen={setIsGenerateCredentialsModalOpen}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-          credential={credential}
-          setCredential={setCredential}
-        />
-      )}
+      <MASGenerateCredentialsModal
+        isOpen={isGenerateCredentialsModalOpen}
+        setIsOpen={setIsGenerateCredentialsModalOpen}
+        isLoading={isLoading}
+        credential={credential}
+        setCredential={setCredential}
+      />
     </div>
   );
 };
