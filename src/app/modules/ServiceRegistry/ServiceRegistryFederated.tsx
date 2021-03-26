@@ -4,8 +4,8 @@ import { ServiceRegistry, ServiceRegistryProps } from '@app/modules/ServiceRegis
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
 import { AlertContext, AlertContextProps } from '@app/common/MASAlerts';
 import { ApiContext } from '@app/api/ApiContext';
-import '../../../i18n/i18n';
-
+import kasi18n from '../../../i18n/i18n';
+import {I18nextProvider} from 'react-i18next';
 // Version of ServiceRegistry for federation
 
 export type ServiceRegistryFederatedProps = ServiceRegistryProps & {
@@ -32,6 +32,7 @@ const ServiceRegistryFederated = ({
   } as AlertContextProps;
 
   return (
+    <I18nextProvider i18n={kasi18n}>
     <ApiContext.Provider
       value={{
         basePath: basePath,
@@ -43,6 +44,7 @@ const ServiceRegistryFederated = ({
         </AuthContext.Provider>
       </AlertContext.Provider>
     </ApiContext.Provider>
+    </I18nextProvider>
   );
 };
 

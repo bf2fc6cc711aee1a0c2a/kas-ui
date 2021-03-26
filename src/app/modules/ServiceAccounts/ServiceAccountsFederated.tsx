@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { AlertVariant } from '@patternfly/react-core';
 import { ServiceAccounts, ServiceAccountsProps } from './ServiceAccounts';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
@@ -32,17 +33,19 @@ const ServiceAccountsFederated = ({
   } as AlertContextProps;
 
   return (
-    <ApiContext.Provider
-      value={{
-        basePath: basePath,
-      }}
-    >
-      <AlertContext.Provider value={alertContext}>
-        <AuthContext.Provider value={authContext}>
-          <ServiceAccounts getConnectToInstancePath={getConnectToInstancePath} />
-        </AuthContext.Provider>
-      </AlertContext.Provider>
-    </ApiContext.Provider>
+    <BrowserRouter>
+      <ApiContext.Provider
+        value={{
+          basePath: basePath,
+        }}
+      >
+        <AlertContext.Provider value={alertContext}>
+          <AuthContext.Provider value={authContext}>
+            <ServiceAccounts getConnectToInstancePath={getConnectToInstancePath} />
+          </AuthContext.Provider>
+        </AlertContext.Provider>
+      </ApiContext.Provider>
+    </BrowserRouter>
   );
 };
 
