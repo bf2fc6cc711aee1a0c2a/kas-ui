@@ -1,7 +1,11 @@
-import React from 'react';
-import { TextContent, Text, TextVariants, Flex, FlexItem, ClipboardCopy } from '@patternfly/react-core';
+import React, { useState, useContext } from 'react';
+import { Button, TextContent, Text, TextVariants, Flex, FlexItem, ClipboardCopy } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { GenerateCredential } from './GenerateCredential';
+import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
+import { ApiContext } from '@app/api/ApiContext';
+import { AuthContext } from '@app/auth/AuthContext';
+import { isServiceApiError } from '@app/utils/error';
+import { DefaultApi, ServiceAccountRequest } from '../../../../../openapi/api';
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;
@@ -12,9 +16,46 @@ export type ResourcesTabProps = {
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   mainToggle,
   externalServer,
-  instanceName,
+  instanceName = '',
 }: ResourcesTabProps) => {
   const { t } = useTranslation();
+  const { basePath } = useContext(ApiContext);
+  const authContext = useContext(AuthContext);
+
+  const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [credential, setCredential] = useState<any | undefined>();
+
+  const generateCredential = async () => {
+    const accessToken = await authContext?.getToken();
+    const serviceAccountRequest: ServiceAccountRequest = {
+      name: instanceName,
+    };
+    const apisService = new DefaultApi({
+      accessToken,
+      basePath,
+    });
+
+    try {
+      await apisService.createServiceAccount(serviceAccountRequest).then((res) => {
+        setCredential(res?.data);
+        setIsLoading(false);
+        setIsGenerateCredentialsModalOpen(true);
+      });
+    } catch (err) {
+      setIsLoading(false);
+      let reason;
+      if (isServiceApiError(err)) {
+        reason = err.response?.data.reason;
+      }
+      // TO DO: Add error - setError(reason);
+    }
+  };
+
+  const handleGenerateCredentialsModal = () => {
+    setIsLoading(true);
+    generateCredential();
+  };
 
   return (
     <div className="mas--details__drawer--tab-content">
@@ -30,7 +71,18 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
           <ClipboardCopy data-testid="drawerStreams-copyBootstrapURL">{externalServer}</ClipboardCopy>
         </FlexItem>
-        <GenerateCredential instanceName={instanceName} mainToggle={mainToggle} />
+        <FlexItem className="pf-m-align-right">
+          <Button
+            variant="secondary"
+            onClick={handleGenerateCredentialsModal}
+            className="pf-u-ml-md"
+            spinnerAriaValueText={isLoading ? 'Loading' : undefined}
+            isLoading={isLoading}
+            data-testid="drawerStreams-buttonCreateServiceAccount"
+          >
+            {t('serviceAccount.create_service_account')}
+          </Button>
+        </FlexItem>
       </Flex>
       {mainToggle && (
         <>
@@ -41,6 +93,13 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           <ClipboardCopy>https://:30123</ClipboardCopy>
         </>
       )}
+      <MASGenerateCredentialsModal
+        isOpen={isGenerateCredentialsModalOpen}
+        setIsOpen={setIsGenerateCredentialsModalOpen}
+        isLoading={isLoading}
+        credential={credential}
+        setCredential={setCredential}
+      />
     </div>
   );
 };

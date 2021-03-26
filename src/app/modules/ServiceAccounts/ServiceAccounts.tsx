@@ -195,7 +195,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
           <CreateServiceAccountModal
             isOpen={isCreateServiceAccountModalOpen}
             setIsOpen={setIsCreateServiceAccountModalOpen}
-            handleCreateModal={handleCreateModal}
             fetchServiceAccounts={fetchServiceAccounts}
           />
           <ResetServiceAccountModal isOpen={isResetServiceAccountModalOpen} setIsOpen={setIsResetServiceAccountModalOpen} serviceAccountToReset={serviceAccountToReset}/>

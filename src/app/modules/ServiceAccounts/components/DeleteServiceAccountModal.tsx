@@ -63,7 +63,7 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
     <MASDeleteModal
       isModalOpen={isOpen}
       handleModalToggle={handleModalToggle}
-      title={t('serviceAccount.delete_service_account')}
+      title={t('serviceAccount.delete_service_account') + '?'}
       confirmButtonProps={{
         onClick: () => deleteServiceAccount(serviceAccountToDelete),
         label: "Delete",

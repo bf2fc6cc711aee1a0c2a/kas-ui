@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { isServiceApiError } from '@app/utils/error';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AlertVariant } from '@patternfly/react-core';
+import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
 
 export type CreateServiceAccountModalProps = {
   isOpen: boolean;
@@ -31,6 +32,8 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
+  const [credential, setCredential] = useState();
+  const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
 
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
@@ -101,13 +104,13 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
             basePath,
           });
           setCreationInProgress(true);
-          await apisService.createServiceAccount(serviceAccountFormData).then((response) => {
-            if (response.status >= 200) {
-              resetForm();
-              setIsOpen(false);
-              addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
-              fetchServiceAccounts();
-            }
+          await apisService.createServiceAccount(serviceAccountFormData).then((res) => {
+            setCredential(res?.data);
+            setIsOpen(false);
+            setIsGenerateCredentialsModalOpen(true);
+            resetForm();
+            addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
+            fetchServiceAccounts();
           });
         } catch (error) {
           handleServerError(error);
@@ -171,17 +174,25 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   };
 
   return (
-    <MASCreateModal
-      isModalOpen={isOpen}
-      title={t('create_a_service_account')}
-      handleModalToggle={handleCreateModal}
-      onCreate={createServiceAccount}
-      isFormValid={isFormValid}
-      primaryButtonTitle="Create"
-      isCreationInProgress={isCreationInProgress}
-    >
-      {createForm()}
-    </MASCreateModal>
+    <>
+      <MASCreateModal
+        isModalOpen={isOpen}
+        title={t('serviceAccount.create_a_service_account')}
+        handleModalToggle={handleCreateModal}
+        onCreate={createServiceAccount}
+        isFormValid={isFormValid}
+        primaryButtonTitle="Create"
+        isCreationInProgress={isCreationInProgress}
+      >
+        {createForm()}
+      </MASCreateModal>
+      <MASGenerateCredentialsModal
+        isOpen={isGenerateCredentialsModalOpen}
+        setIsOpen={setIsGenerateCredentialsModalOpen}
+        credential={credential}
+        setCredential={setCredential}
+      />
+    </>
   );
 };
 
