@@ -45,7 +45,7 @@ const CreateInstanceModalContext = createContext<CreateInstanceModalProps>({
   onCreate: () => {},
   mainToggle: false,
   refresh: () => {},
-  cloudProviders: [],
+  cloudProviders: []
 });
 
 export const CreateInstanceModalProvider = CreateInstanceModalContext.Provider;

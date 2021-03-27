@@ -30,6 +30,8 @@ import { MAX_POLL_INTERVAL } from '@app/utils';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
+  preCreateInstance: (open: boolean) => Promise<boolean>;
+  createDialogOpen: () => boolean;
   getConnectToInstancePath: (data: KafkaRequest) => string;
 };
 
@@ -38,7 +40,7 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: OpenShiftStreamsProps) => {
+const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCreateInstance, createDialogOpen }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { isVisible } = usePageVisibility();
@@ -52,7 +54,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const { addAlert } = useAlerts();
 
   // States
-  const [isOpenCreateInstanceModal, setIsOpenCreateInstanceModal] = useState(false);
+  const [isOpenCreateInstanceModalState, setIsOpenCreateInstanceModalState] = useState(createDialogOpen());
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
@@ -65,6 +67,15 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   // const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+
+  const setIsOpenCreateInstanceModal = async (open: boolean) => {
+    if (open) {
+      // Callback before opening create dialog
+      // The callback can override the new state of opening
+      open = await preCreateInstance(open);
+    }
+    setIsOpenCreateInstanceModalState(open);
+  }
 
   const drawerRef = React.createRef<any>();
 
@@ -241,7 +252,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
       <AlertProvider>
         <CreateInstanceModalProvider
           value={{
-            isModalOpen: isOpenCreateInstanceModal,
+            isModalOpen: isOpenCreateInstanceModalState,
             setIsModalOpen: setIsOpenCreateInstanceModal,
             onCreate,
             cloudProviders,
@@ -283,7 +294,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath }: Ope
                   }}
                   buttonProps={{
                     title: t('create_kafka_instance'),
-                    onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModal),
+                    onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
                     ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
                   }}
                 />
