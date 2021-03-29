@@ -19,7 +19,7 @@ const UnexpectedError = ({ updateState }: UnexpectedError) => {
       updateState(false);
       history.push('/');
     }
-    return <Button onClick={handleClick}>{t('go_to_openshift_streams')}</Button>;
+    return <Button onClick={handleClick}>{t('go_to_kafka_instances')}</Button>;
   };
 
   return (
