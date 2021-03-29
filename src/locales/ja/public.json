@@ -291,6 +291,6 @@
     "service_account_creation_success_message": "日本語 Service account successfully created",
     "will_be_deleted": "日本語 will be deleted.",
     "service_account_name_length_is_greater_than_expected": "日本語 Service account name cannot exceed {{maxLength}} characters.",
-    "service_account_description_length_is_greater_than_expected": "日本語 Service account name cannot exceed {{maxLength}} characters."
+    "service_account_description_length_is_greater_than_expected": "日本語 Service account description cannot exceed {{maxLength}} characters."
   }
 }
