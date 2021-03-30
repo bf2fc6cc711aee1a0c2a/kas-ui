@@ -53,6 +53,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 
   const tableColumns = [
     { title: t('common.name'), transforms: [sortable] },
+    { title: t('common.clientID'), transforms: [sortable] },
     { title: t('common.owner'), transforms: [sortable, cellWidth(20)] },
     { title: t('common.description') },
   ];
@@ -88,9 +89,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner, description } = row;
+      const { name, owner = 'owner-test', description, clientID } = row;
       tableRow.push({
-        cells: [name, 'owner-test', description],
+        cells: [name, clientID, owner, description],
         originalData: row,
       });
     });

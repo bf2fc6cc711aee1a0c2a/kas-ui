@@ -9,9 +9,7 @@
   "404_page_does_not_exist": "404: That page doesn’t exist",
   "we_cannot_find_the_page_you_are_looking_for": "We can’t find the page you’re looking for.",
   "this_is_a_required_field": "This is a required field",
-  "create_instance_name_invalid_helper_text": "Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
   "create_a_kafka_instance": "Create a Kafka instance",
-  "create_instance_invalid_alert": "Please address the errors in your form to proceed",
   "instance_name": "Instance name",
   "create_instance_name_helper_text": "Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
   "cloud_provider": "Cloud provider",
@@ -257,8 +255,10 @@
     "cancel": "Cancel",
     "submitting_request": "Submitting request",
     "this_is_a_required_field": "This is a required field",
-    "create_instance_invalid_alert": "Please address the errors in your form to proceed",
-    "something_went_wrong": "Something went wrong"
+    "form_invalid_alert": "Please address the errors in your form to proceed",
+    "something_went_wrong": "Something went wrong",
+    "clientID": "Client ID",
+    "input_filed_invalid_helper_text": "Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - )."
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",
@@ -287,11 +287,13 @@
     "create_service_account_to_get_started": "To get started, create a service account.",
     "unauthorized_access_to_service_accounts_title": "Access permissions needed",
     "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators.",
-    "client_secret_will_be_reset": "Client secret for <b>{{serviceAccountId}}</b> will be reset.",
+    "client_secret_will_be_reset": "Client secret for <b>{{serviceAccountId}}</b> with client ID <b>{{clientID}}</b> will be reset.",
     "reset": "Reset",
     "reset_service_account_credentials": "Reset service account credentials?",
-    "create_a_service_account": "Create a service account",  
+    "create_a_service_account": "Create a service account",
     "service_account_creation_success_message": "Service account successfully created",
-    "will_be_deleted": "will be deleted."
+    "will_be_deleted": "will be deleted.",
+    "service_account_name_length_is_greater_than_expected": "Service account name cannot exceed {{maxLength}} characters.",
+    "service_account_description_length_is_greater_than_expected": "Service account description cannot exceed {{maxLength}} characters."
   }
 }
