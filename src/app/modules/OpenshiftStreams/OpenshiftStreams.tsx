@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import dayjs from 'dayjs';
 import {
   Level,
   LevelItem,
@@ -9,6 +11,11 @@ import {
   TextContent,
   Text,
   AlertVariant,
+  Banner,
+  Alert,
+  Button,
+  ButtonVariant,
+  Tooltip,
 } from '@patternfly/react-core';
 import {
   StreamsTableView,
@@ -40,7 +47,14 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCreateInstance, createDialogOpen }: OpenShiftStreamsProps) => {
+const OpenshiftStreams = ({
+  onConnectToInstance,
+  getConnectToInstancePath,
+  preCreateInstance,
+  createDialogOpen,
+}: OpenShiftStreamsProps) => {
+  dayjs.extend(localizedFormat);
+
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { isVisible } = usePageVisibility();
@@ -66,7 +80,12 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  // const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+  const [isMaxCapacityReached, setIsMaxCapacityReached] = useState(undefined);
+  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    authContext?.getUsername().then((username) => setLoggedInUser(username));
+  }, []);
 
   const setIsOpenCreateInstanceModal = async (open: boolean) => {
     if (open) {
@@ -75,9 +94,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
       open = await preCreateInstance(open);
     }
     setIsOpenCreateInstanceModalState(open);
-  }
-
-  const drawerRef = React.createRef<any>();
+  };
 
   const { activeTab, instanceDetail } = selectedInstance || {};
 
@@ -247,6 +264,113 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
     );
   }
 
+  /**
+   * This is Onboarding changes
+   * Todo: remove this change after public eval
+   */
+  const getMessage = () => {
+    const isUserSameAsLoggedIn = false; // getLoggedInUserKafkaInstance() !== undefined;
+    if (isMaxCapacityReached) {
+      if (isUserSameAsLoggedIn) {
+        return 'Instances are currently unavailable for creation.';
+      } else {
+        return (
+          <>
+            Instances are available for creation. For help getting started, access the
+            <Button variant={ButtonVariant.link}>
+              <b>quick start guide</b>
+            </Button>
+          </>
+        );
+      }
+    } else {
+      if (isUserSameAsLoggedIn) {
+        return 'Instances are available for creation.';
+      } else {
+        return (
+          <>
+            Instances are currently unavailable for creation, so check back later to see if any become available. In the
+            meantime,
+            <Button variant={ButtonVariant.link}>
+              <b> take a tour </b>
+            </Button>
+            to learn more about the service.
+          </>
+        );
+      }
+    }
+  };
+
+  const renderBanner = () => {
+    return (
+      <Banner isSticky variant={isMaxCapacityReached ? 'warning' : 'info'}>
+        {getMessage()}
+      </Banner>
+    );
+  };
+
+  /**
+   * This is Onboarding changes
+   * Todo: remove this change after public eval
+   */
+  const getLoggedInUserKafkaInstance = () => {
+    const kafkaItem: KafkaRequest | undefined = kafkaInstanceItems?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    return kafkaItem;
+  };
+
+  /**
+   * This is Onboarding changes
+   * Todo: remove this change after public eval
+   */
+  const renderAlertMessage = () => {
+    const kafka = getLoggedInUserKafkaInstance();
+    if (kafka) {
+      return (
+        <Alert
+          variant="info"
+          isInline
+          title={`${kafka?.name} was created on ${dayjs(kafka?.created_at).format('LLLL')}`}
+        >
+          This instance will expire 48 hours after creation
+        </Alert>
+      );
+    }
+    return <></>;
+  };
+
+  const createInstanceButton = () => {
+    const isDisabledCreateButton = getLoggedInUserKafkaInstance() !== undefined;
+
+    if (isDisabledCreateButton) {
+      const content = isMaxCapacityReached
+        ? 'Instances are currently unavailable for creation'
+        : 'You can deploy only 1 instance at a time';
+
+      return (
+        <Tooltip content={content}>
+          <Button
+            data-testid="emptyStateStreams-buttonCreateKafka"
+            variant={ButtonVariant.primary}
+            onClick={() => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState)}
+            isAriaDisabled={isDisabledCreateButton}
+          >
+            {t('create_kafka_instance')}
+          </Button>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Button
+        data-testid="emptyStateStreams-buttonCreateKafka"
+        variant={ButtonVariant.primary}
+        onClick={() => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState)}
+      >
+        {t('create_kafka_instance')}
+      </Button>
+    );
+  };
+
   return (
     <>
       <AlertProvider>
@@ -269,6 +393,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
           >
+            {renderBanner()}
             <PageSection variant={PageSectionVariants.light}>
               <Level>
                 <LevelItem>
@@ -292,12 +417,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),
                   }}
-                  buttonProps={{
-                    title: t('create_kafka_instance'),
-                    onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
-                    ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
-                  }}
-                />
+                >
+                  {createInstanceButton()}
+                </MASEmptyState>
                 <CreateInstanceModal />
               </PageSection>
             ) : (
@@ -306,6 +428,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
                 variant={PageSectionVariants.light}
                 padding={{ default: 'noPadding' }}
               >
+                {renderAlertMessage()}
                 <StreamsTableView
                   kafkaInstanceItems={kafkaInstanceItems}
                   mainToggle={mainToggle}
@@ -327,6 +450,9 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
                   orderBy={orderBy}
                   setOrderBy={setOrderBy}
                   isDrawerOpen={selectedInstance !== null}
+                  loggedInUser={loggedInUser}
+                  isMaxCapacityReached={isMaxCapacityReached}
+                  isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined}
                 />
               </PageSection>
             )}
