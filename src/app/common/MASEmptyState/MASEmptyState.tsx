@@ -12,6 +12,7 @@ import {
   EmptyStateProps as PFEmptyStateProps,
   EmptyStateBodyProps,
   ButtonVariant,
+  EmptyStateSecondaryActions
 } from '@patternfly/react-core';
 import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
 import { css } from '@patternfly/react-styles';
@@ -29,6 +30,11 @@ export type MASEmptyStateProps = {
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     'data-testid'?: string;
   };
+  secondaryButtonProps?: [{
+    title: string;
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    'data-testid'?: string;
+  }];
   children?: React.ReactNode;
 };
 
@@ -38,6 +44,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   emptyStateIconProps,
   emptyStateProps,
   emptyStateBodyProps,
+  secondaryButtonProps,
   children,
 }: MASEmptyStateProps) => {
   const { variant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
@@ -61,6 +68,13 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
             {buttonProps?.title}
           </Button>
         )}
+        {secondaryButtonProps && 
+          <EmptyStateSecondaryActions>
+            {secondaryButtonProps.map((button) => {
+              <Button variant="link" onClick={button.onClick} {...secondaryButtonProps}>{button.title}</Button>
+            })}
+          </EmptyStateSecondaryActions>
+        }
         {children}
       </PFEmptyState>
     </>

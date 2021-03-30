@@ -282,7 +282,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
               <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <MASLoading />
               </PageSection>
-            ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
+            ) : rawKafkaDataLength && rawKafkaDataLength < 100 ? (
               <PageSection>
                 <MASEmptyState
                   titleProps={{
@@ -297,6 +297,16 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
                     onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
                     ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
                   }}
+                  secondaryButtonProps={[
+                    {
+                      title: t('access_the_quick_start_guide'),
+                      onClick: () => {}
+                    },
+                    { 
+                      title: t('take_a_tour'),
+                      ['data-testid']: 'emptyState-actionTour',
+                    }
+                  ]}
                 />
                 <CreateInstanceModal />
               </PageSection>
