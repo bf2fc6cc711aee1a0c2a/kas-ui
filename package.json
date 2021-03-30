@@ -2,7 +2,7 @@
   "name": "kas-ui",
   "federatedModuleName": "kas",
   "version": "0.0.2",
-  "description": "The Control Plane UI for Red Hat OpenShift Streams for Apache Kafka",
+  "description": "The Control Plane UI for Red Hat Kafka Instances for Apache Kafka",
   "main": "server.js",
   "port": "1337",
   "repository": "https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend.git",
