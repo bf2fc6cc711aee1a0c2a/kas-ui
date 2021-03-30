@@ -15,7 +15,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
   const [isServiceRegistryLoading, setIsServiceRegistryLoading] = useState<boolean>(false);
   const [serviceAccountDetails, setServiceAccountDetails] = useState<any>(undefined);
   const [notRequiredDrawerContentBackground, setNotRequiredDrawerContentBackground] = useState<boolean>(false);
-  const [isUnauthorizedUser, setIsUnauthorizedUser] = useState<boolean>(true);
+  const [isUnauthorizedUser, setIsUnauthorizedUser] = useState<boolean>(false);
 
   const onConnectToRegistry = () => {
     setIsExpandedDrawer(true);
