@@ -67,7 +67,7 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
         }}
         titleProps={{
           title: t('credentials_successfully_generated'),
-          headingLevel: 'h4',
+          headingLevel: 'h2',
           size: TitleSizes.lg,
         }}
       >
