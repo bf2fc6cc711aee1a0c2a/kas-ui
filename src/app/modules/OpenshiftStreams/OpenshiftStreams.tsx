@@ -80,12 +80,33 @@ const OpenshiftStreams = ({
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  const [isMaxCapacityReached, setIsMaxCapacityReached] = useState(undefined);
+  const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     authContext?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
+
+  useEffect(() => {
+    // fetchKafkaMaxCapacityStatus();
+  }, []);
+
+  const fetchKafkaMaxCapacityStatus = async () => {
+    const accessToken = await authContext?.getToken();
+    if (accessToken) {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        /**
+         * Todo: integrate quota status API
+         */
+      } catch (error) {
+        handleServerError(error);
+      }
+    }
+  };
 
   const setIsOpenCreateInstanceModal = async (open: boolean) => {
     if (open) {
@@ -269,7 +290,7 @@ const OpenshiftStreams = ({
    * Todo: remove this change after public eval
    */
   const getMessage = () => {
-    const isUserSameAsLoggedIn = false; // getLoggedInUserKafkaInstance() !== undefined;
+    const isUserSameAsLoggedIn = getLoggedInUserKafkaInstance() !== undefined;
     if (isMaxCapacityReached) {
       if (isUserSameAsLoggedIn) {
         return 'Instances are currently unavailable for creation.';

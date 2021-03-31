@@ -76,9 +76,9 @@ export const getDeleteInstanceModalConfig = (
    * This is Onboarding changes
    * Todo: remove this change after public eval
    */
-  const additionalMessage =
-    isMaxCapacityReached &&
-    ' You might not be able to create a new instance because all of them are currently provisioned by other users.';
+  const additionalMessage = isMaxCapacityReached
+    ? ' You might not be able to create a new instance because all of them are currently provisioned by other users.'
+    : '';
 
   if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
