@@ -68,10 +68,12 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
             {buttonProps?.title}
           </Button>
         )}
-        {secondaryButtonProps && 
+        {secondaryButtonProps && secondaryButtonProps.length > 0 && 
           <EmptyStateSecondaryActions>
-            {secondaryButtonProps.map((button) => {
-              <Button variant="link" onClick={button.onClick} {...secondaryButtonProps}>{button.title}</Button>
+            {secondaryButtonProps?.map((button) => {
+              return (
+                <Button variant="link" onClick={button.onClick} {...secondaryButtonProps}>{button.title}</Button>
+              )
             })}
           </EmptyStateSecondaryActions>
         }

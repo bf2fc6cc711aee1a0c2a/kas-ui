@@ -269,6 +269,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
           >
+            <main className="pf-c-page__main">
             <PageSection variant={PageSectionVariants.light}>
               <Level>
                 <LevelItem>
@@ -283,7 +284,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
                 <MASLoading />
               </PageSection>
             ) : rawKafkaDataLength && rawKafkaDataLength < 100 ? (
-              <PageSection>
+              <PageSection isFilled={true}>
                 <MASEmptyState
                   titleProps={{
                     title: t('no_kafka_instances_yet'),
@@ -340,6 +341,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
                 />
               </PageSection>
             )}
+            </main>
           </InstanceDrawer>
         </CreateInstanceModalProvider>
       </AlertProvider>
