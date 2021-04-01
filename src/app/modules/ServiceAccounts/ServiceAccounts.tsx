@@ -14,7 +14,7 @@ import {
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { isServiceApiError, ErrorCodes } from '@app/utils';
+import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { MASEmptyState, MASLoading, AlertProvider, useAlerts, MASFullPageError } from '@app/common';
 import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
@@ -33,6 +33,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
+  const mainToggle = searchParams.has('user-testing');
 
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -44,7 +45,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   // state to store the expected total  service accounts based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
   const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
-  const [orderBy, setOrderBy] = useState<string>('name');
+  const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
@@ -79,7 +80,8 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         await apisService.listServiceAccounts().then((response) => {
           const serviceAccounts = response?.data;
           setServiceAccountList(serviceAccounts);
-          setServiceAccountItems(serviceAccounts?.items);
+          const sortedServiceAccounts = sortValues(serviceAccounts?.items, 'name', 'asc');
+          setServiceAccountItems(sortedServiceAccounts);
         });
       } catch (error) {
         handleServerError(error);
@@ -92,21 +94,20 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   }, []);
 
   const handleResetModal = (serviceAccount: ServiceAccountListItem) => {
-    setIsResetServiceAccountModalOpen(!isResetServiceAccountModalOpen)
+    setIsResetServiceAccountModalOpen(!isResetServiceAccountModalOpen);
     setServiceAccountToReset(serviceAccount);
-  }
+  };
 
   const handleCreateModal = () => {
     setIsCreateServiceAccountModalOpen(!isCreateServiceAccountModalOpen);
-  }
+  };
 
   const handleDeleteModal = (serviceAccount: ServiceAccountListItem) => {
     setIsDeleteServiceAccountModalOpen(!isDeleteServiceAccountModalOpen);
     setServiceAccountToDelete(serviceAccount);
-  }
+  };
 
   const renderTableView = () => {
-
     if (serviceAccountItems === undefined) {
       return (
         <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
@@ -156,6 +157,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               onResetCredentials={handleResetModal}
               onDeleteServiceAccount={handleDeleteModal}
               handleCreateModal={handleCreateModal}
+              mainToggle={mainToggle}
             />
           </PageSection>
         );
@@ -197,8 +199,17 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
             setIsOpen={setIsCreateServiceAccountModalOpen}
             fetchServiceAccounts={fetchServiceAccounts}
           />
-          <ResetServiceAccountModal isOpen={isResetServiceAccountModalOpen} setIsOpen={setIsResetServiceAccountModalOpen} serviceAccountToReset={serviceAccountToReset}/>
-          <DeleteServiceAccountModal isOpen={isDeleteServiceAccountModalOpen} setIsOpen={setIsDeleteServiceAccountModalOpen} serviceAccountToDelete={serviceAccountToDelete} fetchServiceAccounts={fetchServiceAccounts}/>
+          <ResetServiceAccountModal
+            isOpen={isResetServiceAccountModalOpen}
+            setIsOpen={setIsResetServiceAccountModalOpen}
+            serviceAccountToReset={serviceAccountToReset}
+          />
+          <DeleteServiceAccountModal
+            isOpen={isDeleteServiceAccountModalOpen}
+            setIsOpen={setIsDeleteServiceAccountModalOpen}
+            serviceAccountToDelete={serviceAccountToDelete}
+            fetchServiceAccounts={fetchServiceAccounts}
+          />
         </PageSection>
         {renderTableView()}
       </AlertProvider>

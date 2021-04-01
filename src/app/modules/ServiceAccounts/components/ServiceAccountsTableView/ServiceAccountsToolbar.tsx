@@ -28,7 +28,8 @@ export type ServiceAccountsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  handleCreateModal: () => void
+  handleCreateModal: () => void;
+  mainToggle?: boolean;
 };
 
 export type FilterValue = {
@@ -49,7 +50,8 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
-  handleCreateModal
+  handleCreateModal,
+  mainToggle,
 }: ServiceAccountsToolbarProps) => {
   const { t } = useTranslation();
 
@@ -301,7 +303,6 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
     </>
   );
 
-
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: (
@@ -351,7 +352,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         inset: { lg: 'insetLg' },
       }}
       toggleGroupProps={{ toggleIcon: <FilterIcon />, breakpoint: 'md' }}
-      toggleGroupItems={toggleGroupItems}
+      toggleGroupItems={mainToggle ? toggleGroupItems : []}
       toolbarItems={toolbarItems}
     />
   );
