@@ -93,7 +93,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
         panelContent={panelContent}
         className={notRequiredDrawerContentBackground ? 'pf-m-no-background' : ''}
       >
-        <DrawerContentBody> {children}</DrawerContentBody>
+        <DrawerContentBody className="pf-u-display-flex pf-u-flex-direction-column"> {children}</DrawerContentBody>
       </DrawerContent>
     </Drawer>
   );
