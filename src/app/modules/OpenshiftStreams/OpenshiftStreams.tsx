@@ -291,7 +291,7 @@ const OpenshiftStreams = ({
               <PageSection padding={{ default: 'noPadding' }} isFilled>
                 <MASEmptyState
                   emptyStateProps={{
-                    variant: MASEmptyStateVariant.GettingStarted,
+                    variant: MASEmptyStateVariant.NoItems,
                   }}
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),

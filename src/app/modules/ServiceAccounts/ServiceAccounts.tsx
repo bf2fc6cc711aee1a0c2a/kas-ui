@@ -124,7 +124,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
               emptyStateProps={{
-                variant: MASEmptyStateVariant.GettingStarted,
+                variant: MASEmptyStateVariant.NoItems,
               }}
               titleProps={{
                 title: t('serviceAccount.you_do_not_have_any_service_accounts_yet'),
