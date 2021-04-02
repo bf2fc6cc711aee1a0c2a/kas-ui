@@ -1,9 +1,8 @@
 import React from 'react';
-import ExclamationTriangleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon';
 import { useTranslation } from 'react-i18next';
-import { PageSection, Button, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
+import { PageSection, Button } from '@patternfly/react-core';
 import { useHistory } from 'react-router-dom';
-import { MASEmptyState } from '@app/common';
+import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
 
 const MASPageNotFound: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -17,11 +16,10 @@ const MASPageNotFound: React.FunctionComponent = () => {
   }
 
   return (
-    <PageSection padding={{ default: 'noPadding' }}>
+    <PageSection padding={{ default: 'noPadding' }} isFilled>
       <MASEmptyState
-        emptyStateProps={{ variant: EmptyStateVariant.full }}
-        emptyStateIconProps={{ icon: ExclamationTriangleIcon }}
-        titleProps={{ title: t('404_page_does_not_exist'), headingLevel: 'h1', size: TitleSizes.lg }}
+        emptyStateProps={{ variant: MASEmptyStateVariant.PageNotFound }}
+        titleProps={{ title: t('404_page_does_not_exist') }}
         emptyStateBodyProps={{
           body: t('we_cannot_find_the_page_you_are_looking_for'),
         }}

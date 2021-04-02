@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageSection, PageSectionVariants, ButtonVariant, EmptyStateVariant } from '@patternfly/react-core';
-import SpaceShuttleIcon from '@patternfly/react-icons/dist/js/icons/space-shuttle-icon';
-import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
-import { MASEmptyState } from '@app/common';
+import { PageSection, PageSectionVariants, ButtonVariant } from '@patternfly/react-core';
+import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { ServiceRegistryHeader, ServiceRegistryDrawer } from './components';
 
 export type ServiceRegistryProps = {
@@ -17,6 +15,7 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
   const [isServiceRegistryLoading, setIsServiceRegistryLoading] = useState<boolean>(false);
   const [serviceAccountDetails, setServiceAccountDetails] = useState<any>(undefined);
   const [notRequiredDrawerContentBackground, setNotRequiredDrawerContentBackground] = useState<boolean>(false);
+  const [isUnauthorizedUser, setIsUnauthorizedUser] = useState<boolean>(false);
 
   const onConnectToRegistry = () => {
     setIsExpandedDrawer(true);
@@ -50,11 +49,10 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
 
   const renderWelcomeEmptyState = () => {
     return (
-      <PageSection>
+      <PageSection padding={{ default: 'noPadding' }} isFilled>
         <MASEmptyState
-          emptyStateProps={{ variant: EmptyStateVariant.xl }}
-          emptyStateIconProps={{ icon: SpaceShuttleIcon }}
-          titleProps={{ title: t('serviceRegistry.welcome_to_service_registry'), headingLevel: 'h1', size: '3xl' }}
+          emptyStateProps={{ variant: MASEmptyStateVariant.GettingStarted }}
+          titleProps={{ title: t('serviceRegistry.welcome_to_service_registry') }}
           emptyStateBodyProps={{
             body: t('serviceRegistry.welcome_empty_state_body'),
           }}
@@ -72,11 +70,10 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
 
   const renderUnauthorizedUserEmptyState = () => {
     return (
-      <PageSection>
+      <PageSection padding={{ default: 'noPadding' }} isFilled>
         <MASEmptyState
-          emptyStateProps={{ variant: EmptyStateVariant.large }}
-          emptyStateIconProps={{ icon: LockIcon }}
-          titleProps={{ title: t('serviceRegistry.unauthorized_empty_state_title'), headingLevel: 'h2', size: 'lg' }}
+          emptyStateProps={{ variant: MASEmptyStateVariant.NoAccess }}
+          titleProps={{ title: t('serviceRegistry.unauthorized_empty_state_title') }}
           emptyStateBodyProps={{
             body: t('serviceRegistry.unauthorized_empty_state_body'),
           }}
@@ -92,20 +89,25 @@ export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryPro
 
   return (
     <>
-      <ServiceRegistryDrawer
-        isExpanded={isExpandedDrawer}
-        isLoading={serviceAccountDetails === undefined}
-        notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
-        onClose={onCloseDrawer}
-      >
-        <PageSection variant={PageSectionVariants.light}>
-          <ServiceRegistryHeader
-            name={''}
-            onConnectToRegistry={onConnectToRegistry}
-            onDeleteRegistry={onDeleteRegistry}
-          />
-        </PageSection>
-      </ServiceRegistryDrawer>
+      {serviceAccountDetails ? (
+        <ServiceRegistryDrawer
+          isExpanded={isExpandedDrawer}
+          isLoading={serviceAccountDetails === undefined}
+          notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
+          onClose={onCloseDrawer}
+        >
+          <PageSection variant={PageSectionVariants.light}>
+            <ServiceRegistryHeader
+              name={''}
+              onConnectToRegistry={onConnectToRegistry}
+              onDeleteRegistry={onDeleteRegistry}
+            />
+          </PageSection>
+          {isUnauthorizedUser && renderUnauthorizedUserEmptyState()}
+        </ServiceRegistryDrawer>
+      ) : (
+        renderWelcomeEmptyState()
+      )}
     </>
   );
 };
