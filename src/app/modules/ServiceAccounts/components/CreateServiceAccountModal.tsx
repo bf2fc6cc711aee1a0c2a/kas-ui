@@ -204,6 +204,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
             value={name}
             onChange={handleTextInputName}
             validated={fieldState}
+            autoFocus={true}
           />
         </FormGroup>
         <FormGroup
