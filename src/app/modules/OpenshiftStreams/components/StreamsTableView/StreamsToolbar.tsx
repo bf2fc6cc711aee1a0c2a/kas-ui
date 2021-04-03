@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  ToolbarItem,
   InputGroup,
   TextInput,
   Button,
@@ -244,7 +243,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     if (selectedFilters.length > 0) {
       return selectedFilters[0].filterValue.map((val) => val.value);
     }
-    return [];
+    return;
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
