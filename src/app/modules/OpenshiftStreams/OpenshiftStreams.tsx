@@ -284,7 +284,7 @@ const OpenshiftStreams = ({
    * This is Onboarding changes
    * Todo: remove this change after public eval
    */
-  const getMessage = () => {
+  const getBannerMessage = () => {
     const isUserSameAsLoggedIn = getLoggedInUserKafkaInstance() !== undefined;
     if (isMaxCapacityReached) {
       if (isUserSameAsLoggedIn) {
@@ -292,8 +292,8 @@ const OpenshiftStreams = ({
       } else {
         return (
           <>
-            Instances are available for creation. For help getting started, access the
-            <Button variant={ButtonVariant.link}>
+            Instances are available for creation. For help getting started, access the{' '}
+            <Button variant={ButtonVariant.link} isSmall isInline className="mk--openstreams__banner">
               <b>quick start guide</b>
             </Button>
           </>
@@ -306,10 +306,16 @@ const OpenshiftStreams = ({
         return (
           <>
             Instances are currently unavailable for creation, so check back later to see if any become available. In the
-            meantime,
-            <Button variant={ButtonVariant.link}>
+            meantime,{' '}
+            <Button
+              variant={ButtonVariant.link}
+              isSmall
+              isInline
+              data-testid="bannerStreams-actionTour"
+              className="mk--openstreams__banner"
+            >
               <b> take a tour </b>
-            </Button>
+            </Button>{' '}
             to learn more about the service.
           </>
         );
@@ -322,7 +328,7 @@ const OpenshiftStreams = ({
       <>
         {kafkaInstanceItems && (
           <Banner isSticky variant={isMaxCapacityReached ? 'warning' : 'info'}>
-            {getMessage()}
+            {getBannerMessage()}
           </Banner>
         )}
       </>

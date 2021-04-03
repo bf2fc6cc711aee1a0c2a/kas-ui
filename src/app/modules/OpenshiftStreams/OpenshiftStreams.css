@@ -1,3 +1,8 @@
 .mk--main-page__page-section--table.pf-c-page__main-section {
   padding-bottom: 69px;
 }
+
+.mk--openstreams__banner.pf-c-button.pf-m-link {
+  --pf-c-button--Color: var(--pf-global--Color--100);
+  text-decoration: var(--pf-c-button--m-link--m-inline--hover--TextDecoration);
+}
