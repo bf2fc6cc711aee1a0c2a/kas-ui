@@ -89,7 +89,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner = 'owner-test', description, clientID } = row;
+      const { name, owner, description, clientID } = row;
       tableRow.push({
         cells: [name, clientID, owner, description],
         originalData: row,
@@ -104,7 +104,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     const originalData: ServiceAccountListItem = rowData.originalData;
-    const isUserSameAsLoggedIn = true; //originalData.owner === loggedInUser;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     let additionalProps: any;
 
     if (!isUserSameAsLoggedIn) {

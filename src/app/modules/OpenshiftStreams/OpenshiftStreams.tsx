@@ -88,20 +88,22 @@ const OpenshiftStreams = ({
   }, []);
 
   useEffect(() => {
-    // fetchKafkaMaxCapacityStatus();
+    fetchKafkaServiceStatus();
   }, []);
 
-  const fetchKafkaMaxCapacityStatus = async () => {
+  const fetchKafkaServiceStatus = async () => {
     const accessToken = await authContext?.getToken();
+
     if (accessToken) {
       try {
         const apisService = new DefaultApi({
           accessToken,
           basePath,
         });
-        /**
-         * Todo: integrate quota status API
-         */
+
+        await apisService.serviceStatus().then((res) => {
+          setIsMaxCapacityReached(res?.data?.kafkas?.max_capacity_reached);
+        });
       } catch (error) {
         handleServerError(error);
       }
@@ -129,13 +131,6 @@ const OpenshiftStreams = ({
 
   const onViewConnection = (instance: KafkaRequest) => {
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Connection' });
-  };
-
-  const isValidToken = (accessToken: string | undefined) => {
-    if (accessToken !== undefined && accessToken !== '') {
-      return true;
-    }
-    return false;
   };
 
   const getFilterString = () => {
@@ -178,7 +173,7 @@ const OpenshiftStreams = ({
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
 
-    if (isValidToken(accessToken) && isVisible) {
+    if (accessToken && isVisible) {
       try {
         const apisService = new DefaultApi({
           accessToken,
@@ -324,9 +319,13 @@ const OpenshiftStreams = ({
 
   const renderBanner = () => {
     return (
-      <Banner isSticky variant={isMaxCapacityReached ? 'warning' : 'info'}>
-        {getMessage()}
-      </Banner>
+      <>
+        {kafkaInstanceItems && (
+          <Banner isSticky variant={isMaxCapacityReached ? 'warning' : 'info'}>
+            {getMessage()}
+          </Banner>
+        )}
+      </>
     );
   };
 
