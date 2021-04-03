@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import {
   PageSection,
   PageSectionVariants,
-  Title,
   Text,
   AlertVariant,
   Level,
@@ -16,7 +15,14 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
-import { MASEmptyState, MASLoading, AlertProvider, useAlerts, MASFullPageError } from '@app/common';
+import {
+  MASEmptyState,
+  MASLoading,
+  AlertProvider,
+  useAlerts,
+  MASFullPageError,
+  MASEmptyStateVariant,
+} from '@app/common';
 import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
 import { ResetServiceAccountModal } from './components/ResetServiceAccountModal/ResetServiceAccountModal';
 import { DeleteServiceAccountModal } from './components/DeleteServiceAccountModal';
@@ -117,11 +123,13 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
     } else {
       if (rawServiceAccountDataLength && rawServiceAccountDataLength < 1) {
         return (
-          <PageSection>
+          <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
+              emptyStateProps={{
+                variant: MASEmptyStateVariant.GettingStarted,
+              }}
               titleProps={{
                 title: t('serviceAccount.you_do_not_have_any_service_accounts_yet'),
-                headingLevel: 'h2',
               }}
               emptyStateBodyProps={{
                 body: t('serviceAccount.create_service_account_to_get_started'),

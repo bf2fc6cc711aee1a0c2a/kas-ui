@@ -12,12 +12,11 @@ import {
   IExtraColumnData,
   cellWidth,
 } from '@patternfly/react-table';
-import { Skeleton, EmptyStateVariant, PaginationVariant, TitleSizes } from '@patternfly/react-core';
-import { MASPagination, MASTable, MASEmptyState } from '@app/common';
+import { Skeleton, PaginationVariant } from '@patternfly/react-core';
+import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { getLoadingRowsCount } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -217,15 +216,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       {serviceAccountItems && serviceAccountItems?.length < 1 && serviceAccountsDataLoaded && (
         <MASEmptyState
           emptyStateProps={{
-            variant: EmptyStateVariant.full,
-          }}
-          emptyStateIconProps={{
-            icon: SearchIcon,
+            variant: MASEmptyStateVariant.NoResult,
           }}
           titleProps={{
             title: t('no_results_found'),
-            headingLevel: 'h2',
-            size: TitleSizes.lg,
           }}
           emptyStateBodyProps={{
             body: t('adjust_your_filters_and_try_again'),
