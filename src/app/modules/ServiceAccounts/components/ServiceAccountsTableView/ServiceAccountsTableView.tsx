@@ -45,7 +45,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   filterSelected,
   setFilterSelected,
   handleCreateModal,
-  mainToggle
+  mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
 
@@ -89,7 +89,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner = 'owner-test', description, clientID } = row;
+      const { name, owner, description, clientID } = row;
       tableRow.push({
         cells: [name, clientID, owner, description],
         originalData: row,
@@ -226,7 +226,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           }}
         />
       )}
-      {total && total > 0 && (
+      {total && total > 0 && mainToggle && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}

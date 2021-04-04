@@ -317,7 +317,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
     },
   ];
 
-  if (total && total > 0 && toolbarItems.length === 1) {
+  if (total && total > 0 && toolbarItems.length === 1 && mainToggle) {
     toolbarItems.push({
       item: (
         <MASPagination
