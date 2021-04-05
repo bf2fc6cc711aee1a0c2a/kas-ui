@@ -53,7 +53,7 @@ const OpenshiftStreams = ({
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
-  const mainToggle = true;
+  const mainToggle = searchParams.has('user-testing');
 
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
