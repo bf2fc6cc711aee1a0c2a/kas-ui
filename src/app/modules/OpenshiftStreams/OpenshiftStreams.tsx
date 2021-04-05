@@ -31,7 +31,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
-import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
+import { MASLoading, MASEmptyState, MASFullPageError, MASEmptyStateVariant } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 
@@ -434,11 +434,10 @@ const OpenshiftStreams = ({
                 <MASLoading />
               </PageSection>
             ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
-              <PageSection>
+              <PageSection padding={{ default: 'noPadding' }} isFilled>
                 <MASEmptyState
-                  titleProps={{
-                    title: t('no_kafka_instances_yet'),
-                    headingLevel: 'h2',
+                  emptyStateProps={{
+                    variant: MASEmptyStateVariant.GettingStarted,
                   }}
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),
