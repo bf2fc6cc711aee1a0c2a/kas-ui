@@ -2,10 +2,13 @@ import * as React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
-import { NotFound } from '@app/NotFound/NotFound';
+import { MASPageNotFound } from '@app/common/MASPageNotFound/MASPageNotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
-import { OpenshiftStreamsConnected } from '@app/OpenshiftStreams';
+import { OpenshiftStreamsConnected } from '@app/modules/OpenshiftStreams';
+import { ServiceRegistryConnected } from '@app/modules/ServiceRegistry';
+import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
+import { MetricsConnected } from '@app/modules/Metrics'
 
 let routeFocusTimer: number;
 
@@ -32,10 +35,31 @@ const routes: AppRouteConfig[] = [
   {
     component: OpenshiftStreamsConnected,
     exact: true,
-    // t('openshift_streams')
-    label: 'OpenShift Streams',
+    // t('kafka_instances')
+    label: 'Kafka Instances',
     path: '/',
-    title: 'OpenShift Streams',
+    title: 'Kafka Instances',
+  },
+  {
+    component: ServiceRegistryConnected,
+    exact: true,
+    label: 'Service Registry',
+    path: '/service-registry',
+    title: 'Service Registry',
+  },
+  {
+    component: ServiceAccountsConnected,
+    exact: true,
+    label: 'Service Accounts',
+    path: '/service-accounts',
+    title: 'Service Accounts',
+  },
+  {
+    component: MetricsConnected,
+    exact: true,
+    label: 'Metrics',
+    path: '/metrics',
+    title: 'Metrics',
   },
 ];
 
@@ -67,7 +91,7 @@ const RouteWithTitleUpdates = ({ component: Component, isAsync = false, title, .
 
 const PageNotFound = ({ title }: { title: string }) => {
   useDocumentTitle(title);
-  return <Route component={NotFound} />;
+  return <Route component={MASPageNotFound} />;
 };
 
 const flattenedRoutes: IAppRoute[] = routes.reduce(
@@ -90,7 +114,7 @@ const AppRoutes = (): React.ReactElement => {
             isAsync={isAsync}
           />
         ))}
-        <PageNotFound title={t('404_page_not_found')} />
+        <PageNotFound title={t('404_page_does_not_exist')} />
       </Switch>
     </LastLocationProvider>
   );

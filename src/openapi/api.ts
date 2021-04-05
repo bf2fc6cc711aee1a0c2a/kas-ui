@@ -1,7 +1,7 @@
 // tslint:disable
 /**
- * Managed Service API
- * Managed Service API
+ * Kafka Service Fleet Manager
+ * Kafka Service Fleet Manager is a Rest API to manage kafka instances and connectors.
  *
  * The version of the OpenAPI document: 0.0.1
  * 
@@ -261,6 +261,31 @@ export interface ErrorListAllOf {
      * @memberof ErrorListAllOf
      */
     items?: Array<Error>;
+}
+/**
+ * 
+ * @export
+ * @interface InstantQuery
+ */
+export interface InstantQuery {
+    /**
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof InstantQuery
+     */
+    metric?: { [key: string]: string; };
+    /**
+     * 
+     * @type {number}
+     * @memberof InstantQuery
+     */
+    Timestamp?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof InstantQuery
+     */
+    Value: number;
 }
 /**
  * 
@@ -529,53 +554,66 @@ export interface List {
 /**
  * 
  * @export
- * @interface Metric
+ * @interface MetricsInstantQueryList
  */
-export interface Metric {
-    /**
-     * 
-     * @type {{ [key: string]: string; }}
-     * @memberof Metric
-     */
-    metric?: { [key: string]: string; };
-    /**
-     * 
-     * @type {Array<Values>}
-     * @memberof Metric
-     */
-    values?: Array<Values>;
+export interface MetricsInstantQueryList extends MetricsInstantQueryListAllOf {
 }
 /**
  * 
  * @export
- * @interface MetricsList
+ * @interface MetricsInstantQueryListAllOf
  */
-export interface MetricsList extends MetricsListAllOf {
-}
-/**
- * 
- * @export
- * @interface MetricsListAllOf
- */
-export interface MetricsListAllOf {
+export interface MetricsInstantQueryListAllOf {
     /**
      * 
      * @type {string}
-     * @memberof MetricsListAllOf
+     * @memberof MetricsInstantQueryListAllOf
      */
     kind?: string;
     /**
      * 
      * @type {string}
-     * @memberof MetricsListAllOf
+     * @memberof MetricsInstantQueryListAllOf
      */
     id?: string;
     /**
      * 
-     * @type {Array<Metric>}
-     * @memberof MetricsListAllOf
+     * @type {Array<InstantQuery>}
+     * @memberof MetricsInstantQueryListAllOf
      */
-    items?: Array<Metric>;
+    items?: Array<InstantQuery>;
+}
+/**
+ * 
+ * @export
+ * @interface MetricsRangeQueryList
+ */
+export interface MetricsRangeQueryList extends MetricsRangeQueryListAllOf {
+}
+/**
+ * 
+ * @export
+ * @interface MetricsRangeQueryListAllOf
+ */
+export interface MetricsRangeQueryListAllOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof MetricsRangeQueryListAllOf
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof MetricsRangeQueryListAllOf
+     */
+    id?: string;
+    /**
+     * 
+     * @type {Array<RangeQuery>}
+     * @memberof MetricsRangeQueryListAllOf
+     */
+    items?: Array<RangeQuery>;
 }
 /**
  * 
@@ -644,6 +682,25 @@ export interface ObjectReference {
      * @memberof ObjectReference
      */
     href?: string;
+}
+/**
+ * 
+ * @export
+ * @interface RangeQuery
+ */
+export interface RangeQuery {
+    /**
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof RangeQuery
+     */
+    metric?: { [key: string]: string; };
+    /**
+     * 
+     * @type {Array<Values>}
+     * @memberof RangeQuery
+     */
+    values?: Array<Values>;
 }
 /**
  * Service Account created in MAS-SSO for the Kafka Cluster for authentication
@@ -1127,7 +1184,57 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @summary Get metrics by kafka id.
+         * @summary Get metrics with instant query by kafka id.
+         * @param {string} id The id of record
+         * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMetricsByInstantQuery: async (id: string, filters?: Array<string>, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getMetricsByInstantQuery.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/metrics/query`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+            if (filters) {
+                localVarQueryParameter['filters'] = filters;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get metrics with timeseries range query by kafka id.
          * @param {string} id The id of record
          * @param {number} duration The length of time in minutes over which to return the metrics.
          * @param {number} interval The interval in seconds between data points.
@@ -1135,20 +1242,20 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMetricsByKafkaId: async (id: string, duration: number, interval: number, filters?: Array<string>, options: any = {}): Promise<RequestArgs> => {
+        getMetricsByRangeQuery: async (id: string, duration: number, interval: number, filters?: Array<string>, options: any = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling getMetricsByKafkaId.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getMetricsByRangeQuery.');
             }
             // verify required parameter 'duration' is not null or undefined
             if (duration === null || duration === undefined) {
-                throw new RequiredError('duration','Required parameter duration was null or undefined when calling getMetricsByKafkaId.');
+                throw new RequiredError('duration','Required parameter duration was null or undefined when calling getMetricsByRangeQuery.');
             }
             // verify required parameter 'interval' is not null or undefined
             if (interval === null || interval === undefined) {
-                throw new RequiredError('interval','Required parameter interval was null or undefined when calling getMetricsByKafkaId.');
+                throw new RequiredError('interval','Required parameter interval was null or undefined when calling getMetricsByRangeQuery.');
             }
-            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/metrics`
+            const localVarPath = `/api/managed-services-api/v1/kafkas/{id}/metrics/query_range`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
             let baseOptions;
@@ -1178,6 +1285,51 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (filters) {
                 localVarQueryParameter['filters'] = filters;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary get service account by id
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getServiceAccountById: async (id: string, options: any = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            if (id === null || id === undefined) {
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getServiceAccountById.');
+            }
+            const localVarPath = `/api/managed-services-api/v1/serviceaccounts/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
             }
 
 
@@ -1523,7 +1675,22 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Get metrics by kafka id.
+         * @summary Get metrics with instant query by kafka id.
+         * @param {string} id The id of record
+         * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMetricsByInstantQuery(id: string, filters?: Array<string>, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MetricsInstantQueryList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getMetricsByInstantQuery(id, filters, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Get metrics with timeseries range query by kafka id.
          * @param {string} id The id of record
          * @param {number} duration The length of time in minutes over which to return the metrics.
          * @param {number} interval The interval in seconds between data points.
@@ -1531,8 +1698,22 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MetricsList>> {
-            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getMetricsByKafkaId(id, duration, interval, filters, options);
+        async getMetricsByRangeQuery(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MetricsRangeQueryList>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getMetricsByRangeQuery(id, duration, interval, filters, options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary get service account by id
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getServiceAccountById(id: string, options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceAccount>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).getServiceAccountById(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -1676,7 +1857,18 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @summary Get metrics by kafka id.
+         * @summary Get metrics with instant query by kafka id.
+         * @param {string} id The id of record
+         * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMetricsByInstantQuery(id: string, filters?: Array<string>, options?: any): AxiosPromise<MetricsInstantQueryList> {
+            return DefaultApiFp(configuration).getMetricsByInstantQuery(id, filters, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get metrics with timeseries range query by kafka id.
          * @param {string} id The id of record
          * @param {number} duration The length of time in minutes over which to return the metrics.
          * @param {number} interval The interval in seconds between data points.
@@ -1684,8 +1876,18 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): AxiosPromise<MetricsList> {
-            return DefaultApiFp(configuration).getMetricsByKafkaId(id, duration, interval, filters, options).then((request) => request(axios, basePath));
+        getMetricsByRangeQuery(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): AxiosPromise<MetricsRangeQueryList> {
+            return DefaultApiFp(configuration).getMetricsByRangeQuery(id, duration, interval, filters, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary get service account by id
+         * @param {string} id The id of record
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getServiceAccountById(id: string, options?: any): AxiosPromise<ServiceAccount> {
+            return DefaultApiFp(configuration).getServiceAccountById(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1805,7 +2007,18 @@ export interface DefaultApiInterface {
 
     /**
      * 
-     * @summary Get metrics by kafka id.
+     * @summary Get metrics with instant query by kafka id.
+     * @param {string} id The id of record
+     * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    getMetricsByInstantQuery(id: string, filters?: Array<string>, options?: any): AxiosPromise<MetricsInstantQueryList>;
+
+    /**
+     * 
+     * @summary Get metrics with timeseries range query by kafka id.
      * @param {string} id The id of record
      * @param {number} duration The length of time in minutes over which to return the metrics.
      * @param {number} interval The interval in seconds between data points.
@@ -1814,7 +2027,17 @@ export interface DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): AxiosPromise<MetricsList>;
+    getMetricsByRangeQuery(id: string, duration: number, interval: number, filters?: Array<string>, options?: any): AxiosPromise<MetricsRangeQueryList>;
+
+    /**
+     * 
+     * @summary get service account by id
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    getServiceAccountById(id: string, options?: any): AxiosPromise<ServiceAccount>;
 
     /**
      * 
@@ -1944,7 +2167,20 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
 
     /**
      * 
-     * @summary Get metrics by kafka id.
+     * @summary Get metrics with instant query by kafka id.
+     * @param {string} id The id of record
+     * @param {Array<string>} [filters] List of metrics to fetch. Fetch all metrics when empty. List entries are kafka internal metric names.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getMetricsByInstantQuery(id: string, filters?: Array<string>, options?: any) {
+        return DefaultApiFp(this.configuration).getMetricsByInstantQuery(id, filters, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get metrics with timeseries range query by kafka id.
      * @param {string} id The id of record
      * @param {number} duration The length of time in minutes over which to return the metrics.
      * @param {number} interval The interval in seconds between data points.
@@ -1953,8 +2189,20 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getMetricsByKafkaId(id: string, duration: number, interval: number, filters?: Array<string>, options?: any) {
-        return DefaultApiFp(this.configuration).getMetricsByKafkaId(id, duration, interval, filters, options).then((request) => request(this.axios, this.basePath));
+    public getMetricsByRangeQuery(id: string, duration: number, interval: number, filters?: Array<string>, options?: any) {
+        return DefaultApiFp(this.configuration).getMetricsByRangeQuery(id, duration, interval, filters, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary get service account by id
+     * @param {string} id The id of record
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getServiceAccountById(id: string, options?: any) {
+        return DefaultApiFp(this.configuration).getServiceAccountById(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

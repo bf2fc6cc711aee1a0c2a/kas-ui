@@ -7,15 +7,27 @@ import {
   HeaderProps,
   TableBodyProps,
 } from '@patternfly/react-table';
+import { css } from '@patternfly/react-styles';
+import { CustomRowWrapper, CustomRowWrapperProvider, CustomRowWrapperContextProps } from './CustomRowWrapper';
 
-export interface MASTableProps {
-  tableProps: Omit<PFTableProps, 'children'>;
+export type MASTableProps = CustomRowWrapperContextProps & {
+  tableProps: Omit<PFTableProps, 'children'> & {
+    hasDefaultCustomRowWrapper?: boolean;
+  };
   tableHeaderProps?: Omit<HeaderProps, 'children'>;
   tableBodyProps?: Omit<TableBodyProps, 'children'>;
   children?: React.ReactNode;
-}
+};
 
-const MASTable: FunctionComponent<MASTableProps> = ({ tableProps, tableHeaderProps, tableBodyProps, children }) => {
+const MASTable: FunctionComponent<MASTableProps> = ({
+  tableProps,
+  tableHeaderProps,
+  tableBodyProps,
+  children,
+  activeRow,
+  onRowClick,
+  rowDataTestId,
+}) => {
   const {
     cells,
     rows,
@@ -26,26 +38,41 @@ const MASTable: FunctionComponent<MASTableProps> = ({ tableProps, tableHeaderPro
     variant,
     className,
     rowWrapper,
+    hasDefaultCustomRowWrapper = false,
     ...restProps
   } = tableProps;
 
+  /**
+   * Handle CustomRowWrapper
+   */
+  if (hasDefaultCustomRowWrapper) {
+    restProps['rowWrapper'] = CustomRowWrapper;
+  }
+
   return (
-    <PFTable
-      className={className}
-      rowWrapper={rowWrapper}
-      cells={cells}
-      variant={variant}
-      rows={rows}
-      aria-label={ariaLabel}
-      actionResolver={actionResolver}
-      onSort={onSort}
-      sortBy={sortBy}
-      {...restProps}
+    <CustomRowWrapperProvider
+      value={{
+        activeRow,
+        onRowClick,
+        rowDataTestId,
+      }}
     >
-      <TableHeader {...tableHeaderProps} />
-      <TableBody {...tableBodyProps} />
-      {children}
-    </PFTable>
+      <PFTable
+        className={css('mas--streams-table-view__table', className)}
+        cells={cells}
+        variant={variant}
+        rows={rows}
+        aria-label={ariaLabel}
+        actionResolver={actionResolver}
+        onSort={onSort}
+        sortBy={sortBy}
+        {...restProps}
+      >
+        <TableHeader {...tableHeaderProps} />
+        <TableBody {...tableBodyProps} />
+        {children}
+      </PFTable>
+    </CustomRowWrapperProvider>
   );
 };
 

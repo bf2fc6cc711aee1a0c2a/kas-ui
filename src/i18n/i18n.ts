@@ -8,16 +8,16 @@ import * as relativeTime from 'dayjs/plugin/relativeTime';
 
 // import locales for any languages you're supporting (English is included by default)
 import 'dayjs/locale/ja';
+let kasi18n = i18n.createInstance();
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
-declare const __PUBLIC_PATH__: string;
 declare const window: Window & {
   windowError: string;
 };
 
-i18n
+kasi18n
   .use(new Pseudo({ enabled: pseudolocalizationEnabled, wrapped: true }))
   // fetch json files
   // learn more: https://github.com/i18next/i18next-http-backend
@@ -32,7 +32,7 @@ i18n
   .init(
     {
       backend: {
-        loadPath: `${__PUBLIC_PATH__}locales/{{lng}}/{{ns}}.json`,
+        loadPath: `${__webpack_public_path__}locales/{{lng}}/{{ns}}.json`,
       },
       fallbackLng: 'en',
       load: 'all',
@@ -42,8 +42,8 @@ i18n
       // add any namespaces you're using here for loading purposes
       ns: ['public'],
       defaultNS: 'public',
-      nsSeparator: '~',
-      keySeparator: false,
+      nsSeparator: ':',
+      keySeparator: '.',
       postProcess: ['pseudo'],
       interpolation: {
         format: function (value, format, lng, options) {
@@ -78,8 +78,8 @@ i18n
     }
   );
 
-i18n.on('languageChanged', function (lng) {
+kasi18n.on('languageChanged', function (lng) {
   dayjs.locale(lng);
 });
 
-export default i18n;
+export default kasi18n;

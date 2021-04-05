@@ -1,0 +1,25 @@
+.pf-c-code-editor__main {
+  height: 220px;
+}
+
+.pf-c-code-editor__code-pre {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.mas--details__drawer--grid--column-one {
+  margin-right: var(--pf-global--spacer--md);
+}
+
+.mas--details__drawer--grid {
+  margin-bottom: var(--pf-global--spacer--lg);
+}
+
+.mas--details__drawer--tab-content {
+  padding-top: var(--pf-global--spacer--lg);
+  padding-bottom: var(--pf-global--spacer--lg);
+}
+
+.mas--details__drawer--tab-content.pf-m-secondary {
+  padding-top: 0;
+}

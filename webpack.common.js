@@ -4,12 +4,14 @@ const CopyPlugin = require('copy-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const BG_IMAGES_DIRNAME = 'bgimages';
-const ASSET_PATH = process.env.ASSET_PATH || '/';
-const { dependencies, federatedModuleName} = require("./package.json");
+const {dependencies, federatedModuleName} = require("./package.json");
 delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
-module.exports = (env, argv, useContentHash) => {
+const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+module.exports = (env, argv) => {
+  const isProduction = argv && argv.mode === 'production';
   return {
     entry: {
       app: path.resolve(__dirname, 'src', 'index.tsx')
@@ -29,6 +31,11 @@ module.exports = (env, argv, useContentHash) => {
           ]
         },
         {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          sideEffects: true
+        },
+        {
           test: /\.(svg|ttf|eot|woff|woff2)$/,
           // only process modules with this loader
           // if they live under a 'fonts' or 'pficon' directory
@@ -45,7 +52,7 @@ module.exports = (env, argv, useContentHash) => {
               // Limit at 50k. larger files emited into separate files
               limit: 5000,
               outputPath: 'fonts',
-              name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+              name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
             }
           }
         },
@@ -58,7 +65,7 @@ module.exports = (env, argv, useContentHash) => {
               options: {
                 limit: 5000,
                 outputPath: 'svgs',
-                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+                name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -106,7 +113,7 @@ module.exports = (env, argv, useContentHash) => {
               options: {
                 limit: 5000,
                 outputPath: 'images',
-                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+                name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -122,7 +129,7 @@ module.exports = (env, argv, useContentHash) => {
               options: {
                 limit: 5000,
                 outputPath: 'locales',
-                name: useContentHash ? '[contenthash].[ext]' : '[name].[ext]',
+                name: isProduction ? '[contenthash:8].[ext]' : '[name].[ext]',
               }
             }
           ]
@@ -131,7 +138,8 @@ module.exports = (env, argv, useContentHash) => {
     },
     output: {
       filename: '[name].bundle.js',
-      path: path.resolve(__dirname, 'dist')
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: "auto"
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -143,20 +151,30 @@ module.exports = (env, argv, useContentHash) => {
       }),
       new CopyPlugin({
         patterns: [
-          { from: './src/favicon.png', to: 'images' },
+          {from: './src/favicon.png', to: 'images'},
         ]
       }),
       new CopyPlugin({
         patterns: [
-          { from: './src/locales', to: 'locales' },
+          {from: './src/locales', to: 'locales'},
+        ]
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].[contenthash:8].css',
+        chunkFilename: '[contenthash:8].css'
+      }),
+      new ChunkMapper({
+        modules: [
+          federatedModuleName
         ]
       }),
       new webpack.container.ModuleFederationPlugin({
         name: federatedModuleName,
-        filename: "remoteEntry.js",
+        filename: `${federatedModuleName}${isProduction ? '[chunkhash:8]' : ''}.js`,
         exposes: {
-          "./OpenshiftStreams": "./src/app/OpenshiftStreams/OpenshiftStreamsFederated",
-        },
+          "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",
+          "./ServiceRegistry":"./src/app/modules/ServiceRegistry/ServiceRegistryFederated",
+          "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated"        },
         shared: {
           ...dependencies,
           react: {
@@ -181,6 +199,6 @@ module.exports = (env, argv, useContentHash) => {
       ],
       symlinks: false,
       cacheWithContext: false
-    }
+    },
   }
 };

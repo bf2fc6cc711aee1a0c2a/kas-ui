@@ -5,10 +5,11 @@ import { AppLayout } from '@app/AppLayout/AppLayout';
 import { AppRoutes } from '@app/routes';
 import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
-import { Loading } from './components/Loading/Loading';
+import { MASLoading } from '@app/common';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
-import '../i18n/i18n';
-import { ErrorBoundary } from '@app/components/ErrorBoundary';
+import kasi18n from '../i18n/i18n';
+import {I18nextProvider} from 'react-i18next';
+import { MASErrorBoundary } from '@app/common';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 
@@ -24,24 +25,26 @@ const App: React.FunctionComponent = () => {
     init();
   }, []);
 
-  if (!initialized) return <Loading />;
+  if (!initialized) return <MASLoading />;
 
   // TODO - index doing router is not desired.
   // Split to App.tsx etc.
   return (
+    <I18nextProvider i18n={kasi18n}>
     <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
       <KeycloakAuthProvider>
         <Router>
-          <React.Suspense fallback={<Loading />}>
-            <ErrorBoundary>
+          <React.Suspense fallback={<MASLoading />}>
+            <MASErrorBoundary>
               <AppLayout>
                 <AppRoutes />
               </AppLayout>
-            </ErrorBoundary>
+            </MASErrorBoundary>
           </React.Suspense>
         </Router>
       </KeycloakAuthProvider>
     </KeycloakContext.Provider>
+    </I18nextProvider>
   );
 };
 export { App };

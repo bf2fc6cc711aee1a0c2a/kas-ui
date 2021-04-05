@@ -7,7 +7,7 @@ function accessibleRouteChangeHandler() {
   }, 50);
 }
 
-type KeyValueOptions = {  
+type KeyValueOptions = {
   value: string;
   label: string;
 };
@@ -75,12 +75,46 @@ const capitalize = (s: string) => {
 };
 
 const MAX_INSTANCE_NAME_LENGTH = 32;
+const MAX_FILTER_LIMIT = 10;
+const MAX_SERVICE_ACCOUNT_NAME_LENGTH = 50;
+const MAX_SERVICE_ACCOUNT_DESC_LENGTH = 255;
 
+const MIN_POLL_INTERVAL = 1000;
+const MAX_POLL_INTERVAL = 5000;
 const isValidToken = (accessToken: string | undefined) => {
   if (accessToken !== undefined && accessToken !== '') {
     return true;
   }
   return false;
+};
+
+// function to get exact number of skeleton count required for the current page
+const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: number) => {
+  // initiaise loadingRowCount by perPage
+  let loadingRowCount = perPage;
+  /*
+    if number of expected count is greater than 0
+      calculate the loadingRowCount
+    else
+      leave the loadingRowCount to perPage
+   */
+  if (expectedTotal && expectedTotal > 0) {
+    // get total number of pages
+    const totalPage =
+      expectedTotal % perPage !== 0 ? Math.floor(expectedTotal / perPage) + 1 : Math.floor(expectedTotal / perPage);
+    // check whether the current page is the last page
+    if (page === totalPage) {
+      // check whether to total expected count is greater than perPage count
+      if (expectedTotal > perPage) {
+        // assign the calculated skelton rows count to display the exact number of expected loading skelton rows
+        loadingRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
+      } else {
+        loadingRowCount = expectedTotal;
+      }
+    }
+  }
+  // return the exact number of skeleton expected at the time of loading
+  return loadingRowCount !== 0 ? loadingRowCount : perPage;
 };
 
 export {
@@ -94,4 +128,10 @@ export {
   InstanceStatus,
   MAX_INSTANCE_NAME_LENGTH,
   isValidToken,
+  MAX_FILTER_LIMIT,
+  MIN_POLL_INTERVAL,
+  MAX_POLL_INTERVAL,
+  getLoadingRowsCount,
+  MAX_SERVICE_ACCOUNT_NAME_LENGTH,
+  MAX_SERVICE_ACCOUNT_DESC_LENGTH
 };
