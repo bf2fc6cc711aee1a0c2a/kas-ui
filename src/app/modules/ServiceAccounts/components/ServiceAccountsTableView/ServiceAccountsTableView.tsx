@@ -226,7 +226,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           }}
         />
       )}
-      {total && total > 0 && mainToggle && (
+      {/* {total && total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}
@@ -244,7 +244,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
             currPage: t('curr_page'),
           }}
         />
-      )}
+      )} */}
     </>
   );
 };
