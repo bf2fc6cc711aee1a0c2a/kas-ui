@@ -365,7 +365,7 @@ const OpenshiftStreams = ({
   };
 
   const createInstanceButton = () => {
-    const isDisabledCreateButton = getLoggedInUserKafkaInstance() !== undefined;
+    const isDisabledCreateButton = getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached;
 
     if (isDisabledCreateButton) {
       const content = isMaxCapacityReached
@@ -477,7 +477,7 @@ const OpenshiftStreams = ({
                   isDrawerOpen={selectedInstance !== null}
                   loggedInUser={loggedInUser}
                   isMaxCapacityReached={isMaxCapacityReached}
-                  isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined}
+                  isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
                 />
               </PageSection>
             )}
