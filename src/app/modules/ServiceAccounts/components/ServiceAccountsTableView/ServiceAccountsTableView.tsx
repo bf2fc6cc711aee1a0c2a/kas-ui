@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IAction,
@@ -17,6 +17,7 @@ import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@a
 import { getLoadingRowsCount } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
+import { AuthContext } from '@app/auth/AuthContext';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -47,6 +48,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   handleCreateModal,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
+  const authContext = useContext(AuthContext);
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
@@ -56,6 +58,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     { title: t('common.owner'), transforms: [sortable, cellWidth(20)] },
     { title: t('common.description') },
   ];
+
+  useEffect(() => {
+    authContext?.getUsername().then((username) => setLoggedInUser(username));
+  }, []);
 
   const onSelectKebabDropdownOption = (event: any, originalData: ServiceAccountListItem, selectedOption: string) => {
     if (selectedOption === 'reset-credentials') {

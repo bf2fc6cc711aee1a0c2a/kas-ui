@@ -17,12 +17,12 @@ import {
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
+import { MASPagination, MASToolbar, ToolbarItemProps, useGlobalModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
+import { CloudProvider } from '../../../../../openapi';
 import './StreamsToolbar.css';
-import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
 
 export type StreamsToolbarProps = {
   mainToggle: boolean;
@@ -35,6 +35,9 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
   isMaxCapacityReached?: boolean | undefined;
+  onCreate?: () => void;
+  refresh?: () => void;
+  cloudProviders?: Array<CloudProvider>;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -47,8 +50,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   setFilteredValue,
   isDisabledCreateButton,
   isMaxCapacityReached,
+  mainToggle,
+  onCreate,
+  refresh,
+  cloudProviders,
 }) => {
-  const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
+  const { showModal } = useGlobalModalContext();
   const { t } = useTranslation();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
@@ -539,6 +546,15 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
+  const handleCreateModal = () => {
+    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+      onCreate,
+      cloudProviders,
+      mainToggle,
+      refresh,
+    });
+  };
+
   const createButton = () => {
     if (isDisabledCreateButton) {
       const content = isMaxCapacityReached
@@ -549,7 +565,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         <Tooltip content={content}>
           <Button
             variant="primary"
-            onClick={() => setIsModalOpen(!isModalOpen)}
+            onClick={handleCreateModal}
             data-testid={'tableStreams-buttonCreateKafka'}
             isAriaDisabled={isDisabledCreateButton}
           >
@@ -560,11 +576,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     }
 
     return (
-      <Button
-        variant="primary"
-        onClick={() => setIsModalOpen(!isModalOpen)}
-        data-testid={'tableStreams-buttonCreateKafka'}
-      >
+      <Button variant="primary" onClick={handleCreateModal} data-testid={'tableStreams-buttonCreateKafka'}>
         {t('create_kafka_instance')}
       </Button>
     );

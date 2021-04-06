@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextInput } from '@patternfly/react-core';
-import { MASDeleteModal, MASDeleteModalProps } from '@app/common';
+import { MASDeleteModal, MASDeleteModalProps, useGlobalModalContext } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
 export type DeleteInstanceModalProps = MASDeleteModalProps & {
   instanceStatus?: string;
 };
 
-export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
-  isModalOpen,
-  title,
-  confirmButtonProps,
-  cancelButtonProps,
-  handleModalToggle,
-  textProps,
-  instanceStatus,
-  selectedItemData,
-}: DeleteInstanceModalProps) => {
+export const DeleteInstanceModal: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const { hideModal, store } = useGlobalModalContext();
+  const { title, confirmButtonProps, cancelButtonProps, textProps, instanceStatus, selectedItemData } =
+    store?.modalProps || {};
+
   const selectedInstanceName = selectedItemData?.name;
 
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
@@ -42,9 +37,14 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
       confirmButtonProps?.onClick && confirmButtonProps.onClick(selectedItemData);
     }
   };
+
+  const handleModalToggle = () => {
+    hideModal && hideModal();
+  };
+
   return (
     <MASDeleteModal
-      isModalOpen={isModalOpen}
+      isModalOpen={true}
       title={title}
       confirmButtonProps={{
         isDisabled: isConfirmButtonDisabled(),
@@ -54,6 +54,7 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
       cancelButtonProps={cancelButtonProps}
       handleModalToggle={handleModalToggle}
       textProps={textProps}
+      selectedItemData={selectedItemData}
     >
       {instanceStatus === InstanceStatus.READY && (
         <>

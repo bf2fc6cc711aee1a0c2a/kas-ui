@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AlertVariant } from '@patternfly/react-core';
 import { ServiceAccounts, ServiceAccountsProps } from './ServiceAccounts';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
-import { AlertContext, AlertContextProps } from '@app/common/MASAlerts/MASAlerts';
+import { AlertContext, AlertContextProps, GlobalModal } from '@app/common';
 import { ApiContext } from '@app/api/ApiContext';
 import '../../../i18n/i18n';
 
@@ -41,7 +41,9 @@ const ServiceAccountsFederated = ({
       >
         <AlertContext.Provider value={alertContext}>
           <AuthContext.Provider value={authContext}>
-            <ServiceAccounts getConnectToInstancePath={getConnectToInstancePath} />
+            <GlobalModal>
+              <ServiceAccounts getConnectToInstancePath={getConnectToInstancePath} />
+            </GlobalModal>
           </AuthContext.Provider>
         </AlertContext.Provider>
       </ApiContext.Provider>

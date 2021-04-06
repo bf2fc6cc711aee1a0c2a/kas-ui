@@ -289,7 +289,7 @@
     "unauthorized_access_to_service_accounts_info": "To access Service Accounts, contact your organization administrators.",
     "client_secret_will_be_reset": "Client secret for <b>{{serviceAccountId}}</b> with client ID <b>{{clientID}}</b> will be reset.",
     "reset": "Reset",
-    "reset_service_account_credentials": "Reset service account credentials?",
+    "reset_service_account_credentials": "Reset service account credentials",
     "create_a_service_account": "Create a service account",
     "service_account_creation_success_message": "Service account successfully created",
     "will_be_deleted": "will be deleted.",

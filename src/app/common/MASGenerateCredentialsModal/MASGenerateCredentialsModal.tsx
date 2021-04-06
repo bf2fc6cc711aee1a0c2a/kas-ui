@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent, useContext, useEffect } from 'react';
+import React, { useState, FunctionComponent } from 'react';
 import {
   Modal,
   ModalVariant,
@@ -19,36 +19,20 @@ import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Flex/flex.css';
 import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';
 import { useTranslation } from 'react-i18next';
-import { MASEmptyState, MASLoading } from '@app/common';
+import { MASEmptyState, MASLoading, useGlobalModalContext } from '@app/common';
 import './MASGenerateCredentialsModal.css';
 
-type MASGenerateCredentialsModalProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  credential: any | undefined;
-  setCredential: (credential: any) => void;
-  isLoading?: boolean;
-  title?: string;
-};
-
-const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModalProps> = ({
-  isOpen,
-  setIsOpen,
-  credential,
-  setCredential,
-  isLoading,
-  title,
-}: MASGenerateCredentialsModalProps) => {
+const MASGenerateCredentialsModal: FunctionComponent<{}> = () => {
   const { t } = useTranslation();
+  const { store, hideModal } = useGlobalModalContext();
+  const { credential, isLoading, title } = store?.modalProps || {};
 
   const [isCreated, setIsCreated] = useState(false);
   const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
-  const [error, setError] = useState('');
-
+  
   const handleClose = () => {
-    setIsOpen(false);
+    hideModal();
     setIsCreated(!isCreated);
-    setCredential(undefined);
     setConfirmationCheckbox(false);
   };
 
@@ -132,7 +116,7 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
     <Modal
       variant={ModalVariant.medium}
       title={title || t('serviceAccount.create_a_service_account')}
-      isOpen={isOpen}
+      isOpen={true}
       onClose={handleClose}
       showClose={false}
     >

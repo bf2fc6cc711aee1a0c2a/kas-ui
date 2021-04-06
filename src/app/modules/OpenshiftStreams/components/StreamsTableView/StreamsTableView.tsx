@@ -14,11 +14,16 @@ import {
   IExtraColumnData,
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
-import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
+import {
+  MASPagination,
+  MASTable,
+  MASEmptyState,
+  MASEmptyStateVariant,
+  useGlobalModalContext,
+  MODAL_TYPES,
+} from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
-import { CreateInstanceModal } from '../CreateInstanceModal';
-import { DeleteInstanceModal } from '../DeleteInstanceModal';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -26,7 +31,6 @@ import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { InstanceStatus, isServiceApiError, getLoadingRowsCount } from '@app/utils';
 import { useHistory } from 'react-router-dom';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 
 export type FilterValue = {
@@ -120,11 +124,14 @@ const StreamsTableView = ({
   isMaxCapacityReached,
   isDisabledCreateButton,
   loggedInUser,
+  onCreate,
+  cloudProviders,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const { showModal, hideModal } = useGlobalModalContext();
+
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const [activeRow, setActiveRow] = useState<string>();
 
@@ -393,7 +400,7 @@ const StreamsTableView = ({
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
-    const { status } = instance;
+    const { status, name } = instance;
     setSelectedInstance(instance);
     /**
      * Hide confirm modal for status 'failed' and call delete api
@@ -402,7 +409,25 @@ const StreamsTableView = ({
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
-      setIsDeleteModalOpen(!isDeleteModalOpen);
+      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
+        t,
+        status,
+        name,
+        isMaxCapacityReached
+      );
+
+      showModal(MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
+        instanceStatus: status,
+        selectedItemData: instance,
+        title,
+        confirmButtonProps: {
+          onClick: onDeleteInstance,
+          label: confirmActionLabel,
+        },
+        textProps: {
+          description,
+        },
+      });
     }
   };
 
@@ -422,7 +447,7 @@ const StreamsTableView = ({
       basePath,
     });
     onDelete();
-    setIsDeleteModalOpen(false);
+    hideModal();
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         setActiveRow(undefined);
@@ -441,13 +466,6 @@ const StreamsTableView = ({
       addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
-
-  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
-    t,
-    selectedInstance?.status,
-    selectedInstance?.name,
-    isMaxCapacityReached
-  );
 
   const getParameterForSortIndex = (index: number) => {
     switch (index) {
@@ -533,6 +551,9 @@ const StreamsTableView = ({
         setFilteredValue={setFilteredValue}
         isDisabledCreateButton={isDisabledCreateButton}
         isMaxCapacityReached={isMaxCapacityReached}
+        onCreate={onCreate}
+        cloudProviders={cloudProviders}
+        refresh={refresh}
       />
       <MASTable
         tableProps={{
@@ -580,21 +601,6 @@ const StreamsTableView = ({
           }}
         />
       )}
-      <DeleteInstanceModal
-        isModalOpen={isDeleteModalOpen}
-        instanceStatus={selectedInstance?.status}
-        selectedItemData={selectedInstance}
-        handleModalToggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
-        title={title}
-        confirmButtonProps={{
-          onClick: onDeleteInstance,
-          label: confirmActionLabel,
-        }}
-        textProps={{
-          description,
-        }}
-      />
-      <CreateInstanceModal />
     </>
   );
 };

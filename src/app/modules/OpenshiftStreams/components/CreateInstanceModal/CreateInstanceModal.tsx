@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, createContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Alert,
   AlertVariant,
@@ -27,29 +27,8 @@ import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { isValidToken, ErrorCodes } from '@app/utils';
-import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
-
-export type CreateInstanceModalProps = {
-  isModalOpen: boolean;
-  setIsModalOpen: (isModalOpen: boolean) => void;
-  onCreate: () => void;
-  mainToggle: boolean;
-  refresh: () => void;
-  cloudProviders: Array<CloudProvider>;
-};
-
-const CreateInstanceModalContext = createContext<CreateInstanceModalProps>({
-  isModalOpen: false,
-  setIsModalOpen: () => {},
-  onCreate: () => {},
-  mainToggle: false,
-  refresh: () => {},
-  cloudProviders: []
-});
-
-export const CreateInstanceModalProvider = CreateInstanceModalContext.Provider;
-export const useCreateInstanceModal = () => useContext(CreateInstanceModalContext);
+import { ErrorCodes } from '@app/utils';
+import { MASCreateModal, useGlobalModalContext } from '@app/common';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -60,16 +39,13 @@ const emptyProvider: CloudProvider = {
 
 const CreateInstanceModal: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { isModalOpen, setIsModalOpen, onCreate, cloudProviders, refresh, mainToggle } = useCreateInstanceModal();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { addAlert } = useAlerts();
+  const { store, hideModal } = useGlobalModalContext();
+  const { onCreate, cloudProviders, refresh, mainToggle } = store?.modalProps || {};
 
   const newKafka: NewKafka = new NewKafka();
-  newKafka.name = '';
-  newKafka.cloud_provider = '';
-  newKafka.region = '';
-  newKafka.multi_az = true;
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -164,51 +140,44 @@ const CreateInstanceModal: React.FunctionComponent = () => {
     const accessToken = await authContext?.getToken();
     if (!isValid) {
       setIsFormValid(false);
-    } else {
-      if (isValidToken(accessToken)) {
-        try {
-          const apisService = new DefaultApi({
-            accessToken,
-            basePath,
-          });
-          onCreate();
-          setCreationInProgress(true);
-          await apisService.createKafka(true, kafkaFormData).then((res) => {
-            resetForm();
-            setIsModalOpen(false);
-            refresh();
-          });
-        } catch (error) {
-          let reason: string | undefined;
-          let toShowAlert = true;
-          if (isServiceApiError(error)) {
-            if (error.response?.data.code === ErrorCodes.DUPLICATE_INSTANCE_NAME) {
-              setIsFormValid(false);
-              toShowAlert = false;
-              setNameValidated({
-                fieldState: 'error',
-                message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
-              });
-            } else {
-              reason = error.response?.data.reason;
-            }
-          }
-          /**
-           * Todo: show user friendly message according to server code
-           * and translation for specific language
-           *
-           */
-          toShowAlert &&
+      return;
+    }
+
+    if (accessToken) {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        onCreate();
+        setCreationInProgress(true);
+        await apisService.createKafka(true, kafkaFormData).then((res) => {
+          resetForm();
+          hideModal();
+          refresh();
+        });
+      } catch (error) {
+        let reason: string | undefined;
+        if (isServiceApiError(error)) {
+          if (error.response?.data.code === ErrorCodes.DUPLICATE_INSTANCE_NAME) {
+            setIsFormValid(false);
+            setNameValidated({
+              fieldState: 'error',
+              message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
+            });
+          } else {
+            reason = error.response?.data.reason;
             addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
+          }
         }
-        setCreationInProgress(false);
       }
+      setCreationInProgress(false);
     }
   };
 
   const handleModalToggle = () => {
     resetForm();
-    setIsModalOpen(!isModalOpen);
+    hideModal();
   };
 
   const handleInstanceNameChange = (name?: string) => {
@@ -369,7 +338,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
 
   return (
     <MASCreateModal
-      isModalOpen={isModalOpen}
+      isModalOpen={true}
       title={t('create_a_kafka_instance')}
       handleModalToggle={handleModalToggle}
       onCreate={onCreateInstance}

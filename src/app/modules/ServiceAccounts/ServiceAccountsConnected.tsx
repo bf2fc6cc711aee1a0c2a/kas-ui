@@ -1,7 +1,7 @@
 import React from 'react';
 import { ServiceAccounts } from './ServiceAccounts';
 import { ApiContext } from '@app/api/ApiContext';
-import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
+import { AlertProvider, GlobalModal } from '@app/common';
 
 declare const __BASE_PATH__: string;
 
@@ -13,7 +13,9 @@ export const ServiceAccountsConnected = () => {
       }}
     >
       <AlertProvider>
-        <ServiceAccounts />
+        <GlobalModal>
+          <ServiceAccounts />
+        </GlobalModal>
       </AlertProvider>
     </ApiContext.Provider>
   );

@@ -2,32 +2,22 @@ import React, { useState, useContext } from 'react';
 import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from './../../../../../openapi/api';
+import { DefaultApi, ServiceAccountRequest } from './../../../../../openapi/api';
 import { isValidToken } from '@app/utils';
 import { useTranslation } from 'react-i18next';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { isServiceApiError, ErrorCodes } from '@app/utils';
-import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal';
+import { isServiceApiError } from '@app/utils';
+import { useGlobalModalContext, MODAL_TYPES } from '@app/common';
 
-export type ResetServiceAccountModalProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  serviceAccountToReset: ServiceAccountListItem | undefined;
-};
-
-const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModalProps> = ({
-  isOpen,
-  setIsOpen,
-  serviceAccountToReset,
-}: ResetServiceAccountModalProps) => {
+const ResetServiceAccountModal: React.FunctionComponent<{}> = () => {
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { addAlert } = useAlerts();
+  const { showModal, hideModal, store } = useGlobalModalContext();
+  const { serviceAccountToReset } = store?.modalProps || {};
 
-  const [isModalLoading, setIsModalLoading] = React.useState(false);
-  const [credential, setCredential] = useState();
-  const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -35,6 +25,13 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
       reason = error.response?.data.reason;
     }
     addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+  };
+
+  const handleGenerateCredentialsModal = (credential: ServiceAccountRequest | undefined) => {
+    showModal(MODAL_TYPES.GENERATE_CREDENTIALS, {
+      credential,
+      title: t('serviceAccount.reset_service_account_credentials'),
+    });
   };
 
   const resetServiceAccount = async (serviceAccount) => {
@@ -49,10 +46,9 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
         });
         setIsModalLoading(true);
         await apisService.resetServiceAccountCreds(serviceAccountId).then((response) => {
-          setCredential(response?.data);
-          setIsOpen(false);
+          hideModal();
           setIsModalLoading(false);
-          setIsGenerateCredentialsModalOpen(true);
+          handleGenerateCredentialsModal(response?.data);
         });
       } catch (error) {
         handleServerError(error);
@@ -62,7 +58,7 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
   };
 
   const handleModalToggle = () => {
-    setIsOpen(!isOpen);
+    hideModal();
   };
 
   const serviceAccountId = serviceAccountToReset?.name;
@@ -73,8 +69,8 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
       <Modal
         id="reset-service-account-modal"
         variant={ModalVariant.medium}
-        title={t('serviceAccount.reset_service_account_credentials')}
-        isOpen={isOpen}
+        title={t('serviceAccount.reset_service_account_credentials') + '?'}
+        isOpen={true}
         onClose={handleModalToggle}
         actions={[
           <Button
@@ -98,13 +94,6 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
           }}
         />
       </Modal>
-      <MASGenerateCredentialsModal
-        title="Reset service account credentials"
-        isOpen={isGenerateCredentialsModalOpen}
-        setIsOpen={setIsGenerateCredentialsModalOpen}
-        credential={credential}
-        setCredential={setCredential}
-      />
     </>
   );
 };
