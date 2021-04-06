@@ -288,20 +288,7 @@ const OpenshiftStreams = ({
     const isUserSameAsLoggedIn = getLoggedInUserKafkaInstance() !== undefined;
     if (isMaxCapacityReached) {
       if (isUserSameAsLoggedIn) {
-        return 'Instances are currently unavailable for creation.';
-      } else {
-        return (
-          <>
-            Instances are available for creation. For help getting started, access the{' '}
-            <Button variant={ButtonVariant.link} isSmall isInline className="mk--openstreams__banner">
-              <b>quick start guide</b>
-            </Button>
-          </>
-        );
-      }
-    } else {
-      if (isUserSameAsLoggedIn) {
-        return 'Instances are available for creation.';
+        return 'Instances are currently unavailable for creation';
       } else {
         return (
           <>
@@ -317,6 +304,19 @@ const OpenshiftStreams = ({
               <b> take a tour </b>
             </Button>{' '}
             to learn more about the service.
+          </>
+        );
+      }
+    } else {
+      if (isUserSameAsLoggedIn) {
+        return 'Instances are available for creation.';
+      } else {
+        return (
+          <>
+            Instances are available for creation. For help getting started, access the{' '}
+            <Button variant={ButtonVariant.link} isSmall isInline className="mk--openstreams__banner">
+              <b>quick start guide</b>
+            </Button>
           </>
         );
       }
