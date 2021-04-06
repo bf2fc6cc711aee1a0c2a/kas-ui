@@ -30,7 +30,7 @@ export type MASEmptyStateProps = {
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     'data-testid'?: string;
   };
-  secondaryButtonProps?: [{
+  secondaryButtonProps?: Omit<ButtonProps, 'children'> & [{
     title: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     'data-testid'?: string;
@@ -48,6 +48,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   children,
 }: MASEmptyStateProps) => {
   const { variant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
+  // const { variantSecondary = ButtonVariant.link, onClick = onClickSecondary, ...restSecondaryButtonProps } = secondaryButtonProps || {};
   const { icon = PlusCircleIcon, ...restEmptyStateIconProps } = emptyStateIconProps || {};
   const { title, size = TitleSizes.lg, headingLevel = 'h1', ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
@@ -72,7 +73,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           <EmptyStateSecondaryActions>
             {secondaryButtonProps?.map((button) => {
               return (
-                <Button variant="link" onClick={button.onClick} {...secondaryButtonProps}>{button.title}</Button>
+                <Button variant="link" onClick={button.onClick} data-testid={button['data-testid']}>{button.title}</Button>
               )
             })}
           </EmptyStateSecondaryActions>
