@@ -294,6 +294,7 @@
     "service_account_creation_success_message": "Service account successfully created",
     "will_be_deleted": "will be deleted.",
     "service_account_name_length_is_greater_than_expected": "Service account name cannot exceed {{maxLength}} characters.",
-    "service_account_description_length_is_greater_than_expected": "Service account description cannot exceed {{maxLength}} characters."
+    "service_account_description_length_is_greater_than_expected": "Service account description cannot exceed {{maxLength}} characters.",
+    "service_account_successfully_deleted": "{{name}} service account instance successfully deleted"
   }
 }

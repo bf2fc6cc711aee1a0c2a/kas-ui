@@ -107,7 +107,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
       isValid = false;
       setNameValidated({
         fieldState: 'error',
-        message: t('serviceAccount.service_account_name_length_is_greater_than_expected'),
+        message: t('common.input_filed_invalid_helper_text'),
       });
     }
 
@@ -195,6 +195,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           helperTextInvalid={message}
           helperTextInvalidIcon={message && <ExclamationCircleIcon />}
           validated={fieldState}
+          helperText={t('common.input_filed_invalid_helper_text')}
         >
           <TextInput
             isRequired
