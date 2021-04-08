@@ -13,6 +13,7 @@ import {
   EmptyStateBodyProps,
   ButtonVariant,
   EmptyStateVariant,
+  EmptyStateSecondaryActions
 } from '@patternfly/react-core';
 import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
 import SpaceShuttleIcon from '@patternfly/react-icons/dist/js/icons/space-shuttle-icon';
@@ -43,11 +44,11 @@ export type MASEmptyStateProps = {
   emptyStateBodyProps?: Omit<EmptyStateBodyProps, 'children'> & {
     body?: string | React.ReactNode;
   };
-  buttonProps?: Omit<ButtonProps, 'children'> & {
+  buttonProps?: Omit<ButtonProps, 'children'> & [{
     title?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     'data-testid'?: string;
-  };
+  }];
   children?: React.ReactNode;
 };
 
@@ -146,11 +147,20 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           </Title>
         )}
         {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
-        {buttonProps?.title && (
+        {buttonProps && (
           <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
-            {buttonProps?.title}
+            {buttonProps[0].title}
           </Button>
         )}
+        {buttonProps && buttonProps.length > 1 &&
+          <EmptyStateSecondaryActions>
+            {buttonProps?.map((button) => {
+              return (
+                <Button variant="link" onClick={button.onClick} data-testid={button['data-testid']}>{button.title}</Button>
+              )
+            })}
+          </EmptyStateSecondaryActions>
+        }
         {children}
       </PFEmptyState>
     </>

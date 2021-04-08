@@ -27,6 +27,7 @@ import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError, MASEmptyStateVariant } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
+import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -83,7 +84,7 @@ const OpenshiftStreams = ({
   };
 
   const drawerRef = React.createRef<any>();
-
+  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
   const { activeTab, instanceDetail } = selectedInstance || {};
 
   const onCloseDrawer = () => {
@@ -274,36 +275,48 @@ const OpenshiftStreams = ({
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
           >
-            <PageSection variant={PageSectionVariants.light}>
-              <Level>
-                <LevelItem>
-                  <TextContent>
-                    <Text component="h1">{t('kafka_instances')}</Text>
-                  </TextContent>
-                </LevelItem>
-              </Level>
-            </PageSection>
-            {kafkaInstanceItems === undefined ? (
-              <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-                <MASLoading />
+            <main className="pf-c-page__main">
+              <PageSection variant={PageSectionVariants.light}>
+                <Level>
+                  <LevelItem>
+                    <TextContent>
+                      <Text component="h1">{t('kafka_instances')}</Text>
+                    </TextContent>
+                  </LevelItem>
+                </Level>
               </PageSection>
-            ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
-              <PageSection padding={{ default: 'noPadding' }} isFilled>
-                <MASEmptyState
-                  emptyStateProps={{
-                    variant: MASEmptyStateVariant.GettingStarted,
-                  }}
-                  emptyStateBodyProps={{
-                    body: t('create_a_kafka_instance_to_get_started'),
-                  }}
-                  buttonProps={{
-                    title: t('create_kafka_instance'),
-                    onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
-                    ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
-                  }}
-                />
-                <CreateInstanceModal />
-              </PageSection>
+              {kafkaInstanceItems === undefined ? (
+                <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+                  <MASLoading />
+                </PageSection>
+              ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
+                <PageSection padding={{ default: 'noPadding' }} isFilled>
+                  <MASEmptyState
+                    emptyStateProps={{
+                      variant: MASEmptyStateVariant.GettingStarted,
+                    }}
+                    emptyStateBodyProps={{
+                      body: t('create_a_kafka_instance_to_get_started'),
+                    }}
+                    buttonProps={[
+                      {
+                        title: t('create_kafka_instance'),
+                        onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
+                        // ['data-testid']: 'emptyStateStreams-buttonCreateKafka'
+                      },
+                      {
+                        title: t('access_the_quick_start_guide'),
+                        onClick: () => qsContext.setActiveQuickStart("QUICKSTART_ID")
+                      },
+                      {
+                        title: t('take_a_tour'),
+                        onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
+                        // ['data-testid']: 'emptyState-actionTour'
+                      },
+                    ]}
+                  />
+                  <CreateInstanceModal />
+                </PageSection>
             ) : (
               <PageSection
                 className="mk--main-page__page-section--table"
@@ -334,6 +347,7 @@ const OpenshiftStreams = ({
                 />
               </PageSection>
             )}
+            </main>
           </InstanceDrawer>
         </CreateInstanceModalProvider>
       </AlertProvider>

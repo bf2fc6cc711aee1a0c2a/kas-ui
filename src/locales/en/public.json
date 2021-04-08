@@ -236,6 +236,8 @@
   "clear_all_filters": "Clear all filters",
   "delete_instance": "Delete instance",
   "to_access_kafka_instances_contact_your_organization_administrators": "To access Kafka Instances, contact your organization administrators.",
+  "access_the_quick_start_guide": "Access the quick start guide",
+  "take_a_tour": "Take a tour",
   "common": {
     "loding": "Loading",
     "java": "JAVA",
