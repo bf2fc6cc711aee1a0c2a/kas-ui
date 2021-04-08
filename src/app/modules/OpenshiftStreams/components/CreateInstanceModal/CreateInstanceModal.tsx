@@ -10,10 +10,10 @@ import {
   TextInput,
   Tile,
   ToggleGroup,
-  Drawer,
-  DrawerContent,
-  DrawerContentBody,
   ToggleGroupItem,
+  Grid,
+  GridItem,
+  Divider,
 } from '@patternfly/react-core';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
@@ -45,7 +45,7 @@ const CreateInstanceModalContext = createContext<CreateInstanceModalProps>({
   onCreate: () => {},
   mainToggle: false,
   refresh: () => {},
-  cloudProviders: []
+  cloudProviders: [],
 });
 
 export const CreateInstanceModalProvider = CreateInstanceModalContext.Provider;
@@ -379,12 +379,14 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       dataTestIdSubmit="modalCreateKafka-buttonSubmit"
       dataTestIdCancel="modalCreateKafka-buttonCancel"
     >
-      {mainToggle === true ? (
-        <Drawer isStatic className="mk--create-instance-modal__drawer--content">
-          <DrawerContent panelContent={<DrawerPanelContentInfo />}>
-            <DrawerContentBody>{createInstanceForm()}</DrawerContentBody>
-          </DrawerContent>
-        </Drawer>
+      {mainToggle ? (
+        <Grid lg={6} sm={12} hasGutter>
+          <GridItem lg={8}>{createInstanceForm()}</GridItem>
+          {/* <Divider isVertical /> */}
+          <GridItem lg={4} className="mk--create-instance-modal__sidebar--content">
+            <DrawerPanelContentInfo />
+          </GridItem>
+        </Grid>
       ) : (
         createInstanceForm()
       )}
