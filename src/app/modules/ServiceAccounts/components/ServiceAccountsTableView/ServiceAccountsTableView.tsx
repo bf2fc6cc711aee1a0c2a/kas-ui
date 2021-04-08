@@ -45,15 +45,16 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   filterSelected,
   setFilterSelected,
   handleCreateModal,
+  mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
   const tableColumns = [
-    { title: t('common.name'), transforms: [sortable] },
-    { title: t('common.clientID'), transforms: [sortable] },
-    { title: t('common.owner'), transforms: [sortable, cellWidth(20)] },
+    { title: t('common.name') },
+    { title: t('common.clientID') },
+    { title: t('common.owner'), transforms: [cellWidth(20)] },
     { title: t('common.description') },
   ];
 
@@ -149,8 +150,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       case 0:
         return 'name';
       case 1:
-        return 'owner';
+        return 'clientID';
       case 2:
+        return 'owner';
+      case 3:
         return 'description';
       default:
         return '';
@@ -161,10 +164,12 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     switch (parameter.toLowerCase()) {
       case 'name':
         return 0;
-      case 'owner':
+      case 'clientID':
         return 1;
-      case 'description':
+      case 'owner':
         return 2;
+      case 'description':
+        return 3;
       default:
         return undefined;
     }
@@ -196,6 +201,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
         handleCreateModal={handleCreateModal}
+        mainToggle={mainToggle}
       />
       <MASTable
         tableProps={{
@@ -220,7 +226,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           }}
         />
       )}
-      {total && total > 0 && (
+      {/* {total && total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}
@@ -238,7 +244,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
             currPage: t('curr_page'),
           }}
         />
-      )}
+      )} */}
     </>
   );
 };
