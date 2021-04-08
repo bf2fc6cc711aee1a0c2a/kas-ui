@@ -26,6 +26,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   isLoading,
   children,
   'data-ouia-app-id': dataOuiaAppId,
+  notRequiredDrawerContentBackground,
 }) => {
   dayjs.extend(localizedFormat);
 
@@ -84,6 +85,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         title: { value: name, headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}
+      notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
     >
       {children}
     </MASDrawer>

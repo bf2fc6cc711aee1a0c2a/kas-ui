@@ -82,6 +82,9 @@ const OpenshiftStreams = ({
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
+  const [notRequiredDrawerContentBackground, setNotRequiredDrawerContentBackground] = useState<boolean | undefined>(
+    false
+  );
 
   useEffect(() => {
     authContext?.getUsername().then((username) => setLoggedInUser(username));
@@ -102,7 +105,8 @@ const OpenshiftStreams = ({
         });
 
         await apisService.serviceStatus().then((res) => {
-          setIsMaxCapacityReached(res?.data?.kafkas?.max_capacity_reached);
+          const maxCapacityReached = res?.data?.kafkas?.max_capacity_reached || mainToggle;
+          setIsMaxCapacityReached(maxCapacityReached);
         });
       } catch (error) {
         handleServerError(error);
@@ -192,7 +196,9 @@ const OpenshiftStreams = ({
         if (!justPoll) {
           // Check to see if at least 1 kafka is present
           await apisService.listKafkas('1', '1').then((res) => {
-            setRawKafkaDataLength(res.data.items.length);
+            const kafkaItemsLength = res?.data?.items?.length;
+            setRawKafkaDataLength(kafkaItemsLength);
+            kafkaItemsLength < 1 && setNotRequiredDrawerContentBackground(true);
           });
         }
       } catch (error) {
@@ -418,6 +424,7 @@ const OpenshiftStreams = ({
             instanceDetail={instanceDetail}
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
+            notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
           >
             {renderBanner()}
             <PageSection variant={PageSectionVariants.light}>
@@ -437,7 +444,7 @@ const OpenshiftStreams = ({
               <PageSection padding={{ default: 'noPadding' }} isFilled>
                 <MASEmptyState
                   emptyStateProps={{
-                    variant: MASEmptyStateVariant.GettingStarted,
+                    variant: MASEmptyStateVariant.NoItems,
                   }}
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),
