@@ -27,6 +27,7 @@ import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError, MASEmptyStateVariant } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
+import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
 export type OpenShiftStreamsProps = {
   onConnectToInstance: (data: KafkaRequest) => void;
@@ -83,7 +84,7 @@ const OpenshiftStreams = ({
   };
 
   const drawerRef = React.createRef<any>();
-
+  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
   const { activeTab, instanceDetail } = selectedInstance || {};
 
   const onCloseDrawer = () => {
@@ -288,13 +289,8 @@ const OpenshiftStreams = ({
               <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <MASLoading />
               </PageSection>
-<<<<<<< HEAD
-            ) : rawKafkaDataLength && rawKafkaDataLength < 100 ? (
-              <PageSection isFilled={true}>
-=======
             ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
               <PageSection padding={{ default: 'noPadding' }} isFilled>
->>>>>>> main
                 <MASEmptyState
                   emptyStateProps={{
                     variant: MASEmptyStateVariant.GettingStarted,
@@ -302,20 +298,21 @@ const OpenshiftStreams = ({
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),
                   }}
-                  buttonProps={{
-                    title: t('create_kafka_instance'),
-                    onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
-                    ['data-testid']: 'emptyStateStreams-buttonCreateKafka',
-                  }}
-                  secondaryButtonProps={[
+                  buttonProps={[
+                    {
+                      title: t('create_kafka_instance'),
+                      onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
+                      ['data-testid']: 'emptyStateStreams-buttonCreateKafka'
+                    },
                     {
                       title: t('access_the_quick_start_guide'),
-                      onClick: () => {}
+                      onClick: () => qsContext.setActiveQuickStart("QUICKSTART_ID")
                     },
-                    { 
+                    {
                       title: t('take_a_tour'),
-                      ['data-testid']: 'emptyState-actionTour',
-                    }
+                      onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
+                      ['data-testid']: 'emptyState-actionTour'
+                    },
                   ]}
                 />
                 <CreateInstanceModal />
