@@ -13,8 +13,8 @@ import {
   SortByDirection,
   IExtraColumnData,
 } from '@patternfly/react-table';
-import { AlertVariant, PaginationVariant, Skeleton, EmptyStateVariant, TitleSizes } from '@patternfly/react-core';
-import { MASPagination, MASTable, MASEmptyState } from '@app/common';
+import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
+import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
 import { StatusColumn } from './StatusColumn';
 import { CreateInstanceModal } from '../CreateInstanceModal';
@@ -548,15 +548,10 @@ const StreamsTableView = ({
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <MASEmptyState
           emptyStateProps={{
-            variant: EmptyStateVariant.full,
-          }}
-          emptyStateIconProps={{
-            icon: SearchIcon,
+            variant: MASEmptyStateVariant.NoResult,
           }}
           titleProps={{
             title: t('no_results_found'),
-            headingLevel: 'h2',
-            size: TitleSizes.lg,
           }}
           emptyStateBodyProps={{
             body: t('adjust_your_filters_and_try_again'),

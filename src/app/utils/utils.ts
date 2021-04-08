@@ -76,6 +76,8 @@ const capitalize = (s: string) => {
 
 const MAX_INSTANCE_NAME_LENGTH = 32;
 const MAX_FILTER_LIMIT = 10;
+const MAX_SERVICE_ACCOUNT_NAME_LENGTH = 50;
+const MAX_SERVICE_ACCOUNT_DESC_LENGTH = 255;
 
 const MIN_POLL_INTERVAL = 1000;
 const MAX_POLL_INTERVAL = 5000;
@@ -115,6 +117,27 @@ const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: numbe
   return loadingRowCount !== 0 ? loadingRowCount : perPage;
 };
 
+const sortValues = (items: any[] | undefined, key: string, order: string = 'asc') => {
+  const compareValue = (a: any, b: any) => {
+    if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+      // property doesn't exist on either object
+      return 0;
+    }
+
+    const varA = typeof a[key] === 'string' ? a[key].toUpperCase() : a[key];
+    const varB = typeof b[key] === 'string' ? b[key].toUpperCase() : b[key];
+
+    let comparison = 0;
+    if (varA > varB) {
+      comparison = 1;
+    } else if (varA < varB) {
+      comparison = -1;
+    }
+    return order === 'desc' ? comparison * -1 : comparison;
+  }
+  return items?.sort(compareValue);
+};
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -129,5 +152,8 @@ export {
   MAX_FILTER_LIMIT,
   MIN_POLL_INTERVAL,
   MAX_POLL_INTERVAL,
-  getLoadingRowsCount
+  getLoadingRowsCount,
+  MAX_SERVICE_ACCOUNT_NAME_LENGTH,
+  MAX_SERVICE_ACCOUNT_DESC_LENGTH,
+  sortValues
 };

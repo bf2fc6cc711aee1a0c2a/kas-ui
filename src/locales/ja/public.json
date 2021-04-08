@@ -2,15 +2,13 @@
   "global_navigation": "日本語 Global navigation",
   "global": "日本語 Global",
   "skip_to_content": "日本語 Skip to Content",
-  "go_to_openshift_streams": "日本語 Go to OpenShift Streams",
+  "go_to_kafka_instances": "日本語 Go to OpenShift Streams",
   "something_went_wrong": "日本語 Something went wrong",
   "unexpected_error": "日本語 There was a problem processing the request. Please try again.",
   "return_to_home_page": "日本語 Return to home page",
   "404_page_does_not_exist": "日本語 404: That page doesn’t exist",
   "we_cannot_find_the_page_you_are_looking_for": "日本語 We can’t find the page you’re looking for. ",
   "this_is_a_required_field": "日本語 This is a required field",
-  "create_instance_name_invalid_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
-  "create_instance_invalid_alert": "日本語 Please address the errors in your form to proceed",
   "instance_name": "日本語 Instance name",
   "create_instance_name_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
   "cloud_provider": "日本語 Cloud provider",
@@ -253,8 +251,13 @@
     "owner": "日本語 Owner",
     "description": "日本語 Description",
     "reset_credentials": "日本語 Reset credentials",
-    "cancel": "Cancel",
-    "submitting_request": "日本語 Submitting request"
+    "cancel": "日本語 Cancel",
+    "submitting_request": "日本語 Submitting request",
+    "this_is_a_required_field": "日本語 This is a required field",
+    "form_invalid_alert": "日本語 Please address the errors in your form to proceed",
+    "something_went_wrong": "日本語 Something went wrong",
+    "clientID": "日本語 Client ID",
+    "input_filed_invalid_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - )."
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",
@@ -283,10 +286,14 @@
     "create_service_account_to_get_started": "日本語 To get started, create a service account.",
     "unauthorized_access_to_service_accounts_title": "日本語 Access permissions needed",
     "unauthorized_access_to_service_accounts_info": "日本語 To access Service Accounts, contact your organization administrators.",
-    "client_secret_will_be_reset": "日本語 Client secret for {{serviceAccount}} will be reset.",
+    "client_secret_will_be_reset": "日本語 Client secret for <b>{{serviceAccountId}}</b> with client ID <b>{{clientID}}</b> will be reset.",
     "reset": "日本語 Reset",
     "reset_service_account_credentials": "日本語 Reset service account credentials?",
-     "create_a_service_account": "日本語 Create a service account",
-    "service_account_creation_success_message": "日本語 Service account successfully created"
+    "create_a_service_account": "日本語 Create a service account",
+    "service_account_creation_success_message": "日本語 Service account successfully created",
+    "will_be_deleted": "日本語 will be deleted.",
+    "service_account_name_length_is_greater_than_expected": "日本語 Service account name cannot exceed {{maxLength}} characters.",
+    "service_account_description_length_is_greater_than_expected": "日本語 Service account description cannot exceed {{maxLength}} characters.",
+    "service_account_successfully_deleted": "日本語 {{name}} service account instance successfully deleted"
   }
 }

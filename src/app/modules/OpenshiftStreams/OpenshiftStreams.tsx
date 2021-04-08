@@ -24,7 +24,7 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import './OpenshiftStreams.css';
-import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
+import { MASLoading, MASEmptyState, MASFullPageError, MASEmptyStateVariant } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 
@@ -40,7 +40,12 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCreateInstance, createDialogOpen }: OpenShiftStreamsProps) => {
+const OpenshiftStreams = ({
+  onConnectToInstance,
+  getConnectToInstancePath,
+  preCreateInstance,
+  createDialogOpen,
+}: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { isVisible } = usePageVisibility();
@@ -75,7 +80,7 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
       open = await preCreateInstance(open);
     }
     setIsOpenCreateInstanceModalState(open);
-  }
+  };
 
   const drawerRef = React.createRef<any>();
 
@@ -283,12 +288,16 @@ const OpenshiftStreams = ({ onConnectToInstance, getConnectToInstancePath, preCr
               <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                 <MASLoading />
               </PageSection>
+<<<<<<< HEAD
             ) : rawKafkaDataLength && rawKafkaDataLength < 100 ? (
               <PageSection isFilled={true}>
+=======
+            ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
+              <PageSection padding={{ default: 'noPadding' }} isFilled>
+>>>>>>> main
                 <MASEmptyState
-                  titleProps={{
-                    title: t('no_kafka_instances_yet'),
-                    headingLevel: 'h2',
+                  emptyStateProps={{
+                    variant: MASEmptyStateVariant.GettingStarted,
                   }}
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),

@@ -12,12 +12,11 @@ import {
   IExtraColumnData,
   cellWidth,
 } from '@patternfly/react-table';
-import { Skeleton, EmptyStateVariant, PaginationVariant, TitleSizes } from '@patternfly/react-core';
-import { MASPagination, MASTable, MASEmptyState } from '@app/common';
+import { Skeleton, PaginationVariant } from '@patternfly/react-core';
+import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { getLoadingRowsCount } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -46,14 +45,16 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   filterSelected,
   setFilterSelected,
   handleCreateModal,
+  mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
   const tableColumns = [
-    { title: t('common.name'), transforms: [sortable] },
-    { title: t('common.owner'), transforms: [sortable, cellWidth(20)] },
+    { title: t('common.name') },
+    { title: t('common.clientID') },
+    { title: t('common.owner'), transforms: [cellWidth(20)] },
     { title: t('common.description') },
   ];
 
@@ -88,9 +89,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner, description } = row;
+      const { name, owner, description, clientID } = row;
       tableRow.push({
-        cells: [name, 'owner-test', description],
+        cells: [name, clientID, owner, description],
         originalData: row,
       });
     });
@@ -149,8 +150,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       case 0:
         return 'name';
       case 1:
-        return 'owner';
+        return 'clientID';
       case 2:
+        return 'owner';
+      case 3:
         return 'description';
       default:
         return '';
@@ -161,10 +164,12 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     switch (parameter.toLowerCase()) {
       case 'name':
         return 0;
-      case 'owner':
+      case 'clientID':
         return 1;
-      case 'description':
+      case 'owner':
         return 2;
+      case 'description':
+        return 3;
       default:
         return undefined;
     }
@@ -196,6 +201,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
         handleCreateModal={handleCreateModal}
+        mainToggle={mainToggle}
       />
       <MASTable
         tableProps={{
@@ -210,22 +216,17 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       {serviceAccountItems && serviceAccountItems?.length < 1 && serviceAccountsDataLoaded && (
         <MASEmptyState
           emptyStateProps={{
-            variant: EmptyStateVariant.full,
-          }}
-          emptyStateIconProps={{
-            icon: SearchIcon,
+            variant: MASEmptyStateVariant.NoResult,
           }}
           titleProps={{
             title: t('no_results_found'),
-            headingLevel: 'h2',
-            size: TitleSizes.lg,
           }}
           emptyStateBodyProps={{
             body: t('adjust_your_filters_and_try_again'),
           }}
         />
       )}
-      {total && total > 0 && (
+      {/* {total && total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}
@@ -243,7 +244,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
             currPage: t('curr_page'),
           }}
         />
-      )}
+      )} */}
     </>
   );
 };
