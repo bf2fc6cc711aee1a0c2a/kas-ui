@@ -935,6 +935,9 @@ components:
               format: date-time
               description: 'service account creation timestamp'
               type: string
+            owner:
+              description: ''
+              type: string
             description:
               type: string
               description: 'description of the service account'
