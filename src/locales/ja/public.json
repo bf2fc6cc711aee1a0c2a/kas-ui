@@ -255,7 +255,8 @@
     "form_invalid_alert": "日本語 Please address the errors in your form to proceed",
     "something_went_wrong": "日本語 Something went wrong",
     "clientID": "日本語 Client ID",
-    "input_filed_invalid_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - )."
+    "input_filed_invalid_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
+    "kafka_instance_not_ready_inline_message": "日本語 We're creating your kafka instance, so some details aren't yet available."
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",

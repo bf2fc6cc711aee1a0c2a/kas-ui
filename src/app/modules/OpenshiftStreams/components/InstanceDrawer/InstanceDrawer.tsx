@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
+import { Tabs, Tab, TabTitleText, Alert, AlertVariant } from '@patternfly/react-core';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import dayjs from 'dayjs';
@@ -8,6 +8,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { MASDrawer, MASDrawerProps } from '@app/common';
 import { ConnectionTab } from './ConnectionTab';
 import { DetailsTab, DetailsTabProps } from './DetailsTab';
+import { InstanceStatus } from '@app/utils';
 import './InstanceDrawer.css';
 
 export type InstanceDrawerProps = Omit<
@@ -30,7 +31,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   dayjs.extend(localizedFormat);
 
   const { t } = useTranslation();
-  const { name } = instanceDetail || {};
+  const { name, status } = instanceDetail || {};
 
   const [activeTab1Key, setActiveTab1Key] = useState<string | number>(0);
   const [activeTab2Key, setActiveTab2Key] = useState<string | number>(0);
@@ -54,6 +55,8 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     return bootstrapServerHost?.endsWith(':443') ? bootstrapServerHost : `${bootstrapServerHost}:443`;
   };
 
+  const isKafkaPending = status === InstanceStatus.READY;
+
   const panelBodyContent = () => {
     return (
       <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
@@ -67,10 +70,25 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             instanceName={name}
             externalServer={getExternalServer()}
             onSelect={onSelectConnectionTab}
+            isKafkaPending={isKafkaPending}
           />
         </Tab>
       </Tabs>
     );
+  };
+
+  const alertMessage = () => {
+    if (isKafkaPending) {
+      return (
+        <Alert
+          isInline
+          variant={AlertVariant.info}
+          title={t('kafka_instance_not_ready_inline_message')}
+          style={{ marginTop: '15px' }}
+        />
+      );
+    }
+    return <></>;
   };
 
   return (
@@ -84,6 +102,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         title: { value: name, headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}
+      inlineAlertMessage={alertMessage()}
     >
       {children}
     </MASDrawer>

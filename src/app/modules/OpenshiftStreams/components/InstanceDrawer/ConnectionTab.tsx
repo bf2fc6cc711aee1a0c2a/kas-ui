@@ -12,6 +12,7 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   instanceName,
   mainToggle,
   activeKey,
+  isKafkaPending,
 }: ConnectionTabProps) => {
   const { t } = useTranslation();
 
@@ -21,7 +22,12 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
         <div className="mas--details__drawer--tab-content pf-m-secondary">
           <Tabs activeKey={activeKey} isSecondary onSelect={onSelect}>
             <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
-              <ResourcesTab externalServer={externalServer} instanceName={instanceName} mainToggle={mainToggle} />
+              <ResourcesTab
+                externalServer={externalServer}
+                instanceName={instanceName}
+                mainToggle={mainToggle}
+                isKafkaPending={isKafkaPending}
+              />
             </Tab>
             <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
               <SampleCodeTab />
@@ -29,7 +35,12 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
           </Tabs>
         </div>
       ) : (
-        <ResourcesTab externalServer={externalServer} instanceName={instanceName} mainToggle={mainToggle} />
+        <ResourcesTab
+          externalServer={externalServer}
+          instanceName={instanceName}
+          mainToggle={mainToggle}
+          isKafkaPending={isKafkaPending}
+        />
       )}
     </>
   );
