@@ -121,7 +121,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
       });
     }
 
-    if (description && description.length > MAX_SERVICE_ACCOUNT_NAME_LENGTH) {
+    if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
       isValid = false;
       setDescriptionValidated({
         fieldState: 'error',
