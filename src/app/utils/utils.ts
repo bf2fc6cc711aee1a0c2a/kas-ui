@@ -1,3 +1,5 @@
+import { formatDistance } from 'date-fns';
+
 function accessibleRouteChangeHandler() {
   return window.setTimeout(() => {
     const mainContainer = document.getElementById('primary-app-container');
@@ -138,6 +140,11 @@ const sortValues = (items: any[] | undefined, key: string, order: string = 'asc'
   return items?.sort(compareValue);
 };
 
+const getFormattedDate = (date: string | Date, translatePostfix: string) => {
+  date = typeof date === 'string' ? new Date(date) : date;
+  return formatDistance(date, new Date()) + ' ' + translatePostfix;
+}
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -155,5 +162,6 @@ export {
   getLoadingRowsCount,
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
   MAX_SERVICE_ACCOUNT_DESC_LENGTH,
-  sortValues
+  sortValues,
+  getFormattedDate
 };

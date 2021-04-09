@@ -82,6 +82,10 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
 
   const handleTextInputDescription = (description: string) => {
     setServiceAccountFormData({ ...serviceAccountFormData, description });
+    let isValid = true;
+    if (description && !/^[a-zA-Z0-9\s]*$/.test(description.trim())) {
+      isValid = false;
+    }
     if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
       setDescriptionValidated({
         fieldState: 'error',
@@ -89,10 +93,15 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
         }),
       });
-    } else if (descriptionValidated.fieldState === 'error') {
+    } else if (isValid && descriptionValidated.fieldState === 'error') {
       setDescriptionValidated({
         fieldState: 'default',
         message: '',
+      });
+    } else if (!isValid) {
+      setDescriptionValidated({
+        fieldState: 'error',
+        message: t('common.input_text_area_invalid_helper_text'),
       });
     }
   };
@@ -108,6 +117,12 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
       setNameValidated({
         fieldState: 'error',
         message: t('common.input_filed_invalid_helper_text'),
+      });
+    } else if (!/^[a-zA-Z0-9\s]*$/.test(description.trim())) {
+      isValid = false;
+      setDescriptionValidated({
+        fieldState: 'error',
+        message: t('common.input_text_area_invalid_helper_text'),
       });
     }
 

@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-table';
 import { Skeleton, PaginationVariant } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
-import { getLoadingRowsCount } from '@app/utils';
+import { getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
 
@@ -56,6 +56,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     { title: t('common.clientID') },
     { title: t('common.owner'), transforms: [cellWidth(20)] },
     { title: t('common.description') },
+    { title: t('time_created') },
   ];
 
   const onSelectKebabDropdownOption = (event: any, originalData: ServiceAccountListItem, selectedOption: string) => {
@@ -89,9 +90,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner, description, clientID } = row;
+      const { name, owner, description, clientID, created_at } = row;
       tableRow.push({
-        cells: [name, clientID, owner, description],
+        cells: [name, clientID, owner, description, { title: getFormattedDate(created_at, t('ago')) }],
         originalData: row,
       });
     });
@@ -155,6 +156,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         return 'owner';
       case 3:
         return 'description';
+      case 4:
+        return 'created_at';
       default:
         return '';
     }
@@ -170,6 +173,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         return 2;
       case 'description':
         return 3;
+      case 'created_at':
+        return 4;
       default:
         return undefined;
     }

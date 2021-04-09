@@ -24,10 +24,8 @@ import { StreamsToolbar } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
-import { InstanceStatus, isServiceApiError, getLoadingRowsCount } from '@app/utils';
+import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { useHistory } from 'react-router-dom';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
-import { formatDistance } from 'date-fns';
 
 export type FilterValue = {
   value: string;
@@ -351,15 +349,6 @@ const StreamsTableView = ({
       return tableRow;
     }
 
-    const formatDate = (date) => {
-      date = typeof date === 'string' ? new Date(date) : date;
-      return (
-        <>
-          {formatDistance(date, new Date())} {t('ago')}
-        </>
-      );
-    };
-
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
@@ -379,7 +368,7 @@ const StreamsTableView = ({
             title: <StatusColumn status={status} instanceName={name} />,
           },
           {
-            title: formatDate(created_at),
+            title: getFormattedDate(created_at, t('ago')),
           },
         ],
         originalData: row,
