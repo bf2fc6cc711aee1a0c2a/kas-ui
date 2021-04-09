@@ -228,6 +228,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           helperTextInvalid={descMessage}
           helperTextInvalidIcon={descMessage && <ExclamationCircleIcon />}
           validated={descFieldState}
+          helperText={t('common.input_text_area_invalid_helper_text')}
         >
           <TextArea
             id="text-input-description"
