@@ -449,6 +449,7 @@ const OpenshiftStreams = ({
                   emptyStateBodyProps={{
                     body: t('create_a_kafka_instance_to_get_started'),
                   }}
+                  titleProps={{ title: t('no_kafka_instances_yet') }}
                 >
                   {createInstanceButton()}
                 </MASEmptyState>
