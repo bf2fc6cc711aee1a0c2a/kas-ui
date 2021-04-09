@@ -46,7 +46,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  const [rawServiceAccountDataLength, setRawServiceAccountDataLength] = useState<number>(0);
+  const [rawServiceAccountDataLength, setRawServiceAccountDataLength] = useState<number | undefined>(undefined);
   // state to store the expected total  service accounts based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
   const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
@@ -86,6 +86,12 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
           const serviceAccounts = response?.data;
           setServiceAccountList(serviceAccounts);
           setServiceAccountItems(serviceAccounts?.items);
+          /**
+           * Todo: integrate separated API for lenght when backednd startd support filter
+           * This is temporary fix
+           *
+           */
+          setRawServiceAccountDataLength(serviceAccounts?.items?.length);
         });
       } catch (error) {
         handleServerError(error);
