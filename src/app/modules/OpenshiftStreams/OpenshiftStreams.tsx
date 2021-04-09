@@ -294,7 +294,7 @@ const OpenshiftStreams = ({
     const isUserSameAsLoggedIn = getLoggedInUserKafkaInstance() !== undefined;
     if (isMaxCapacityReached) {
       if (isUserSameAsLoggedIn) {
-        return 'Instances are currently unavailable for creation';
+        return 'Instances are currently unavailable for creation.';
       } else {
         return (
           <>
@@ -321,7 +321,7 @@ const OpenshiftStreams = ({
           <>
             Instances are available for creation. For help getting started, access the{' '}
             <Button variant={ButtonVariant.link} isSmall isInline className="mk--openstreams__banner">
-              quick start guide
+              quick start guide.
             </Button>
           </>
         );
@@ -370,13 +370,27 @@ const OpenshiftStreams = ({
     return <></>;
   };
 
-  const createInstanceButton = () => {
-    const isDisabledCreateButton = getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached;
-
+  const getButtonTooltipContent = () => {
+    const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
+    const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
+    let content = '';
     if (isDisabledCreateButton) {
-      const content = isMaxCapacityReached
-        ? 'Instances are currently unavailable for creation'
-        : 'You can deploy only 1 instance at a time';
+      if (isMaxCapacityReached && isKafkaInstanceExist) {
+        content = 'You can deploy 1 instance at a time.';
+      } else if (isMaxCapacityReached) {
+        content = 'Instances are currently unavailable for creation.';
+      } else {
+        content = 'You can deploy 1 instance at a time.';
+      }
+    }
+    return content;
+  };
+
+  const createInstanceButton = () => {
+    const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
+    const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
+    if (isDisabledCreateButton) {
+      const content = getButtonTooltipContent();
 
       return (
         <Tooltip content={content}>
@@ -485,6 +499,7 @@ const OpenshiftStreams = ({
                   isDrawerOpen={selectedInstance !== null}
                   loggedInUser={loggedInUser}
                   isMaxCapacityReached={isMaxCapacityReached}
+                  buttonTooltipContent={getButtonTooltipContent()}
                   isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
                 />
               </PageSection>

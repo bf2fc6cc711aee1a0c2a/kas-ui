@@ -34,7 +34,7 @@ export type StreamsToolbarProps = {
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
-  isMaxCapacityReached?: boolean | undefined;
+  buttonTooltipContent?: string | undefined;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -46,7 +46,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   filteredValue,
   setFilteredValue,
   isDisabledCreateButton,
-  isMaxCapacityReached,
+  buttonTooltipContent,
 }) => {
   const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
   const { t } = useTranslation();
@@ -541,12 +541,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const createButton = () => {
     if (isDisabledCreateButton) {
-      const content = isMaxCapacityReached
-        ? 'Instances are currently unavailable for creation'
-        : 'You can deploy only 1 instance at a time';
-
       return (
-        <Tooltip content={content}>
+        <Tooltip content={buttonTooltipContent}>
           <Button
             variant="primary"
             onClick={() => setIsModalOpen(!isModalOpen)}

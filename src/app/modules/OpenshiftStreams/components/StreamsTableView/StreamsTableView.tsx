@@ -26,7 +26,6 @@ import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
 import { InstanceStatus, isServiceApiError, getLoadingRowsCount } from '@app/utils';
 import { useHistory } from 'react-router-dom';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { formatDistance } from 'date-fns';
 
 export type FilterValue = {
@@ -53,6 +52,7 @@ export type StreamsTableProps = StreamsToolbarProps & {
   setOrderBy: (order: string) => void;
   isDrawerOpen?: boolean;
   loggedInUser: string | undefined;
+  isMaxCapacityReached?: boolean | undefined;
 };
 
 type ConfigDetail = {
@@ -118,6 +118,7 @@ const StreamsTableView = ({
   setOrderBy,
   isDrawerOpen,
   isMaxCapacityReached,
+  buttonTooltipContent,
   isDisabledCreateButton,
   loggedInUser,
 }: StreamsTableProps) => {
@@ -532,7 +533,7 @@ const StreamsTableView = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
         isDisabledCreateButton={isDisabledCreateButton}
-        isMaxCapacityReached={isMaxCapacityReached}
+        buttonTooltipContent={buttonTooltipContent}
       />
       <MASTable
         tableProps={{
