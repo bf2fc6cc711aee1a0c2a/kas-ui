@@ -307,7 +307,7 @@ const OpenshiftStreams = ({
               data-testid="bannerStreams-actionTour"
               className="mk--openstreams__banner"
             >
-              <b> take a tour </b>
+              take a tour
             </Button>{' '}
             to learn more about the service.
           </>
@@ -315,13 +315,13 @@ const OpenshiftStreams = ({
       }
     } else {
       if (isUserSameAsLoggedIn) {
-        return 'Instances are available for creation.';
+        return 'Instances are available for creation. You can deploy 1 instance at a time.';
       } else {
         return (
           <>
             Instances are available for creation. For help getting started, access the{' '}
             <Button variant={ButtonVariant.link} isSmall isInline className="mk--openstreams__banner">
-              <b>quick start guide</b>
+              quick start guide
             </Button>
           </>
         );
