@@ -6,15 +6,16 @@ import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { MASDrawer, MASDrawerProps } from '@app/common';
-import { ConnectionTab } from './ConnectionTab';
+import { ConnectionTab, ConnectionTabProps } from './ConnectionTab';
 import { DetailsTab, DetailsTabProps } from './DetailsTab';
 import { InstanceStatus } from '@app/utils';
 import './InstanceDrawer.css';
 
-export type InstanceDrawerProps = Omit<
-  MASDrawerProps,
-  'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'
+export type InstanceDrawerProps = Pick<
+  ConnectionTabProps,
+  'getConnectToServiceAcountsPath' | 'onConnectToServiceAccounts'
 > &
+  Omit<MASDrawerProps, 'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'> &
   DetailsTabProps & {
     activeTab?: string;
   };
@@ -27,6 +28,8 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   isLoading,
   children,
   'data-ouia-app-id': dataOuiaAppId,
+  getConnectToServiceAcountsPath,
+  onConnectToServiceAccounts,
 }) => {
   dayjs.extend(localizedFormat);
 
@@ -55,7 +58,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     return bootstrapServerHost?.endsWith(':443') ? bootstrapServerHost : `${bootstrapServerHost}:443`;
   };
 
-  const isKafkaPending = status === InstanceStatus.READY;
+  const isKafkaPending = status === InstanceStatus.ACCEPTED;
 
   const panelBodyContent = () => {
     return (
@@ -71,6 +74,8 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             externalServer={getExternalServer()}
             onSelect={onSelectConnectionTab}
             isKafkaPending={isKafkaPending}
+            getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
+            onConnectToServiceAccounts={onConnectToServiceAccounts}
           />
         </Tab>
       </Tabs>

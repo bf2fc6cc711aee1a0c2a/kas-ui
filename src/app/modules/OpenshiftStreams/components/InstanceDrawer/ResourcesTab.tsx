@@ -1,21 +1,22 @@
 import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   TextContent,
   Text,
   TextVariants,
   ClipboardCopy,
-  ButtonVariant,
   Label,
   Popover,
   Skeleton,
+  AlertVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
+import { MASGenerateCredentialsModal, useAlerts } from '@app/common';
 import { ApiContext } from '@app/api/ApiContext';
 import { AuthContext } from '@app/auth/AuthContext';
 import { isServiceApiError } from '@app/utils/error';
-import { DefaultApi, ServiceAccountRequest } from '../../../../../openapi/api';
+import { DefaultApi, ServiceAccountRequest, KafkaRequest } from '../../../../../openapi/api';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 
 export type ResourcesTabProps = {
@@ -23,6 +24,8 @@ export type ResourcesTabProps = {
   externalServer?: string;
   instanceName?: string;
   isKafkaPending?: boolean;
+  getConnectToServiceAcountsPath: (data?: KafkaRequest) => string;
+  onConnectToServiceAccounts: (data?: KafkaRequest) => void;
 };
 
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({
@@ -30,10 +33,13 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   externalServer,
   instanceName = '',
   isKafkaPending,
+  getConnectToServiceAcountsPath,
+  onConnectToServiceAccounts,
 }: ResourcesTabProps) => {
   const { t } = useTranslation();
   const { basePath } = useContext(ApiContext);
   const authContext = useContext(AuthContext);
+  const { addAlert } = useAlerts();
 
   const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +67,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
       if (isServiceApiError(err)) {
         reason = err.response?.data.reason;
       }
-      // TO DO: Add error - setError(reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -93,9 +99,16 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         </Text>
         <Text component={TextVariants.small}>
           {t('serviceAccount.create_service_account_to_generate_credentials')}{' '}
-          <Button variant={ButtonVariant.link} isSmall isInline>
+          <Link
+            to={() => getConnectToServiceAcountsPath()}
+            onClick={(e) => {
+              e.preventDefault();
+              onConnectToServiceAccounts();
+            }}
+            data-testid="tableStreams-linkKafka"
+          >
             {t('serviceAccount.service_accounts')}
-          </Button>{' '}
+          </Link>{' '}
           {t('common.page')}.
         </Text>
       </TextContent>

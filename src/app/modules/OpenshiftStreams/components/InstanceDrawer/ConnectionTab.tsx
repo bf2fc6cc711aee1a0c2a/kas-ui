@@ -13,6 +13,8 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   mainToggle,
   activeKey,
   isKafkaPending,
+  getConnectToServiceAcountsPath,
+  onConnectToServiceAccounts,
 }: ConnectionTabProps) => {
   const { t } = useTranslation();
 
@@ -27,6 +29,8 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
                 instanceName={instanceName}
                 mainToggle={mainToggle}
                 isKafkaPending={isKafkaPending}
+                getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
+                onConnectToServiceAccounts={onConnectToServiceAccounts}
               />
             </Tab>
             <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
@@ -40,6 +44,8 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
           instanceName={instanceName}
           mainToggle={mainToggle}
           isKafkaPending={isKafkaPending}
+          getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
+          onConnectToServiceAccounts={onConnectToServiceAccounts}
         />
       )}
     </>

@@ -16,6 +16,7 @@ import {
   CreateInstanceModal,
   InstanceDrawer,
   CreateInstanceModalProvider,
+  InstanceDrawerProps,
 } from './components';
 import { AlertProvider, useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
@@ -28,7 +29,10 @@ import { MASLoading, MASEmptyState, MASFullPageError, MASEmptyStateVariant } fro
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 
-export type OpenShiftStreamsProps = {
+export type OpenShiftStreamsProps = Pick<
+  InstanceDrawerProps,
+  'getConnectToServiceAcountsPath' | 'onConnectToServiceAccounts'
+> & {
   onConnectToInstance: (data: KafkaRequest) => void;
   preCreateInstance: (open: boolean) => Promise<boolean>;
   createDialogOpen: () => boolean;
@@ -45,6 +49,8 @@ const OpenshiftStreams = ({
   getConnectToInstancePath,
   preCreateInstance,
   createDialogOpen,
+  getConnectToServiceAcountsPath,
+  onConnectToServiceAccounts,
 }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -71,7 +77,20 @@ const OpenshiftStreams = ({
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  // const [pollInterval, setPollInterval] = useState<number>(MAX_POLL_INTERVAL);
+
+  const updateSelectedKafkaInstance = () => {
+    if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {
+      const selectedKafkaItem = kafkaInstanceItems?.filter(
+        (kafka) => kafka?.id === selectedInstance?.instanceDetail?.id
+      )[0];
+      const newState: any = { ...selectedInstance, instanceDetail: selectedKafkaItem };
+      selectedKafkaItem && setSelectedInstance(newState);
+    }
+  };
+
+  useEffect(() => {
+    updateSelectedKafkaInstance();
+  }, [kafkaInstanceItems]);
 
   const setIsOpenCreateInstanceModal = async (open: boolean) => {
     if (open) {
@@ -81,8 +100,6 @@ const OpenshiftStreams = ({
     }
     setIsOpenCreateInstanceModalState(open);
   };
-
-  const drawerRef = React.createRef<any>();
 
   const { activeTab, instanceDetail } = selectedInstance || {};
 
@@ -96,13 +113,6 @@ const OpenshiftStreams = ({
 
   const onViewConnection = (instance: KafkaRequest) => {
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Connection' });
-  };
-
-  const isValidToken = (accessToken: string | undefined) => {
-    if (accessToken !== undefined && accessToken !== '') {
-      return true;
-    }
-    return false;
   };
 
   const getFilterString = () => {
@@ -145,7 +155,7 @@ const OpenshiftStreams = ({
   const fetchKafkas = async (justPoll: boolean) => {
     const accessToken = await authContext?.getToken();
 
-    if (isValidToken(accessToken) && isVisible) {
+    if (accessToken && isVisible) {
       try {
         const apisService = new DefaultApi({
           accessToken,
@@ -273,6 +283,8 @@ const OpenshiftStreams = ({
             instanceDetail={instanceDetail}
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
+            getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
+            onConnectToServiceAccounts={onConnectToServiceAccounts}
           >
             <PageSection variant={PageSectionVariants.light}>
               <Level>
