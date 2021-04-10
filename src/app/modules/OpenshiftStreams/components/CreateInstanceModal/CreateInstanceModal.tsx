@@ -381,9 +381,9 @@ const CreateInstanceModal: React.FunctionComponent = () => {
     >
       {mainToggle ? (
         <Grid lg={6} sm={12} hasGutter>
-          <GridItem lg={8}>{createInstanceForm()}</GridItem>
+          <GridItem lg={9}>{createInstanceForm()}</GridItem>
           {/* <Divider isVertical /> */}
-          <GridItem lg={4} className="mk--create-instance-modal__sidebar--content">
+          <GridItem lg={3} className="mk--create-instance-modal__sidebar--content">
             <DrawerPanelContentInfo />
           </GridItem>
         </Grid>

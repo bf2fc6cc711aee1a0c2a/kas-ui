@@ -258,7 +258,16 @@
     "form_invalid_alert": "Please address the errors in your form to proceed",
     "something_went_wrong": "Something went wrong",
     "clientID": "Client ID",
-    "input_filed_invalid_helper_text": "Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - )."
+    "input_filed_invalid_helper_text": "Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
+    "instance_information": "Instance information",
+    "duration": "Duration",
+    "ingress_egress": "Ingress/Egress",
+    "storage": "Storage",
+    "partitions": "Partitions",
+    "client_connections": "Client connections",
+    "client_attempts": "Client attempts",
+    "message_size": "Message size",
+    "quick_start_guide_message": "Need help getting started? Follow our quick start guide."
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",

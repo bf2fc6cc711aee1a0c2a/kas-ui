@@ -255,7 +255,16 @@
     "form_invalid_alert": "日本語 Please address the errors in your form to proceed",
     "something_went_wrong": "日本語 Something went wrong",
     "clientID": "日本語 Client ID",
-    "input_filed_invalid_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - )."
+    "input_filed_invalid_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
+    "instance_information": "日本語 Instance information",
+    "duration": "日本語 Duration",
+    "ingress_egress": "日本語 Ingress/Egress",
+    "storage": "日本語 Storage",
+    "partitions": "日本語 Partitions",
+    "client_connections": "日本語 Client connections",
+    "client_attempts": "日本語 Client attempts",
+    "message_size": "日本語 Message size",
+    "quick_start_guide_message": "日本語 Need help getting started? Follow our quick start guide."
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",
