@@ -379,20 +379,14 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       dataTestIdSubmit="modalCreateKafka-buttonSubmit"
       dataTestIdCancel="modalCreateKafka-buttonCancel"
     >
-      {mainToggle ? (
-        <>
-          <Alert variant="info" title="Your preview instance will expire after 48 hours." aria-live="polite" isInline />
-          <Grid lg={6} sm={12} hasGutter>
-            <GridItem lg={9}>{createInstanceForm()}</GridItem>
-            {/* <Divider isVertical /> */}
-            <GridItem lg={3} className="mk--create-instance-modal__sidebar--content">
-              <DrawerPanelContentInfo />
-            </GridItem>
-          </Grid>
-        </>
-      ) : (
-        createInstanceForm()
-      )}
+      <Alert variant="info" title="Your preview instance will expire after 48 hours." aria-live="polite" isInline />
+      <Grid lg={6} sm={12} hasGutter>
+        <GridItem lg={9}>{createInstanceForm()}</GridItem>
+        {/* <Divider isVertical /> */}
+        <GridItem lg={3} className="mk--create-instance-modal__sidebar--content">
+          <DrawerPanelContentInfo />
+        </GridItem>
+      </Grid>
     </MASCreateModal>
   );
 };
