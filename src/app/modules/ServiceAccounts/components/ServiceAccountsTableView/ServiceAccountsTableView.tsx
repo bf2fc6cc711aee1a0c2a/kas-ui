@@ -104,7 +104,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     const originalData: ServiceAccountListItem = rowData.originalData;
-    const isUserSameAsLoggedIn = true; //originalData.owner === loggedInUser;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     let additionalProps: any;
 
     if (!isUserSameAsLoggedIn) {
