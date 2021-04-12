@@ -34,10 +34,10 @@ export const Metrics = () => {
 
   const [globalPartitionCount, setGlobalPartitionCount] = useState<number>(0);
   const [offlinePartitionCount, setOfflinePartitionCount] = useState<number>(0);
-  const [brokerAvailableSpace, setBrokerAvailableSpace] = useState<Broker[]>([] as Broker[]);
+  const [brokerAvailableSpace, setBrokerAvailableSpace] = useState<Broker[]>([]);
   const [topicMessageCount, setTopicMessageCount] = useState<Topic[]>([] as Topic[]);
 
-  const instanceDetail = "1qZo2ST6XgUadLImw59RLauEU2h";
+  const instanceDetail = "1qwYPIV2YFiuTEF5c100IwmsLZ0";
 
   console.log('what is brokerAvailableSpace' + brokerAvailableSpace);
 
@@ -89,31 +89,34 @@ export const Metrics = () => {
   //   }
   // };
 
-  const returnAvailableBytesData = (data, i) => {
-    const labels = data.metric;
-    const pvcName = labels['persistentvolumeclaim'];
-    if (!pvcName.includes('zookeeper')) {
-      const broker = {
-        name: `broker ${i}`,
-        data: []
-      } as Broker;
-      data.values?.forEach(value => {
-        if (value.Timestamp == undefined) {
-          throw new Error('timestamp cannot be undefined');
-        }
-        const hardLimit = 225 * 1024 * 1024 * 1024 * .95;
-        const usedSpaceInBytes = hardLimit - value.Value;
-        const softLimit = 225 * 1024 * 1024 * 1024 * .90;
-        broker.data.push({
-          timestamp: value.Timestamp,
-          usedSpace: usedSpaceInBytes,
-          hardLimit,
-          softLimit
+  const returnAvailableBytesData = (data) => {
+    let brokerArray = [];
+    data.forEach((datum, i) => {
+      const labels = datum.metric;
+      const pvcName = labels['persistentvolumeclaim'];
+      if (!pvcName.includes('zookeeper')) {
+        const broker = {
+          name: `broker ${i}`,
+          data: []
+        } as Broker;
+        datum.values?.forEach(value => {
+          if (value.Timestamp == undefined) {
+            throw new Error('timestamp cannot be undefined');
+          }
+          const hardLimit = 225 * 1024 * 1024 * 1024 * .95;
+          const usedSpaceInBytes = hardLimit - value.Value;
+          const softLimit = 225 * 1024 * 1024 * 1024 * .90;
+          broker.data.push({
+            timestamp: value.Timestamp,
+            usedSpace: usedSpaceInBytes,
+            hardLimit,
+            softLimit
+          });
         });
-      });
-      setBrokerAvailableSpace(broker);
+        brokerArray.push(broker);
+      }})
+      setBrokerAvailableSpace(brokerArray);
     }
-  }
 
   const returnBrokerTopicMetricsMessagesInTotal = (data, i) => {
     const labels = data.metric;
@@ -138,7 +141,24 @@ export const Metrics = () => {
   }
 
   const returnBrokerTopicMetricsBytesInTotal = (data, i) => {
-    console.log('what is data' + data);
+    console.log('what is data heree' + JSON.stringify(data));
+
+    // let bytes = {
+    //   name,
+    //   data: []
+    // } as Topic;
+
+    // data.items.forEach(item => {
+    //   let values = item.values;
+    //   if (values.Timestamp == undefined) {
+    //     throw new Error('timestamp cannot be undefined');
+    //   }
+
+    // }
+
+    // bytes.data.push({
+    //   timestamp: 
+    // })
 
   }
   
@@ -157,6 +177,7 @@ export const Metrics = () => {
           await apisService.getMetricsByRangeQuery(instanceDetail, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes', 'kafka_server_brokertopicmetrics_messages_in_total', 'kafka_server_brokertopicmetrics_bytes_in_total']).then((res) => {
             console.log('what is data' + JSON.stringify(res.data));
             const data = res.data;
+            let availableBytesData = [];
             data.items?.forEach((item, i) => {
               const labels = item.metric;
               if (labels === undefined) {
@@ -166,7 +187,7 @@ export const Metrics = () => {
                 throw new Error('item.values cannot be undefined');
               }
               if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
-                returnAvailableBytesData(item, i);
+                availableBytesData.push(item);
               }
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_messages_in_total') {
                 returnBrokerTopicMetricsMessagesInTotal(item, i);
@@ -175,6 +196,7 @@ export const Metrics = () => {
                 returnBrokerTopicMetricsBytesInTotal(item, i);
               }
             });
+            returnAvailableBytesData(availableBytesData);
           });
         } catch (error) {
           let reason: string | undefined;
@@ -194,7 +216,7 @@ export const Metrics = () => {
     useEffect(() => {
       fetchMetrics();
       // fetchInstantMetrics();
-    }, [instanceDetail]);
+    }, []);
   
     // For when we add messages chart later
     // const ConnectedMessagesChart = () => {
@@ -227,7 +249,7 @@ export const Metrics = () => {
               {t('metrics.incoming_bytes_per_topic')}
             </CardTitle>
             <CardBody>
-              <IncomingBytesPerTopicChart/>
+              {/* <IncomingBytesPerTopicChart/> */}
             </CardBody>
           </Card>
         </GridItem>

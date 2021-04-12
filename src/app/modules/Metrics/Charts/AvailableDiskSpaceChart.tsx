@@ -58,6 +58,10 @@ export type AvailableDiskSpaceChartProps = {
 
 export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) => {
 
+  console.log('what is brokers' + JSON.stringify(brokers));
+
+  console.log('what is this' + JSON.stringify(brokers.brokers[0][0]));
+
   const containerRef = useRef();
 
   const { t } = useTranslation();
@@ -85,7 +89,8 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
     let legendData: Array<LegendData> = [{name: 'Limit', symbol: { fill: chart_color_black_300.value, type: 'threshold'}}];
     let chartData: Array<ChartData> = [];
   
-    brokers["brokers"].map((broker, index) => {
+    brokers.brokers.map((broker, index) => {
+      console.log('HELLO what is broker' + JSON.stringify(broker));
       const color = colors[index];
       const softLimitColor = softLimitColors[index];
       const hardLimitColor = chart_color_black_300.value;
@@ -98,7 +103,6 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
           fill: color
         }
       });
-
       // legendData.push({
       //   name: softLimitName,
       //   symbol: {
