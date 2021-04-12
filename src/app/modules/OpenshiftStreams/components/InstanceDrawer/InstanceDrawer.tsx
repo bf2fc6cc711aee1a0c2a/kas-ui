@@ -31,6 +31,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   getConnectToRoutePath,
   onConnectToRoute,
   tokenEndPointUrl,
+  notRequiredDrawerContentBackground,
 }) => {
   dayjs.extend(localizedFormat);
 
@@ -110,6 +111,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       }}
       data-ouia-app-id={dataOuiaAppId}
       inlineAlertMessage={alertMessage()}
+      notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
     >
       {children}
     </MASDrawer>
