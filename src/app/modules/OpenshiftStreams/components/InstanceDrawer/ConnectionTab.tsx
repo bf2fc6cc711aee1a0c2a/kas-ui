@@ -9,12 +9,13 @@ export type ConnectionTabProps = Pick<TabsProps, 'onSelect' | 'activeKey'> & Res
 export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   onSelect,
   externalServer,
-  instanceName,
+  instance,
   mainToggle,
   activeKey,
   isKafkaPending,
-  getConnectToServiceAcountsPath,
-  onConnectToServiceAccounts,
+  onConnectToRoute,
+  getConnectToRoutePath,
+  tokenEndPointUrl,
 }: ConnectionTabProps) => {
   const { t } = useTranslation();
 
@@ -26,11 +27,12 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
             <Tab eventKey={0} title={<TabTitleText>{t('resources')}</TabTitleText>}>
               <ResourcesTab
                 externalServer={externalServer}
-                instanceName={instanceName}
+                instance={instance}
                 mainToggle={mainToggle}
                 isKafkaPending={isKafkaPending}
-                getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
-                onConnectToServiceAccounts={onConnectToServiceAccounts}
+                getConnectToRoutePath={getConnectToRoutePath}
+                onConnectToRoute={onConnectToRoute}
+                tokenEndPointUrl={tokenEndPointUrl}
               />
             </Tab>
             <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
@@ -41,11 +43,12 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
       ) : (
         <ResourcesTab
           externalServer={externalServer}
-          instanceName={instanceName}
+          instance={instance}
           mainToggle={mainToggle}
           isKafkaPending={isKafkaPending}
-          getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
-          onConnectToServiceAccounts={onConnectToServiceAccounts}
+          getConnectToRoutePath={getConnectToRoutePath}
+          onConnectToRoute={onConnectToRoute}
+          tokenEndPointUrl={tokenEndPointUrl}
         />
       )}
     </>

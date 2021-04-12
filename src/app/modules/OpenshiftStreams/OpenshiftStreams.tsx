@@ -17,6 +17,7 @@ import {
   InstanceDrawer,
   CreateInstanceModalProvider,
   InstanceDrawerProps,
+  StreamsTableProps,
 } from './components';
 import { AlertProvider, useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
@@ -29,15 +30,11 @@ import { MASLoading, MASEmptyState, MASFullPageError, MASEmptyStateVariant } fro
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 
-export type OpenShiftStreamsProps = Pick<
-  InstanceDrawerProps,
-  'getConnectToServiceAcountsPath' | 'onConnectToServiceAccounts'
-> & {
-  onConnectToInstance: (data: KafkaRequest) => void;
-  preCreateInstance: (open: boolean) => Promise<boolean>;
-  createDialogOpen: () => boolean;
-  getConnectToInstancePath: (data: KafkaRequest) => string;
-};
+export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
+  Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
+    preCreateInstance: (open: boolean) => Promise<boolean>;
+    createDialogOpen: () => boolean;
+  };
 
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
@@ -45,12 +42,11 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams = ({
-  onConnectToInstance,
-  getConnectToInstancePath,
+  onConnectToRoute,
+  getConnectToRoutePath,
   preCreateInstance,
   createDialogOpen,
-  getConnectToServiceAcountsPath,
-  onConnectToServiceAccounts,
+  tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -283,8 +279,9 @@ const OpenshiftStreams = ({
             instanceDetail={instanceDetail}
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
-            getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
-            onConnectToServiceAccounts={onConnectToServiceAccounts}
+            getConnectToRoutePath={getConnectToRoutePath}
+            onConnectToRoute={onConnectToRoute}
+            tokenEndPointUrl={tokenEndPointUrl}
           >
             <PageSection variant={PageSectionVariants.light}>
               <Level>
@@ -327,8 +324,8 @@ const OpenshiftStreams = ({
                   mainToggle={mainToggle}
                   onViewConnection={onViewConnection}
                   onViewInstance={onViewInstance}
-                  onConnectToInstance={onConnectToInstance}
-                  getConnectToInstancePath={getConnectToInstancePath}
+                  onConnectToRoute={onConnectToRoute}
+                  getConnectToRoutePath={getConnectToRoutePath}
                   refresh={refreshKafkas}
                   kafkaDataLoaded={kafkaDataLoaded}
                   onDelete={onDelete}

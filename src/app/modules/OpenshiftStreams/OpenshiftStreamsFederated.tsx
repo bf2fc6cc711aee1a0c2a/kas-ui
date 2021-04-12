@@ -20,14 +20,13 @@ export type OpenshiftStreamsFederatedProps = OpenShiftStreamsProps & {
 const OpenshiftStreamsFederated = ({
   getUsername,
   getToken,
-  onConnectToInstance,
-  getConnectToInstancePath,
+  onConnectToRoute,
+  getConnectToRoutePath,
   addAlert,
   basePath,
   preCreateInstance,
   createDialogOpen,
-  onConnectToServiceAccounts,
-  getConnectToServiceAcountsPath,
+  tokenEndPointUrl,
 }: OpenshiftStreamsFederatedProps) => {
   const authContext = {
     getToken,
@@ -50,12 +49,11 @@ const OpenshiftStreamsFederated = ({
           <AlertContext.Provider value={alertContext}>
             <AuthContext.Provider value={authContext}>
               <OpenshiftStreams
-                onConnectToInstance={onConnectToInstance}
-                getConnectToInstancePath={getConnectToInstancePath}
+                onConnectToRoute={onConnectToRoute}
+                getConnectToRoutePath={getConnectToRoutePath}
                 preCreateInstance={preCreateInstance}
                 createDialogOpen={createDialogOpen}
-                onConnectToServiceAccounts={onConnectToServiceAccounts}
-                getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
+                tokenEndPointUrl={tokenEndPointUrl}
               />
             </AuthContext.Provider>
           </AlertContext.Provider>

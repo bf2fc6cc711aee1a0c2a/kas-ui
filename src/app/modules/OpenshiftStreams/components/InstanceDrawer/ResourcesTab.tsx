@@ -22,19 +22,21 @@ import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 export type ResourcesTabProps = {
   mainToggle?: boolean;
   externalServer?: string;
-  instanceName?: string;
+  instance: KafkaRequest | undefined;
   isKafkaPending?: boolean;
-  getConnectToServiceAcountsPath: (data?: KafkaRequest) => string;
-  onConnectToServiceAccounts: (data?: KafkaRequest) => void;
+  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
+  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
+  tokenEndPointUrl: string;
 };
 
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   mainToggle,
   externalServer,
-  instanceName = '',
+  instance = {},
   isKafkaPending,
-  getConnectToServiceAcountsPath,
-  onConnectToServiceAccounts,
+  onConnectToRoute,
+  getConnectToRoutePath,
+  tokenEndPointUrl,
 }: ResourcesTabProps) => {
   const { t } = useTranslation();
   const { basePath } = useContext(ApiContext);
@@ -48,7 +50,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   const generateCredential = async () => {
     const accessToken = await authContext?.getToken();
     const serviceAccountRequest: ServiceAccountRequest = {
-      name: instanceName,
+      name: instance?.name || '',
     };
     const apisService = new DefaultApi({
       accessToken,
@@ -100,10 +102,10 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <Text component={TextVariants.small}>
           {t('serviceAccount.create_service_account_to_generate_credentials')}{' '}
           <Link
-            to={() => getConnectToServiceAcountsPath()}
+            to={() => getConnectToRoutePath(instance, 'service-accounts')}
             onClick={(e) => {
               e.preventDefault();
-              onConnectToServiceAccounts();
+              onConnectToRoute(instance, 'service-accounts');
             }}
             data-testid="tableStreams-linkKafka"
           >
@@ -139,17 +141,17 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <Text component={TextVariants.h6} className="pf-u-mt-md">
           {t('common.token_endpoint_url')}
         </Text>
-        {isKafkaPending ? <Skeleton /> : <ClipboardCopy>https://:30123</ClipboardCopy>}
+        {isKafkaPending ? <Skeleton /> : <ClipboardCopy>{tokenEndPointUrl}</ClipboardCopy>}
       </TextContent>
       <TextContent className="pf-u-pb-sm">
         <Text component={TextVariants.h4} className="pf-u-mt-md">
           {t('common.sasl_plain')}{' '}
-          <Popover
+          {/* <Popover
             aria-label={t('common.sasl_plain')}
             bodyContent={<div>{t('serviceAccount.sasl_plain_popover_content')}</div>}
           >
             <HelpIcon />
-          </Popover>
+          </Popover> */}
         </Text>
         <Text component={TextVariants.small}>{t('serviceAccount.sasl_plain_description')}</Text>
       </TextContent>

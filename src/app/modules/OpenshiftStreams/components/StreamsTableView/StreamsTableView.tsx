@@ -43,8 +43,8 @@ export type StreamsTableProps = {
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
-  onConnectToInstance: (data: KafkaRequest) => void;
-  getConnectToInstancePath: (data: KafkaRequest) => string;
+  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
+  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
   mainToggle: boolean;
   refresh: () => void;
   page: number;
@@ -99,8 +99,8 @@ const StreamsTableView = ({
   kafkaInstanceItems,
   onViewInstance,
   onViewConnection,
-  onConnectToInstance,
-  getConnectToInstancePath,
+  onConnectToRoute,
+  getConnectToRoutePath,
   refresh,
   page,
   perPage,
@@ -318,10 +318,10 @@ const StreamsTableView = ({
           </a>
         ) : (
           <Link
-            to={() => getConnectToInstancePath(row as KafkaRequest)}
+            to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
             onClick={(e) => {
               e.preventDefault();
-              onConnectToInstance(row as KafkaRequest);
+              onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
             }}
             data-testid="tableStreams-linkKafka"
           >

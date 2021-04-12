@@ -13,7 +13,7 @@ import './InstanceDrawer.css';
 
 export type InstanceDrawerProps = Pick<
   ConnectionTabProps,
-  'getConnectToServiceAcountsPath' | 'onConnectToServiceAccounts'
+  'getConnectToRoutePath' | 'onConnectToRoute' | 'tokenEndPointUrl'
 > &
   Omit<MASDrawerProps, 'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'> &
   DetailsTabProps & {
@@ -28,8 +28,9 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   isLoading,
   children,
   'data-ouia-app-id': dataOuiaAppId,
-  getConnectToServiceAcountsPath,
-  onConnectToServiceAccounts,
+  getConnectToRoutePath,
+  onConnectToRoute,
+  tokenEndPointUrl,
 }) => {
   dayjs.extend(localizedFormat);
 
@@ -58,7 +59,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     return bootstrapServerHost?.endsWith(':443') ? bootstrapServerHost : `${bootstrapServerHost}:443`;
   };
 
-  const isKafkaPending = status === InstanceStatus.ACCEPTED;
+  const isKafkaPending = status === InstanceStatus.ACCEPTED || status === InstanceStatus.PREPARING;
 
   const panelBodyContent = () => {
     return (
@@ -70,12 +71,13 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           <ConnectionTab
             mainToggle={mainToggle}
             activeKey={activeTab2Key}
-            instanceName={name}
+            instance={instanceDetail}
             externalServer={getExternalServer()}
             onSelect={onSelectConnectionTab}
             isKafkaPending={isKafkaPending}
-            getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
-            onConnectToServiceAccounts={onConnectToServiceAccounts}
+            getConnectToRoutePath={getConnectToRoutePath}
+            onConnectToRoute={onConnectToRoute}
+            tokenEndPointUrl={tokenEndPointUrl}
           />
         </Tab>
       </Tabs>

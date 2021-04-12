@@ -9,12 +9,12 @@ declare const __BASE_PATH__: string;
 export const OpenshiftStreamsConnected = () => {
   const history = useHistory();
 
-  const getConnectToServiceAcountsPath = () => {
-    return history.createHref({ pathname: '/service-accounts' });
+  const getConnectToRoutePath = (kafka, routePath) => {
+    return history.createHref({ pathname: `/${routePath}` });
   };
 
-  const onConnectToServiceAccounts = () => {
-    history.push('/service-accounts');
+  const onConnectToRoute = (kafka, routePath) => {
+    history.push(`/${routePath}`);
   };
 
   return (
@@ -25,12 +25,11 @@ export const OpenshiftStreamsConnected = () => {
     >
       <AlertProvider>
         <OpenshiftStreams
-          onConnectToInstance={() => {}}
-          getConnectToInstancePath={() => ''}
+          onConnectToRoute={onConnectToRoute}
+          getConnectToRoutePath={getConnectToRoutePath}
           preCreateInstance={(open) => Promise.resolve(open)}
           createDialogOpen={() => false}
-          getConnectToServiceAcountsPath={getConnectToServiceAcountsPath}
-          onConnectToServiceAccounts={onConnectToServiceAccounts}
+          tokenEndPointUrl="fake-token-url"
         />
       </AlertProvider>
     </ApiContext.Provider>
