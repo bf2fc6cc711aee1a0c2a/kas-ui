@@ -14,6 +14,39 @@ servers:
   - url: /
     description: current domain
 paths:
+  /api/managed-services-api/v1:
+    get:
+      operationId: versionMetadata
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionMetadata'
+          description: Version metadata
+      summary: Retrieves the version metadata
+  /api/managed-services-api/v1/status:
+    get:
+      operationId: serviceStatus
+      security:
+        - Bearer: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceStatus'
+          description: Ok
+        "500":
+          description: Unexpected error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                500Example:
+                  $ref: '#/components/examples/500Example'  
+      summary: Retrieves the status of resources e.g whether we have reached maximum service capacity    
   /api/managed-services-api/v1/kafkas/{id}:
     get:
       operationId: getKafkaById
@@ -688,6 +721,38 @@ components:
               items:
                 allOf:
                   - $ref: "#/components/schemas/KafkaRequest"
+    VersionMetadata:
+      allOf:
+        - $ref: "#/components/schemas/ObjectReference"
+        - type: object
+          example:
+            kind: "APIVersion"
+            id: "v1"
+            href: "/api/managed-services-api/v1"
+            collections:
+              - id: "kafkas"
+                href: "/api/managed-services-api/v1/kafkas"
+                kind: "KafkaList" 
+          properties:
+            collections:
+              type: array
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/ObjectReference"
+    ServiceStatus:
+      description: Schema for the service status response body
+      example:
+        kafkas:
+          max_capacity_reached: true
+      type: object
+      properties:
+        kafkas:
+          description: The kafka resource api status
+          type: object
+          properties: 
+            max_capacity_reached: 
+              description: Indicates whether we have reached kafka maximum capacity
+              type: boolean
     KafkaRequestPayload:
       description: Schema for the request body sent to /kafkas POST
       required:
@@ -797,6 +862,8 @@ components:
               type: string
             clientSecret:
               type: string
+            owner:
+              type: string
           example:
             $ref: "#/components/examples/ServiceAccountExample"
     ServiceAccountRequest:
@@ -826,6 +893,9 @@ components:
               description: ''
               type: string
             name:
+              description: ''
+              type: string
+            owner:
               description: ''
               type: string
             description:
@@ -1122,6 +1192,7 @@ components:
         description: "service account for my app"
         clientID: "SA-121212"
         clientSecret: "secret"
+        owner: "test-user"
     ServiceAccountByIdExample:
       value:
         id: "1"
@@ -1130,6 +1201,7 @@ components:
         name: "my-app-sa"
         description: "service account for my app"
         clientID: "SA-121212"
+        owner: "test-user"
     ServiceAccountListItemExample:
       value:
         id: "1"
@@ -1138,6 +1210,7 @@ components:
         name: "my-app-sa"
         description: "service account for my app"
         clientID: "SA-121212"
+        owner: "test-user"
     MetricsRangeQueryExample:
       value:
         metric:

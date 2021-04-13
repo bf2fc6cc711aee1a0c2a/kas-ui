@@ -23,7 +23,7 @@ import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIM
 import './StreamsToolbar.css';
 import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
 
-type StreamsToolbarProps = {
+export type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
   setFilterSelected: (value: string) => void;
@@ -32,6 +32,8 @@ type StreamsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
+  isDisabledCreateButton?: boolean;
+  buttonTooltipContent?: string | undefined;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -42,6 +44,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
+  isDisabledCreateButton,
+  buttonTooltipContent,
 }) => {
   const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
   const { t } = useTranslation();
@@ -522,17 +526,36 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
+  const createButton = () => {
+    if (isDisabledCreateButton) {
+      return (
+        <Tooltip content={buttonTooltipContent}>
+          <Button
+            variant="primary"
+            onClick={() => setIsModalOpen(!isModalOpen)}
+            data-testid={'tableStreams-buttonCreateKafka'}
+            isAriaDisabled={isDisabledCreateButton}
+          >
+            {t('create_kafka_instance')}
+          </Button>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Button
+        variant="primary"
+        onClick={() => setIsModalOpen(!isModalOpen)}
+        data-testid={'tableStreams-buttonCreateKafka'}
+      >
+        {t('create_kafka_instance')}
+      </Button>
+    );
+  };
+
   const toolbarItems: ToolbarItemProps[] = [
     {
-      item: (
-        <Button
-          variant="primary"
-          onClick={() => setIsModalOpen(!isModalOpen)}
-          data-testid={'tableStreams-buttonCreateKafka'}
-        >
-          {t('create_kafka_instance')}
-        </Button>
-      ),
+      item: createButton(),
     },
   ];
 
