@@ -75,7 +75,7 @@
   "create_credential_wizard_description": "Generate credential for your application",
   "details": "Details",
   "connection": "Connection",
-  "drawer_resource_tab_body_description_1": "Your application or tool initially connects to the kafka instance using the bootstrap server and authenticates with your service accounts credentials.",
+  "drawer_resource_tab_body_description_1": "Your application or tool initially connects to the Kafka instance using the bootstrap server and authenticates with your service accounts credentials.",
   "kafka_listener_and_credentials": "Kafka listener and credentials",
   "drawer_resource_tab_body_description_2": "Your application or tool initially connects to the Kafka instance using the bootstrap server and authenticates with your service account credentials. These credentials can be used with an OAuth Client Credential Grant or as the username and password for SASL/Plain.",
   "bootstrap_server": "Bootstrap server",
@@ -236,8 +236,8 @@
   "clear_all_filters": "Clear all filters",
   "delete_instance": "Delete instance",
   "to_access_kafka_instances_contact_your_organization_administrators": "To access Kafka Instances, contact your organization administrators.",
-  "kafka_instance_not_ready_inline_message": "We're creating your kafka instance, so some details aren't yet available.",
-  "bootstrap_server_description": "Establish the initial connection between your client and kafka instance.",
+  "kafka_instance_not_ready_inline_message": "We're creating your Kafka instance, so some details aren't yet available.",
+  "bootstrap_server_description": "Establish the initial connection between your client and Kafka instance.",
   "common": {
     "loding": "Loading",
     "java": "JAVA",
@@ -306,9 +306,9 @@
     "service_account_description_length_is_greater_than_expected": "Service account description cannot exceed {{maxLength}} characters.",
     "service_account_successfully_deleted": "{{name}} service account instance successfully deleted",
     "create_service_account_to_generate_credentials": "Create a service account to generate credentials. Manage the service accounts you create on the",
-    "sasl_oauthbearer_popover_content": "Product uses the industry-standard OAuth protocol via the SASL/OAUTHBEARER provided by Apache Kafka.",
-    "sasl_oauthbearer_description": "Use your service account credentials and a token endpoint URL to authenticate your client with the kafka instance.",
+    "sasl_oauthbearer_popover_content": "OpenShift Streams for Apache Kafka uses the industry-standard OAuth protocol via the SASL/OAUTHBEARER provided by Apache Kafka.",
+    "sasl_oauthbearer_description": "Use your service account credentials and a token endpoint URL to authenticate your client with the Kafka instance.",
     "sasl_plain_popover_content": "Explanation that this is available for tools that do not support the Oauth method.",
-    "sasl_plain_description": " Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the kafka instance."
+    "sasl_plain_description": " Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance."
   }
 }

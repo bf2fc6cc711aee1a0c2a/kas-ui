@@ -82,7 +82,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
     <div className="mas--details__drawer--tab-content">
       <TextContent className="pf-u-pb-sm">
         <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_1')}</Text>
-        <Text component={TextVariants.h3} className="pf-u-mt-md">
+        <Text component={TextVariants.h3} className="pf-u-mt-lg">
           {t('bootstrap_server')}
         </Text>
         <Text component={TextVariants.small}>{t('bootstrap_server_description')}</Text>
@@ -96,7 +96,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
       )}
 
       <TextContent className="pf-u-pb-sm">
-        <Text component={TextVariants.h3} className="pf-u-mt-md">
+        <Text component={TextVariants.h3} className="pf-u-mt-xl">
           {t('serviceAccount.service_accounts_small')}
         </Text>
         <Text component={TextVariants.small}>
@@ -125,7 +125,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         {t('serviceAccount.create_service_account')}
       </Button>
       <TextContent className="pf-u-pb-sm">
-        <Text component={TextVariants.h3} className="pf-u-mt-md">
+        <Text component={TextVariants.h3} className="pf-u-mt-xl">
           {t('common.authentication_method')}
         </Text>
         <Text component={TextVariants.h4} className="pf-u-mt-md">
