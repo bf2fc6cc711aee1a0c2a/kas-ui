@@ -43,8 +43,8 @@ const DrawerPanelContentInfo = () => {
             <TextListItem component={TextListItemVariants.dd}>up to 100</TextListItem>
           </GridItem>
           <GridItem>
-            <TextListItem component={TextListItemVariants.dt}>{t('common.client_attempts')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 50/s</TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>{t('common.connection_attempts')}</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>up to 50 per second</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.message_size')}</TextListItem>

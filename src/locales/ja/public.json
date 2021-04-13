@@ -262,7 +262,7 @@
     "storage": "日本語 Storage",
     "partitions": "日本語 Partitions",
     "client_connections": "日本語 Client connections",
-    "client_attempts": "日本語 Client attempts",
+    "connection_attempts": "日本語 Connection attempts",
     "message_size": "日本語 Message size",
     "quick_start_guide_message": "日本語 Need help getting started? Follow our quick start guide."
   },

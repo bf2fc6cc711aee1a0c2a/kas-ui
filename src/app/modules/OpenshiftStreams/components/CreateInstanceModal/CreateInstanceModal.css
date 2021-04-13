@@ -9,16 +9,3 @@
 .mk--create-instance-modal__sidebar--content dt {
   font-size: var(--pf-global--FontSize--sm);
 }
-/* .mk--create-instance-modal__drawer--content dd {
-  margin-bottom: var(--pf-global--spacer--sm);
-} */
-
-/* @media screen and (min-width: 992px) {
-  .mk--create-instance__griditem--form.pf-l-grid > *,
-  .pf-l-grid .pf-l-grid__item {
-    min-width: 130%;
-  }
-  .mk--create-instance__griditem--contentinfo {
-    padding-left: 175px;
-  }
-} */

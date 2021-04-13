@@ -265,7 +265,7 @@
     "storage": "Storage",
     "partitions": "Partitions",
     "client_connections": "Client connections",
-    "client_attempts": "Client attempts",
+    "connection_attempts": "Connection attempts",
     "message_size": "Message size",
     "quick_start_guide_message": "Need help getting started? Follow our quick start guide."
   },
