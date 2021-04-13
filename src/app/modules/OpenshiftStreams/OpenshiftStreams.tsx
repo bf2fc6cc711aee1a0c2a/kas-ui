@@ -70,6 +70,7 @@ const OpenshiftStreams = ({
   // States
   const [isOpenCreateInstanceModalState, setIsOpenCreateInstanceModalState] = useState(createDialogOpen());
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
+  const [kafkas, setKafkas] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
@@ -207,6 +208,25 @@ const OpenshiftStreams = ({
     }
   };
 
+  const fetchKafkasOnborading = async () => {
+    const accessToken = await authContext?.getToken();
+
+    if (accessToken && isVisible) {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        await apisService.listKafkas().then((res) => {
+          const kafkaInstances = res.data;
+          setKafkas(kafkaInstances.items);
+        });
+      } catch (error) {
+        handleServerError(error);
+      }
+    }
+  };
+
   const fetchCloudProviders = async () => {
     const accessToken = await authContext?.getToken();
     if (accessToken !== undefined && accessToken !== '') {
@@ -243,6 +263,16 @@ const OpenshiftStreams = ({
     fetchCloudProviders();
     fetchKafkas(false);
   }, []);
+
+  /**
+   * This change is temporary for summit
+   * Todo: remove this code after summit
+   */
+  useEffect(() => {
+    fetchKafkasOnborading();
+  }, []);
+
+  useTimeout(() => fetchKafkasOnborading(), MAX_POLL_INTERVAL);
 
   useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
 
@@ -346,7 +376,7 @@ const OpenshiftStreams = ({
    * Todo: remove this change after public eval
    */
   const getLoggedInUserKafkaInstance = () => {
-    const kafkaItem: KafkaRequest | undefined = kafkaInstanceItems?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    const kafkaItem: KafkaRequest | undefined = kafkas?.filter((kafka) => kafka.owner === loggedInUser)[0];
     return kafkaItem;
   };
 
