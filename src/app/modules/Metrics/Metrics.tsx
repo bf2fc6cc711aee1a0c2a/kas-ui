@@ -34,10 +34,11 @@ export const Metrics = () => {
 
   const [globalPartitionCount, setGlobalPartitionCount] = useState<number>(0);
   const [offlinePartitionCount, setOfflinePartitionCount] = useState<number>(0);
-  const [brokerAvailableSpace, setBrokerAvailableSpace] = useState<Broker[]>([]);
+  const [brokerAvailableSpace, setBrokerAvailableSpace] = useState<Broker[]>();
   const [topicMessageCount, setTopicMessageCount] = useState<Topic[]>([] as Topic[]);
+  const [topicIncomingBytes, setTopicIncomingBytes] = useState<Topic[]>();
 
-  const instanceDetail = "1qwYPIV2YFiuTEF5c100IwmsLZ0";
+  const instanceDetail = "1r4a07ELEiYkb4zdZrlCQqCkkkg";
 
   console.log('what is brokerAvailableSpace' + brokerAvailableSpace);
 
@@ -90,7 +91,7 @@ export const Metrics = () => {
   // };
 
   const returnAvailableBytesData = (data) => {
-    let brokerArray = [];
+    let brokerArray: Broker[] = [];
     data.forEach((datum, i) => {
       const labels = datum.metric;
       const pvcName = labels['persistentvolumeclaim'];
@@ -109,7 +110,6 @@ export const Metrics = () => {
           broker.data.push({
             timestamp: value.Timestamp,
             usedSpace: usedSpaceInBytes,
-            hardLimit,
             softLimit
           });
         });
@@ -118,48 +118,52 @@ export const Metrics = () => {
       setBrokerAvailableSpace(brokerArray);
     }
 
-  const returnBrokerTopicMetricsMessagesInTotal = (data, i) => {
-    const labels = data.metric;
-    const name = labels['topic'];
-    if (name !== '__consumer_offsets' && name !== 'strimzi-canary') {
-      let topic = {
-        name,
+  // const returnBrokerTopicMetricsMessagesInTotal = (data) => {
+  //   const labels = data.metric;
+  //   const name = labels['topic'];
+  //   if (name !== '__consumer_offsets' && name !== 'strimzi-canary') {
+  //     let topic = {
+  //       name,
+  //       data: []
+  //     } as Topic;
+
+  //     data.values.forEach(value => {
+  //       if (value.Timestamp == undefined) {
+  //         throw new Error('timestamp cannot be undefined');
+  //       }
+  //       topic.data.push({
+  //         count: value.Value,
+  //         timestamp: value.Timestamp
+  //       });
+  //     });
+  //     setTopicMessageCount(topic);
+  //   }
+  // }
+
+  const returnBrokerTopicMetricsBytesInTotal = (data) => {
+    console.log('what is data bytes' + JSON.stringify(data));
+
+    let topicArray: Topic[] = [];
+    data.forEach((datum, i) => {
+      console.log('did it get here');
+      const topic = {
+        name: `topic ${i}`,
         data: []
       } as Topic;
-
-      data.values.forEach(value => {
+      console.log('what is datum.values' + datum.values);
+      datum.values?.forEach(value => {
         if (value.Timestamp == undefined) {
           throw new Error('timestamp cannot be undefined');
         }
         topic.data.push({
           count: value.Value,
-          timestamp: value.Timestamp
+          timestamp: value.Timestamp,
         });
       });
-      setTopicMessageCount(topic);
-    }
-  }
-
-  const returnBrokerTopicMetricsBytesInTotal = (data, i) => {
-    console.log('what is data heree' + JSON.stringify(data));
-
-    // let bytes = {
-    //   name,
-    //   data: []
-    // } as Topic;
-
-    // data.items.forEach(item => {
-    //   let values = item.values;
-    //   if (values.Timestamp == undefined) {
-    //     throw new Error('timestamp cannot be undefined');
-    //   }
-
-    // }
-
-    // bytes.data.push({
-    //   timestamp: 
-    // })
-
+      topicArray.push(topic);
+      console.log('what is topicArray' + topicArray);
+    });
+    setTopicIncomingBytes(topicArray);
   }
   
     // Functions
@@ -174,30 +178,34 @@ export const Metrics = () => {
           if (!instanceDetail || !instanceDetail) {
             return;
           }
-          await apisService.getMetricsByRangeQuery(instanceDetail, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes', 'kafka_server_brokertopicmetrics_messages_in_total', 'kafka_server_brokertopicmetrics_bytes_in_total']).then((res) => {
-            console.log('what is data' + JSON.stringify(res.data));
-            const data = res.data;
-            let availableBytesData = [];
-            data.items?.forEach((item, i) => {
-              const labels = item.metric;
-              if (labels === undefined) {
-                throw new Error('item.metric cannot be undefined');
-              }
-              if (item.values === undefined) {
-                throw new Error('item.values cannot be undefined');
-              }
-              if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
-                availableBytesData.push(item);
-              }
-              if (labels['__name__'] === 'kafka_server_brokertopicmetrics_messages_in_total') {
-                returnBrokerTopicMetricsMessagesInTotal(item, i);
-              }
-              if(labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
-                returnBrokerTopicMetricsBytesInTotal(item, i);
-              }
-            });
-            returnAvailableBytesData(availableBytesData);
+          const data = await apisService.getMetricsByRangeQuery(instanceDetail, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes', 'kafka_server_brokertopicmetrics_messages_in_total', 'kafka_server_brokertopicmetrics_bytes_in_total']);
+
+          const availableBytesData = [];
+          const incomingBytesPerTopic = [];
+          console.log('what is data' + JSON.stringify(data.data.items));
+          data.data.items?.forEach((item, i) => {
+            console.log('does it get here');
+            const labels = item.metric;
+            if (labels === undefined) {
+              throw new Error('item.metric cannot be undefined');
+            }
+            if (item.values === undefined) {
+              throw new Error('item.values cannot be undefined');
+            }
+            if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
+              availableBytesData.push(item);
+            }
+            // if (labels['__name__'] === 'kafka_server_brokertopicmetrics_messages_in_total') {
+            //   returnBrokerTopicMetricsMessagesInTotal(item);
+            // }
+            if(labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
+              incomingBytesPerTopic.push(item)
+            }
           });
+
+          console.log('availableBytesData' + availableBytesData);
+          returnAvailableBytesData(availableBytesData);
+          returnBrokerTopicMetricsBytesInTotal(incomingBytesPerTopic);
         } catch (error) {
           let reason: string | undefined;
           if (isServiceApiError(error)) {
@@ -216,7 +224,7 @@ export const Metrics = () => {
     useEffect(() => {
       fetchMetrics();
       // fetchInstantMetrics();
-    }, []);
+    }, [instanceDetail]);
   
     // For when we add messages chart later
     // const ConnectedMessagesChart = () => {
@@ -232,29 +240,29 @@ export const Metrics = () => {
   return (
     <PageSection>
       <Grid hasGutter>
-        <GridItem>
+        {/* <GridItem>
           <Card>
             <CardTitle>
               {t('metrics.available_disk_space_per_broker')}
             </CardTitle>
             <CardBody>
-              { brokerAvailableSpace.length > 0 && <AvailableDiskSpaceChart brokers={brokerAvailableSpace} />}
+              { brokerAvailableSpace && <AvailableDiskSpaceChart brokers={brokerAvailableSpace} />}
             </CardBody>
           </Card>
-        </GridItem>
+        </GridItem> */}
 
-        <GridItem span={6}>
+        <GridItem>
           <Card>
             <CardTitle>
               {t('metrics.incoming_bytes_per_topic')}
             </CardTitle>
             <CardBody>
-              {/* <IncomingBytesPerTopicChart/> */}
+              { topicIncomingBytes && <IncomingBytesPerTopicChart topicBytes={topicIncomingBytes} /> }
             </CardBody>
           </Card>
         </GridItem>
 
-        <GridItem span={6}>
+        <GridItem>
           <Card>
             <CardTitle>
               {t('metrics.outgoing_bytes_per_topic')}

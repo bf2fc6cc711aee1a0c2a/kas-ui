@@ -28,17 +28,14 @@ export type Broker = {
     timestamp: number
     usedSpace: number
     softLimit: number
-    hardLimit: number
   }[]
 }
 
 export type ChartData = {
   color: string
   softLimitColor: string
-  hardLimitColor: string
   area: BrokerChartData[]
   softLimit: BrokerChartData[]
-  hardLimit: BrokerChartData[]
 }
 
 export type BrokerChartData = {
@@ -60,8 +57,6 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
 
   console.log('what is brokers' + JSON.stringify(brokers));
 
-  console.log('what is this' + JSON.stringify(brokers.brokers[0][0]));
-
   const containerRef = useRef();
 
   const { t } = useTranslation();
@@ -72,7 +67,6 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
 
   const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
   const softLimitColors = [chart_color_blue_100.value, chart_color_orange_100.value, chart_color_green_100.value];
-  const hardLimitColors = [chart_color_blue_500.value, chart_color_orange_500.value, chart_color_green_500.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
@@ -93,9 +87,7 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
       console.log('HELLO what is broker' + JSON.stringify(broker));
       const color = colors[index];
       const softLimitColor = softLimitColors[index];
-      const hardLimitColor = chart_color_black_300.value;
       const softLimitName = `${broker.name} limit`;
-      const hardLimitName = `${broker.name} hard limit`;
 
       legendData.push({
         name: broker.name.charAt(0).toUpperCase() + broker.name.slice(1),
@@ -110,24 +102,15 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
       //     fill: softLimitColor
       //   }
       // });
-      // legendData.push({
-      //   name: hardLimitName,
-      //   symbol: {
-      //     type: 'threshold',
-      //     fill: hardLimitColor
-      //   }
-      // });
       let area: Array<BrokerChartData> = [];
       let softLimit: Array<BrokerChartData> = [];
-      let hardLimit: Array<BrokerChartData> = [];
       broker.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
-        area.push({ name: broker.name, x: time, y: value.usedSpace / 1024 / 1024 / 1024 });
-        softLimit.push({ name: softLimitName, x: time, y: value.softLimit / 1024 / 1024 / 1024 });
-        hardLimit.push({ name: hardLimitName, x: time, y: value.hardLimit / 1024 / 1024 / 1024 });
+        area.push({ name: broker.name, x: time, y: (value.usedSpace / 1024 / 1024 / 1024) * -1 });
+        softLimit.push({ name: softLimitName, x: time, y: 20 });
       });
-      chartData.push({ color, softLimitColor, hardLimitColor, area, softLimit, hardLimit });
+      chartData.push({ color, softLimitColor, area, softLimit });
     });
     setLegend(legendData);
     setChartData(chartData);
@@ -182,24 +165,13 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
                 />
               ))}
             </ChartGroup>
-            {/* {chartData.map((value, index) => (
+            {chartData.map((value, index) => (
               <ChartThreshold
                 key={`chart-softlimit-${index}`}
                 data={value.softLimit}
                 style={{
                   data: {
                     stroke: value.softLimitColor
-                  }
-                }}
-              />
-            ))} */}
-            {chartData.map((value, index) => (
-              <ChartThreshold
-                key={`chart-hardlimit-${index}`}
-                data={value.hardLimit}
-                style={{
-                  data: {
-                    stroke: value.hardLimitColor
                   }
                 }}
               />
