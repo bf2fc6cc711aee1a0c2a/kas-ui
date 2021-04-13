@@ -264,7 +264,8 @@
     "client_connections": "日本語 Client connections",
     "connection_attempts": "日本語 Connection attempts",
     "message_size": "日本語 Message size",
-    "quick_start_guide_message": "日本語 Need help getting started? Follow our quick start guide."
+    "quick_start_guide_message": "日本語 Need help getting started? Follow our quick start guide.",
+    "input_text_area_invalid_helper_text": "日本語 Valid characters include letters from Aa to Zz, numbers from 0 to 9, spaces, and line breaks."
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",
