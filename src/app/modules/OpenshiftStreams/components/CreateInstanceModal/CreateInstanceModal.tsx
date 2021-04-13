@@ -11,8 +11,8 @@ import {
   Tile,
   ToggleGroup,
   ToggleGroupItem,
-  Grid,
-  GridItem,
+  Flex,
+  FlexItem,
   Divider,
 } from '@patternfly/react-core';
 import { NewKafka, FormDataValidationState } from '../../../../models';
@@ -379,14 +379,20 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       dataTestIdSubmit="modalCreateKafka-buttonSubmit"
       dataTestIdCancel="modalCreateKafka-buttonCancel"
     >
-      <Alert variant="info" title="Your preview instance will expire after 48 hours." aria-live="polite" isInline />
-      <Grid lg={6} sm={12} hasGutter>
-        <GridItem lg={9}>{createInstanceForm()}</GridItem>
-        {/* <Divider isVertical /> */}
-        <GridItem lg={3} className="mk--create-instance-modal__sidebar--content">
+      <Alert
+        className="pf-u-mb-md"
+        variant="info"
+        title="Your preview instance will expire after 48 hours."
+        aria-live="polite"
+        isInline
+      />
+      <Flex direction={{ default: 'column', lg: 'row' }}>
+        <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
+        <Divider isVertical />
+        <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
           <DrawerPanelContentInfo />
-        </GridItem>
-      </Grid>
+        </FlexItem>
+      </Flex>   
     </MASCreateModal>
   );
 };
