@@ -47,7 +47,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  const [rawServiceAccountDataLength, setRawServiceAccountDataLength] = useState<number | undefined>(undefined);
   // state to store the expected total  service accounts based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
   const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
@@ -59,6 +58,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountToReset, setServiceAccountToReset] = useState<ServiceAccountListItem>();
   const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
   const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
+  const [isDisplayEmptyState, setIsDisplayEmptyState] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -85,9 +85,17 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         });
         await apisService.listServiceAccounts().then((response) => {
           const serviceAccounts = response?.data;
+          const items = serviceAccounts?.items;
+          const itemsLength = items?.length;
           setServiceAccountList(serviceAccounts);
-          const sortedServiceAccounts = sortValues(serviceAccounts?.items, 'name', 'asc');
+          const sortedServiceAccounts = sortValues(items, 'name', 'asc');
           setServiceAccountItems(sortedServiceAccounts);
+          /**
+           * Todo: handle below logic in separate API call when backend start support pagination
+           */
+          if (!itemsLength || itemsLength < 1) {
+            setIsDisplayEmptyState(true);
+          }
         });
       } catch (error) {
         handleServerError(error);
@@ -121,7 +129,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         </PageSection>
       );
     } else {
-      if (rawServiceAccountDataLength && rawServiceAccountDataLength < 1) {
+      if (isDisplayEmptyState) {
         return (
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
