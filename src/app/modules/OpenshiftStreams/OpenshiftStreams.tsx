@@ -210,14 +210,14 @@ const OpenshiftStreams = ({
 
   const fetchKafkasOnborading = async () => {
     const accessToken = await authContext?.getToken();
-
+    const filter = loggedInUser ? `owner = ${loggedInUser}` : '';
     if (accessToken && isVisible) {
       try {
         const apisService = new DefaultApi({
           accessToken,
           basePath,
         });
-        await apisService.listKafkas().then((res) => {
+        await apisService.listKafkas('1', '1', '', filter).then((res) => {
           const kafkaInstances = res.data;
           setKafkas(kafkaInstances.items);
         });
