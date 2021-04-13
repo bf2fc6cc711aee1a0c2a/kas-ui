@@ -562,7 +562,7 @@ const StreamsTableView = ({
           }}
         />
       )}
-      {total && total > 0 && (
+      {total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}
