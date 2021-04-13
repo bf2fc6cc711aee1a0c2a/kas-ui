@@ -371,6 +371,12 @@ export interface KafkaRequest {
      * @memberof KafkaRequest
      */
     failed_reason?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof KafkaRequest
+     */
+    version?: string;
 }
 /**
  * 
@@ -438,6 +444,12 @@ export interface KafkaRequestAllOf {
      * @memberof KafkaRequestAllOf
      */
     failed_reason?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof KafkaRequestAllOf
+     */
+    version?: string;
 }
 /**
  * 
@@ -756,6 +768,12 @@ export interface ServiceAccount {
      * @memberof ServiceAccount
      */
     owner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    created_at?: string;
 }
 /**
  * 
@@ -799,6 +817,12 @@ export interface ServiceAccountAllOf {
      * @memberof ServiceAccountAllOf
      */
     owner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    created_at?: string;
 }
 /**
  * 
@@ -851,29 +875,35 @@ export interface ServiceAccountListItem {
      */
     href?: string;
     /**
-     * 
+     * client id of the service account
      * @type {string}
      * @memberof ServiceAccountListItem
      */
     clientID?: string;
     /**
-     * 
+     * name of the service account
      * @type {string}
      * @memberof ServiceAccountListItem
      */
     name?: string;
     /**
-     * 
+     * owner of the service account
      * @type {string}
      * @memberof ServiceAccountListItem
      */
     owner?: string;
     /**
-     * 
-     * @type {AnyType}
+     * service account creation timestamp
+     * @type {string}
      * @memberof ServiceAccountListItem
      */
-    description?: AnyType;
+    created_at?: string;
+    /**
+     * description of the service account
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    description?: string;
 }
 /**
  * 
@@ -888,29 +918,35 @@ export interface ServiceAccountListItemAllOf {
      */
     id?: string;
     /**
-     * 
+     * client id of the service account
      * @type {string}
      * @memberof ServiceAccountListItemAllOf
      */
     clientID?: string;
     /**
-     * 
+     * name of the service account
      * @type {string}
      * @memberof ServiceAccountListItemAllOf
      */
     name?: string;
     /**
-     * 
+     * owner of the service account
      * @type {string}
      * @memberof ServiceAccountListItemAllOf
      */
     owner?: string;
     /**
-     * 
-     * @type {AnyType}
+     * service account creation timestamp
+     * @type {string}
      * @memberof ServiceAccountListItemAllOf
      */
-    description?: AnyType;
+    created_at?: string;
+    /**
+     * description of the service account
+     * @type {string}
+     * @memberof ServiceAccountListItemAllOf
+     */
+    description?: string;
 }
 /**
  * Schema for the request to create a service account
@@ -955,7 +991,7 @@ export interface ServiceStatusKafkas {
      * @type {boolean}
      * @memberof ServiceStatusKafkas
      */
-    max_capacity_reached?: boolean;
+    max_capacity_reached: boolean;
 }
 /**
  * 
