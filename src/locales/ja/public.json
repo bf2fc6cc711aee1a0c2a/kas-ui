@@ -233,6 +233,9 @@
   "unauthorized_access_to_kafka_instances_info": "日本語 To access Kafka Instances, contact your organization administrators.",
   "clear_all_filters": "日本語 Clear all filters",
   "to_access_kafka_instances_contact_your_organization_administrators": "日本語 To access Kafka Instances, contact your organization administrators.",
+  "kafka_instance_not_ready_inline_message": "日本語 We're creating your kafka instance, so some details aren't yet available.",
+  "bootstrap_server_description": "日本語 Establish the initial connection between your client and Kafka instance.",
+  "more_info_about_sasl_oauthbearer": "日本語 More information about SASL/OAUTHBEARER",
   "common": {
     "loding": "日本語 Loading",
     "java": "日本語 JAVA",
@@ -256,7 +259,12 @@
     "something_went_wrong": "日本語 Something went wrong",
     "clientID": "日本語 Client ID",
     "input_filed_invalid_helper_text": "日本語 Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
-    "input_text_area_invalid_helper_text": "日本語 Valid characters include letters from Aa to Zz, numbers from 0 to 9, spaces, and line breaks."
+    "page": "日本語 page",
+    "authentication_method": "日本語 Authentication method",
+    "sasl_oauthbearer": "日本語 SASL/OAUTHBEARER",
+    "recommended": "日本語 Recommended",
+    "token_endpoint_url": "日本語 Token endpoint URL",
+    "sasl_plain": "日本語 SAL/PLAIN"
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",
@@ -293,6 +301,11 @@
     "will_be_deleted": "日本語 will be deleted.",
     "service_account_name_length_is_greater_than_expected": "日本語 Service account name cannot exceed {{maxLength}} characters.",
     "service_account_description_length_is_greater_than_expected": "日本語 Service account description cannot exceed {{maxLength}} characters.",
-    "service_account_successfully_deleted": "日本語 {{name}} service account instance successfully deleted"
+    "service_account_successfully_deleted": "日本語 {{name}} service account instance successfully deleted",
+    "create_service_account_to_generate_credentials": "日本語 Create a service account to generate credentials. Manage the service accounts you create on the",
+    "sasl_oauthbearer_popover_content": "日本語 OpenShift Streams for Apache Kafka uses the industry-standard OAuth protocol via the SASL/OAUTHBEARER provided by Apache Kafka.",
+    "sasl_oauthbearer_description": "日本語 Use your service account credentials and a token endpoint URL to authenticate your client with the Kafka instance.",
+    "sasl_plain_popover_content": "日本語 Explanation that this is available for tools that do not support the Oauth method.",
+    "sasl_plain_description": "日本語 Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance."
   }
 }

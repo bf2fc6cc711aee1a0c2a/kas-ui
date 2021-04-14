@@ -23,6 +23,8 @@ import {
   CreateInstanceModal,
   InstanceDrawer,
   CreateInstanceModalProvider,
+  InstanceDrawerProps,
+  StreamsTableProps,
 } from './components';
 import { AlertProvider, useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
@@ -35,12 +37,11 @@ import { MASLoading, MASEmptyState, MASFullPageError, MASEmptyStateVariant } fro
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 
-export type OpenShiftStreamsProps = {
-  onConnectToInstance: (data: KafkaRequest) => void;
-  preCreateInstance: (open: boolean) => Promise<boolean>;
-  createDialogOpen: () => boolean;
-  getConnectToInstancePath: (data: KafkaRequest) => string;
-};
+export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
+  Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
+    preCreateInstance: (open: boolean) => Promise<boolean>;
+    createDialogOpen: () => boolean;
+  };
 
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
@@ -48,10 +49,11 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams = ({
-  onConnectToInstance,
-  getConnectToInstancePath,
+  onConnectToRoute,
+  getConnectToRoutePath,
   preCreateInstance,
   createDialogOpen,
+  tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
 
@@ -80,6 +82,20 @@ const OpenshiftStreams = ({
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
+
+  const updateSelectedKafkaInstance = () => {
+    if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {
+      const selectedKafkaItem = kafkaInstanceItems?.filter(
+        (kafka) => kafka?.id === selectedInstance?.instanceDetail?.id
+      )[0];
+      const newState: any = { ...selectedInstance, instanceDetail: selectedKafkaItem };
+      selectedKafkaItem && setSelectedInstance(newState);
+    }
+  };
+
+  useEffect(() => {
+    updateSelectedKafkaInstance();
+  }, [kafkaInstanceItems]);
   const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
@@ -453,8 +469,8 @@ const OpenshiftStreams = ({
               mainToggle={mainToggle}
               onViewConnection={onViewConnection}
               onViewInstance={onViewInstance}
-              onConnectToInstance={onConnectToInstance}
-              getConnectToInstancePath={getConnectToInstancePath}
+              onConnectToRoute={onConnectToRoute}
+              getConnectToRoutePath={getConnectToRoutePath}
               refresh={refreshKafkas}
               kafkaDataLoaded={kafkaDataLoaded}
               onDelete={onDelete}
@@ -501,6 +517,9 @@ const OpenshiftStreams = ({
             instanceDetail={instanceDetail}
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
+            getConnectToRoutePath={getConnectToRoutePath}
+            onConnectToRoute={onConnectToRoute}
+            tokenEndPointUrl={tokenEndPointUrl}
             notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
           >
             {renderBanner()}

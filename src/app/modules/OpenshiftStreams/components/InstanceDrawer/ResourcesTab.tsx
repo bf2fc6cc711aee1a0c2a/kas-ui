@@ -1,26 +1,48 @@
 import React, { useState, useContext } from 'react';
-import { Button, TextContent, Text, TextVariants, Flex, FlexItem, ClipboardCopy } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
+import {
+  Button,
+  TextContent,
+  Text,
+  TextVariants,
+  ClipboardCopy,
+  Label,
+  Popover,
+  Skeleton,
+  AlertVariant,
+  ButtonVariant,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal/MASGenerateCredentialsModal';
+import { MASGenerateCredentialsModal, useAlerts } from '@app/common';
 import { ApiContext } from '@app/api/ApiContext';
 import { AuthContext } from '@app/auth/AuthContext';
 import { isServiceApiError } from '@app/utils/error';
-import { DefaultApi, ServiceAccountRequest } from '../../../../../openapi/api';
+import { DefaultApi, ServiceAccountRequest, KafkaRequest } from '../../../../../openapi/api';
+import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;
   externalServer?: string;
-  instanceName?: string;
+  instance: KafkaRequest | undefined;
+  isKafkaPending?: boolean;
+  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
+  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
+  tokenEndPointUrl: string;
 };
 
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   mainToggle,
   externalServer,
-  instanceName = '',
+  instance = {},
+  isKafkaPending,
+  onConnectToRoute,
+  getConnectToRoutePath,
+  tokenEndPointUrl,
 }: ResourcesTabProps) => {
   const { t } = useTranslation();
   const { basePath } = useContext(ApiContext);
   const authContext = useContext(AuthContext);
+  const { addAlert } = useAlerts();
 
   const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +51,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   const generateCredential = async () => {
     const accessToken = await authContext?.getToken();
     const serviceAccountRequest: ServiceAccountRequest = {
-      name: instanceName,
+      name: instance?.name || '',
     };
     const apisService = new DefaultApi({
       accessToken,
@@ -48,7 +70,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
       if (isServiceApiError(err)) {
         reason = err.response?.data.reason;
       }
-      // TO DO: Add error - setError(reason);
+      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
 
@@ -61,29 +83,75 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
     <div className="mas--details__drawer--tab-content">
       <TextContent className="pf-u-pb-sm">
         <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_1')}</Text>
-        <Text component={TextVariants.h5}>{t('kafka_listener_and_credentials')}</Text>
-        <Text component={TextVariants.small}>{t('drawer_resource_tab_body_description_2')}</Text>
-        <Text component={TextVariants.p} className="pf-u-mt-md">
+        <Text component={TextVariants.h3} className="pf-u-mt-lg">
           {t('bootstrap_server')}
         </Text>
+        <Text component={TextVariants.small}>{t('bootstrap_server_description')}</Text>
       </TextContent>
-      <Flex>
-        <FlexItem className="pf-m-grow pf-m-spacer-none pf-u-mb-xs">
-          <ClipboardCopy data-testid="drawerStreams-copyBootstrapURL">{externalServer}</ClipboardCopy>
-        </FlexItem>
-        <FlexItem className="pf-m-align-right">
-          <Button
-            variant="secondary"
-            onClick={handleGenerateCredentialsModal}
-            className="pf-u-ml-md"
-            spinnerAriaValueText={isLoading ? 'Loading' : undefined}
-            isLoading={isLoading}
-            data-testid="drawerStreams-buttonCreateServiceAccount"
+      {isKafkaPending ? (
+        <Skeleton fontSize="2xl" />
+      ) : (
+        <ClipboardCopy data-testid="drawerStreams-copyBootstrapURL" textAriaLabel={t('bootstrap_server')}>
+          {externalServer}
+        </ClipboardCopy>
+      )}
+
+      <TextContent className="pf-u-pb-sm">
+        <Text component={TextVariants.h3} className="pf-u-mt-xl">
+          {t('serviceAccount.service_accounts_small')}
+        </Text>
+        <Text component={TextVariants.small}>
+          {t('serviceAccount.create_service_account_to_generate_credentials')}{' '}
+          <Link
+            to={() => getConnectToRoutePath(instance, 'service-accounts')}
+            onClick={(e) => {
+              e.preventDefault();
+              onConnectToRoute(instance, 'service-accounts');
+            }}
+            data-testid="tableStreams-linkKafka"
           >
-            {t('serviceAccount.create_service_account')}
-          </Button>
-        </FlexItem>
-      </Flex>
+            {t('serviceAccount.service_accounts')}
+          </Link>{' '}
+          {t('common.page')}.
+        </Text>
+      </TextContent>
+      <Button
+        variant="secondary"
+        onClick={handleGenerateCredentialsModal}
+        spinnerAriaValueText={isLoading ? 'Loading' : undefined}
+        isLoading={isLoading}
+        data-testid="drawerStreams-buttonCreateServiceAccount"
+        isInline
+      >
+        {t('serviceAccount.create_service_account')}
+      </Button>
+      <TextContent className="pf-u-pb-sm">
+        <Text component={TextVariants.h3} className="pf-u-mt-xl">
+          {t('common.authentication_method')}
+        </Text>
+        <Text component={TextVariants.h4} className="pf-u-mt-md">
+          {t('common.sasl_oauthbearer')} <Label color="green">{t('common.recommended')}</Label>
+          <Popover
+            aria-label={t('common.sasl_oauthbearer')}
+            bodyContent={<div>{t('serviceAccount.sasl_oauthbearer_popover_content')}</div>}
+          >
+            <Button variant={ButtonVariant.plain} aria-label={t('more_info_about_sasl_oauthbearer')}>
+              <HelpIcon />
+            </Button>
+          </Popover>
+        </Text>
+        <Text component={TextVariants.small}>{t('serviceAccount.sasl_oauthbearer_description')}</Text>
+        <Text component={TextVariants.h6} className="pf-u-mt-md">
+          {t('common.token_endpoint_url')}
+        </Text>
+        {isKafkaPending ? <Skeleton fontSize="2xl" /> : <ClipboardCopy>{tokenEndPointUrl}</ClipboardCopy>}
+      </TextContent>
+      <TextContent className="pf-u-pb-sm">
+        <Text component={TextVariants.h4} className="pf-u-mt-md">
+          {t('common.sasl_plain')}
+        </Text>
+        <Text component={TextVariants.small}>{t('serviceAccount.sasl_plain_description')}</Text>
+      </TextContent>
       {mainToggle && (
         <>
           <TextContent className="pf-u-pb-sm pf-u-pt-lg">
