@@ -214,7 +214,7 @@ const OpenshiftStreams = ({
           // Check to see if at least 1 kafka is present
           await apisService.listKafkas('1', '1').then((res) => {
             const kafkaItemsLength = res?.data?.items?.length;
-            if (!kafkaItemsLength || kafkaItemsLength < 100) {
+            if (!kafkaItemsLength || kafkaItemsLength < 1) {
               setIsDisplayKafkaEmptyState(true);
             }
           });
@@ -367,7 +367,13 @@ const OpenshiftStreams = ({
         return (
           <>
             Instances are available for creation. For help getting started, access the{' '}
-            <Button variant={ButtonVariant.link} isSmall isInline className="mk--openstreams__banner">
+            <Button
+              variant={ButtonVariant.link}
+              isSmall
+              isInline
+              className="mk--openstreams__banner"
+              onClick={() => (qsContext.setActiveQuickStart && qsContext.setActiveQuickStart("getting-started"))}
+            >
               quick start guide.
             </Button>
           </>
@@ -486,21 +492,19 @@ const OpenshiftStreams = ({
                 {
                   title: t('create_kafka_instance'),
                   onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
-                  // ['data-testid']: 'emptyStateStreams-buttonCreateKafka'
+                  ['data-testid']: 'emptyStateStreams-buttonCreateKafka'
                 },
                 {
                   title: t('access_the_quick_start_guide'),
-                  onClick: () => qsContext.setActiveQuickStart("QUICKSTART_ID")
+                  onClick: () => (qsContext.setActiveQuickStart && qsContext.setActiveQuickStart("getting-started"))
                 },
                 {
                   title: t('take_a_tour'),
-                  onClick: () => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState),
-                  // ['data-testid']: 'emptyState-actionTour'
+                  ['data-testid']: 'emptyState-actionTour'
                 },
               ]}
               titleProps={{ title: t('no_kafka_instances_yet') }}
             >
-              {createInstanceButton()}
             </MASEmptyState>
             <CreateInstanceModal />
           </PageSection>

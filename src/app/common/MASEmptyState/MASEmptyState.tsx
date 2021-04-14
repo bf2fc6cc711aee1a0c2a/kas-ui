@@ -60,7 +60,6 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   emptyStateBodyProps,
   children,
 }: MASEmptyStateProps) => {
-  const { variant: buttonVariant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
   const { title, ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
   const { variant: masEmptyStateVariant = MASEmptyStateVariant.GettingStarted, className, ...restEmptyStateProps } =
@@ -132,6 +131,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   };
 
   const { variant, icon, titleSize, headingLevel } = getVariantConfig();
+  const secondaryButtonProps = buttonProps && buttonProps.slice(1, buttonProps.length);
 
   return (
     <>
@@ -148,16 +148,15 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         )}
         {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
         {buttonProps && (
-          <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
+          <Button variant={ButtonVariant.primary} onClick={buttonProps[0].onClick} {...buttonProps[0]}>
             {buttonProps[0].title}
           </Button>
         )}
-        {buttonProps && buttonProps.length > 1 &&
-          const secondaryButtonProps = buttonProps[]
+        {secondaryButtonProps?.length > 0 &&
           <EmptyStateSecondaryActions>
-            {buttonProps?.map((button) => {
+            {secondaryButtonProps.map((button, index) => {
               return (
-                <Button variant="link" onClick={button.onClick} data-testid={button['data-testid']}>{button.title}</Button>
+                <Button key={index} variant="link" onClick={button.onClick} data-testid={button['data-testid']}>{button.title}</Button>
               )
             })}
           </EmptyStateSecondaryActions>
