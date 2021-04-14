@@ -265,7 +265,7 @@
     "storage": "日本語 Storage",
     "partitions": "日本語 Partitions",
     "client_connections": "日本語 Client connections",
-    "connection_attempts": "日本語 Connection attempts",
+    "connection_rate": "日本語 Connection rate",
     "message_size": "日本語 Message size",
     "quick_start_guide_message": "日本語 Need help getting started? Follow our quick start guide.",
     "input_text_area_invalid_helper_text": "日本語 Valid characters include letters from Aa to Zz, numbers from 0 to 9, spaces, and line breaks.",

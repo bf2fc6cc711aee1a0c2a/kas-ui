@@ -28,7 +28,7 @@ const DrawerPanelContentInfo = () => {
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.ingress_egress')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 2 MB/s each</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>up to 2 MB/second each</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.storage')}</TextListItem>
@@ -43,8 +43,8 @@ const DrawerPanelContentInfo = () => {
             <TextListItem component={TextListItemVariants.dd}>up to 100</TextListItem>
           </GridItem>
           <GridItem>
-            <TextListItem component={TextListItemVariants.dt}>{t('common.connection_attempts')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 50 per second</TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>{t('common.connection_rate')}</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>up to 50 connections/second</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.message_size')}</TextListItem>
