@@ -21,7 +21,7 @@ export const CustomRowWrapper = (rowWrapperProps) => {
   const { trRef, className, rowProps, row, ...props } = rowWrapperProps || {};
   const { rowIndex } = rowProps;
   const { isExpanded, originalData } = row;
-  const isRowDeleted = originalData?.status === InstanceStatus.DEPROVISION;
+  const isRowDeleted = originalData?.status === InstanceStatus.DEPROVISION || originalData?.status === InstanceStatus.DELETED;
 
   return (
     <tr
