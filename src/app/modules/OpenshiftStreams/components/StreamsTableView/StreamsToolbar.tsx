@@ -379,6 +379,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip, cloudProviderFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
           categoryName={t('cloud_provider')}
+          showToolbarItem={filterSelected === 'cloud_provider'}
         >
           {filterSelected === 'cloud_provider' && (
             <Select
@@ -417,6 +418,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('region', chip, regionFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('region')}
           categoryName={t('region')}
+          showToolbarItem={filterSelected === 'region'}
         >
           {filterSelected === 'region' && (
             <Select
@@ -453,6 +455,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('owner', chip)}
           deleteChipGroup={() => onDeleteChipGroup('owner')}
           categoryName={t('owner')}
+          showToolbarItem={filterSelected?.toLowerCase() === 'owner'}
         >
           {filterSelected.toLowerCase() === 'owner' && (
             <InputGroup className="mk--filter-instances__toolbar--text-input">
@@ -491,6 +494,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('status', chip, statusFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('status')}
           categoryName={t('status')}
+          showToolbarItem={filterSelected === 'status'}
         >
           {filterSelected === 'status' && (
             <Select
