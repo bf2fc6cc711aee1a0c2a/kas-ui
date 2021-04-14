@@ -85,7 +85,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         });
         await apisService.listServiceAccounts().then((response) => {
           const serviceAccounts = response?.data;
-          const items = serviceAccounts?.items;
+          const items = serviceAccounts?.items || [];
           const itemsLength = items?.length;
           setServiceAccountList(serviceAccounts);
           const sortedServiceAccounts = sortValues(items, 'name', 'asc');
