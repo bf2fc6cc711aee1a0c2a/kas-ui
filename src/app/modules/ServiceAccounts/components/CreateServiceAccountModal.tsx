@@ -83,7 +83,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   const handleTextInputDescription = (description: string) => {
     setServiceAccountFormData({ ...serviceAccountFormData, description });
     let isValid = true;
-    if (description && !/^[a-zA-Z0-9\s]*$/.test(description.trim())) {
+    if (description && !/^[a-zA-Z0-9.,\-\s]*$/.test(description.trim())) {
       isValid = false;
     }
     if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
@@ -118,7 +118,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
         fieldState: 'error',
         message: t('common.input_filed_invalid_helper_text'),
       });
-    } else if (!/^[a-zA-Z0-9\s]*$/.test(description.trim())) {
+    } else if (!/^[a-zA-Z0-9.,\-\s]*$/.test(description.trim())) {
       isValid = false;
       setDescriptionValidated({
         fieldState: 'error',
