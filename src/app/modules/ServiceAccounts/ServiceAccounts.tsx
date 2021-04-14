@@ -58,7 +58,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountToReset, setServiceAccountToReset] = useState<ServiceAccountListItem>();
   const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
   const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
-  const [isDisplayEmptyState, setIsDisplayEmptyState] = useState<boolean>(false);
+  const [isDisplayServiceAccountEmptyState, setIsDisplayServiceAccountEmptyState] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -94,7 +94,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
            * Todo: handle below logic in separate API call when backend start support pagination
            */
           if (!itemsLength || itemsLength < 1) {
-            setIsDisplayEmptyState(true);
+            setIsDisplayServiceAccountEmptyState(true);
           }
         });
       } catch (error) {
@@ -129,7 +129,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         </PageSection>
       );
     } else {
-      if (isDisplayEmptyState) {
+      if (isDisplayServiceAccountEmptyState) {
         return (
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState

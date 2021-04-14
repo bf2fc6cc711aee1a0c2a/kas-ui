@@ -76,15 +76,12 @@ const OpenshiftStreams = ({
   const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
-  const [isDisplayEmptyState, setIsDisplayEmptyState] = useState<boolean>(false);
+  const [isDisplayKafkaEmptyState, setIsDisplayKafkaEmptyState] = useState<boolean>(false);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
-  const [notRequiredDrawerContentBackground, setNotRequiredDrawerContentBackground] = useState<boolean | undefined>(
-    false
-  );
 
   useEffect(() => {
     authContext?.getUsername().then((username) => setLoggedInUser(username));
@@ -198,8 +195,7 @@ const OpenshiftStreams = ({
           await apisService.listKafkas('1', '1').then((res) => {
             const kafkaItemsLength = res?.data?.items?.length;
             if (!kafkaItemsLength || kafkaItemsLength < 1) {
-              setIsDisplayEmptyState(true);
-              setNotRequiredDrawerContentBackground(true);
+              setIsDisplayKafkaEmptyState(true);
             }
           });
         }
@@ -427,7 +423,7 @@ const OpenshiftStreams = ({
         </PageSection>
       );
     } else {
-      if (isDisplayEmptyState) {
+      if (isDisplayKafkaEmptyState) {
         return (
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
@@ -505,7 +501,7 @@ const OpenshiftStreams = ({
             instanceDetail={instanceDetail}
             onClose={onCloseDrawer}
             data-ouia-app-id="controlPlane-streams"
-            notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
+            notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
           >
             {renderBanner()}
             <PageSection variant={PageSectionVariants.light}>
