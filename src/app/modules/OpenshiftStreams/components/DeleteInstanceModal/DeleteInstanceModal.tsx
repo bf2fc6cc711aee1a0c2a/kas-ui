@@ -42,6 +42,12 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
       confirmButtonProps?.onClick && confirmButtonProps.onClick(selectedItemData);
     }
   };
+
+  const handleToggle = () => {
+    setInstanceNameInput('');
+    handleModalToggle && handleModalToggle();
+  };
+
   return (
     <MASDeleteModal
       isModalOpen={isModalOpen}
@@ -52,7 +58,7 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
         ...confirmButtonProps,
       }}
       cancelButtonProps={cancelButtonProps}
-      handleModalToggle={handleModalToggle}
+      handleModalToggle={handleToggle}
       textProps={textProps}
     >
       {instanceStatus === InstanceStatus.READY && (

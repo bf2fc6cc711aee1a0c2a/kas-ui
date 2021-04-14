@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  ToolbarItem,
   InputGroup,
   TextInput,
   Button,
@@ -248,7 +247,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     if (selectedFilters.length > 0) {
       return selectedFilters[0].filterValue.map((val) => val.value);
     }
-    return [];
+    return;
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
@@ -323,60 +322,57 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
-        <ToolbarItem>
-          <Select
-            variant={SelectVariant.single}
-            aria-label="Select filter"
-            onToggle={onFilterToggle}
-            selections={filterSelected}
-            isOpen={isFilterExpanded}
-            onSelect={onChangeSelect}
-          >
-            {mainFilterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
-                {option.label}
-              </SelectOption>
-            ))}
-          </Select>
-        </ToolbarItem>
+        <Select
+          variant={SelectVariant.single}
+          aria-label="Select filter"
+          onToggle={onFilterToggle}
+          selections={filterSelected}
+          isOpen={isFilterExpanded}
+          onSelect={onChangeSelect}
+        >
+          {mainFilterOptions.map((option, index) => (
+            <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+              {option.label}
+            </SelectOption>
+          ))}
+        </Select>
         <ToolbarFilter
           chips={getSelectionForFilter('name')}
           deleteChip={(_category, chip) => onDeleteChip('name', chip)}
           deleteChipGroup={() => onDeleteChipGroup('name')}
           categoryName={t('name')}
+          showToolbarItem={filterSelected?.toLowerCase() === 'name'}
         >
           {filterSelected?.toLowerCase() === 'name' && (
-            <ToolbarItem>
-              <InputGroup className="mk--filter-instances__toolbar--text-input">
-                <TextInput
-                  name="name"
-                  id="filterText"
-                  type="search"
-                  aria-label="Search filter input"
-                  validated={!isNameValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
-                  placeholder={t('filter_by_name_lower')}
-                  onChange={onNameInputChange}
-                  onKeyPress={onInputPress}
-                  value={nameInputValue}
-                  ref={nameInputRef as React.RefObject<HTMLInputElement>}
+            <InputGroup className="mk--filter-instances__toolbar--text-input">
+              <TextInput
+                name="name"
+                id="filterText"
+                type="search"
+                aria-label="Search filter input"
+                validated={!isNameValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
+                placeholder={t('filter_by_name_lower')}
+                onChange={onNameInputChange}
+                onKeyPress={onInputPress}
+                value={nameInputValue}
+                ref={nameInputRef as React.RefObject<HTMLInputElement>}
+              />
+              <Button
+                variant={ButtonVariant.control}
+                isDisabled={!isNameValid || isMaxFilter}
+                onClick={() => onFilter('name')}
+                aria-label="Search instances"
+              >
+                <SearchIcon />
+              </Button>
+              {(!isNameValid || isMaxFilter) && (
+                <Tooltip
+                  isVisible={isMaxFilter || !isNameValid}
+                  content={tooltipContent('name')}
+                  reference={nameInputRef}
                 />
-                <Button
-                  variant={ButtonVariant.control}
-                  isDisabled={!isNameValid || isMaxFilter}
-                  onClick={() => onFilter('name')}
-                  aria-label="Search instances"
-                >
-                  <SearchIcon />
-                </Button>
-                {(!isNameValid || isMaxFilter) && (
-                  <Tooltip
-                    isVisible={isMaxFilter || !isNameValid}
-                    content={tooltipContent('name')}
-                    reference={nameInputRef}
-                  />
-                )}
-              </InputGroup>
-            </ToolbarItem>
+              )}
+            </InputGroup>
           )}
         </ToolbarFilter>
         <ToolbarFilter
@@ -384,39 +380,38 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('cloud_provider', chip, cloudProviderFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('cloud_provider')}
           categoryName={t('cloud_provider')}
+          showToolbarItem={filterSelected === 'cloud_provider'}
         >
           {filterSelected === 'cloud_provider' && (
-            <ToolbarItem>
-              <Select
-                id="cloud-provider-select"
-                variant={SelectVariant.checkbox}
-                aria-label="Select cloud provider"
-                onToggle={onCloudProviderFilterToggle}
-                selections={getSelectionForFilter('cloud_provider')}
-                isOpen={isCloudProviderFilterExpanded}
-                onSelect={onCloudProviderFilterSelect}
-                placeholderText={t('filter_by_cloud_provider')}
-              >
-                {cloudProviderFilterOptions.map((option, index) => (
-                  <SelectOption
-                    isDisabled={
-                      option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
-                    }
-                    key={index}
-                    value={option.value}
-                  >
-                    {isMaxFilter && (
-                      <Tooltip
-                        isVisible={isMaxFilter}
-                        content={tooltipContent()}
-                        reference={() => document.getElementById('cloud-provider-select')}
-                      />
-                    )}
-                    {option.label}
-                  </SelectOption>
-                ))}
-              </Select>
-            </ToolbarItem>
+            <Select
+              id="cloud-provider-select"
+              variant={SelectVariant.checkbox}
+              aria-label="Select cloud provider"
+              onToggle={onCloudProviderFilterToggle}
+              selections={getSelectionForFilter('cloud_provider')}
+              isOpen={isCloudProviderFilterExpanded}
+              onSelect={onCloudProviderFilterSelect}
+              placeholderText={t('filter_by_cloud_provider')}
+            >
+              {cloudProviderFilterOptions.map((option, index) => (
+                <SelectOption
+                  isDisabled={
+                    option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
+                  }
+                  key={index}
+                  value={option.value}
+                >
+                  {isMaxFilter && (
+                    <Tooltip
+                      isVisible={isMaxFilter}
+                      content={tooltipContent()}
+                      reference={() => document.getElementById('cloud-provider-select')}
+                    />
+                  )}
+                  {option.label}
+                </SelectOption>
+              ))}
+            </Select>
           )}
         </ToolbarFilter>
         <ToolbarFilter
@@ -424,37 +419,36 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('region', chip, regionFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('region')}
           categoryName={t('region')}
+          showToolbarItem={filterSelected === 'region'}
         >
           {filterSelected === 'region' && (
-            <ToolbarItem>
-              <Select
-                id="region-select"
-                variant={SelectVariant.checkbox}
-                aria-label="Select region"
-                onToggle={onRegionFilterToggle}
-                selections={getSelectionForFilter('region')}
-                isOpen={isRegionFilterExpanded}
-                onSelect={onRegionFilterSelect}
-                placeholderText={t('filter_by_region')}
-              >
-                {regionFilterOptions.map((option, index) => (
-                  <SelectOption
-                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
-                    key={index}
-                    value={option.value}
-                  >
-                    {isMaxFilter && (
-                      <Tooltip
-                        isVisible={isMaxFilter}
-                        content={tooltipContent()}
-                        reference={() => document.getElementById('region-select')}
-                      />
-                    )}
-                    {option.label}
-                  </SelectOption>
-                ))}
-              </Select>
-            </ToolbarItem>
+            <Select
+              id="region-select"
+              variant={SelectVariant.checkbox}
+              aria-label="Select region"
+              onToggle={onRegionFilterToggle}
+              selections={getSelectionForFilter('region')}
+              isOpen={isRegionFilterExpanded}
+              onSelect={onRegionFilterSelect}
+              placeholderText={t('filter_by_region')}
+            >
+              {regionFilterOptions.map((option, index) => (
+                <SelectOption
+                  isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
+                  key={index}
+                  value={option.value}
+                >
+                  {isMaxFilter && (
+                    <Tooltip
+                      isVisible={isMaxFilter}
+                      content={tooltipContent()}
+                      reference={() => document.getElementById('region-select')}
+                    />
+                  )}
+                  {option.label}
+                </SelectOption>
+              ))}
+            </Select>
           )}
         </ToolbarFilter>
         <ToolbarFilter
@@ -462,39 +456,38 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('owner', chip)}
           deleteChipGroup={() => onDeleteChipGroup('owner')}
           categoryName={t('owner')}
+          showToolbarItem={filterSelected?.toLowerCase() === 'owner'}
         >
           {filterSelected.toLowerCase() === 'owner' && (
-            <ToolbarItem>
-              <InputGroup className="mk--filter-instances__toolbar--text-input">
-                <TextInput
-                  name="owner"
-                  id="filterOwners"
-                  type="search"
-                  aria-label="Search filter input"
-                  placeholder={t('filter_by_owner')}
-                  validated={!isOwnerValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
-                  onChange={onOwnerInputChange}
-                  onKeyPress={onInputPress}
-                  value={ownerInputValue}
-                  ref={ownerInputRef as React.RefObject<HTMLInputElement>}
+            <InputGroup className="mk--filter-instances__toolbar--text-input">
+              <TextInput
+                name="owner"
+                id="filterOwners"
+                type="search"
+                aria-label="Search filter input"
+                placeholder={t('filter_by_owner')}
+                validated={!isOwnerValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
+                onChange={onOwnerInputChange}
+                onKeyPress={onInputPress}
+                value={ownerInputValue}
+                ref={ownerInputRef as React.RefObject<HTMLInputElement>}
+              />
+              <Button
+                isDisabled={!isOwnerValid || isMaxFilter}
+                variant={ButtonVariant.control}
+                onClick={() => onFilter('owner')}
+                aria-label="Search owners"
+              >
+                <SearchIcon />
+              </Button>
+              {(!isOwnerValid || isMaxFilter) && (
+                <Tooltip
+                  isVisible={isMaxFilter || !isOwnerValid}
+                  content={tooltipContent('owner')}
+                  reference={ownerInputRef}
                 />
-                <Button
-                  isDisabled={!isOwnerValid || isMaxFilter}
-                  variant={ButtonVariant.control}
-                  onClick={() => onFilter('owner')}
-                  aria-label="Search owners"
-                >
-                  <SearchIcon />
-                </Button>
-                {(!isOwnerValid || isMaxFilter) && (
-                  <Tooltip
-                    isVisible={isMaxFilter || !isOwnerValid}
-                    content={tooltipContent('owner')}
-                    reference={ownerInputRef}
-                  />
-                )}
-              </InputGroup>
-            </ToolbarItem>
+              )}
+            </InputGroup>
           )}
         </ToolbarFilter>
         <ToolbarFilter
@@ -502,37 +495,36 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('status', chip, statusFilterOptions)}
           deleteChipGroup={() => onDeleteChipGroup('status')}
           categoryName={t('status')}
+          showToolbarItem={filterSelected === 'status'}
         >
           {filterSelected === 'status' && (
-            <ToolbarItem>
-              <Select
-                id="status-select"
-                variant={SelectVariant.checkbox}
-                aria-label="Select status"
-                onToggle={onStatusFilterToggle}
-                selections={getSelectionForFilter('status')}
-                isOpen={isStatusFilterExpanded}
-                onSelect={onStatusFilterSelect}
-                placeholderText={t('filter_by_status')}
-              >
-                {statusFilterOptions.map((option, index) => (
-                  <SelectOption
-                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
-                    key={index}
-                    value={option.value}
-                  >
-                    {isMaxFilter && (
-                      <Tooltip
-                        isVisible={isMaxFilter}
-                        content={tooltipContent()}
-                        reference={() => document.getElementById('status-select')}
-                      />
-                    )}
-                    {option.label}
-                  </SelectOption>
-                ))}
-              </Select>
-            </ToolbarItem>
+            <Select
+              id="status-select"
+              variant={SelectVariant.checkbox}
+              aria-label="Select status"
+              onToggle={onStatusFilterToggle}
+              selections={getSelectionForFilter('status')}
+              isOpen={isStatusFilterExpanded}
+              onSelect={onStatusFilterSelect}
+              placeholderText={t('filter_by_status')}
+            >
+              {statusFilterOptions.map((option, index) => (
+                <SelectOption
+                  isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
+                  key={index}
+                  value={option.value}
+                >
+                  {isMaxFilter && (
+                    <Tooltip
+                      isVisible={isMaxFilter}
+                      content={tooltipContent()}
+                      reference={() => document.getElementById('status-select')}
+                    />
+                  )}
+                  {option.label}
+                </SelectOption>
+              ))}
+            </Select>
           )}
         </ToolbarFilter>
       </ToolbarGroup>
