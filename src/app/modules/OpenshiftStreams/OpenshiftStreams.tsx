@@ -289,7 +289,7 @@ const OpenshiftStreams = ({
                 <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
                   <MASLoading />
                 </PageSection>
-              ) : rawKafkaDataLength && rawKafkaDataLength < 1 ? (
+              ) : rawKafkaDataLength && rawKafkaDataLength < 100 ? (
                 <PageSection padding={{ default: 'noPadding' }} isFilled>
                   <MASEmptyState
                     emptyStateProps={{
