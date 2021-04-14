@@ -341,6 +341,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           deleteChip={(_category, chip) => onDeleteChip('name', chip)}
           deleteChipGroup={() => onDeleteChipGroup('name')}
           categoryName={t('name')}
+          showToolbarItem={filterSelected?.toLowerCase() === 'name'}
         >
           {filterSelected?.toLowerCase() === 'name' && (
             <InputGroup className="mk--filter-instances__toolbar--text-input">
