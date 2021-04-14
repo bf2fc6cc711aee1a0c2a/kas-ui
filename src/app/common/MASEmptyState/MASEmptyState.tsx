@@ -153,6 +153,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           </Button>
         )}
         {buttonProps && buttonProps.length > 1 &&
+          const secondaryButtonProps = buttonProps[]
           <EmptyStateSecondaryActions>
             {buttonProps?.map((button) => {
               return (

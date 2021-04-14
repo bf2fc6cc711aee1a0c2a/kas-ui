@@ -82,6 +82,10 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
 
   const handleTextInputDescription = (description: string) => {
     setServiceAccountFormData({ ...serviceAccountFormData, description });
+    let isValid = true;
+    if (description && !/^[a-zA-Z0-9.,\-\s]*$/.test(description.trim())) {
+      isValid = false;
+    }
     if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
       setDescriptionValidated({
         fieldState: 'error',
@@ -89,10 +93,15 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
         }),
       });
-    } else if (descriptionValidated.fieldState === 'error') {
+    } else if (isValid && descriptionValidated.fieldState === 'error') {
       setDescriptionValidated({
         fieldState: 'default',
         message: '',
+      });
+    } else if (!isValid) {
+      setDescriptionValidated({
+        fieldState: 'error',
+        message: t('common.input_text_area_invalid_helper_text'),
       });
     }
   };
@@ -109,6 +118,12 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
         fieldState: 'error',
         message: t('common.input_filed_invalid_helper_text'),
       });
+    } else if (!/^[a-zA-Z0-9.,\-\s]*$/.test(description.trim())) {
+      isValid = false;
+      setDescriptionValidated({
+        fieldState: 'error',
+        message: t('common.input_text_area_invalid_helper_text'),
+      });
     }
 
     if (name.length > MAX_SERVICE_ACCOUNT_NAME_LENGTH) {
@@ -121,7 +136,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
       });
     }
 
-    if (description && description.length > MAX_SERVICE_ACCOUNT_NAME_LENGTH) {
+    if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
       isValid = false;
       setDescriptionValidated({
         fieldState: 'error',
@@ -205,6 +220,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
             value={name}
             onChange={handleTextInputName}
             validated={fieldState}
+            autoFocus={true}
           />
         </FormGroup>
         <FormGroup
@@ -213,6 +229,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           helperTextInvalid={descMessage}
           helperTextInvalidIcon={descMessage && <ExclamationCircleIcon />}
           validated={descFieldState}
+          helperText={t('common.input_text_area_invalid_helper_text')}
         >
           <TextArea
             id="text-input-description"

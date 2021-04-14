@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IAction,
@@ -14,9 +14,10 @@ import {
 } from '@patternfly/react-table';
 import { Skeleton, PaginationVariant } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
-import { getLoadingRowsCount } from '@app/utils';
+import { getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
+import { AuthContext } from '@app/auth/AuthContext';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -48,14 +49,20 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
+  const authContext = useContext(AuthContext);
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    authContext?.getUsername().then((username) => setLoggedInUser(username));
+  }, []);
 
   const tableColumns = [
     { title: t('common.name') },
     { title: t('common.clientID') },
     { title: t('common.owner'), transforms: [cellWidth(20)] },
     { title: t('common.description') },
+    { title: t('time_created') },
   ];
 
   const onSelectKebabDropdownOption = (event: any, originalData: ServiceAccountListItem, selectedOption: string) => {
@@ -89,9 +96,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner, description, clientID } = row;
+      const { name, owner, description, clientID, created_at } = row;
       tableRow.push({
-        cells: [name, clientID, owner, description],
+        cells: [name, clientID, owner, description, { title: getFormattedDate(created_at, t('ago')) }],
         originalData: row,
       });
     });
@@ -104,7 +111,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     const originalData: ServiceAccountListItem = rowData.originalData;
-    const isUserSameAsLoggedIn = true; //originalData.owner === loggedInUser;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     let additionalProps: any;
 
     if (!isUserSameAsLoggedIn) {
@@ -155,6 +162,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         return 'owner';
       case 3:
         return 'description';
+      case 4:
+        return 'created_at';
       default:
         return '';
     }
@@ -170,6 +179,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         return 2;
       case 'description':
         return 3;
+      case 'created_at':
+        return 4;
       default:
         return undefined;
     }
