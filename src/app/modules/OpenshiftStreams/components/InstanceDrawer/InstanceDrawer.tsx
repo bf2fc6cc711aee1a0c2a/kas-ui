@@ -92,7 +92,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
           isInline
           variant={AlertVariant.info}
           title={t('kafka_instance_not_ready_inline_message')}
-          style={{ marginTop: '15px' }}
+          className="pf-u-mt-sm"
         />
       );
     }

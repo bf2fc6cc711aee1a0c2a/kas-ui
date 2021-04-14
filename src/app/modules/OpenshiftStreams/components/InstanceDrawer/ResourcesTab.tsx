@@ -10,6 +10,7 @@ import {
   Popover,
   Skeleton,
   AlertVariant,
+  ButtonVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { MASGenerateCredentialsModal, useAlerts } from '@app/common';
@@ -88,7 +89,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <Text component={TextVariants.small}>{t('bootstrap_server_description')}</Text>
       </TextContent>
       {isKafkaPending ? (
-        <Skeleton />
+        <Skeleton fontSize="2xl" />
       ) : (
         <ClipboardCopy data-testid="drawerStreams-copyBootstrapURL" textAriaLabel={t('bootstrap_server')}>
           {externalServer}
@@ -129,29 +130,25 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           {t('common.authentication_method')}
         </Text>
         <Text component={TextVariants.h4} className="pf-u-mt-md">
-          {t('common.sasl_oauthbearer')} <Label color="green">{t('common.recommended')}</Label>{' '}
+          {t('common.sasl_oauthbearer')} <Label color="green">{t('common.recommended')}</Label>
           <Popover
             aria-label={t('common.sasl_oauthbearer')}
             bodyContent={<div>{t('serviceAccount.sasl_oauthbearer_popover_content')}</div>}
           >
-            <HelpIcon />
+            <Button variant={ButtonVariant.plain} aria-label={t('more_info_about_sasl_oauthbearer')}>
+              <HelpIcon />
+            </Button>
           </Popover>
         </Text>
         <Text component={TextVariants.small}>{t('serviceAccount.sasl_oauthbearer_description')}</Text>
         <Text component={TextVariants.h6} className="pf-u-mt-md">
           {t('common.token_endpoint_url')}
         </Text>
-        {isKafkaPending ? <Skeleton /> : <ClipboardCopy>{tokenEndPointUrl}</ClipboardCopy>}
+        {isKafkaPending ? <Skeleton fontSize="2xl" /> : <ClipboardCopy>{tokenEndPointUrl}</ClipboardCopy>}
       </TextContent>
       <TextContent className="pf-u-pb-sm">
         <Text component={TextVariants.h4} className="pf-u-mt-md">
-          {t('common.sasl_plain')}{' '}
-          {/* <Popover
-            aria-label={t('common.sasl_plain')}
-            bodyContent={<div>{t('serviceAccount.sasl_plain_popover_content')}</div>}
-          >
-            <HelpIcon />
-          </Popover> */}
+          {t('common.sasl_plain')}
         </Text>
         <Text component={TextVariants.small}>{t('serviceAccount.sasl_plain_description')}</Text>
       </TextContent>

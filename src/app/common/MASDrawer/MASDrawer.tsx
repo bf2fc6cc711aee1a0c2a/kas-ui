@@ -79,12 +79,14 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
                 </Title>
               )}
             </TextContent>
-            {inlineAlertMessage}
             <DrawerActions>
               <DrawerCloseButton onClick={onClose} />
             </DrawerActions>
           </DrawerHead>
-          <DrawerPanelBody>{panelBodyContent}</DrawerPanelBody>
+          <DrawerPanelBody>
+            {inlineAlertMessage}
+            {panelBodyContent}
+          </DrawerPanelBody>
         </>
       )}
     </DrawerPanelContent>
