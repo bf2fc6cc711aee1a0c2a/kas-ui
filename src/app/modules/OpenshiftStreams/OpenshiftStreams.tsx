@@ -421,7 +421,9 @@ const OpenshiftStreams = ({
     const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
     let content = '';
     if (isDisabledCreateButton) {
-      if (isMaxCapacityReached) {
+      if (isMaxCapacityReached && isKafkaInstanceExist) {
+        content = 'You can deploy 1 instance at a time.';
+      } else if (isMaxCapacityReached) {
         content = 'Instances are currently unavailable for creation.';
       } else {
         content = 'You can deploy 1 instance at a time.';
