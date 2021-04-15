@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal';
+import { getModalAppendTo } from '@app/utils/utils';
 
 export type ResetServiceAccountModalProps = {
   isOpen: boolean;
@@ -76,6 +77,7 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
         title={t('serviceAccount.reset_service_account_credentials')}
         isOpen={isOpen}
         onClose={handleModalToggle}
+        appendTo={getModalAppendTo}
         actions={[
           <Button
             key="create"
