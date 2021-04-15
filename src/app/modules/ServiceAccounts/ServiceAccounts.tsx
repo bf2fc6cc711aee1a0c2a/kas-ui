@@ -95,6 +95,8 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
            */
           if (!itemsLength || itemsLength < 1) {
             setIsDisplayServiceAccountEmptyState(true);
+          } else {
+            setIsDisplayServiceAccountEmptyState(false);
           }
         });
       } catch (error) {
