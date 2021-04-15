@@ -1,4 +1,16 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DefaultApi } from 'src/openapi';
+import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { isServiceApiError } from '@app/utils';
+import { AuthContext } from '@app/auth/AuthContext';
+import { ApiContext } from '@app/api/ApiContext';
+import { 
+  AlertVariant,
+  Card,
+  CardTitle,
+  CardBody,
+} from '@patternfly/react-core';
 import {
   Chart,
   ChartArea,
@@ -12,15 +24,8 @@ import {
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
-import chart_color_blue_500 from '@patternfly/react-tokens/dist/js/chart_color_blue_500';
-import chart_color_orange_500 from '@patternfly/react-tokens/dist/js/chart_color_orange_500';
-import chart_color_green_500 from '@patternfly/react-tokens/dist/js/chart_color_green_500';
-import chart_color_blue_100 from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
-import chart_color_orange_100 from '@patternfly/react-tokens/dist/js/chart_color_orange_100';
-import chart_color_green_100 from '@patternfly/react-tokens/dist/js/chart_color_green_100';
 import chart_color_black_300 from '@patternfly/react-tokens/dist/js/chart_color_black_300';
 import { format } from 'date-fns';
-import { useTranslation } from 'react-i18next';
 
 export type Broker = {
   name: string
@@ -53,40 +58,98 @@ export type AvailableDiskSpaceChartProps = {
   brokers: Broker[]
 }
 
-export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) => {
+export const AvailableDiskSpaceChart = (kafkaID) => {
 
-  console.log('what is brokers' + JSON.stringify(brokers));
+  const kafkaInstanceID = kafkaID.kafkaID;
 
   const containerRef = useRef();
 
   const { t } = useTranslation();
+  const authContext = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
+  const { addAlert } = useAlerts();
   const [width, setWidth] = useState();
-  const [legend, setLegend] = useState([])
-  const [chartData, setChartData] = useState<ChartData[]>([] as ChartData[]);
+  const [legend, setLegend] = useState()
+  const [chartData, setChartData] = useState<ChartData[]>();
   const itemsPerRow = 4;
-
   const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
-  const softLimitColors = [chart_color_blue_100.value, chart_color_orange_100.value, chart_color_green_100.value];
+  const softLimitColor = 'chart_color_black_300.value';
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+
+  const fetchAvailableDiskSpaceMetrics = async () => {
+    const accessToken = await authContext?.getToken();
+    if (accessToken !== undefined && accessToken !== '') {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath
+        });
+        // if (!kafkaInstanceID) {
+        //   return;
+        // }
+        const data = await apisService.getMetricsByRangeQuery('1rAvUD7CFXIm2M3mj2pjtpHExWw', 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes']);
+        let brokerArray: Broker[] = [];
+        data.data.items?.forEach((item, i) => {
+          const labels = item.metric;
+          if (labels === undefined) {
+            throw new Error('item.metric cannot be undefined');
+          }
+          if (item.values === undefined) {
+            throw new Error('item.values cannot be undefined');
+          }
+          if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
+
+            const labels = item.metric;
+            const pvcName = labels['persistentvolumeclaim'];
+            if (!pvcName.includes('zookeeper')) {
+              const broker = {
+                name: `broker ${i + 1}`,
+                data: []
+              } as Broker;
+              item.values?.forEach(value => {
+                if (value.Timestamp == undefined) {
+                  throw new Error('timestamp cannot be undefined');
+              }
+                const hardLimit = 225 * 1024 * 1024 * 1024 * .95;
+                const usedSpaceInBytes = hardLimit - value.Value;
+                const softLimit = 225 * 1024 * 1024 * 1024 * .90;
+                broker.data.push({
+                  timestamp: value.Timestamp,
+                  usedSpace: usedSpaceInBytes,
+                  softLimit
+                });
+            });
+            brokerArray.push(broker);
+          }
+        }
+      });
+      getChartData(brokerArray);
+      } catch (error) {
+      let reason: string | undefined;
+      if (isServiceApiError(error)) {
+        reason = error.response?.data.reason;
+      }
+        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchAvailableDiskSpaceMetrics();
+  }, []);
 
   useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);
   }, [width]);
 
-  useEffect(() => {
-    getChartData();
-  }, []);
-
-  const getChartData = () => {
+  const getChartData = (brokerArray) => {
     let legendData: Array<LegendData> = [{name: 'Limit', symbol: { fill: chart_color_black_300.value, type: 'threshold'}}];
     let chartData: Array<ChartData> = [];
-  
-    brokers.brokers.map((broker, index) => {
-      console.log('HELLO what is broker' + JSON.stringify(broker));
+
+    brokerArray.map((broker, index) => {
       const color = colors[index];
-      const softLimitColor = softLimitColors[index];
       const softLimitName = `${broker.name} limit`;
 
       legendData.push({
@@ -95,13 +158,6 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
           fill: color
         }
       });
-      // legendData.push({
-      //   name: softLimitName,
-      //   symbol: {
-      //     type: 'threshold',
-      //     fill: softLimitColor
-      //   }
-      // });
       let area: Array<BrokerChartData> = [];
       let softLimit: Array<BrokerChartData> = [];
       broker.data.map(value => {
@@ -119,66 +175,73 @@ export const AvailableDiskSpaceChart = (brokers: AvailableDiskSpaceChartProps) =
     return (
       <>
       {chartData && legend && (
-        <div ref={containerRef}>
-          <Chart
-            ariaDesc={t('metrics.available_disk_space_per_broker')}
-            ariaTitle="Disk Space"
-            containerComponent={
-              <ChartVoronoiContainer
-                labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                constrainToVisibleArea
-              />
-            }
-            legendPosition="bottom-left"
-            legendComponent={
-              <ChartLegend
-                data={legend}
-                itemsPerRow={itemsPerRow}
-              />
-            }
-            height={300}
-            padding={{
-              bottom: 80, // Adjusted to accomodate legend
-              left: 60,
-              right: 0,
-              top: 25
-            }}
-            themeColor={ChartThemeColor.multiUnordered}
-            width={width}
-          >
-            <ChartAxis label={'Time'} tickCount={5} />
-            <ChartAxis
-              dependentAxis
-              tickFormat={(t) => `${Math.round(t)} Gi`}
-            />
-            <ChartGroup>
-              {chartData.map((value, index) => (
-                <ChartArea
-                  key={`chart-area-${index}`}
-                  data={value.area}
-                  interpolation="monotoneX"
-                  style={{
-                    data: {
-                      stroke: value.color
-                    }
-                  }}
-                />
-              ))}
-            </ChartGroup>
-            {chartData.map((value, index) => (
-              <ChartThreshold
-                key={`chart-softlimit-${index}`}
-                data={value.softLimit}
-                style={{
-                  data: {
-                    stroke: value.softLimitColor
-                  }
+      <Card>
+        <CardTitle>
+          {t('metrics.available_disk_space_per_broker')}
+        </CardTitle>
+        <CardBody>
+          <div ref={containerRef}>
+              <Chart
+                ariaDesc={t('metrics.available_disk_space_per_broker')}
+                ariaTitle="Disk Space"
+                containerComponent={
+                  <ChartVoronoiContainer
+                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                    constrainToVisibleArea
+                  />
+                }
+                legendPosition="bottom-left"
+                legendComponent={
+                  <ChartLegend
+                    data={legend}
+                    itemsPerRow={itemsPerRow}
+                  />
+                }
+                height={300}
+                padding={{
+                  bottom: 80, // Adjusted to accomodate legend
+                  left: 60,
+                  right: 0,
+                  top: 25
                 }}
-              />
-            ))}
-          </Chart>
-        </div>
-        )}
-      </>
-    );
-  }
+                themeColor={ChartThemeColor.multiUnordered}
+                width={width}
+              >
+                <ChartAxis label={'Time'} tickCount={5} />
+                <ChartAxis
+                  dependentAxis
+                  tickFormat={(t) => `${Math.round(t)} Gi`}
+                />
+                <ChartGroup>
+                  {chartData.map((value, index) => (
+                    <ChartArea
+                      key={`chart-area-${index}`}
+                      data={value.area}
+                      interpolation="monotoneX"
+                      style={{
+                        data: {
+                          stroke: value.color
+                        }
+                      }}
+                    />
+                  ))}
+                </ChartGroup>
+                {chartData.map((value, index) => (
+                  <ChartThreshold
+                    key={`chart-softlimit-${index}`}
+                    data={value.softLimit}
+                    style={{
+                      data: {
+                        stroke: value.softLimitColor
+                      }
+                    }}
+                  />
+                ))}
+              </Chart>
+            </div>
+          </CardBody>
+        </Card>
+      )}
+    </>
+  );
+}

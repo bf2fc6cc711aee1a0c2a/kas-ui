@@ -38,9 +38,7 @@ export const Metrics = () => {
   const [topicMessageCount, setTopicMessageCount] = useState<Topic[]>([] as Topic[]);
   const [topicIncomingBytes, setTopicIncomingBytes] = useState<Topic[]>();
 
-  const instanceDetail = "1r4a07ELEiYkb4zdZrlCQqCkkkg";
-
-  console.log('what is brokerAvailableSpace' + brokerAvailableSpace);
+  const kafkaID: string = '1rAvUD7CFXIm2M3mj2pjtpHExWw';
 
   // Functions
   // const fetchInstantMetrics = async () => {
@@ -166,66 +164,62 @@ export const Metrics = () => {
     setTopicIncomingBytes(topicArray);
   }
   
-    // Functions
-    const fetchMetrics = async () => {
-      const accessToken = await authContext?.getToken();
-      if (accessToken !== undefined && accessToken !== '') {
-        try {
-          const apisService = new DefaultApi({
-            accessToken,
-            basePath
-          });
-          if (!instanceDetail || !instanceDetail) {
-            return;
-          }
-          const data = await apisService.getMetricsByRangeQuery(instanceDetail, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes', 'kafka_server_brokertopicmetrics_messages_in_total', 'kafka_server_brokertopicmetrics_bytes_in_total']);
+    // // Functions
+    // const fetchMetrics = async () => {
+    //   const accessToken = await authContext?.getToken();
+    //   if (accessToken !== undefined && accessToken !== '') {
+    //     try {
+    //       const apisService = new DefaultApi({
+    //         accessToken,
+    //         basePath
+    //       });
+    //       if (!instanceID || !instanceID) {
+    //         return;
+    //       }
+    //       const data = await apisService.getMetricsByRangeQuery(instanceDetail, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes', 'kafka_server_brokertopicmetrics_messages_in_total', 'kafka_server_brokertopicmetrics_bytes_in_total']);
 
-          const availableBytesData = [];
-          const incomingBytesPerTopic = [];
-          console.log('what is data' + JSON.stringify(data.data.items));
-          data.data.items?.forEach((item, i) => {
-            console.log('does it get here');
-            const labels = item.metric;
-            if (labels === undefined) {
-              throw new Error('item.metric cannot be undefined');
-            }
-            if (item.values === undefined) {
-              throw new Error('item.values cannot be undefined');
-            }
-            if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
-              availableBytesData.push(item);
-            }
-            // if (labels['__name__'] === 'kafka_server_brokertopicmetrics_messages_in_total') {
-            //   returnBrokerTopicMetricsMessagesInTotal(item);
-            // }
-            if(labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
-              incomingBytesPerTopic.push(item)
-            }
-          });
+    //       const availableBytesData = [];
+    //       const incomingBytesPerTopic = [];
+    //       console.log('what is data' + JSON.stringify(data.data.items));
+    //       data.data.items?.forEach((item, i) => {
+    //         console.log('does it get here');
+    //         const labels = item.metric;
+    //         if (labels === undefined) {
+    //           throw new Error('item.metric cannot be undefined');
+    //         }
+    //         if (item.values === undefined) {
+    //           throw new Error('item.values cannot be undefined');
+    //         }
+    //         if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
+    //           availableBytesData.push(item);
+    //         }
+    //         // if (labels['__name__'] === 'kafka_server_brokertopicmetrics_messages_in_total') {
+    //         //   returnBrokerTopicMetricsMessagesInTotal(item);
+    //         // }
+    //         if(labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
+    //           incomingBytesPerTopic.push(item)
+    //         }
+    //       });
 
-          console.log('availableBytesData' + availableBytesData);
-          returnAvailableBytesData(availableBytesData);
-          returnBrokerTopicMetricsBytesInTotal(incomingBytesPerTopic);
-        } catch (error) {
-          let reason: string | undefined;
-          if (isServiceApiError(error)) {
-            reason = error.response?.data.reason;
-          }
-          /**
-           * Todo: show user friendly message according to server code
-           * and translation for specific language
-           *
-           */
-          addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-        }
-      }
-    };
+    //       console.log('availableBytesData' + availableBytesData);
+    //       returnAvailableBytesData(availableBytesData);
+    //       returnBrokerTopicMetricsBytesInTotal(incomingBytesPerTopic);
+    //     } catch (error) {
+    //       let reason: string | undefined;
+    //       if (isServiceApiError(error)) {
+    //         reason = error.response?.data.reason;
+    //       }
+    //       /**
+    //        * Todo: show user friendly message according to server code
+    //        * and translation for specific language
+    //        *
+    //        */
+    //       addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    //     }
+    //   }
+    // };
   
-    useEffect(() => {
-      fetchMetrics();
-      // fetchInstantMetrics();
-    }, [instanceDetail]);
-  
+
     // For when we add messages chart later
     // const ConnectedMessagesChart = () => {
     //   if (topicMessageCount.length > 0) {
@@ -235,53 +229,20 @@ export const Metrics = () => {
     //   }
     // };
 
-    console.log('what is brokerAvailableSpace' + JSON.stringify(brokerAvailableSpace));
-
   return (
     <PageSection>
       <Grid hasGutter>
-        {/* <GridItem>
-          <Card>
-            <CardTitle>
-              {t('metrics.available_disk_space_per_broker')}
-            </CardTitle>
-            <CardBody>
-              { brokerAvailableSpace && <AvailableDiskSpaceChart brokers={brokerAvailableSpace} />}
-            </CardBody>
-          </Card>
-        </GridItem> */}
-
         <GridItem>
-          <Card>
-            <CardTitle>
-              {t('metrics.incoming_bytes_per_topic')}
-            </CardTitle>
-            <CardBody>
-              { topicIncomingBytes && <IncomingBytesPerTopicChart topicBytes={topicIncomingBytes} /> }
-            </CardBody>
-          </Card>
+          <AvailableDiskSpaceChart kafkaId={kafkaID}/>
         </GridItem>
-
         <GridItem>
-          <Card>
-            <CardTitle>
-              {t('metrics.outgoing_bytes_per_topic')}
-            </CardTitle>
-            <CardBody>
-              <OutgoingBytesPerTopicChart/>
-            </CardBody>
-          </Card>
+          <IncomingBytesPerTopicChart kafkaId={kafkaID}/>
         </GridItem>
-
         <GridItem>
-          <Card>
-            <CardTitle>
-              {t('metrics.log_size_per_partition')}
-            </CardTitle>
-            <CardBody>
-              <LogSizePerPartitionChart/>
-            </CardBody>
-          </Card>
+          <OutgoingBytesPerTopicChart kafkaId={kafkaID}/>
+        </GridItem>
+        <GridItem>
+          <LogSizePerPartitionChart kafkaId={kafkaID}/>
         </GridItem>
       </Grid>
     </PageSection>
