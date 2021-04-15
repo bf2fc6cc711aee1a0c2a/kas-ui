@@ -20,6 +20,7 @@ import '@patternfly/react-styles/css/utilities/Flex/flex.css';
 import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';
 import { useTranslation } from 'react-i18next';
 import { MASEmptyState, MASLoading } from '@app/common';
+import { getModalAppendTo } from '@app/utils/utils';
 import './MASGenerateCredentialsModal.css';
 
 type MASGenerateCredentialsModalProps = {
@@ -135,6 +136,7 @@ const MASGenerateCredentialsModal: FunctionComponent<MASGenerateCredentialsModal
       isOpen={isOpen}
       onClose={handleClose}
       showClose={false}
+      appendTo={getModalAppendTo}
     >
       {isLoading ? <MASLoading /> : generateCredentials}
     </Modal>
