@@ -352,8 +352,6 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         collapseListedFiltersBreakpoint: 'md',
         inset: { lg: 'insetLg' },
       }}
-      toggleGroupProps={{ toggleIcon: <FilterIcon />, breakpoint: 'md' }}
-      // toggleGroupItems={toggleGroupItems}
       toolbarItems={toolbarItems}
     />
   );
