@@ -24,15 +24,14 @@ import {
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
-import chart_color_black_300 from '@patternfly/react-tokens/dist/js/chart_color_black_300';
+import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { format } from 'date-fns';
 
 export type Broker = {
   name: string
   data: {
     timestamp: number
-    usedSpace: number
-    softLimit: number
+    usedSpaceAvg: number[]
   }[]
 }
 
@@ -40,7 +39,6 @@ export type ChartData = {
   color: string
   softLimitColor: string
   area: BrokerChartData[]
-  softLimit: BrokerChartData[]
 }
 
 export type BrokerChartData = {
@@ -58,12 +56,11 @@ export type AvailableDiskSpaceChartProps = {
   brokers: Broker[]
 }
 
-export const AvailableDiskSpaceChart = (kafkaID) => {
+export const AvailableDiskSpaceChart = () => {
 
-  const kafkaInstanceID = kafkaID.kafkaID;
+  const kafkaInstanceID = '1rGHY9WURtN71LcftnEn8IgUGaa';
 
   const containerRef = useRef();
-
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -73,7 +70,7 @@ export const AvailableDiskSpaceChart = (kafkaID) => {
   const [chartData, setChartData] = useState<ChartData[]>();
   const itemsPerRow = 4;
   const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
-  const softLimitColor = 'chart_color_black_300.value';
+  const softLimitColor = chart_color_black_500.value;
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
@@ -85,12 +82,16 @@ export const AvailableDiskSpaceChart = (kafkaID) => {
           accessToken,
           basePath
         });
-        // if (!kafkaInstanceID) {
-        //   return;
-        // }
-        const data = await apisService.getMetricsByRangeQuery('1rAvUD7CFXIm2M3mj2pjtpHExWw', 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes']);
-        let brokerArray: Broker[] = [];
-        data.data.items?.forEach((item, i) => {
+        if (!kafkaInstanceID) {
+          return;
+        }
+        const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes']);
+        const avgBroker = {
+          name: `Available disk space`,
+          data: []
+        } as Broker;
+
+        data.data.items?.forEach((item, index) => {
           const labels = item.metric;
           if (labels === undefined) {
             throw new Error('item.metric cannot be undefined');
@@ -99,32 +100,32 @@ export const AvailableDiskSpaceChart = (kafkaID) => {
             throw new Error('item.values cannot be undefined');
           }
           if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
-
             const labels = item.metric;
             const pvcName = labels['persistentvolumeclaim'];
             if (!pvcName.includes('zookeeper')) {
-              const broker = {
-                name: `broker ${i + 1}`,
-                data: []
-              } as Broker;
-              item.values?.forEach(value => {
+
+              item.values?.forEach((value, indexJ) => {
                 if (value.Timestamp == undefined) {
                   throw new Error('timestamp cannot be undefined');
               }
                 const hardLimit = 225 * 1024 * 1024 * 1024 * .95;
-                const usedSpaceInBytes = hardLimit - value.Value;
-                const softLimit = 225 * 1024 * 1024 * 1024 * .90;
-                broker.data.push({
-                  timestamp: value.Timestamp,
-                  usedSpace: usedSpaceInBytes,
-                  softLimit
-                });
+                const usedSpaceInBytes = [hardLimit - value.Value];
+
+                if(index > 0) {
+                  let newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(usedSpaceInBytes);
+                  avgBroker.data[indexJ].usedSpaceAvg = newArray;
+                }
+                else {
+                  avgBroker.data.push({
+                    timestamp: value.Timestamp,
+                    usedSpaceAvg: usedSpaceInBytes,
+                  });
+                }
             });
-            brokerArray.push(broker);
           }
         }
       });
-      getChartData(brokerArray);
+      getChartData(avgBroker);
       } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
@@ -144,30 +145,27 @@ export const AvailableDiskSpaceChart = (kafkaID) => {
     window.addEventListener('resize', handleResize);
   }, [width]);
 
-  const getChartData = (brokerArray) => {
-    let legendData: Array<LegendData> = [{name: 'Limit', symbol: { fill: chart_color_black_300.value, type: 'threshold'}}];
+  const getChartData = (avgBroker) => {
+    const legendData: Array<LegendData> = [
+      {name: 'Limit', symbol: { fill: chart_color_black_500.value, type: 'threshold'}},
+      {name: avgBroker.name, symbol: { fill: colors[0]}}
+    ];
+    const color = colors[0];
     let chartData: Array<ChartData> = [];
+    let area: Array<BrokerChartData> = [];
+    let softLimit: Array<BrokerChartData> = [];
 
-    brokerArray.map((broker, index) => {
-      const color = colors[index];
-      const softLimitName = `${broker.name} limit`;
-
-      legendData.push({
-        name: broker.name.charAt(0).toUpperCase() + broker.name.slice(1),
-        symbol: {
-          fill: color
-        }
-      });
-      let area: Array<BrokerChartData> = [];
-      let softLimit: Array<BrokerChartData> = [];
-      broker.data.map(value => {
-        const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
-        area.push({ name: broker.name, x: time, y: (value.usedSpace / 1024 / 1024 / 1024) * -1 });
-        softLimit.push({ name: softLimitName, x: time, y: 20 });
-      });
-      chartData.push({ color, softLimitColor, area, softLimit });
+    const average = (nums) => {
+      return nums.reduce((a, b) => (a + b)) / nums.length;
+    }
+    avgBroker.data.map(value => {
+      const date = new Date(value.timestamp);
+      const time = format(date, 'hh:mm');
+      const usedSpace = average(value.usedSpaceAvg);
+      area.push({ name: avgBroker.name, x: time, y: usedSpace / 1024 / 1024 / 1024 });
+      softLimit.push({ name: avgBroker.name, x: time, y: 20 });
     });
+    chartData.push({ color, softLimitColor, area, softLimit });
     setLegend(legendData);
     setChartData(chartData);
   }
@@ -177,12 +175,12 @@ export const AvailableDiskSpaceChart = (kafkaID) => {
       {chartData && legend && (
       <Card>
         <CardTitle>
-          {t('metrics.available_disk_space_per_broker')}
+          {t('metrics.available_disk_space_for_all_brokers')}
         </CardTitle>
         <CardBody>
           <div ref={containerRef}>
               <Chart
-                ariaDesc={t('metrics.available_disk_space_per_broker')}
+                ariaDesc={t('metrics.available_disk_space_for_all_brokers')}
                 ariaTitle="Disk Space"
                 containerComponent={
                   <ChartVoronoiContainer

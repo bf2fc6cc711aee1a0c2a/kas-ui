@@ -304,7 +304,7 @@
     "service_account_description_length_is_greater_than_expected": "Service account description cannot exceed {{maxLength}} characters."
   },
   "metrics": {
-    "available_disk_space_per_broker": "Available disk space per broker",
+    "available_disk_space_for_all_brokers": "Available disk space for all brokers",
     "log_size_per_partition": "Log size per partition",
     "incoming_bytes_per_topic": "Incoming bytes per topic",
     "outgoing_bytes_per_topic": "Outgoing bytes per topic"

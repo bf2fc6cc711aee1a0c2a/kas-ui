@@ -57,9 +57,9 @@ export type LegendData = {
   symbol: {}
 }
 
-export const LogSizePerPartitionChart = (kafkaID) => {
+export const LogSizePerPartitionChart = () => {
 
-  const kafkaInstanceID = kafkaID.kafkaID;
+  const kafkaInstanceID = '1rGHY9WURtN71LcftnEn8IgUGaa';
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -83,10 +83,10 @@ export const LogSizePerPartitionChart = (kafkaID) => {
           accessToken,
           basePath
         });
-        // if (!kafkaInstanceID) {
-        //   return;
-        // }
-        const data = await apisService.getMetricsByRangeQuery('1rAvUD7CFXIm2M3mj2pjtpHExWw', 6 * 60, 5 * 60, ['kafka_log_log_size']);
+        if (!kafkaInstanceID) {
+          return;
+        }
+        const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
         console.log('what is log size data' + JSON.stringify(data));
         let partitionArray = [];
 
@@ -145,7 +145,7 @@ export const LogSizePerPartitionChart = (kafkaID) => {
       partition.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
-        area.push({ name: value.name, x: time, y: (value.logSize / 1024 / 1024 / 1024) });
+        area.push({ name: value.name, x: time, y: value.logSize });
       });
       chartData.push({ color, area });
     });

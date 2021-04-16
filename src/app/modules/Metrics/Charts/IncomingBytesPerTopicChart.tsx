@@ -21,16 +21,11 @@ import {
   ChartThreshold,
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
-import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
-import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
-import chart_color_blue_500 from '@patternfly/react-tokens/dist/js/chart_color_blue_500';
-import chart_color_orange_500 from '@patternfly/react-tokens/dist/js/chart_color_orange_500';
-import chart_color_green_500 from '@patternfly/react-tokens/dist/js/chart_color_green_500';
 import chart_color_blue_100 from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
-import chart_color_orange_100 from '@patternfly/react-tokens/dist/js/chart_color_orange_100';
-import chart_color_green_100 from '@patternfly/react-tokens/dist/js/chart_color_green_100';
-import chart_color_black_300 from '@patternfly/react-tokens/dist/js/chart_color_black_300';
+import chart_color_blue_200 from '@patternfly/react-tokens/dist/js/chart_color_blue_200';
+import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import chart_color_blue_400 from '@patternfly/react-tokens/dist/js/chart_color_blue_400';
+import chart_color_blue_500 from '@patternfly/react-tokens/dist/js/chart_color_blue_500';
 import { format } from 'date-fns';
 
 export type Topic = {
@@ -57,9 +52,9 @@ export type LegendData = {
   symbol: {}
 }
 
-export const IncomingBytesPerTopicChart = (kafkaID) => {
+export const IncomingBytesPerTopicChart = () => {
 
-  const kafkaInstanceID = kafkaID.kafkaID;
+  const kafkaInstanceID = '1rGHY9WURtN71LcftnEn8IgUGaa';
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -70,7 +65,7 @@ export const IncomingBytesPerTopicChart = (kafkaID) => {
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
   const itemsPerRow = 4;
-  const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
+  const colors = [chart_color_blue_100.value, chart_color_blue_200.value, chart_color_blue_300.value, chart_color_blue_400.value, chart_color_blue_500.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
@@ -82,10 +77,10 @@ export const IncomingBytesPerTopicChart = (kafkaID) => {
           accessToken,
           basePath
         });
-        // if (!kafkaInstanceID) {
-        //   return;
-        // }
-        const data = await apisService.getMetricsByRangeQuery('1rAvUD7CFXIm2M3mj2pjtpHExWw', 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_in_total']);
+        if (!kafkaInstanceID) {
+          return;
+        }
+        const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_in_total']);
         let topicArray: Topic[] = [];
         data.data.items?.forEach((item, i) => {
           const labels = item.metric;
@@ -147,7 +142,7 @@ export const IncomingBytesPerTopicChart = (kafkaID) => {
       topic.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
-        line.push({ name: value.name, x: time, y: (value.bytes / 1024 / 1024 / 1024)});
+        line.push({ name: value.name, x: time, y: (value.bytes)});
       });
       chartData.push({ color, line });
     });
@@ -166,7 +161,7 @@ export const IncomingBytesPerTopicChart = (kafkaID) => {
           <div ref={containerRef}>
               <Chart
                 ariaDesc={t('metrics.incoming_bytes_per_topic')}
-                ariaTitle="Disk Space"
+                ariaTitle="Incoming bytes"
                 containerComponent={
                   <ChartVoronoiContainer
                     labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -182,7 +177,7 @@ export const IncomingBytesPerTopicChart = (kafkaID) => {
                 }
                 height={300}
                 padding={{
-                  bottom: 80, // Adjusted to accomodate legend
+                  bottom: 80,
                   left: 60,
                   right: 0,
                   top: 25
