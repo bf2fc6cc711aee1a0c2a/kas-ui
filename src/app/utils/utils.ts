@@ -145,6 +145,8 @@ const getFormattedDate = (date: string | Date, translatePostfix: string) => {
   return formatDistance(date, new Date()) + ' ' + translatePostfix;
 }
 
+const getModalAppendTo = () => document.querySelector('#qs-content') as HTMLElement || document.body;
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -163,5 +165,6 @@ export {
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
   MAX_SERVICE_ACCOUNT_DESC_LENGTH,
   sortValues,
-  getFormattedDate
+  getFormattedDate,
+  getModalAppendTo
 };
