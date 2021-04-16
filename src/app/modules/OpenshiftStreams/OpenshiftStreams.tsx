@@ -79,7 +79,7 @@ const OpenshiftStreams = ({
   const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
-  const [isDisplayKafkaEmptyState, setIsDisplayKafkaEmptyState] = useState<boolean>(false);
+  const [isDisplayKafkaEmptyState, setIsDisplayKafkaEmptyState] = useState<boolean | undefined>(undefined);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
@@ -295,6 +295,12 @@ const OpenshiftStreams = ({
   const refreshKafkas = () => {
     //set the page to laoding state
     setKafkaDataLoaded(false);
+    /**
+     * Set setIsDisplayKafkaEmptyState state undefined to handle view for empty state and table
+     */
+    if (kafkaInstanceItems === undefined || kafkaInstanceItems?.length <= 1) {
+      setIsDisplayKafkaEmptyState(undefined);
+    }
     fetchKafkas();
   };
 
@@ -464,7 +470,7 @@ const OpenshiftStreams = ({
   };
 
   const renderStreamsTable = () => {
-    if (kafkaInstanceItems === undefined) {
+    if (kafkaInstanceItems === undefined || isDisplayKafkaEmptyState === undefined) {
       return (
         <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
           <MASLoading />
@@ -487,7 +493,7 @@ const OpenshiftStreams = ({
           <CreateInstanceModal />
         </PageSection>
       );
-    } else if (kafkaInstanceItems && !isDisplayKafkaEmptyState) {
+    } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
       return (
         <PageSection
           className="mk--main-page__page-section--table"
