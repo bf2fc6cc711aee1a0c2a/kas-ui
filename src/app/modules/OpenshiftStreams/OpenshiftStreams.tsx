@@ -202,9 +202,9 @@ const OpenshiftStreams = ({
           const kafkaInstanceItems = kafkaInstances?.items;
           setKafkaInstancesList(kafkaInstances);
           setKafkaInstanceItems(kafkaInstanceItems);
-          kafkaInstancesList?.total !== undefined &&
-            kafkaInstancesList.total > expectedTotal &&
+          if (kafkaInstancesList?.total !== undefined && kafkaInstancesList.total > expectedTotal) {
             setExpectedTotal(kafkaInstancesList.total);
+          }
           setKafkaDataLoaded(true);
         });
         // Check to see if at least 1 kafka is present
@@ -224,6 +224,9 @@ const OpenshiftStreams = ({
     }
   };
 
+  /**
+   * Todo: Hey, remove me after summit
+   */
   const fetchKafkasOnborading = async () => {
     const accessToken = await authContext?.getToken();
     const filter = loggedInUser ? `owner = ${loggedInUser}` : '';
@@ -281,8 +284,7 @@ const OpenshiftStreams = ({
   }, []);
 
   /**
-   * This change is temporary for summit
-   * Todo: remove this code after summit
+   * Todo: Hey, remove me after summit
    */
   useEffect(() => {
     fetchKafkasOnborading();
@@ -294,12 +296,10 @@ const OpenshiftStreams = ({
 
   const refreshKafkas = () => {
     //set the page to laoding state
-    setKafkaDataLoaded(false);
-    /**
-     * Set setIsDisplayKafkaEmptyState state undefined to handle view for empty state and table
-     */
-    if (kafkaInstanceItems === undefined || kafkaInstanceItems?.length <= 1) {
-      setIsDisplayKafkaEmptyState(undefined);
+    if (kafkaInstanceItems && kafkaInstanceItems?.length >= 0) {
+      setKafkaDataLoaded(true);
+    } else {
+      setKafkaDataLoaded(false);
     }
     fetchKafkas();
   };
@@ -339,8 +339,7 @@ const OpenshiftStreams = ({
   }
 
   /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
+   * Todo: Hey, remove me after summit
    */
   const getBannerMessage = () => {
     const isUserSameAsLoggedIn = getLoggedInUserKafkaInstance() !== undefined;
@@ -381,6 +380,9 @@ const OpenshiftStreams = ({
     }
   };
 
+  /**
+   * Todo: Hey, remove me after summit
+   */
   const renderBanner = () => {
     return (
       <>
@@ -394,17 +396,18 @@ const OpenshiftStreams = ({
   };
 
   /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
+   * Todo: Hey, remove me after summit
    */
   const getLoggedInUserKafkaInstance = () => {
-    const kafkaItem: KafkaRequest | undefined = kafkas?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    let kafkaItem: KafkaRequest | undefined = kafkaInstanceItems?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    if (!kafkaItem) {
+      kafkaItem = kafkas?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    }
     return kafkaItem;
   };
 
   /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
+   * Todo: Hey, remove me after summit
    */
   const renderAlertMessage = () => {
     const kafka = getLoggedInUserKafkaInstance();
@@ -422,6 +425,9 @@ const OpenshiftStreams = ({
     return <></>;
   };
 
+  /**
+   * Todo: Hey, remove me after summit
+   */
   const getButtonTooltipContent = () => {
     const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
     const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
@@ -470,7 +476,7 @@ const OpenshiftStreams = ({
   };
 
   const renderStreamsTable = () => {
-    if (kafkaInstanceItems === undefined || isDisplayKafkaEmptyState === undefined) {
+    if (kafkaInstanceItems === undefined) {
       return (
         <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
           <MASLoading />
