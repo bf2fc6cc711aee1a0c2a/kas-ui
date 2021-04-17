@@ -15,7 +15,7 @@ import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsM
 export type CreateServiceAccountModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  fetchServiceAccounts: () => void;
+  fetchServiceAccounts?: () => void;
 };
 
 const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountModalProps> = ({
@@ -171,7 +171,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           setIsGenerateCredentialsModalOpen(true);
           resetForm();
           addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
-          fetchServiceAccounts();
+          fetchServiceAccounts && fetchServiceAccounts();
         });
       } catch (error) {
         handleServerError(error);
