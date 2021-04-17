@@ -27,6 +27,7 @@ const MASTable: FunctionComponent<MASTableProps> = ({
   activeRow,
   onRowClick,
   rowDataTestId,
+  loggedInUser,
 }) => {
   const {
     cells,
@@ -55,6 +56,7 @@ const MASTable: FunctionComponent<MASTableProps> = ({
         activeRow,
         onRowClick,
         rowDataTestId,
+        loggedInUser,
       }}
     >
       <PFTable

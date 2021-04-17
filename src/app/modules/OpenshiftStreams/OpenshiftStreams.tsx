@@ -537,6 +537,7 @@ const OpenshiftStreams = ({
             cloudProviders,
             mainToggle,
             refresh: refreshKafkas,
+            loggedInUser
           }}
         >
           <InstanceDrawer

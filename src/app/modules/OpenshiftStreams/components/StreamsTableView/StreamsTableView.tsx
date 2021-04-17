@@ -551,6 +551,7 @@ const StreamsTableView = ({
         activeRow={activeRow}
         onRowClick={onRowClick}
         rowDataTestId="tableStreams-row"
+        loggedInUser={loggedInUser}
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <MASEmptyState
