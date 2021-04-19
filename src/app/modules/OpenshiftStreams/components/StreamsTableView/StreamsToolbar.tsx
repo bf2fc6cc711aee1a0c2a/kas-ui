@@ -22,7 +22,9 @@ import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
 import './StreamsToolbar.css';
 import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
-
+/**
+ * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
+ */
 export type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
@@ -34,6 +36,7 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
   buttonTooltipContent?: string | undefined;
+  labelWithTooltip?: React.ReactNode;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -46,6 +49,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   setFilteredValue,
   isDisabledCreateButton,
   buttonTooltipContent,
+  labelWithTooltip,
 }) => {
   const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
   const { t } = useTranslation();
@@ -560,7 +564,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const toolbarItems: ToolbarItemProps[] = [
     {
-      item: createButton(),
+      item: (
+        <>
+          {createButton()}
+          {labelWithTooltip}
+        </>
+      ),
     },
   ];
 
