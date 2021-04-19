@@ -117,10 +117,6 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
-        tooltipProps: {
-          position: 'left',
-          content: t('serviceAccount.no_permission_to_delete_service_account'),
-        },
         isDisabled: true,
         style: {
           pointerEvents: 'auto',
@@ -134,7 +130,13 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         title: t('common.reset_credentials'),
         id: 'reset-credentials',
         ['data-testid']: 'tableServiceAccounts-actionResetCredentials',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'reset-credentials'),
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'reset-credentials'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('serviceAccount.no_permission_to_reset_service_account'),
+        },
       },
       {
         title: t('serviceAccount.delete_service_account'),
@@ -143,6 +145,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         onClick: (event: any) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-account'),
         ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('serviceAccount.no_permission_to_delete_service_account'),
+        },
       },
     ];
     return resolver;
