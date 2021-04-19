@@ -79,7 +79,7 @@ const OpenshiftStreams = ({
   const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
   const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
-  const [isDisplayKafkaEmptyState, setIsDisplayKafkaEmptyState] = useState<boolean>(false);
+  const [isDisplayKafkaEmptyState, setIsDisplayKafkaEmptyState] = useState<boolean | undefined>(undefined);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
@@ -188,7 +188,7 @@ const OpenshiftStreams = ({
   };
 
   // Functions
-  const fetchKafkas = async (justPoll: boolean) => {
+  const fetchKafkas = async () => {
     const accessToken = await authContext?.getToken();
 
     if (accessToken && isVisible) {
@@ -199,20 +199,22 @@ const OpenshiftStreams = ({
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
           const kafkaInstances = res.data;
+          const kafkaInstanceItems = kafkaInstances?.items;
           setKafkaInstancesList(kafkaInstances);
-          setKafkaInstanceItems(kafkaInstances.items);
-          kafkaInstancesList?.total !== undefined &&
-            kafkaInstancesList.total > expectedTotal &&
+          setKafkaInstanceItems(kafkaInstanceItems);
+          if (kafkaInstancesList?.total !== undefined && kafkaInstancesList.total > expectedTotal) {
             setExpectedTotal(kafkaInstancesList.total);
+          }
           setKafkaDataLoaded(true);
         });
-        // only if we are not just polling the kafka
-        if (!justPoll) {
-          // Check to see if at least 1 kafka is present
+        // Check to see if at least 1 kafka is present
+        if (!kafkaInstanceItems || kafkaInstanceItems?.length === 0) {
           await apisService.listKafkas('1', '1').then((res) => {
             const kafkaItemsLength = res?.data?.items?.length;
             if (!kafkaItemsLength || kafkaItemsLength < 1) {
               setIsDisplayKafkaEmptyState(true);
+            } else {
+              setIsDisplayKafkaEmptyState(false);
             }
           });
         }
@@ -222,6 +224,9 @@ const OpenshiftStreams = ({
     }
   };
 
+  /**
+   * Todo: Hey, remove me after summit
+   */
   const fetchKafkasOnborading = async () => {
     const accessToken = await authContext?.getToken();
     const filter = loggedInUser ? `owner = ${loggedInUser}` : '';
@@ -270,17 +275,16 @@ const OpenshiftStreams = ({
 
   useEffect(() => {
     setKafkaDataLoaded(false);
-    fetchKafkas(true);
+    fetchKafkas();
   }, [authContext, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
-    fetchKafkas(false);
+    fetchKafkas();
   }, []);
 
   /**
-   * This change is temporary for summit
-   * Todo: remove this code after summit
+   * Todo: Hey, remove me after summit
    */
   useEffect(() => {
     fetchKafkasOnborading();
@@ -288,12 +292,16 @@ const OpenshiftStreams = ({
 
   useTimeout(() => fetchKafkasOnborading(), MAX_POLL_INTERVAL);
 
-  useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
+  useTimeout(() => fetchKafkas(), MAX_POLL_INTERVAL);
 
   const refreshKafkas = () => {
     //set the page to laoding state
-    setKafkaDataLoaded(false);
-    fetchKafkas(false);
+    if (kafkaInstanceItems && kafkaInstanceItems?.length === 1) {
+      setKafkaDataLoaded(true);
+    } else {
+      setKafkaDataLoaded(false);
+    }
+    fetchKafkas();
   };
 
   const onCreate = () => {
@@ -331,8 +339,7 @@ const OpenshiftStreams = ({
   }
 
   /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
+   * Todo: Hey, remove me after summit
    */
   const getBannerMessage = () => {
     const isUserSameAsLoggedIn = getLoggedInUserKafkaInstance() !== undefined;
@@ -373,6 +380,9 @@ const OpenshiftStreams = ({
     }
   };
 
+  /**
+   * Todo: Hey, remove me after summit
+   */
   const renderBanner = () => {
     return (
       <>
@@ -386,17 +396,18 @@ const OpenshiftStreams = ({
   };
 
   /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
+   * Todo: Hey, remove me after summit
    */
   const getLoggedInUserKafkaInstance = () => {
-    const kafkaItem: KafkaRequest | undefined = kafkas?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    let kafkaItem: KafkaRequest | undefined = kafkaInstanceItems?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    if (!kafkaItem) {
+      kafkaItem = kafkas?.filter((kafka) => kafka.owner === loggedInUser)[0];
+    }
     return kafkaItem;
   };
 
   /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
+   * Todo: Hey, remove me after summit
    */
   const renderAlertMessage = () => {
     const kafka = getLoggedInUserKafkaInstance();
@@ -414,6 +425,9 @@ const OpenshiftStreams = ({
     return <></>;
   };
 
+  /**
+   * Todo: Hey, remove me after summit
+   */
   const getButtonTooltipContent = () => {
     const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
     const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
@@ -468,62 +482,61 @@ const OpenshiftStreams = ({
           <MASLoading />
         </PageSection>
       );
-    } else {
-      if (isDisplayKafkaEmptyState) {
-        return (
-          <PageSection padding={{ default: 'noPadding' }} isFilled>
-            <MASEmptyState
-              emptyStateProps={{
-                variant: MASEmptyStateVariant.NoItems,
-              }}
-              emptyStateBodyProps={{
-                body: t('create_a_kafka_instance_to_get_started'),
-              }}
-              titleProps={{ title: t('no_kafka_instances_yet') }}
-            >
-              {createInstanceButton()}
-            </MASEmptyState>
-            <CreateInstanceModal />
-          </PageSection>
-        );
-      } else {
-        return (
-          <PageSection
-            className="mk--main-page__page-section--table"
-            variant={PageSectionVariants.light}
-            padding={{ default: 'noPadding' }}
+    } else if (isDisplayKafkaEmptyState) {
+      return (
+        <PageSection padding={{ default: 'noPadding' }} isFilled>
+          <MASEmptyState
+            emptyStateProps={{
+              variant: MASEmptyStateVariant.NoItems,
+            }}
+            emptyStateBodyProps={{
+              body: t('create_a_kafka_instance_to_get_started'),
+            }}
+            titleProps={{ title: t('no_kafka_instances_yet') }}
           >
-            {renderAlertMessage()}
-            <StreamsTableView
-              kafkaInstanceItems={kafkaInstanceItems}
-              mainToggle={mainToggle}
-              onViewConnection={onViewConnection}
-              onViewInstance={onViewInstance}
-              onConnectToRoute={onConnectToRoute}
-              getConnectToRoutePath={getConnectToRoutePath}
-              refresh={refreshKafkas}
-              kafkaDataLoaded={kafkaDataLoaded}
-              onDelete={onDelete}
-              page={page}
-              perPage={perPage}
-              total={kafkaInstancesList?.total}
-              expectedTotal={expectedTotal}
-              filteredValue={filteredValue}
-              setFilteredValue={setFilteredValue}
-              setFilterSelected={setFilterSelected}
-              filterSelected={filterSelected}
-              orderBy={orderBy}
-              setOrderBy={setOrderBy}
-              isDrawerOpen={selectedInstance !== null}
-              loggedInUser={loggedInUser}
-              isMaxCapacityReached={isMaxCapacityReached}
-              buttonTooltipContent={getButtonTooltipContent()}
-              isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
-            />
-          </PageSection>
-        );
-      }
+            {createInstanceButton()}
+          </MASEmptyState>
+          <CreateInstanceModal />
+        </PageSection>
+      );
+    } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
+      return (
+        <PageSection
+          className="mk--main-page__page-section--table"
+          variant={PageSectionVariants.light}
+          padding={{ default: 'noPadding' }}
+        >
+          {renderAlertMessage()}
+          <StreamsTableView
+            kafkaInstanceItems={kafkaInstanceItems}
+            mainToggle={mainToggle}
+            onViewConnection={onViewConnection}
+            onViewInstance={onViewInstance}
+            onConnectToRoute={onConnectToRoute}
+            getConnectToRoutePath={getConnectToRoutePath}
+            refresh={refreshKafkas}
+            kafkaDataLoaded={kafkaDataLoaded}
+            onDelete={onDelete}
+            page={page}
+            perPage={perPage}
+            total={kafkaInstancesList?.total}
+            expectedTotal={expectedTotal}
+            filteredValue={filteredValue}
+            setFilteredValue={setFilteredValue}
+            setFilterSelected={setFilterSelected}
+            filterSelected={filterSelected}
+            orderBy={orderBy}
+            setOrderBy={setOrderBy}
+            isDrawerOpen={selectedInstance !== null}
+            loggedInUser={loggedInUser}
+            isMaxCapacityReached={isMaxCapacityReached}
+            buttonTooltipContent={getButtonTooltipContent()}
+            isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
+          />
+        </PageSection>
+      );
     }
+    return <></>;
   };
 
   return (
