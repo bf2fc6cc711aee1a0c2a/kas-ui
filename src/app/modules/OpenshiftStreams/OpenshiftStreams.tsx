@@ -296,7 +296,7 @@ const OpenshiftStreams = ({
 
   const refreshKafkas = () => {
     //set the page to laoding state
-    if (kafkaInstanceItems && kafkaInstanceItems?.length >= 0) {
+    if (kafkaInstanceItems && kafkaInstanceItems?.length === 1) {
       setKafkaDataLoaded(true);
     } else {
       setKafkaDataLoaded(false);
