@@ -10,6 +10,8 @@ import {
   Card,
   CardTitle,
   CardBody,
+  Spinner,
+  Bullseye
 } from '@patternfly/react-core';
 import {
   Chart,
@@ -27,10 +29,12 @@ import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color
 import chart_color_orange_400 from '@patternfly/react-tokens/dist/js/chart_color_orange_400';
 import chart_color_orange_500 from '@patternfly/react-tokens/dist/js/chart_color_orange_500';
 import { format } from 'date-fns';
+import byteSize from 'byte-size';
 
 export type Topic = {
   name: string
   data: {
+    name: string
     timestamp: number
     bytes: number
   }[]
@@ -69,7 +73,7 @@ export const OutgoingBytesPerTopicChart = () => {
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
-  const fetchAvailableDiskSpaceMetrics = async () => {
+  const fetchOutgoingBytesPerTopicMetrics = async () => {
     const accessToken = await authContext?.getToken();
     if (accessToken !== undefined && accessToken !== '') {
       try {
@@ -81,6 +85,9 @@ export const OutgoingBytesPerTopicChart = () => {
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_out_total']);
+
+        console.log('what is outgoing bytes data' + JSON.stringify(data));
+
         let topicArray: Topic[] = [];
         data.data.items?.forEach((item, i) => {
           const labels = item.metric;
@@ -92,7 +99,7 @@ export const OutgoingBytesPerTopicChart = () => {
           }
           if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
             const topic = {
-              name: `topic ${i + 1}`,
+              name: `Topic ${i + 1}`,
               data: []
             } as Topic;
             item.values?.forEach(value => {
@@ -100,6 +107,7 @@ export const OutgoingBytesPerTopicChart = () => {
                 throw new Error('timestamp cannot be undefined');
               }
               topic.data.push({
+                name: `Topic ${i + 1}`,
                 timestamp: value.Timestamp,
                 bytes: value.Value
               });
@@ -119,7 +127,8 @@ export const OutgoingBytesPerTopicChart = () => {
   };
 
   useEffect(() => {
-    fetchAvailableDiskSpaceMetrics();
+    fetchOutgoingBytesPerTopicMetrics();
+    handleResize();
   }, []);
 
   useEffect(() => {
@@ -133,7 +142,7 @@ export const OutgoingBytesPerTopicChart = () => {
     topicArray.map((topic, index) => {
       const color = colors[index];
       legendData.push({
-        name: topic.name.charAt(0).toUpperCase() + topic.name.slice(1),
+        name: topic.name,
         symbol: {
           fill: color
         }
@@ -142,7 +151,8 @@ export const OutgoingBytesPerTopicChart = () => {
       topic.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
-        line.push({ name: value.name, x: time, y: value.bytes});
+        const bytes = byteSize(value.bytes)
+        line.push({ name: value.name, x: time, y: bytes.value});
       });
       chartData.push({ color, line });
     });
@@ -150,64 +160,67 @@ export const OutgoingBytesPerTopicChart = () => {
     setChartData(chartData);
   }
 
-    return (
-      <>
-      {chartData && legend && (
-      <Card>
-        <CardTitle>
-          {t('metrics.outgoing_bytes_per_topic')}
-        </CardTitle>
-        <CardBody>
-          <div ref={containerRef}>
-              <Chart
-                ariaDesc={t('metrics.outgoing_bytes_per_topic')}
-                ariaTitle="Outgoing bytes"
-                containerComponent={
-                  <ChartVoronoiContainer
-                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                    constrainToVisibleArea
-                  />
-                }
-                legendPosition="bottom-left"
-                legendComponent={
-                  <ChartLegend
-                    data={legend}
-                    itemsPerRow={itemsPerRow}
-                  />
-                }
-                height={300}
-                padding={{
-                  bottom: 80,
-                  left: 60,
-                  right: 0,
-                  top: 25
-                }}
-                themeColor={ChartThemeColor.multiUnordered}
-                width={width}
-              >
-                <ChartAxis label={'Time'} tickCount={5} />
-                <ChartAxis
-                  dependentAxis
-                  tickFormat={(t) => `${Math.round(t)} MiB`}
+  return (
+    <Card>
+      <CardTitle>
+        {t('metrics.outgoing_bytes_per_topic')}
+      </CardTitle>
+      <CardBody>
+        <div ref={containerRef}>
+          {chartData && legend && width ? (
+            <Chart
+              ariaDesc={t('metrics.outgoing_bytes_per_topic')}
+              ariaTitle="Outgoing bytes"
+              containerComponent={
+                <ChartVoronoiContainer
+                  labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                  constrainToVisibleArea
                 />
-                <ChartGroup>
-                  {chartData.map((value, index) => (
-                    <ChartLine
-                      key={`chart-line-${index}`}
-                      data={value.line}
-                      style={{
-                        data: {
-                          stroke: value.color
-                        }
-                      }}
-                    />
-                  ))}
-                </ChartGroup>
-              </Chart>
-            </div>
-          </CardBody>
-        </Card>
-      )}
-    </>
+              }
+              legendPosition="bottom-left"
+              legendComponent={
+                <ChartLegend
+                  data={legend}
+                  itemsPerRow={itemsPerRow}
+                />
+              }
+              height={300}
+              padding={{
+                bottom: 80,
+                left: 60,
+                right: 0,
+                top: 25
+              }}
+              themeColor={ChartThemeColor.multiUnordered}
+              width={width}
+            >
+              <ChartAxis label={'Time'} tickCount={5} />
+              <ChartAxis
+                dependentAxis
+                tickFormat={(t) => `${Math.round(t)} B/s`}
+              />
+              <ChartGroup>
+                {chartData.map((value, index) => (
+                  <ChartLine
+                    key={`chart-line-${index}`}
+                    data={value.line}
+                    style={{
+                      data: {
+                        stroke: value.color
+                      }
+                    }}
+                  />
+                ))}
+              </ChartGroup>
+            </Chart>
+            ) : (
+              <Bullseye>
+                <Spinner isSVG/>
+              </Bullseye>
+            )
+            }
+        </div>
+      </CardBody>
+    </Card>
   );
 }

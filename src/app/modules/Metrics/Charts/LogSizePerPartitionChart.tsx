@@ -7,9 +7,11 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { 
   AlertVariant,
+  Bullseye,
   Card,
   CardTitle,
   CardBody,
+  Spinner
 } from '@patternfly/react-core';
 import {
   Chart,
@@ -22,22 +24,16 @@ import {
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
-import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
-import chart_color_blue_500 from '@patternfly/react-tokens/dist/js/chart_color_blue_500';
-import chart_color_orange_500 from '@patternfly/react-tokens/dist/js/chart_color_orange_500';
-import chart_color_green_500 from '@patternfly/react-tokens/dist/js/chart_color_green_500';
-import chart_color_blue_100 from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
-import chart_color_orange_100 from '@patternfly/react-tokens/dist/js/chart_color_orange_100';
-import chart_color_green_100 from '@patternfly/react-tokens/dist/js/chart_color_green_100';
-import chart_color_black_300 from '@patternfly/react-tokens/dist/js/chart_color_black_300';
 import { format } from 'date-fns';
+import byteSize from 'byte-size';
 
 export type Partition = {
   name: string
   data: {
     timestamp: number
     logSize: number
+    name: string
   }[]
 }
 
@@ -59,7 +55,7 @@ export type LegendData = {
 
 export const LogSizePerPartitionChart = () => {
 
-  const kafkaInstanceID = '1rGHY9WURtN71LcftnEn8IgUGaa';
+  const kafkaInstanceID = '1rGPabXMVG7cSONKOdPk0eAY2mZ';
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -70,7 +66,7 @@ export const LogSizePerPartitionChart = () => {
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
   const itemsPerRow = 4;
-  const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
+  const colors = [chart_color_blue_300.value, chart_color_green_300.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
@@ -100,6 +96,7 @@ export const LogSizePerPartitionChart = () => {
               throw new Error('timestamp cannot be undefined');
             }
             partition.data.push({
+              name: `Topic name: Partition ${i + 1}`,
               timestamp: value.Timestamp,
               logSize: value.Value
             });
@@ -121,6 +118,7 @@ export const LogSizePerPartitionChart = () => {
 
   useEffect(() => {
     fetchLogSizePerPartition();
+    handleResize();
   }, []);
 
   useEffect(() => {
@@ -131,7 +129,6 @@ export const LogSizePerPartitionChart = () => {
   const getChartData = (partitionArray) => {
     let legendData: Array<LegendData> = [];
     let chartData: Array<ChartData> = [];
-    console.log('does it here partition array ' + partitionArray);
     partitionArray.map((partition, index) => {
       const color = colors[index];
 
@@ -145,7 +142,8 @@ export const LogSizePerPartitionChart = () => {
       partition.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
-        area.push({ name: value.name, x: time, y: value.logSize });
+        const logSize = byteSize(value.logSize);
+        area.push({ name: value.name, x: time, y: logSize.value });
       });
       chartData.push({ color, area });
     });
@@ -153,65 +151,69 @@ export const LogSizePerPartitionChart = () => {
     setChartData(chartData);
   }
 
-    return (
-      <>
-      {chartData && legend && (
-      <Card>
-        <CardTitle>
-          {t('metrics.log_size_per_partition')}
-        </CardTitle>
-        <CardBody>
-          <div ref={containerRef}>
-              <Chart
-                ariaDesc={t('metrics.log_size_per_partition')}
-                ariaTitle="Log Size"
-                containerComponent={
-                  <ChartVoronoiContainer
-                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                    constrainToVisibleArea
-                  />
-                }
-                legendPosition="bottom-left"
-                legendComponent={
-                  <ChartLegend
-                    data={legend}
-                    itemsPerRow={itemsPerRow}
-                  />
-                }
-                height={300}
-                padding={{
-                  bottom: 80,
-                  left: 60,
-                  right: 0,
-                  top: 25
-                }}
-                themeColor={ChartThemeColor.multiUnordered}
-                width={width}
-              >
-                <ChartAxis label={'Time'} tickCount={5} />
-                <ChartAxis
-                  dependentAxis
-                  tickFormat={(t) => `${Math.round(t)} GiB`}
+  return (
+    <Card>
+      <CardTitle>
+        {t('metrics.log_size_per_partition')}
+      </CardTitle>
+      <CardBody>
+      <div ref={containerRef}>
+        {chartData && legend && width ? (
+          <Chart
+            ariaDesc={t('metrics.log_size_per_partition')}
+            ariaTitle="Log Size"
+            containerComponent={
+              <ChartVoronoiContainer
+                labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                constrainToVisibleArea
+              />
+            }
+            legendPosition="bottom-left"
+            legendComponent={
+              <ChartLegend
+                data={legend}
+                itemsPerRow={itemsPerRow}
+              />
+            }
+            height={300}
+            padding={{
+              bottom: 80,
+              left: 60,
+              right: 0,
+              top: 25
+            }}
+            themeColor={ChartThemeColor.multiUnordered}
+            width={width}
+          >
+            <ChartAxis label={'Time'} tickCount={5} />
+            <ChartAxis
+              dependentAxis
+              tickFormat={(t) => `${Math.round(t)} GiB`}
+              tickValues={[40, 60, 80]} 
+            />
+            <ChartGroup>
+              {chartData.map((value, index) => (
+                <ChartArea
+                  key={`chart-area-${index}`}
+                  data={value.area}
+                  interpolation="monotoneX"
+                  style={{
+                    data: {
+                      stroke: value.color
+                    }
+                  }}
                 />
-                <ChartGroup>
-                  {chartData.map((value, index) => (
-                    <ChartArea
-                      key={`chart-area-${index}`}
-                      data={value.area}
-                      interpolation="monotoneX"
-                      style={{
-                        data: {
-                          stroke: value.color
-                        }
-                      }}
-                    />
-                  ))}
-                </ChartGroup>
-              </Chart>
-            </div>
-          </CardBody>
-        </Card>
-      )}
-    </>
+              ))}
+            </ChartGroup>
+          </Chart>
+          ) : (
+            <Bullseye>
+              <Spinner isSVG />
+            </Bullseye>
+          )
+          }
+        </div>
+      </CardBody>
+    </Card>
   );
 }

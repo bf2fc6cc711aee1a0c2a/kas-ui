@@ -7,9 +7,11 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { 
   AlertVariant,
+  Bullseye,
   Card,
   CardTitle,
   CardBody,
+  Spinner
 } from '@patternfly/react-core';
 import {
   Chart,
@@ -26,6 +28,7 @@ import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { format } from 'date-fns';
+import byteSize from 'byte-size';
 
 export type Broker = {
   name: string
@@ -58,7 +61,7 @@ export type AvailableDiskSpaceChartProps = {
 
 export const AvailableDiskSpaceChart = () => {
 
-  const kafkaInstanceID = '1rGHY9WURtN71LcftnEn8IgUGaa';
+  const kafkaInstanceID = '1rGPabXMVG7cSONKOdPk0eAY2mZ';
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -138,6 +141,7 @@ export const AvailableDiskSpaceChart = () => {
 
   useEffect(() => {
     fetchAvailableDiskSpaceMetrics();
+    handleResize();
   }, []);
 
   useEffect(() => {
@@ -161,9 +165,9 @@ export const AvailableDiskSpaceChart = () => {
     avgBroker.data.map(value => {
       const date = new Date(value.timestamp);
       const time = format(date, 'hh:mm');
-      const usedSpace = average(value.usedSpaceAvg);
-      area.push({ name: avgBroker.name, x: time, y: usedSpace / 1024 / 1024 / 1024 });
-      softLimit.push({ name: avgBroker.name, x: time, y: 20 });
+      const usedSpace = byteSize(average(value.usedSpaceAvg));
+      area.push({ name: avgBroker.name, x: time, y: usedSpace.value });
+      softLimit.push({ name: 'Soft limit', x: time, y: 20 });
     });
     chartData.push({ color, softLimitColor, area, softLimit });
     setLegend(legendData);
@@ -171,16 +175,15 @@ export const AvailableDiskSpaceChart = () => {
   }
 
     return (
-      <>
-      {chartData && legend && (
       <Card>
         <CardTitle>
-          {t('metrics.available_disk_space_for_all_brokers')}
+          {t('metrics.available_disk_space')}
         </CardTitle>
         <CardBody>
           <div ref={containerRef}>
+            {chartData && legend && width ? (
               <Chart
-                ariaDesc={t('metrics.available_disk_space_for_all_brokers')}
+                ariaDesc={t('metrics.available_disk_space')}
                 ariaTitle="Disk Space"
                 containerComponent={
                   <ChartVoronoiContainer
@@ -211,6 +214,7 @@ export const AvailableDiskSpaceChart = () => {
                   tickFormat={(t) => `${Math.round(t)} Gi`}
                 />
                 <ChartGroup>
+
                   {chartData.map((value, index) => (
                     <ChartArea
                       key={`chart-area-${index}`}
@@ -223,8 +227,8 @@ export const AvailableDiskSpaceChart = () => {
                       }}
                     />
                   ))}
-                </ChartGroup>
-                {chartData.map((value, index) => (
+
+                  {chartData.map((value, index) => (
                   <ChartThreshold
                     key={`chart-softlimit-${index}`}
                     data={value.softLimit}
@@ -235,11 +239,17 @@ export const AvailableDiskSpaceChart = () => {
                     }}
                   />
                 ))}
+                
+                </ChartGroup>
               </Chart>
-            </div>
-          </CardBody>
-        </Card>
-      )}
-    </>
+            ) : (
+              <Bullseye>
+                <Spinner isSVG/>
+              </Bullseye>
+            )
+            }
+          </div>
+        </CardBody>
+      </Card>
   );
 }
