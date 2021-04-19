@@ -225,6 +225,7 @@
   "preparing": "日本語 Creation in progress",
   "completed": "日本語 Ready",
   "deprovision": "日本語 Deleting",
+  "deleted": "日本語 Deleting",
   "filter_by_cloud_provider": "日本語 Filter by cloud provider",
   "filter_by_status": "日本語 Filter by status",
   "you_do_not_have_access_to_openshift_streams": "日本語 You do not have access to OpenShift Streams",
