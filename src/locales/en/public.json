@@ -280,7 +280,7 @@
     "sasl_oauthbearer": "SASL/OAUTHBEARER",
     "recommended": "Recommended",
     "token_endpoint_url": "Token endpoint URL",
-    "sasl_plain": "SAL/PLAIN"
+    "sasl_plain": "SASL/PLAIN"
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",

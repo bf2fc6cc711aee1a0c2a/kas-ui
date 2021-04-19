@@ -277,7 +277,7 @@
     "sasl_oauthbearer": "日本語 SASL/OAUTHBEARER",
     "recommended": "日本語 Recommended",
     "token_endpoint_url": "日本語 Token endpoint URL",
-    "sasl_plain": "日本語 SAL/PLAIN"
+    "sasl_plain": "日本語 SASL/PLAIN"
   },
   "serviceRegistry": {
     "service_registry": "日本語 Service Registry",
