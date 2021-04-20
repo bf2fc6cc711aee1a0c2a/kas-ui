@@ -46,6 +46,7 @@ export type StreamsTableProps = StreamsToolbarProps & {
   mainToggle: boolean;
   refresh: () => void;
   kafkaDataLoaded: boolean;
+  setIsDisplayKafkaEmptyState: (arg0: boolean) => void;
   onDelete: () => void;
   expectedTotal: number;
   orderBy: string;
@@ -108,6 +109,7 @@ const StreamsTableView = ({
   perPage,
   total,
   kafkaDataLoaded,
+  setIsDisplayKafkaEmptyState,
   onDelete,
   expectedTotal,
   filteredValue,
@@ -431,6 +433,7 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         setActiveRow(undefined);
+        setIsDisplayKafkaEmptyState(true);
         refresh();
       });
     } catch (error) {
@@ -446,6 +449,8 @@ const StreamsTableView = ({
       addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
+
+  console.log('what is kafka data loaded' + kafkaDataLoaded);
 
   const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
     t,

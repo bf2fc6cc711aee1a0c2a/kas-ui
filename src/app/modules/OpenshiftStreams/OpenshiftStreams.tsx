@@ -542,6 +542,7 @@ const OpenshiftStreams = ({
             getConnectToRoutePath={getConnectToRoutePath}
             refresh={refreshKafkas}
             kafkaDataLoaded={kafkaDataLoaded}
+            setIsDisplayKafkaEmptyState={setIsDisplayKafkaEmptyState}
             onDelete={onDelete}
             page={page}
             perPage={perPage}
