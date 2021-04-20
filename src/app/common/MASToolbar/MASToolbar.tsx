@@ -14,7 +14,7 @@ export type ToolbarItemProps = Omit<PFToolbarItemProps, 'children'> & {
 };
 export type MASToolbarProps = {
   toolbarProps: Omit<ToolbarProps, 'children' | 'ref'>;
-  toggleGroupProps: Omit<ToolbarToggleGroupProps, 'children'>;
+  toggleGroupProps?: Omit<ToolbarToggleGroupProps, 'children'>;
   toggleGroupItems?: any;
   toolbarItems?: ToolbarItemProps[];
 };
@@ -26,7 +26,7 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
   toggleGroupItems,
 }) => {
   const { id, clearAllFilters, collapseListedFiltersBreakpoint = 'md', inset, ...restToolbarProps } = toolbarProps;
-  const { toggleIcon, breakpoint = 'md', ...toolbarToggleGroupProps } = toggleGroupProps;
+
   return (
     <>
       <Toolbar
@@ -37,9 +37,11 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
         {...restToolbarProps}
       >
         <ToolbarContent>
-          <ToolbarToggleGroup toggleIcon={toggleIcon} breakpoint={breakpoint} {...toolbarToggleGroupProps}>
-            {toggleGroupItems}
-          </ToolbarToggleGroup>
+          { toggleGroupProps && (
+            <ToolbarToggleGroup toggleIcon={toggleGroupProps.toggleIcon} breakpoint='md' {...toggleGroupProps}>
+              {toggleGroupItems}
+            </ToolbarToggleGroup>
+          )}
           {toolbarItems?.map((toolbarItem, index) => {
             const { key = 'mas', variant, className, id, alignment, item, ...restItemProps } = toolbarItem;
             return (

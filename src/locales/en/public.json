@@ -95,7 +95,9 @@
   "kafka_success_message": "The creation of the <b>{{name}}</b> Kafka instance is ready for you to create topics.",
   "kafka_not_created": "Kafka instance creation failed",
   "kafka_failed_message": "The creation of the <b>{{name}}</b> Kafka instance is failed",
-  "no_permission_to_delete_kafka": "Ask the Kafka instance owner or an administrator to delete this Kafka instance.",
+  "no_permission_to_delete_kafka": "Ask the Kafka instance owner to delete this Kafka instance.",
+  "no_permission_to_view_kafka": "Ask the Kafka instance owner for the details.",
+  "no_permission_to_connect_kafka": "Ask the Kafka instance owner for connection information.",
   "view_details": "View details",
   "view_connection_information": "View connection information",
   "ago": "ago",
@@ -230,6 +232,7 @@
   "preparing": "Creation in progress",
   "completed": "Ready",
   "deprovision": "Deleting",
+  "deleted":"Deleting",
   "you_do_not_have_access_to_openshift_streams": "You do not have access to OpenShift Streams",
   "length_is_greater_than_expected": "Kafka instance name cannot exceed {{maxLength}} characters.",
   "the_name_already_exists_please_enter_a_unique_name": "The name {{name}} already exists. Please enter a unique name.",
@@ -279,7 +282,7 @@
     "sasl_oauthbearer": "SASL/OAUTHBEARER",
     "recommended": "Recommended",
     "token_endpoint_url": "Token endpoint URL",
-    "sasl_plain": "SAL/PLAIN"
+    "sasl_plain": "SASL/PLAIN"
   },
   "serviceRegistry": {
     "service_registry": "Service Registry",
@@ -301,7 +304,8 @@
     "service_accounts": "Service Accounts",
     "service_accounts_small": "Service accounts",
     "service_accounts_title_header_info": "Use service accounts to connect and authenticate your applications with Kafka instances. The service accounts that you create can access only the Kafka instances that you create.",
-    "no_permission_to_delete_service_account": "Ask the service account owner or an administrator to delete this account",
+    "no_permission_to_delete_service_account": "Ask the service account owner to delete this account.",
+    "no_permission_to_reset_service_account": "Ask the service account owner to reset credentials.",
     "delete_service_account": "Delete service account",
     "service_account_list": "Service account list",
     "create_service_account": "Create service account",

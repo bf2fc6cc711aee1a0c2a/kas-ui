@@ -13,14 +13,13 @@ import {
   EmptyStateBodyProps,
   ButtonVariant,
   EmptyStateVariant,
-  EmptyStateSecondaryActions
 } from '@patternfly/react-core';
 import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
 import SpaceShuttleIcon from '@patternfly/react-icons/dist/js/icons/space-shuttle-icon';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import ExclamationTriangleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon';
+import NotFoundIcon from '@app/bgimages/Not-Found.svg';
 import { css } from '@patternfly/react-styles';
 import './MASEmptyState.css';
 
@@ -44,11 +43,11 @@ export type MASEmptyStateProps = {
   emptyStateBodyProps?: Omit<EmptyStateBodyProps, 'children'> & {
     body?: string | React.ReactNode;
   };
-  buttonProps?: Omit<ButtonProps, 'children'> & [{
+  buttonProps?: Omit<ButtonProps, 'children'> & {
     title?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     'data-testid'?: string;
-  }];
+  };
   children?: React.ReactNode;
 };
 
@@ -60,10 +59,13 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   emptyStateBodyProps,
   children,
 }: MASEmptyStateProps) => {
+  const { variant: buttonVariant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
   const { title, ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
   const { variant: masEmptyStateVariant = MASEmptyStateVariant.GettingStarted, className, ...restEmptyStateProps } =
     emptyStateProps || {};
+
+  const NotFoundImg = () => <img src={NotFoundIcon} alt="Not found page" width="128px" />;
 
   const getVariantConfig = () => {
     let varaintConfig: any = {};
@@ -112,7 +114,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
       case MASEmptyStateVariant.PageNotFound:
         varaintConfig = {
           variant: EmptyStateVariant.full,
-          icon: ExclamationTriangleIcon,
+          icon: NotFoundImg,
           titleSize: TitleSizes.lg,
           headingLevel: 'h1',
         };
@@ -131,7 +133,6 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   };
 
   const { variant, icon, titleSize, headingLevel } = getVariantConfig();
-  const secondaryButtonProps = buttonProps && buttonProps.slice(1, buttonProps.length);
 
   return (
     <>
@@ -147,20 +148,11 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           </Title>
         )}
         {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
-        {buttonProps && (
-          <Button variant={ButtonVariant.primary} onClick={buttonProps[0].onClick} {...buttonProps[0]}>
-            {buttonProps[0].title}
+        {buttonProps?.title && (
+          <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
+            {buttonProps?.title}
           </Button>
         )}
-        {secondaryButtonProps?.length > 0 &&
-          <EmptyStateSecondaryActions>
-            {secondaryButtonProps.map((button, index) => {
-              return (
-                <Button key={index} variant="link" onClick={button.onClick} data-testid={button['data-testid']}>{button.title}</Button>
-              )
-            })}
-          </EmptyStateSecondaryActions>
-        }
         {children}
       </PFEmptyState>
     </>

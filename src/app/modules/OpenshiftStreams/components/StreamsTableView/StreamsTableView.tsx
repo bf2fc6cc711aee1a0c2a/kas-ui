@@ -121,6 +121,7 @@ const StreamsTableView = ({
   buttonTooltipContent,
   isDisabledCreateButton,
   loggedInUser,
+  labelWithTooltip,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -274,10 +275,6 @@ const StreamsTableView = ({
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
-        tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_delete_kafka'),
-        },
         isDisabled: true,
         style: {
           pointerEvents: 'auto',
@@ -290,13 +287,25 @@ const StreamsTableView = ({
         title: t('view_details'),
         id: 'view-instance',
         ['data-testid']: 'tableStreams-actionDetails',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'view-instance'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_view_kafka'),
+        },
       },
       {
         title: t('view_connection_information'),
         id: 'connect-instance',
         ['data-testid']: 'tableStreams-actionConnection',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_connect_kafka'),
+        },
       },
       {
         title: t('delete_instance'),
@@ -305,6 +314,10 @@ const StreamsTableView = ({
         onClick: (event: any) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_delete_kafka'),
+        },
       },
     ];
     return resolver;
@@ -525,6 +538,7 @@ const StreamsTableView = ({
         setFilteredValue={setFilteredValue}
         isDisabledCreateButton={isDisabledCreateButton}
         buttonTooltipContent={buttonTooltipContent}
+        labelWithTooltip={labelWithTooltip}
       />
       <MASTable
         tableProps={{
@@ -539,6 +553,7 @@ const StreamsTableView = ({
         activeRow={activeRow}
         onRowClick={onRowClick}
         rowDataTestId="tableStreams-row"
+        loggedInUser={loggedInUser}
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <MASEmptyState
