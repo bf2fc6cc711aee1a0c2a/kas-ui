@@ -28,7 +28,8 @@ export type ServiceAccountsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  handleCreateModal: () => void
+  handleCreateModal: () => void;
+  mainToggle?: boolean;
 };
 
 export type FilterValue = {
@@ -49,7 +50,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
-  handleCreateModal
+  handleCreateModal,
 }: ServiceAccountsToolbarProps) => {
   const { t } = useTranslation();
 
@@ -301,7 +302,6 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
     </>
   );
 
-
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: (
@@ -315,32 +315,34 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
       ),
     },
   ];
-
-  if (total && total > 0 && toolbarItems.length === 1) {
-    toolbarItems.push({
-      item: (
-        <MASPagination
-          widgetId="pagination-options-menu-top"
-          itemCount={total}
-          page={page}
-          perPage={perPage}
-          isCompact={true}
-          titles={{
-            paginationTitle: t('minimal_pagination'),
-            perPageSuffix: t('per_page_suffix'),
-            toFirstPage: t('to_first_page'),
-            toPreviousPage: t('to_previous_page'),
-            toLastPage: t('to_last_page'),
-            toNextPage: t('to_next_page'),
-            optionsToggle: t('options_toggle'),
-            currPage: t('curr_page'),
-          }}
-        />
-      ),
-      variant: 'pagination',
-      alignment: { default: 'alignRight' },
-    });
-  }
+  /**
+   * Todo: uncomment code when API start support pagination
+   */
+  // if (total && total > 0 && toolbarItems.length === 1) {
+  //   toolbarItems.push({
+  //     item: (
+  //       <MASPagination
+  //         widgetId="pagination-options-menu-top"
+  //         itemCount={total}
+  //         page={page}
+  //         perPage={perPage}
+  //         isCompact={true}
+  //         titles={{
+  //           paginationTitle: t('minimal_pagination'),
+  //           perPageSuffix: t('per_page_suffix'),
+  //           toFirstPage: t('to_first_page'),
+  //           toPreviousPage: t('to_previous_page'),
+  //           toLastPage: t('to_last_page'),
+  //           toNextPage: t('to_next_page'),
+  //           optionsToggle: t('options_toggle'),
+  //           currPage: t('curr_page'),
+  //         }}
+  //       />
+  //     ),
+  //     variant: 'pagination',
+  //     alignment: { default: 'alignRight' },
+  //   });
+  // }
 
   return (
     <MASToolbar
@@ -350,8 +352,6 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         collapseListedFiltersBreakpoint: 'md',
         inset: { lg: 'insetLg' },
       }}
-      toggleGroupProps={{ toggleIcon: <FilterIcon />, breakpoint: 'md' }}
-      toggleGroupItems={toggleGroupItems}
       toolbarItems={toolbarItems}
     />
   );

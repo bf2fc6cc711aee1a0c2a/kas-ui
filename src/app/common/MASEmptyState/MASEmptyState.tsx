@@ -19,7 +19,7 @@ import SpaceShuttleIcon from '@patternfly/react-icons/dist/js/icons/space-shuttl
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import ExclamationTriangleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-triangle-icon';
+import NotFoundIcon from '@app/bgimages/Not-Found.svg';
 import { css } from '@patternfly/react-styles';
 import './MASEmptyState.css';
 
@@ -64,6 +64,8 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
   const { variant: masEmptyStateVariant = MASEmptyStateVariant.GettingStarted, className, ...restEmptyStateProps } =
     emptyStateProps || {};
+
+  const NotFoundImg = () => <img src={NotFoundIcon} alt="Not found page" width="128px" />;
 
   const getVariantConfig = () => {
     let varaintConfig: any = {};
@@ -112,7 +114,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
       case MASEmptyStateVariant.PageNotFound:
         varaintConfig = {
           variant: EmptyStateVariant.full,
-          icon: ExclamationTriangleIcon,
+          icon: NotFoundImg,
           titleSize: TitleSizes.lg,
           headingLevel: 'h1',
         };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IAction,
@@ -14,9 +14,10 @@ import {
 } from '@patternfly/react-table';
 import { Skeleton, PaginationVariant } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
-import { getLoadingRowsCount } from '@app/utils';
+import { getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
+import { AuthContext } from '@app/auth/AuthContext';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -45,16 +46,23 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   filterSelected,
   setFilterSelected,
   handleCreateModal,
+  mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
+  const authContext = useContext(AuthContext);
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
+  useEffect(() => {
+    authContext?.getUsername().then((username) => setLoggedInUser(username));
+  }, []);
+
   const tableColumns = [
-    { title: t('common.name'), transforms: [sortable] },
-    { title: t('common.clientID'), transforms: [sortable] },
-    { title: t('common.owner'), transforms: [sortable, cellWidth(20)] },
+    { title: t('common.name') },
+    { title: t('common.clientID') },
+    { title: t('common.owner'), transforms: [cellWidth(20)] },
     { title: t('common.description') },
+    { title: t('time_created') },
   ];
 
   const onSelectKebabDropdownOption = (event: any, originalData: ServiceAccountListItem, selectedOption: string) => {
@@ -88,9 +96,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner = 'owner-test', description, clientID } = row;
+      const { name, owner, description, clientID, created_at } = row;
       tableRow.push({
-        cells: [name, clientID, owner, description],
+        cells: [name, clientID, owner, description, { title: getFormattedDate(created_at, t('ago')) }],
         originalData: row,
       });
     });
@@ -103,16 +111,12 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     const originalData: ServiceAccountListItem = rowData.originalData;
-    const isUserSameAsLoggedIn = true; //originalData.owner === loggedInUser;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
     let additionalProps: any;
 
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
-        tooltipProps: {
-          position: 'left',
-          content: t('serviceAccount.no_permission_to_delete_service_account'),
-        },
         isDisabled: true,
         style: {
           pointerEvents: 'auto',
@@ -126,7 +130,13 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         title: t('common.reset_credentials'),
         id: 'reset-credentials',
         ['data-testid']: 'tableServiceAccounts-actionResetCredentials',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'reset-credentials'),
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'reset-credentials'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('serviceAccount.no_permission_to_reset_service_account'),
+        },
       },
       {
         title: t('serviceAccount.delete_service_account'),
@@ -135,6 +145,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         onClick: (event: any) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-account'),
         ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('serviceAccount.no_permission_to_delete_service_account'),
+        },
       },
     ];
     return resolver;
@@ -149,9 +163,13 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       case 0:
         return 'name';
       case 1:
-        return 'owner';
+        return 'clientID';
       case 2:
+        return 'owner';
+      case 3:
         return 'description';
+      case 4:
+        return 'created_at';
       default:
         return '';
     }
@@ -161,10 +179,14 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     switch (parameter.toLowerCase()) {
       case 'name':
         return 0;
-      case 'owner':
+      case 'clientID':
         return 1;
-      case 'description':
+      case 'owner':
         return 2;
+      case 'description':
+        return 3;
+      case 'created_at':
+        return 4;
       default:
         return undefined;
     }
@@ -196,6 +218,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
         handleCreateModal={handleCreateModal}
+        mainToggle={mainToggle}
       />
       <MASTable
         tableProps={{
@@ -220,7 +243,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           }}
         />
       )}
-      {total && total > 0 && (
+      {/* {total && total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}
@@ -238,7 +261,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
             currPage: t('curr_page'),
           }}
         />
-      )}
+      )} */}
     </>
   );
 };

@@ -371,6 +371,12 @@ export interface KafkaRequest {
      * @memberof KafkaRequest
      */
     failed_reason?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof KafkaRequest
+     */
+    version?: string;
 }
 /**
  * 
@@ -438,6 +444,12 @@ export interface KafkaRequestAllOf {
      * @memberof KafkaRequestAllOf
      */
     failed_reason?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof KafkaRequestAllOf
+     */
+    version?: string;
 }
 /**
  * 
@@ -750,6 +762,18 @@ export interface ServiceAccount {
      * @memberof ServiceAccount
      */
     clientSecret?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    owner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccount
+     */
+    created_at?: string;
 }
 /**
  * 
@@ -787,6 +811,18 @@ export interface ServiceAccountAllOf {
      * @memberof ServiceAccountAllOf
      */
     clientSecret?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    owner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ServiceAccountAllOf
+     */
+    created_at?: string;
 }
 /**
  * 
@@ -839,23 +875,35 @@ export interface ServiceAccountListItem {
      */
     href?: string;
     /**
-     * 
+     * client id of the service account
      * @type {string}
      * @memberof ServiceAccountListItem
      */
     clientID?: string;
     /**
-     * 
+     * name of the service account
      * @type {string}
      * @memberof ServiceAccountListItem
      */
     name?: string;
     /**
-     * 
-     * @type {AnyType}
+     * owner of the service account
+     * @type {string}
      * @memberof ServiceAccountListItem
      */
-    description?: AnyType;
+    owner?: string;
+    /**
+     * service account creation timestamp
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    created_at?: string;
+    /**
+     * description of the service account
+     * @type {string}
+     * @memberof ServiceAccountListItem
+     */
+    description?: string;
 }
 /**
  * 
@@ -870,23 +918,35 @@ export interface ServiceAccountListItemAllOf {
      */
     id?: string;
     /**
-     * 
+     * client id of the service account
      * @type {string}
      * @memberof ServiceAccountListItemAllOf
      */
     clientID?: string;
     /**
-     * 
+     * name of the service account
      * @type {string}
      * @memberof ServiceAccountListItemAllOf
      */
     name?: string;
     /**
-     * 
-     * @type {AnyType}
+     * owner of the service account
+     * @type {string}
      * @memberof ServiceAccountListItemAllOf
      */
-    description?: AnyType;
+    owner?: string;
+    /**
+     * service account creation timestamp
+     * @type {string}
+     * @memberof ServiceAccountListItemAllOf
+     */
+    created_at?: string;
+    /**
+     * description of the service account
+     * @type {string}
+     * @memberof ServiceAccountListItemAllOf
+     */
+    description?: string;
 }
 /**
  * Schema for the request to create a service account
@@ -908,6 +968,32 @@ export interface ServiceAccountRequest {
     description?: string;
 }
 /**
+ * Schema for the service status response body
+ * @export
+ * @interface ServiceStatus
+ */
+export interface ServiceStatus {
+    /**
+     * 
+     * @type {ServiceStatusKafkas}
+     * @memberof ServiceStatus
+     */
+    kafkas?: ServiceStatusKafkas;
+}
+/**
+ * The kafka resource api status
+ * @export
+ * @interface ServiceStatusKafkas
+ */
+export interface ServiceStatusKafkas {
+    /**
+     * Indicates whether we have reached kafka maximum capacity
+     * @type {boolean}
+     * @memberof ServiceStatusKafkas
+     */
+    max_capacity_reached: boolean;
+}
+/**
  * 
  * @export
  * @interface Values
@@ -925,6 +1011,50 @@ export interface Values {
      * @memberof Values
      */
     Value: number;
+}
+/**
+ * 
+ * @export
+ * @interface VersionMetadata
+ */
+export interface VersionMetadata {
+    /**
+     * 
+     * @type {string}
+     * @memberof VersionMetadata
+     */
+    id?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VersionMetadata
+     */
+    kind?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VersionMetadata
+     */
+    href?: string;
+    /**
+     * 
+     * @type {Array<ObjectReference>}
+     * @memberof VersionMetadata
+     */
+    collections?: Array<ObjectReference>;
+}
+/**
+ * 
+ * @export
+ * @interface VersionMetadataAllOf
+ */
+export interface VersionMetadataAllOf {
+    /**
+     * 
+     * @type {Array<ObjectReference>}
+     * @memberof VersionMetadataAllOf
+     */
+    collections?: Array<ObjectReference>;
 }
 
 /**
@@ -1592,6 +1722,75 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Retrieves the status of resources e.g whether we have reached maximum service capacity
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        serviceStatus: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/managed-services-api/v1/status`;
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            // http bearer authentication required
+            if (configuration && configuration.accessToken) {
+                const accessToken = typeof configuration.accessToken === 'function'
+                    ? configuration.accessToken()
+                    : configuration.accessToken;
+                localVarHeaderParameter["Authorization"] = "Bearer " + accessToken;
+            }
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Retrieves the version metadata
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        versionMetadata: async (options: any = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/managed-services-api/v1`;
+            const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarUrlObj.query = {...localVarUrlObj.query, ...localVarQueryParameter, ...options.query};
+            // fix override query string Detail: https://stackoverflow.com/a/7517673/1077943
+            delete localVarUrlObj.search;
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: globalImportUrl.format(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1794,6 +1993,32 @@ export const DefaultApiFp = function(configuration?: Configuration) {
                 return axios.request(axiosRequestArgs);
             };
         },
+        /**
+         * 
+         * @summary Retrieves the status of resources e.g whether we have reached maximum service capacity
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async serviceStatus(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceStatus>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).serviceStatus(options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
+        /**
+         * 
+         * @summary Retrieves the version metadata
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async versionMetadata(options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VersionMetadata>> {
+            const localVarAxiosArgs = await DefaultApiAxiosParamCreator(configuration).versionMetadata(options);
+            return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
+                const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
+                return axios.request(axiosRequestArgs);
+            };
+        },
     }
 };
 
@@ -1944,6 +2169,24 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         resetServiceAccountCreds(id: string, options?: any): AxiosPromise<ServiceAccount> {
             return DefaultApiFp(configuration).resetServiceAccountCreds(id, options).then((request) => request(axios, basePath));
         },
+        /**
+         * 
+         * @summary Retrieves the status of resources e.g whether we have reached maximum service capacity
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        serviceStatus(options?: any): AxiosPromise<ServiceStatus> {
+            return DefaultApiFp(configuration).serviceStatus(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Retrieves the version metadata
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        versionMetadata(options?: any): AxiosPromise<VersionMetadata> {
+            return DefaultApiFp(configuration).versionMetadata(options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -2093,6 +2336,24 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     resetServiceAccountCreds(id: string, options?: any): AxiosPromise<ServiceAccount>;
+
+    /**
+     * 
+     * @summary Retrieves the status of resources e.g whether we have reached maximum service capacity
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    serviceStatus(options?: any): AxiosPromise<ServiceStatus>;
+
+    /**
+     * 
+     * @summary Retrieves the version metadata
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    versionMetadata(options?: any): AxiosPromise<VersionMetadata>;
 
 }
 
@@ -2268,6 +2529,28 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public resetServiceAccountCreds(id: string, options?: any) {
         return DefaultApiFp(this.configuration).resetServiceAccountCreds(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Retrieves the status of resources e.g whether we have reached maximum service capacity
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public serviceStatus(options?: any) {
+        return DefaultApiFp(this.configuration).serviceStatus(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Retrieves the version metadata
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public versionMetadata(options?: any) {
+        return DefaultApiFp(this.configuration).versionMetadata(options).then((request) => request(this.axios, this.basePath));
     }
 
 }

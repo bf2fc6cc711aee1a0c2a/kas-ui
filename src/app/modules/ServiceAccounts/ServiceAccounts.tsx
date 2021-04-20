@@ -13,7 +13,7 @@ import {
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { isServiceApiError, ErrorCodes } from '@app/utils';
+import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import {
   MASEmptyState,
@@ -39,6 +39,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
+  const mainToggle = searchParams.has('user-testing');
 
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -46,11 +47,10 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  const [rawServiceAccountDataLength, setRawServiceAccountDataLength] = useState<number>(0);
   // state to store the expected total  service accounts based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
   const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
-  const [orderBy, setOrderBy] = useState<string>('name');
+  const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
@@ -58,6 +58,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountToReset, setServiceAccountToReset] = useState<ServiceAccountListItem>();
   const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
   const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
+  const [isDisplayServiceAccountEmptyState, setIsDisplayServiceAccountEmptyState] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -84,8 +85,19 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         });
         await apisService.listServiceAccounts().then((response) => {
           const serviceAccounts = response?.data;
+          const items = serviceAccounts?.items || [];
+          const itemsLength = items?.length;
           setServiceAccountList(serviceAccounts);
-          setServiceAccountItems(serviceAccounts?.items);
+          const sortedServiceAccounts = sortValues(items, 'name', 'asc');
+          setServiceAccountItems(sortedServiceAccounts);
+          /**
+           * Todo: handle below logic in separate API call when backend start support pagination
+           */
+          if (!itemsLength || itemsLength < 1) {
+            setIsDisplayServiceAccountEmptyState(true);
+          } else {
+            setIsDisplayServiceAccountEmptyState(false);
+          }
         });
       } catch (error) {
         handleServerError(error);
@@ -119,12 +131,12 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         </PageSection>
       );
     } else {
-      if (rawServiceAccountDataLength && rawServiceAccountDataLength < 1) {
+      if (isDisplayServiceAccountEmptyState) {
         return (
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
               emptyStateProps={{
-                variant: MASEmptyStateVariant.GettingStarted,
+                variant: MASEmptyStateVariant.NoItems,
               }}
               titleProps={{
                 title: t('serviceAccount.you_do_not_have_any_service_accounts_yet'),
@@ -163,6 +175,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               onResetCredentials={handleResetModal}
               onDeleteServiceAccount={handleDeleteModal}
               handleCreateModal={handleCreateModal}
+              mainToggle={mainToggle}
             />
           </PageSection>
         );

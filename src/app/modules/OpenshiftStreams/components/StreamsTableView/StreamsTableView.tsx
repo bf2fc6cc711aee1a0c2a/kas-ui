@@ -20,14 +20,12 @@ import { StatusColumn } from './StatusColumn';
 import { CreateInstanceModal } from '../CreateInstanceModal';
 import { DeleteInstanceModal } from '../DeleteInstanceModal';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { StreamsToolbar } from './StreamsToolbar';
+import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
-import { InstanceStatus, isServiceApiError, getLoadingRowsCount } from '@app/utils';
+import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { useHistory } from 'react-router-dom';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
-import { formatDistance } from 'date-fns';
 
 export type FilterValue = {
   value: string;
@@ -39,27 +37,22 @@ export type FilterType = {
   filterValue: FilterValue[];
 };
 
-export type StreamsTableProps = {
+export type StreamsTableProps = StreamsToolbarProps & {
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
-  onConnectToInstance: (data: KafkaRequest) => void;
-  getConnectToInstancePath: (data: KafkaRequest) => string;
+  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
+  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
   mainToggle: boolean;
   refresh: () => void;
-  page: number;
-  perPage: number;
-  total: number;
   kafkaDataLoaded: boolean;
   onDelete: () => void;
   expectedTotal: number;
-  filteredValue: Array<FilterType>;
-  setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  filterSelected: string;
-  setFilterSelected: (filterSelected: string) => void;
   orderBy: string;
   setOrderBy: (order: string) => void;
   isDrawerOpen?: boolean;
+  loggedInUser: string | undefined;
+  isMaxCapacityReached?: boolean | undefined;
 };
 
 type ConfigDetail = {
@@ -71,17 +64,26 @@ type ConfigDetail = {
 export const getDeleteInstanceModalConfig = (
   t: TFunction,
   status: string | undefined,
-  instanceName: string | undefined
+  instanceName: string | undefined,
+  isMaxCapacityReached?: boolean | undefined
 ): ConfigDetail => {
   const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
     description: '',
   };
+  /**
+   * This is Onboarding changes
+   * Todo: remove this change after public eval
+   */
+  const additionalMessage = isMaxCapacityReached
+    ? ' You might not be able to create a new instance because all of them are currently provisioned by other users.'
+    : '';
+
   if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_complete', { instanceName });
+    config.description = t('delete_instance_status_complete', { instanceName }) + additionalMessage;
   } else if (
     status === InstanceStatus.ACCEPTED ||
     status === InstanceStatus.PROVISIONING ||
@@ -89,7 +91,7 @@ export const getDeleteInstanceModalConfig = (
   ) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
+    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName }) + additionalMessage;
   }
   return config;
 };
@@ -99,8 +101,8 @@ const StreamsTableView = ({
   kafkaInstanceItems,
   onViewInstance,
   onViewConnection,
-  onConnectToInstance,
-  getConnectToInstancePath,
+  onConnectToRoute,
+  getConnectToRoutePath,
   refresh,
   page,
   perPage,
@@ -115,6 +117,11 @@ const StreamsTableView = ({
   orderBy,
   setOrderBy,
   isDrawerOpen,
+  isMaxCapacityReached,
+  buttonTooltipContent,
+  isDisabledCreateButton,
+  loggedInUser,
+  labelWithTooltip,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -133,7 +140,6 @@ const StreamsTableView = ({
     { title: t('time_created'), transforms: [sortable] },
   ];
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
-  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
 
@@ -154,10 +160,6 @@ const StreamsTableView = ({
     },
     [searchParams]
   );
-
-  useEffect(() => {
-    authContext?.getUsername().then((username) => setLoggedInUser(username));
-  }, []);
 
   useEffect(() => {
     if (!isDrawerOpen) {
@@ -273,10 +275,6 @@ const StreamsTableView = ({
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
-        tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_delete_kafka'),
-        },
         isDisabled: true,
         style: {
           pointerEvents: 'auto',
@@ -289,13 +287,25 @@ const StreamsTableView = ({
         title: t('view_details'),
         id: 'view-instance',
         ['data-testid']: 'tableStreams-actionDetails',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'view-instance'),
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'view-instance'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_view_kafka'),
+        },
       },
       {
         title: t('view_connection_information'),
         id: 'connect-instance',
         ['data-testid']: 'tableStreams-actionConnection',
-        onClick: (event: any) => onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_connect_kafka'),
+        },
       },
       {
         title: t('delete_instance'),
@@ -304,6 +314,10 @@ const StreamsTableView = ({
         onClick: (event: any) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_delete_kafka'),
+        },
       },
     ];
     return resolver;
@@ -318,10 +332,10 @@ const StreamsTableView = ({
           </a>
         ) : (
           <Link
-            to={() => getConnectToInstancePath(row as KafkaRequest)}
+            to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
             onClick={(e) => {
               e.preventDefault();
-              onConnectToInstance(row as KafkaRequest);
+              onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
             }}
             data-testid="tableStreams-linkKafka"
           >
@@ -351,15 +365,6 @@ const StreamsTableView = ({
       return tableRow;
     }
 
-    const formatDate = (date) => {
-      date = typeof date === 'string' ? new Date(date) : date;
-      return (
-        <>
-          {formatDistance(date, new Date())} {t('ago')}
-        </>
-      );
-    };
-
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
@@ -379,7 +384,7 @@ const StreamsTableView = ({
             title: <StatusColumn status={status} instanceName={name} />,
           },
           {
-            title: formatDate(created_at),
+            title: getFormattedDate(created_at, t('ago')),
           },
         ],
         originalData: row,
@@ -445,7 +450,8 @@ const StreamsTableView = ({
   const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
     t,
     selectedInstance?.status,
-    selectedInstance?.name
+    selectedInstance?.name,
+    isMaxCapacityReached
   );
 
   const getParameterForSortIndex = (index: number) => {
@@ -530,6 +536,9 @@ const StreamsTableView = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
+        isDisabledCreateButton={isDisabledCreateButton}
+        buttonTooltipContent={buttonTooltipContent}
+        labelWithTooltip={labelWithTooltip}
       />
       <MASTable
         tableProps={{
@@ -544,6 +553,7 @@ const StreamsTableView = ({
         activeRow={activeRow}
         onRowClick={onRowClick}
         rowDataTestId="tableStreams-row"
+        loggedInUser={loggedInUser}
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
         <MASEmptyState
@@ -558,7 +568,7 @@ const StreamsTableView = ({
           }}
         />
       )}
-      {total && total > 0 && (
+      {total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"
           itemCount={total}

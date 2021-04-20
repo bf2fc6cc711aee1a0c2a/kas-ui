@@ -176,8 +176,6 @@ export const AvailableDiskSpaceChart = () => {
     setChartData(chartData);
   }
 
-  console.log('what is chartData' + JSON.stringify(chartData)); 
-
     return (
       <Card>
         <CardTitle>

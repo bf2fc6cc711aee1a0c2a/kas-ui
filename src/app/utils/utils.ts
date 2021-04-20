@@ -1,3 +1,5 @@
+import { formatDistance } from 'date-fns';
+
 function accessibleRouteChangeHandler() {
   return window.setTimeout(() => {
     const mainContainer = document.getElementById('primary-app-container');
@@ -19,6 +21,7 @@ enum InstanceStatus {
   PROVISIONING = 'provisioning',
   FAILED = 'failed',
   DEPROVISION = 'deprovision',
+  DELETED = 'deleted',
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
@@ -39,6 +42,7 @@ const statusOptions: KeyValueOptions[] = [
   { value: 'provisioning', label: 'Creation in progress' },
   { value: 'preparing', label: 'Creation in progress' },
   { value: 'deprovision', label: 'Deletion in progress' },
+  { value: 'deleted', label: 'Deletion in progress' },
 ];
 
 const getCloudProviderDisplayName = (value: string) => {
@@ -117,6 +121,34 @@ const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: numbe
   return loadingRowCount !== 0 ? loadingRowCount : perPage;
 };
 
+const sortValues = (items: any[] | undefined, key: string, order: string = 'asc') => {
+  const compareValue = (a: any, b: any) => {
+    if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+      // property doesn't exist on either object
+      return 0;
+    }
+
+    const varA = typeof a[key] === 'string' ? a[key].toUpperCase() : a[key];
+    const varB = typeof b[key] === 'string' ? b[key].toUpperCase() : b[key];
+
+    let comparison = 0;
+    if (varA > varB) {
+      comparison = 1;
+    } else if (varA < varB) {
+      comparison = -1;
+    }
+    return order === 'desc' ? comparison * -1 : comparison;
+  }
+  return items?.sort(compareValue);
+};
+
+const getFormattedDate = (date: string | Date, translatePostfix: string) => {
+  date = typeof date === 'string' ? new Date(date) : date;
+  return formatDistance(date, new Date()) + ' ' + translatePostfix;
+}
+
+const getModalAppendTo = () => document.querySelector('#qs-content') as HTMLElement || document.body;
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -133,5 +165,8 @@ export {
   MAX_POLL_INTERVAL,
   getLoadingRowsCount,
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
-  MAX_SERVICE_ACCOUNT_DESC_LENGTH
+  MAX_SERVICE_ACCOUNT_DESC_LENGTH,
+  sortValues,
+  getFormattedDate,
+  getModalAppendTo
 };

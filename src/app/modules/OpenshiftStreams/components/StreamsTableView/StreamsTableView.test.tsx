@@ -61,7 +61,7 @@ describe('<StreamsTableView/>', () => {
     onViewInstance: jest.fn(),
     onViewConnection: jest.fn(),
     getOnConnectToInstancePath: jest.fn(),
-    onConnectToInstance: jest.fn(),
+    onConnectToRoute: jest.fn(),
     mainToggle: false,
     refresh: jest.fn(),
     page: 1,
