@@ -38,6 +38,7 @@ import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
+import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
@@ -142,6 +143,8 @@ const OpenshiftStreams = ({
     setIsOpenCreateInstanceModalState(open);
   };
 
+  const drawerRef = React.createRef<any>();
+  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
   const { activeTab, instanceDetail } = selectedInstance || {};
 
   const onCloseDrawer = () => {
@@ -494,7 +497,6 @@ const OpenshiftStreams = ({
               }}
               titleProps={{ title: 'Kafka instances unavailable', size: TitleSizes.xl, headingLevel: 'h2' }}
             >
-              {createInstanceButton()}
             </MASEmptyState>
           ) : (
             <MASEmptyState
@@ -509,7 +511,7 @@ const OpenshiftStreams = ({
                 body: (
                   <>
                     Development preview instances are available for creation. For help getting started, access the{' '}
-                    <Button variant={ButtonVariant.link} isSmall isInline>
+                    <Button variant={ButtonVariant.link} isSmall isInline onClick={() => (qsContext.setActiveQuickStart && qsContext.setActiveQuickStart("getting-started"))}>
                       quick start guide.
                     </Button>
                   </>

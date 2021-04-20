@@ -239,6 +239,8 @@
   "clear_all_filters": "Clear all filters",
   "delete_instance": "Delete instance",
   "to_access_kafka_instances_contact_your_organization_administrators": "To access Kafka Instances, contact your organization administrators.",
+  "access_the_quick_start_guide": "Access the quick start guide",
+  "take_a_tour": "Take a tour",
   "kafka_instance_not_ready_inline_message": "We're creating your Kafka instance, so some details aren't yet available.",
   "bootstrap_server_description": "Establish the initial connection between your client and Kafka instance.",
   "more_info_about_sasl_oauthbearer": "More information about SASL/OAUTHBEARER",
