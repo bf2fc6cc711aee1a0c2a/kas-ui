@@ -592,16 +592,18 @@ const OpenshiftStreams = ({
             tokenEndPointUrl={tokenEndPointUrl}
             notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
           >
-            <PageSection variant={PageSectionVariants.light}>
-              <Level>
-                <LevelItem>
-                  <TextContent>
-                    <Text component="h1">{t('kafka_instances')}</Text>
-                  </TextContent>
-                </LevelItem>
-              </Level>
-            </PageSection>
-            {renderStreamsTable()}
+            <main className="pf-c-page__main">
+              <PageSection variant={PageSectionVariants.light}>
+                <Level>
+                  <LevelItem>
+                    <TextContent>
+                      <Text component="h1">{t('kafka_instances')}</Text>
+                    </TextContent>
+                  </LevelItem>
+                </Level>
+              </PageSection>
+              {renderStreamsTable()}
+            </main>
           </InstanceDrawer>
         </CreateInstanceModalProvider>
       </AlertProvider>
