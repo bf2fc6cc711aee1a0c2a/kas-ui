@@ -153,7 +153,7 @@ export const IncomingBytesPerTopicChart = () => {
         const time = format(date, 'hh:mm');
         const bytes = byteSize(value.bytes);
         console.log('what is incoming bytes' + bytes);
-        line.push({ name: value.name, x: time, y: bytes.value});
+        line.push({ name: value.name, x: time, y: parseInt(bytes, 10)});
       });
       chartData.push({ color, line });
     });
@@ -201,8 +201,7 @@ export const IncomingBytesPerTopicChart = () => {
                 <ChartAxis label={'Time'} tickCount={5} />
                 <ChartAxis
                   dependentAxis
-                  // tickValues={[200,400,600,800]}
-                  // tickFormat={(t) => `${Math.round(t)} B/s`}
+                  tickFormat={(t) => `${Math.round(t)} kB/s`}
                   tickCount={4}
                 />
                 <ChartGroup>

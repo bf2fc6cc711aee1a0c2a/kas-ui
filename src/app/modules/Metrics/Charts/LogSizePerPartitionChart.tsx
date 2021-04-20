@@ -83,7 +83,6 @@ export const LogSizePerPartitionChart = () => {
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
-        console.log('what is log size data' + JSON.stringify(data));
         let partitionArray = [];
 
         data.data.items?.forEach((item, i) => {
@@ -143,8 +142,8 @@ export const LogSizePerPartitionChart = () => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
         const logSize = byteSize(value.logSize);
-        console.log('what is the log size' + logSize);
-        area.push({ name: value.name, x: time, y: logSize.value });
+        console.log('WHAT IS logSize' + logSize)
+        area.push({ name: value.name, x: time, y: parseInt(logSize, 10)});
       });
       chartData.push({ color, area });
     });

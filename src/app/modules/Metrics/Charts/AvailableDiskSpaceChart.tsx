@@ -42,6 +42,7 @@ export type ChartData = {
   color: string
   softLimitColor: string
   area: BrokerChartData[]
+  softLimit: BrokerChartData[]
 }
 
 export type BrokerChartData = {
@@ -61,7 +62,7 @@ export type AvailableDiskSpaceChartProps = {
 
 export const AvailableDiskSpaceChart = () => {
 
-  const kafkaInstanceID = '1rGPabXMVG7cSONKOdPk0eAY2mZ';
+  const kafkaInstanceID = '1rRefr8MyPeaptqXORZ5Jk6kP1t';
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -166,13 +167,16 @@ export const AvailableDiskSpaceChart = () => {
       const date = new Date(value.timestamp);
       const time = format(date, 'hh:mm');
       const usedSpace = byteSize(average(value.usedSpaceAvg));
-      area.push({ name: avgBroker.name, x: time, y: usedSpace.value });
+      console.log('what is usedSpace' + usedSpace);
+      area.push({ name: avgBroker.name, x: time, y: parseInt(usedSpace, 10)});
       softLimit.push({ name: 'Soft limit', x: time, y: 20 });
     });
     chartData.push({ color, softLimitColor, area, softLimit });
     setLegend(legendData);
     setChartData(chartData);
   }
+
+  console.log('what is chartData' + JSON.stringify(chartData)); 
 
     return (
       <Card>
@@ -207,47 +211,42 @@ export const AvailableDiskSpaceChart = () => {
                 }}
                 themeColor={ChartThemeColor.multiUnordered}
                 width={width}
+                minDomain={{ y: 0 }}
               >
                 <ChartAxis label={'Time'} tickCount={5} />
                 <ChartAxis
                   dependentAxis
                   tickFormat={(t) => `${Math.round(t)} Gi`}
                 />
-                <ChartGroup>
-
-                  {chartData.map((value, index) => (
-                    <ChartArea
-                      key={`chart-area-${index}`}
-                      data={value.area}
-                      interpolation="monotoneX"
-                      style={{
-                        data: {
-                          stroke: value.color
-                        }
-                      }}
-                    />
-                  ))}
-
-                  {chartData.map((value, index) => (
+                  <ChartGroup>
+                    {chartData.map((value, index) => (
+                      <ChartArea
+                        key={`chart-area-${index}`}
+                        data={value.area}
+                        interpolation="monotoneX"
+                        style={{
+                          data: {
+                            stroke: value.color
+                          }
+                        }}
+                      />
+                    ))}
+                  </ChartGroup>
                   <ChartThreshold
-                    key={`chart-softlimit-${index}`}
-                    data={value.softLimit}
+                    key={`chart-softlimit`}
+                    data={chartData[0].softLimit}
                     style={{
                       data: {
-                        stroke: value.softLimitColor
+                        stroke: chartData[0].softLimitColor
                       }
                     }}
                   />
-                ))}
-                
-                </ChartGroup>
               </Chart>
             ) : (
               <Bullseye>
                 <Spinner isSVG/>
               </Bullseye>
-            )
-            }
+            )}
           </div>
         </CardBody>
       </Card>
