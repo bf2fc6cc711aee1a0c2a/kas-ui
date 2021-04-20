@@ -450,8 +450,6 @@ const StreamsTableView = ({
     }
   };
 
-  console.log('what is kafka data loaded' + kafkaDataLoaded);
-
   const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
     t,
     selectedInstance?.status,
