@@ -121,6 +121,7 @@ const StreamsTableView = ({
   buttonTooltipContent,
   isDisabledCreateButton,
   loggedInUser,
+  labelWithTooltip,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -537,6 +538,7 @@ const StreamsTableView = ({
         setFilteredValue={setFilteredValue}
         isDisabledCreateButton={isDisabledCreateButton}
         buttonTooltipContent={buttonTooltipContent}
+        labelWithTooltip={labelWithTooltip}
       />
       <MASTable
         tableProps={{
