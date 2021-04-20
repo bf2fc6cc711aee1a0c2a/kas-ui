@@ -66,7 +66,7 @@ export const LogSizePerPartitionChart = () => {
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
   const itemsPerRow = 4;
-  const colors = [chart_color_blue_300.value, chart_color_green_300.value];
+  const colors = [chart_color_blue_300.value, chart_color_green_300.value, chart_color_blue_300.value, chart_color_green_300.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
@@ -133,7 +133,7 @@ export const LogSizePerPartitionChart = () => {
       const color = colors[index];
 
       legendData.push({
-        name: partition.name.charAt(0).toUpperCase() + partition.name.slice(1),
+        name: partition.name,
         symbol: {
           fill: color
         }
@@ -143,6 +143,7 @@ export const LogSizePerPartitionChart = () => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
         const logSize = byteSize(value.logSize);
+        console.log('what is the log size' + logSize);
         area.push({ name: value.name, x: time, y: logSize.value });
       });
       chartData.push({ color, area });
@@ -188,11 +189,13 @@ export const LogSizePerPartitionChart = () => {
             <ChartAxis label={'Time'} tickCount={5} />
             <ChartAxis
               dependentAxis
-              tickFormat={(t) => `${Math.round(t)} GiB`}
-              tickValues={[40, 60, 80]} 
+              // tickValues={['200 KB', '400 KB', '600 KB', '800 KB', '1000 KB']}
+              tickFormat={(t, name) => `${Math.round(t)} MiB`}
+              tickCount={4}
             />
             <ChartGroup>
               {chartData.map((value, index) => (
+                
                 <ChartArea
                   key={`chart-area-${index}`}
                   data={value.area}

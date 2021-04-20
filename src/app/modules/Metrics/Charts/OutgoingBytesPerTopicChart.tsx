@@ -198,6 +198,7 @@ export const OutgoingBytesPerTopicChart = () => {
               <ChartAxis
                 dependentAxis
                 tickFormat={(t) => `${Math.round(t)} B/s`}
+                tickCount={4}
               />
               <ChartGroup>
                 {chartData.map((value, index) => (

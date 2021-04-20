@@ -58,7 +58,7 @@ export type LegendData = {
 
 export const IncomingBytesPerTopicChart = () => {
 
-  const kafkaInstanceID = '1rOuWNysqHyurjYleBN1VfJ6CTu';
+  const kafkaInstanceID = '1rCf57x2vbE7ddSkhuMFAxivE8P';
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -109,7 +109,7 @@ export const IncomingBytesPerTopicChart = () => {
               topic.data.push({
                 name: `Topic ${i + 1}`,
                 timestamp: value.Timestamp,
-                bytes: byteSize(value.Value)
+                bytes: value.Value
               });
           });
           topicArray.push(topic);
@@ -151,7 +151,7 @@ export const IncomingBytesPerTopicChart = () => {
       topic.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
-        const bytes = value.bytes;
+        const bytes = byteSize(value.bytes);
         console.log('what is incoming bytes' + bytes);
         line.push({ name: value.name, x: time, y: bytes.value});
       });
@@ -160,6 +160,8 @@ export const IncomingBytesPerTopicChart = () => {
     setLegend(legendData);
     setChartData(chartData);
   }
+
+  console.log('what is chartData' + JSON.stringify(chartData));
 
     return (
       <Card>
