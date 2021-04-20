@@ -13,9 +13,11 @@ import {
   ButtonVariant,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
 const DrawerPanelContentInfo = () => {
   const { t } = useTranslation();
+  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
 
   return (
     <TextContent>
@@ -51,7 +53,7 @@ const DrawerPanelContentInfo = () => {
             <TextListItem component={TextListItemVariants.dd}>up to 1 MB</TextListItem>
           </GridItem>
         </Grid>
-        <Button isSmall isInline variant={ButtonVariant.link} style={{ marginTop: '20px' }}>
+        <Button isSmall isInline variant={ButtonVariant.link} style={{ marginTop: '20px' }} onClick={() => (qsContext.setActiveQuickStart && qsContext.setActiveQuickStart("getting-started"))}>
           {t('common.quick_start_guide_message')}
         </Button>
       </TextList>
