@@ -40,6 +40,7 @@ import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
+import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
@@ -446,14 +447,14 @@ const OpenshiftStreams = ({
       return (
         <Tooltip content={content}>
           <Label icon={<BanIcon />} className="pf-u-ml-md" tabIndex={0}>
-            No Instances available
+            No instances available
           </Label>
         </Tooltip>
       );
     } else {
       return (
         <Tooltip content={content}>
-          <Label color="green" icon={<CheckCircleIcon />} className="pf-u-ml-md" tabIndex={0}>
+          <Label color="green" icon={<CheckIcon />} className="pf-u-ml-md" tabIndex={0}>
             Instances available
           </Label>
         </Tooltip>
