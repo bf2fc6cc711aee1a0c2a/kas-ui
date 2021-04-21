@@ -267,7 +267,7 @@ const StreamsTableView = ({
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
-    if (originalData.status === InstanceStatus.DEPROVISION) {
+    if (originalData.status === InstanceStatus.DEPROVISION || originalData.status === InstanceStatus.DELETED) {
       return [];
     }
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
@@ -432,7 +432,7 @@ const StreamsTableView = ({
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         setActiveRow(undefined);
         refresh();
-      });
+    });
     } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
