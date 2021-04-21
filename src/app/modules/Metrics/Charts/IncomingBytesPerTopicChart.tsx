@@ -70,7 +70,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({kafkaI
   const [width, setWidth] = useState();
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
-  const itemsPerRow = width && width > 400 ? 4 : 2;
+  // const itemsPerRow = width && width > 400 ? 4 : 2;
   const colors = [chart_color_blue_100.value, chart_color_blue_200.value, chart_color_blue_300.value, chart_color_blue_400.value, chart_color_blue_500.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
@@ -172,6 +172,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({kafkaI
         </CardTitle>
         <CardBody>
           <div ref={containerRef}>
+            <div style={{ height: '300px' }}>
             {chartData && legend && width ? (
               <Chart
                 ariaDesc={t('metrics.incoming_bytes_per_topic')}
@@ -182,14 +183,15 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({kafkaI
                     constrainToVisibleArea
                   />
                 }
+                legendAllowWrap={true}
                 legendPosition="bottom-left"
                 legendComponent={
                   <ChartLegend
                     data={legend}
-                    itemsPerRow={itemsPerRow}
+                    // itemsPerRow={itemsPerRow}
+                    orientation="horizontal"
                   />
                 }
-                legendAllowWrap={true}
                 height={300}
                 padding={{
                   bottom: 80,
@@ -225,6 +227,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({kafkaI
                 <Spinner isSVG/>
               </Bullseye>
             )}
+            </div>
             </div>
           </CardBody>
         </Card>

@@ -153,7 +153,8 @@ export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({kafkaI
       topic.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
-        const bytes = byteSize(value.bytes)
+        const bytes = byteSize(value.bytes);
+        console.log('what is OUTGOING bytes' + bytes);
         line.push({ name: value.name, x: time, y: parseInt(bytes, 10)});
       });
       chartData.push({ color, line });
