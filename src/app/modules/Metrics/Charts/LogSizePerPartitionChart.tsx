@@ -50,12 +50,13 @@ export type PartitionChartData = {
 
 export type LegendData = {
   name: string
-  symbol: {}
 }
 
-export const LogSizePerPartitionChart = () => {
+export type KafkaInstanceProps = {
+  kafkaID: string
+}
 
-  const kafkaInstanceID = '1rGPabXMVG7cSONKOdPk0eAY2mZ';
+export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}: KafkaInstanceProps) => {
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -66,7 +67,7 @@ export const LogSizePerPartitionChart = () => {
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
   const itemsPerRow = 4;
-  const colors = [chart_color_blue_300.value, chart_color_green_300.value, chart_color_blue_300.value, chart_color_green_300.value];
+  const colors = [chart_color_green_300.value, chart_color_blue_300.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
@@ -79,10 +80,10 @@ export const LogSizePerPartitionChart = () => {
           accessToken,
           basePath
         });
-        if (!kafkaInstanceID) {
+        if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
         let partitionArray = [];
 
         data.data.items?.forEach((item, i) => {
@@ -132,10 +133,7 @@ export const LogSizePerPartitionChart = () => {
       const color = colors[index];
 
       legendData.push({
-        name: partition.name,
-        symbol: {
-          fill: color
-        }
+        name: partition.name
       });
       let area: Array<PartitionChartData> = [];
       partition.data.map(value => {
@@ -178,7 +176,7 @@ export const LogSizePerPartitionChart = () => {
             height={300}
             padding={{
               bottom: 80,
-              left: 60,
+              left: 70,
               right: 0,
               top: 25
             }}
@@ -199,11 +197,11 @@ export const LogSizePerPartitionChart = () => {
                   key={`chart-area-${index}`}
                   data={value.area}
                   interpolation="monotoneX"
-                  style={{
-                    data: {
-                      stroke: value.color
-                    }
-                  }}
+                  // style={{
+                  //   data: {
+                  //     stroke: value.color
+                  //   }
+                  // }}
                 />
               ))}
             </ChartGroup>

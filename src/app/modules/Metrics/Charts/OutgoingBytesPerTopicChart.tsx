@@ -56,9 +56,11 @@ export type LegendData = {
   symbol: {}
 }
 
-export const OutgoingBytesPerTopicChart = () => {
+export type KafkaInstanceProps = {
+  kafkaID: string
+}
 
-  const kafkaInstanceID = '1rGHY9WURtN71LcftnEn8IgUGaa';
+export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({kafkaID}: KafkaInstanceProps) => {
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -81,10 +83,10 @@ export const OutgoingBytesPerTopicChart = () => {
           accessToken,
           basePath
         });
-        if (!kafkaInstanceID) {
+        if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_out_total']);
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_out_total']);
 
         console.log('what is outgoing bytes data' + JSON.stringify(data));
 

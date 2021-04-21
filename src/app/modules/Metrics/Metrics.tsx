@@ -20,22 +20,22 @@ import {
 
 export const Metrics = () => {
 
-  const kafkaID: string = '1rAvUD7CFXIm2M3mj2pjtpHExWw';
+  const kafkaID: string = '1rGPabXMVG7cSONKOdPk0eAY2mZ';
 
   return (
     <PageSection>
       <Grid hasGutter>
         <GridItem>
-          <AvailableDiskSpaceChart kafkaId={{id: '1rGHY9WURtN71LcftnEn8IgUGaa'}}/>
+          <AvailableDiskSpaceChart kafkaID={kafkaID}/>
         </GridItem>
         <GridItem span={6}>
-          <IncomingBytesPerTopicChart kafkaId={kafkaID}/>
+          <IncomingBytesPerTopicChart kafkaID={kafkaID}/>
         </GridItem>
         <GridItem span={6}>
-          <OutgoingBytesPerTopicChart kafkaId={kafkaID}/>
+          <OutgoingBytesPerTopicChart kafkaID={kafkaID}/>
         </GridItem>
         <GridItem>
-          <LogSizePerPartitionChart kafkaId={kafkaID}/>
+          <LogSizePerPartitionChart kafkaID={kafkaID}/>
         </GridItem>
       </Grid>
     </PageSection>

@@ -60,9 +60,11 @@ export type AvailableDiskSpaceChartProps = {
   brokers: Broker[]
 }
 
-export const AvailableDiskSpaceChart = () => {
+export type KafkaInstanceProps = {
+  kafkaID: string
+}
 
-  const kafkaInstanceID = '1rRefr8MyPeaptqXORZ5Jk6kP1t';
+export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: KafkaInstanceProps) => {
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -86,10 +88,10 @@ export const AvailableDiskSpaceChart = () => {
           accessToken,
           basePath
         });
-        if (!kafkaInstanceID) {
+        if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaInstanceID, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes']);
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes']);
         const avgBroker = {
           name: `Available disk space`,
           data: []
