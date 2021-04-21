@@ -74,6 +74,7 @@ const OpenshiftStreams = ({
 
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
+  const localStorage = window.localStorage;
 
   // States
   const [isOpenCreateInstanceModalState, setIsOpenCreateInstanceModalState] = useState(createDialogOpen());
@@ -116,13 +117,23 @@ const OpenshiftStreams = ({
 
   useEffect(() => {
     if (isMobileTablet()) {
-      addAlert(
-        'Mobile experience',
-        AlertVariant.warning,
-        "The mobile experience isn't fully optimized yet, so some items might not appear correctly.",
-        '',
-        true
-      );
+      if (localStorage) {
+        const count = localStorage.getItem("openSessions") || 0;
+        const newCount = parseInt(count) + 1;
+        if (count < 1) {
+          localStorage.setItem("openSessions", newCount);
+          addAlert(
+            'Mobile experience',
+            AlertVariant.warning,
+            "The mobile experience isn't fully optimized yet, so some items might not appear correctly.",
+            '',
+            true
+          );
+        }
+      }
+      // updateDOM();
+
+  
     }
   }, []);
 
