@@ -567,13 +567,19 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       item: (
         <>
           {createButton()}
+        </>
+      )
+    },
+    {
+      item: (
+        <>
           {labelWithTooltip}
         </>
-      ),
-    },
+      )
+    }
   ];
 
-  if (total && total > 0 && toolbarItems.length === 1) {
+  if (total && total > 0 && toolbarItems.length > 1) {
     toolbarItems.push({
       item: (
         <MASPagination

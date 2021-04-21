@@ -25,7 +25,8 @@ export const CustomRowWrapper = (rowWrapperProps) => {
   const { isExpanded, originalData } = row;
   const isRowDeleted =
     originalData?.status === InstanceStatus.DEPROVISION || originalData?.status === InstanceStatus.DELETED;
-  const isRowDisabled = isRowDeleted || loggedInUser !== originalData?.owner;
+  const isLoggedInUserOwner = loggedInUser === originalData?.owner;
+  const isRowDisabled = isRowDeleted || !isLoggedInUserOwner;
 
   return (
     <tr
@@ -35,7 +36,7 @@ export const CustomRowWrapper = (rowWrapperProps) => {
       className={css(
         className,
         'pf-c-table-row__item',
-        isRowDeleted ? 'pf-m-disabled' : 'pf-m-selectable',
+        isRowDeleted ? 'pf-m-disabled' : isLoggedInUserOwner && 'pf-m-selectable',
         !isRowDisabled && activeRow && activeRow === originalData?.name && 'pf-m-selected'
       )}
       hidden={isExpanded !== undefined && !isExpanded}

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import "@patternfly/patternfly/patternfly.min.css";
+import "@patternfly/patternfly/utilities/Accessibility/accessibility.css";
+import "@patternfly/patternfly/components/Select/Select.css";
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AppLayout } from '@app/AppLayout/AppLayout';
 import { AppRoutes } from '@app/routes';

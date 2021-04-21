@@ -7,6 +7,7 @@ export type MASAlertType = {
   variant: AlertVariant;
   body?: string | React.ReactElement;
   dataTestId?: string;
+  skipAutoClose?: boolean;
 };
 
 type AlertToastGroupProps = {
