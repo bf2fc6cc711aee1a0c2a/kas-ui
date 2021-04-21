@@ -46,7 +46,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   mainToggle: boolean;
   refresh: () => void;
   kafkaDataLoaded: boolean;
-  setIsDisplayKafkaEmptyState: (arg0: boolean) => void;
   onDelete: () => void;
   expectedTotal: number;
   orderBy: string;
@@ -109,7 +108,6 @@ const StreamsTableView = ({
   perPage,
   total,
   kafkaDataLoaded,
-  setIsDisplayKafkaEmptyState,
   onDelete,
   expectedTotal,
   filteredValue,
@@ -269,7 +267,7 @@ const StreamsTableView = ({
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
-    if (originalData.status === InstanceStatus.DEPROVISION) {
+    if (originalData.status === InstanceStatus.DEPROVISION || originalData.status === InstanceStatus.DELETED) {
       return [];
     }
     const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
@@ -433,9 +431,8 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         setActiveRow(undefined);
-        setIsDisplayKafkaEmptyState(true);
         refresh();
-      });
+    });
     } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
