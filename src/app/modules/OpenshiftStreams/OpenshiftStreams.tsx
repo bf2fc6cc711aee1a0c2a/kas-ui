@@ -131,9 +131,6 @@ const OpenshiftStreams = ({
           );
         }
       }
-      // updateDOM();
-
-  
     }
   }, []);
 
