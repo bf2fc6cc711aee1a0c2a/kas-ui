@@ -33,7 +33,7 @@ import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../..
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError, ErrorCodes } from '@app/utils';
+import { isServiceApiError, ErrorCodes, isMobileTablet } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
@@ -112,6 +112,18 @@ const OpenshiftStreams = ({
 
   useEffect(() => {
     fetchKafkaServiceStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isMobileTablet()) {
+      addAlert(
+        'Mobile experience',
+        AlertVariant.warning,
+        "The mobile experience isn't fully optimized yet, so some items might not appear correctly.",
+        '',
+        true
+      );
+    }
   }, []);
 
   const fetchKafkaServiceStatus = async () => {
@@ -496,8 +508,7 @@ const OpenshiftStreams = ({
                 ),
               }}
               titleProps={{ title: 'Kafka instances unavailable', size: TitleSizes.xl, headingLevel: 'h2' }}
-            >
-            </MASEmptyState>
+            ></MASEmptyState>
           ) : (
             <MASEmptyState
               emptyStateProps={{
@@ -511,7 +522,12 @@ const OpenshiftStreams = ({
                 body: (
                   <>
                     Development preview instances are available for creation. For help getting started, access the{' '}
-                    <Button variant={ButtonVariant.link} isSmall isInline onClick={() => (qsContext.setActiveQuickStart && qsContext.setActiveQuickStart("getting-started"))}>
+                    <Button
+                      variant={ButtonVariant.link}
+                      isSmall
+                      isInline
+                      onClick={() => qsContext.setActiveQuickStart && qsContext.setActiveQuickStart('getting-started')}
+                    >
                       quick start guide.
                     </Button>
                   </>
