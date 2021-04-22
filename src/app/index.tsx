@@ -3,7 +3,6 @@ import "@patternfly/patternfly/patternfly.min.css";
 import "@patternfly/patternfly/utilities/Accessibility/accessibility.css";
 import "@patternfly/patternfly/utilities/Spacing/spacing.css";
 import "@patternfly/patternfly/utilities/Sizing/sizing.css";
-import "@patternfly/patternfly/components/Select/select.css";
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AppLayout } from '@app/AppLayout/AppLayout';
 import { AppRoutes } from '@app/routes';
