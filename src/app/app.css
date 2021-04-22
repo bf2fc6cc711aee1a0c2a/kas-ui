@@ -3,8 +3,8 @@ html, body, #root {
 }
 
 .pf-c-select__toggle:before {
-  border-top: var(--pf-c-select__toggle--before--BorderTopWidth) solid var(--pf-c-select__toggle--before--BorderTopColor);
-  border-right: var(--pf-c-select__toggle--before--BorderRightWidth) solid var(--pf-c-select__toggle--before--BorderRightColor);
-  border-bottom: var(--pf-c-select__toggle--before--BorderBottomWidth) solid var(--pf-c-select__toggle--before--BorderBottomColor);
-  border-left: var(--pf-c-select__toggle--before--BorderLeftWidth) solid var(--pf-c-select__toggle--before--BorderLeftColor);
+  border-top: 1px solid var(--pf-c-select__toggle--before--BorderTopColor);
+  border-right: 1px solid var(--pf-c-select__toggle--before--BorderRightColor);
+  border-bottom: 1px solid var(--pf-c-select__toggle--before--BorderBottomColor);
+  border-left: 1px solid var(--pf-c-select__toggle--before--BorderLeftColor);
 }
