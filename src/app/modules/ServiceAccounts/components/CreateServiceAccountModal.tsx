@@ -150,7 +150,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   };
 
   const createServiceAccount = async () => {
-    let isValid = validateCreateForm();
+    const isValid = validateCreateForm();
     if (!isValid) {
       setIsFormValid(false);
       return;

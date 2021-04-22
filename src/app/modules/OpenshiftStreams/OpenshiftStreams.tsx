@@ -487,7 +487,7 @@ const OpenshiftStreams = ({
     if (isMaxCapacityReached) {
       return (
         <Tooltip content={content}>
-          <Label icon={<BanIcon />} className="pf-u-ml-md" tabIndex={0}>
+          <Label icon={<BanIcon />} tabIndex={0}>
             No instances available
           </Label>
         </Tooltip>
@@ -495,7 +495,7 @@ const OpenshiftStreams = ({
     } else {
       return (
         <Tooltip content={content}>
-          <Label color="green" icon={<CheckIcon />} className="pf-u-ml-md" tabIndex={0}>
+          <Label color="green" icon={<CheckIcon />} tabIndex={0}>
             Instances available
           </Label>
         </Tooltip>

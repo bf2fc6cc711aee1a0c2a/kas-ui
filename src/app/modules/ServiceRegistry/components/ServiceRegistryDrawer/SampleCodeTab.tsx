@@ -19,7 +19,7 @@ export const SampleCodeTab = () => {
           <Text component={TextVariants.small}>{t('serviceRegistry.tab_sample_code_title_info')}</Text>
         </TextContent>
         {editors?.map(({ type, code }) => (
-          <div className="pf-c-code-editor pf-m-read-only">
+          <div className="pf-c-code-editor pf-m-read-only" key={type}>
             <div className="pf-c-code-editor__header pf-u-pt-lg">
               <div className="pf-c-code-editor__controls">
                 <Button variant="control" aria-label="Action">

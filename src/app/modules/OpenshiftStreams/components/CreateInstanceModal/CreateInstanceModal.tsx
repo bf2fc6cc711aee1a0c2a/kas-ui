@@ -159,7 +159,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   };
 
   const onCreateInstance = async () => {
-    let isValid = validateCreateForm();
+    const isValid = validateCreateForm();
 
     const accessToken = await authContext?.getToken();
     if (!isValid) {
@@ -392,7 +392,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
         <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
           <DrawerPanelContentInfo />
         </FlexItem>
-      </Flex>   
+      </Flex>
     </MASCreateModal>
   );
 };

@@ -18,7 +18,7 @@ import {
   ButtonVariant,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
+import { MASToolbar, ToolbarItemProps } from '@app/common';
 
 export type ServiceAccountsToolbarProps = {
   filterSelected?: string;
@@ -170,7 +170,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
-    let newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
     const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
     let filterChip: string | undefined = chip.toString();
