@@ -118,10 +118,10 @@ const OpenshiftStreams = ({
   useEffect(() => {
     if (isMobileTablet()) {
       if (localStorage) {
-        const count = localStorage.getItem("openSessions") || 0;
+        const count = localStorage.getItem('openSessions') || 0;
         const newCount = parseInt(count) + 1;
         if (count < 1) {
-          localStorage.setItem("openSessions", newCount);
+          localStorage.setItem('openSessions', newCount);
           addAlert(
             'Mobile experience',
             AlertVariant.warning,
@@ -227,33 +227,48 @@ const OpenshiftStreams = ({
         });
         await apisService.listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
           const kafkaInstances = res.data;
-          const kafkaInstanceItems = kafkaInstances?.items;
+          const kafkaItems = kafkaInstances?.items;
           setKafkaInstancesList(kafkaInstances);
-          setKafkaInstanceItems(kafkaInstanceItems);
+          setKafkaInstanceItems(kafkaItems);
           if (kafkaInstancesList?.total !== undefined && kafkaInstancesList.total > expectedTotal) {
             setExpectedTotal(kafkaInstancesList.total);
           }
-          if ( kafkaInstanceItems?.length === 0) {
-            setIsDisplayKafkaEmptyState(true);
-          }
           setKafkaDataLoaded(true);
         });
-        // Check to see if at least 1 kafka is present
-        if (!kafkaInstanceItems || kafkaInstanceItems?.length === 0) {
-          await apisService.listKafkas('1', '1').then((res) => {
-            const kafkaItemsLength = res?.data?.items?.length;
-            if (!kafkaItemsLength || kafkaItemsLength < 1) {
-              setIsDisplayKafkaEmptyState(true);
-            } else {
-              setIsDisplayKafkaEmptyState(false);
-            }
-          });
-        }
       } catch (error) {
         handleServerError(error);
       }
     }
   };
+
+  const fetchSingleKafka = async () => {
+    const accessToken = await authContext?.getToken();
+    if (accessToken && isVisible) {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+
+        await apisService.listKafkas('1', '1').then((res) => {
+          const kafkaItemsLength = res?.data?.items?.length;
+          if (!kafkaItemsLength || kafkaItemsLength < 1) {
+            setIsDisplayKafkaEmptyState(true);
+          } else {
+            setIsDisplayKafkaEmptyState(false);
+          }
+        });
+      } catch (error) {
+        handleServerError(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!kafkaInstanceItems || kafkaInstanceItems?.length <= 1) {
+      fetchSingleKafka();
+    }
+  }, [kafkaInstanceItems]);
 
   /**
    * Todo:remove after summit
@@ -552,7 +567,7 @@ const OpenshiftStreams = ({
           <CreateInstanceModal />
         </PageSection>
       );
-    } else if (kafkaInstanceItems && !isDisplayKafkaEmptyState) {
+    } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
       return (
         <PageSection
           className="mk--main-page__page-section--table"
@@ -569,7 +584,6 @@ const OpenshiftStreams = ({
             getConnectToRoutePath={getConnectToRoutePath}
             refresh={refreshKafkas}
             kafkaDataLoaded={kafkaDataLoaded}
-            setIsDisplayKafkaEmptyState={setIsDisplayKafkaEmptyState}
             onDelete={onDelete}
             page={page}
             perPage={perPage}
