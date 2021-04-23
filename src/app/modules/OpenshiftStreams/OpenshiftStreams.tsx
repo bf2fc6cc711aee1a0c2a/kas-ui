@@ -93,6 +93,7 @@ const OpenshiftStreams = ({
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
+  const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
 
   const updateSelectedKafkaInstance = () => {
     if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {
@@ -234,9 +235,11 @@ const OpenshiftStreams = ({
           if (kafkaInstancesList?.total !== undefined && kafkaInstancesList.total > expectedTotal) {
             setExpectedTotal(kafkaInstancesList.total);
           }
-          // if ( kafkaInstanceItems?.length === 0) {
-          //   setIsDisplayKafkaEmptyState(true);
-          // }
+          console.log('what is waitingForDelete' + waitingForDelete);
+    
+          if (waitingForDelete && kafkaInstanceItems?.length === 0) {
+            setIsDisplayKafkaEmptyState(true);
+          }
           setKafkaDataLoaded(true);
         });
         // Check to see if at least 1 kafka is present
@@ -571,6 +574,7 @@ const OpenshiftStreams = ({
             refresh={refreshKafkas}
             kafkaDataLoaded={kafkaDataLoaded}
             setIsDisplayKafkaEmptyState={setIsDisplayKafkaEmptyState}
+            setWaitingForDelete={setWaitingForDelete}
             onDelete={onDelete}
             page={page}
             perPage={perPage}
