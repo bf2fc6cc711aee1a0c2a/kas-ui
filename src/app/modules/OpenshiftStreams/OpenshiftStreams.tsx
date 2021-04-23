@@ -252,8 +252,8 @@ const OpenshiftStreams = ({
               setIsDisplayKafkaEmptyState(false);
             }
           });
+          setWaitingForDelete(false);
         }
-        setWaitingForDelete(false);
       } catch (error) {
         handleServerError(error);
       }
