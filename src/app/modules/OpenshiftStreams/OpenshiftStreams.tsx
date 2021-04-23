@@ -253,6 +253,7 @@ const OpenshiftStreams = ({
             }
           });
         }
+        setWaitingForDelete(false);
       } catch (error) {
         handleServerError(error);
       }
