@@ -18,6 +18,8 @@ import {
   EmptyStateVariant,
   TitleSizes,
   Label,
+  Modal,
+  ModalVariant
 } from '@patternfly/react-core';
 import {
   StreamsTableView,
@@ -90,6 +92,7 @@ const OpenshiftStreams = ({
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
+  const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
 
   const updateSelectedKafkaInstance = () => {
     if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {
@@ -122,11 +125,15 @@ const OpenshiftStreams = ({
         const newCount = parseInt(count) + 1;
         if (count < 1) {
           localStorage.setItem("openSessions", newCount);
-          addAlert('Mobile experience', AlertVariant.warning, "The mobile experience isn't fully optimized yet, so some items might not appear correctly.");
+          setIsMobileModalOpen(true);
         }
       }
     }
   }, []);
+
+  const handleMobileModal = () => {
+    setIsMobileModalOpen(!isMobileModalOpen);
+  }
 
   const fetchKafkaServiceStatus = async () => {
     const accessToken = await authContext?.getToken();
@@ -627,6 +634,19 @@ const OpenshiftStreams = ({
               {renderStreamsTable()}
             </main>
           </InstanceDrawer>
+          <Modal
+            variant={ModalVariant.small}
+            title="Mobile experience"
+            isOpen={isMobileModalOpen}
+            onClose={() => handleMobileModal()}
+            actions={[
+              <Button key="confirm" variant="primary" onClick={() => handleMobileModal()}>
+                Ok
+              </Button>
+            ]}
+          >
+            The mobile experience isn't fully optimized yet, so some items might not appear correctly.
+          </Modal>
         </CreateInstanceModalProvider>
       </AlertProvider>
     </>
