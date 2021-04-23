@@ -122,13 +122,7 @@ const OpenshiftStreams = ({
         const newCount = parseInt(count) + 1;
         if (count < 1) {
           localStorage.setItem("openSessions", newCount);
-          addAlert(
-            'Mobile experience',
-            AlertVariant.warning,
-            "The mobile experience isn't fully optimized yet, so some items might not appear correctly.",
-            '',
-            true
-          );
+          addAlert('Mobile experience', AlertVariant.warning, "The mobile experience isn't fully optimized yet, so some items might not appear correctly.");
         }
       }
     }
