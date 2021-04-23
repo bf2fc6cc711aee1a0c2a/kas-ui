@@ -44,7 +44,7 @@ export type StreamsTableProps = StreamsToolbarProps & {
   onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
   getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
   mainToggle: boolean;
-  refresh: () => void;
+  refresh: (arg0?: boolean) => void;
   kafkaDataLoaded: boolean;
   onDelete: () => void;
   expectedTotal: number;
@@ -53,6 +53,7 @@ export type StreamsTableProps = StreamsToolbarProps & {
   isDrawerOpen?: boolean;
   loggedInUser: string | undefined;
   isMaxCapacityReached?: boolean | undefined;
+  setWaitingForDelete: () => void;
 };
 
 type ConfigDetail = {
@@ -122,6 +123,7 @@ const StreamsTableView = ({
   isDisabledCreateButton,
   loggedInUser,
   labelWithTooltip,
+  setWaitingForDelete
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -431,6 +433,7 @@ const StreamsTableView = ({
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         setActiveRow(undefined);
+        setWaitingForDelete(true);
         refresh();
     });
     } catch (error) {
