@@ -235,7 +235,6 @@ const OpenshiftStreams = ({
           if (kafkaInstancesList?.total !== undefined && kafkaInstancesList.total > expectedTotal) {
             setExpectedTotal(kafkaInstancesList.total);
           }
-          console.log('what is waitingForDelete' + waitingForDelete);
     
           if (waitingForDelete && filteredValue.length < 1 && kafkaInstanceItems?.length === 0) {
             setIsDisplayKafkaEmptyState(true);
