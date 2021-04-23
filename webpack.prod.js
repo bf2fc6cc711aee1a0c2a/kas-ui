@@ -12,7 +12,7 @@ module.exports = merge(common('production', { mode: "production" }), {
       new TerserJSPlugin({}),
       new OptimizeCSSAssetsPlugin({
         cssProcessorPluginOptions: {
-         preset: ['default', { mergeLonghand: false }]
+         preset: ['default', { mergeLonghand: false }] // Fixes bug in PF Select component https://github.com/patternfly/patternfly-react/issues/5650#issuecomment-822667560  
        }
      })
     ],
