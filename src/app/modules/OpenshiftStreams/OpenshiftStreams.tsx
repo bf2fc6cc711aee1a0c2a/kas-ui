@@ -237,8 +237,9 @@ const OpenshiftStreams = ({
           }
           console.log('what is waitingForDelete' + waitingForDelete);
     
-          if (waitingForDelete && kafkaInstanceItems?.length === 0) {
+          if (waitingForDelete && filteredValue.length < 1 && kafkaInstanceItems?.length === 0) {
             setIsDisplayKafkaEmptyState(true);
+            setWaitingForDelete(false);
           }
           setKafkaDataLoaded(true);
         });
@@ -252,7 +253,6 @@ const OpenshiftStreams = ({
               setIsDisplayKafkaEmptyState(false);
             }
           });
-          setWaitingForDelete(false);
         }
       } catch (error) {
         handleServerError(error);
