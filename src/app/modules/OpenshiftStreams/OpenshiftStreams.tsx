@@ -234,9 +234,9 @@ const OpenshiftStreams = ({
           if (kafkaInstancesList?.total !== undefined && kafkaInstancesList.total > expectedTotal) {
             setExpectedTotal(kafkaInstancesList.total);
           }
-          if ( kafkaInstanceItems?.length === 0) {
-            setIsDisplayKafkaEmptyState(true);
-          }
+          // if ( kafkaInstanceItems?.length === 0) {
+          //   setIsDisplayKafkaEmptyState(true);
+          // }
           setKafkaDataLoaded(true);
         });
         // Check to see if at least 1 kafka is present
