@@ -255,7 +255,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
-    let newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
     const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
     let filterChip: string | undefined = chip.toString();
