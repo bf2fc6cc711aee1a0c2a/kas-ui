@@ -98,7 +98,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
                 height={300}
                 padding={{
                   bottom: 80,
-                  left: 60,
+                  left: 80,
                   right: 0,
                   top: 25
                 }}

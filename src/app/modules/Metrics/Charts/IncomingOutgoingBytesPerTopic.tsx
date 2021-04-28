@@ -75,18 +75,20 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
     let currentByteSize = "B";
     data.forEach(value => {
       const byteString = byteSize(value.bytes).unit;
-      if(byteString === "KB") {
-        if (currentByteSize === 'B') {
+      console.log('what is bytestring incomeoutg' + byteString);
+      if(byteString === "kB") {
+        if (currentByteSize === "B") {
           currentByteSize = "KB";
         }
       }
       if(byteString === "MB") {
-        if (currentByteSize === 'B' || currentByteSize === 'KB')
-        currentByteSize = "MB"
+        if (currentByteSize === 'B' || currentByteSize === 'kB') {
+          currentByteSize = "MB";
+        }
       }
       if(byteString === "GB") {
-        if (currentByteSize === 'B' || currentByteSize === 'KB' || currentByteSize === 'MB') {
-          currentByteSize = "GB"
+        if (currentByteSize === 'B' || currentByteSize === 'kB' || currentByteSize === 'MB') {
+          currentByteSize = "GB";
         }
       }
     })
@@ -94,7 +96,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
   }
 
   const convertToSpecifiedByte = (bytes, largestByteSize) => {
-    console.log('what is bytes type' + typeof(bytes));
+    console.log('what is bytes type' + bytes + largestByteSize);
     if(largestByteSize === 'B') {
       return Math.round(bytes * 10) / 10
     }

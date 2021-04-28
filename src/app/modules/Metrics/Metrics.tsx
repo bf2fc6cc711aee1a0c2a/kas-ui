@@ -12,7 +12,7 @@ import {
 
 export const Metrics = () => {
 
-  const kafkaID: string = '1rief1YRUt06JdUM4aR5DrMiwGs';
+  const kafkaID: string = '1roSHSqyJhtass3R3WvjAxb8q5w';
   const kafkaID2: string = '1rknQ7vbgO5LVkkWsQQU4v4Pjg1';
   const kafkaID3: string = '1rkDflm4QfioB8vUur2a8Zzu2cU';
 

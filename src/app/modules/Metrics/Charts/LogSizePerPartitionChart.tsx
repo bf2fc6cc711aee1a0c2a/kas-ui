@@ -74,17 +74,18 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
     let currentByteSize = "B";
     data.forEach(value => {
       const byteString = byteSize(value.bytes).unit;
-      if(byteString === "KB") {
+      console.log('what is bytestring LOG SIZE' + byteString);
+      if(byteString === "kB") {
         if (currentByteSize === 'B') {
           currentByteSize = "KB";
         }
       }
       if(byteString === "MB") {
-        if (currentByteSize === 'B' || currentByteSize === 'KB')
+        if (currentByteSize === 'B' || currentByteSize === 'kB')
         currentByteSize = "MB"
       }
       if(byteString === "GB") {
-        if (currentByteSize === 'B' || currentByteSize === 'KB' || currentByteSize === 'MB') {
+        if (currentByteSize === 'B' || currentByteSize === 'kB' || currentByteSize === 'MB') {
           currentByteSize = "GB"
         }
       }
@@ -216,7 +217,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
             height={300}
             padding={{
               bottom: 80,
-              left: 70,
+              left: 80,
               right: 0,
               top: 25
             }}

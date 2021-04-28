@@ -208,7 +208,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                 height={300}
                 padding={{
                   bottom: 80, // Adjusted to accomodate legend
-                  left: 60,
+                  left: 80,
                   right: 0,
                   top: 25
                 }}
