@@ -1,18 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { DefaultApi } from 'src/openapi';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { isServiceApiError } from '@app/utils';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
+import React from 'react';
 import {
   AvailableDiskSpaceChart,
   LogSizePerPartitionChart,
-  IncomingBytesPerTopicChart,
-  OutgoingBytesPerTopicChart,
+  IncomingOutgoingBytesPerTopic
 } from '@app/modules/Metrics/Charts';
 import { 
-
   Grid,
   GridItem,
   PageSection
@@ -20,7 +12,9 @@ import {
 
 export const Metrics = () => {
 
-  const kafkaID: string = '1rGPabXMVG7cSONKOdPk0eAY2mZ';
+  const kafkaID: string = '1rief1YRUt06JdUM4aR5DrMiwGs';
+  const kafkaID2: string = '1rknQ7vbgO5LVkkWsQQU4v4Pjg1';
+  const kafkaID3: string = '1rkDflm4QfioB8vUur2a8Zzu2cU';
 
   return (
     <PageSection>
@@ -28,12 +22,7 @@ export const Metrics = () => {
         <GridItem>
           <AvailableDiskSpaceChart kafkaID={kafkaID}/>
         </GridItem>
-        <GridItem span={6}>
-          <IncomingBytesPerTopicChart kafkaID={kafkaID}/>
-        </GridItem>
-        <GridItem span={6}>
-          <OutgoingBytesPerTopicChart kafkaID={kafkaID}/>
-        </GridItem>
+        <IncomingOutgoingBytesPerTopic kafkaID={kafkaID}/>
         <GridItem>
           <LogSizePerPartitionChart kafkaID={kafkaID}/>
         </GridItem>

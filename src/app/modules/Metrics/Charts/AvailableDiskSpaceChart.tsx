@@ -30,37 +30,37 @@ import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_
 import { format } from 'date-fns';
 import byteSize from 'byte-size';
 
-export type Broker = {
+type Broker = {
   name: string
   data: {
     timestamp: number
-    usedSpaceAvg: number[]
+    bytes: number[]
   }[]
 }
 
-export type ChartData = {
+type ChartData = {
   color: string
   softLimitColor: string
   area: BrokerChartData[]
   softLimit: BrokerChartData[]
 }
 
-export type BrokerChartData = {
+type BrokerChartData = {
   name: string
   x: string
   y: number 
 }
 
-export type LegendData = {
+type LegendData = {
   name: string
   symbol: {}
 }
 
-export type AvailableDiskSpaceChartProps = {
+type AvailableDiskSpaceChartProps = {
   brokers: Broker[]
 }
 
-export type KafkaInstanceProps = {
+type KafkaInstanceProps = {
   kafkaID: string
 }
 
@@ -74,6 +74,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
   const [width, setWidth] = useState();
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
+  const [largestByteSize, setLargestByteSize] = useState();
   const itemsPerRow = 4;
   const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
   const softLimitColor = chart_color_black_500.value;
@@ -118,13 +119,13 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                 const usedSpaceInBytes = [hardLimit - value.Value];
 
                 if(index > 0) {
-                  let newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(usedSpaceInBytes);
-                  avgBroker.data[indexJ].usedSpaceAvg = newArray;
+                  let newArray = avgBroker.data[indexJ].bytes.concat(usedSpaceInBytes);
+                  avgBroker.data[indexJ].bytes = newArray;
                 }
                 else {
                   avgBroker.data.push({
                     timestamp: value.Timestamp,
-                    usedSpaceAvg: usedSpaceInBytes,
+                    bytes: usedSpaceInBytes,
                   });
                 }
             });
@@ -161,21 +162,23 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
     let chartData: Array<ChartData> = [];
     let area: Array<BrokerChartData> = [];
     let softLimit: Array<BrokerChartData> = [];
-
+    let largestByteSize: string = "";
     const average = (nums) => {
       return nums.reduce((a, b) => (a + b)) / nums.length;
     }
     avgBroker.data.map(value => {
       const date = new Date(value.timestamp);
       const time = format(date, 'hh:mm');
-      const usedSpace = byteSize(average(value.usedSpaceAvg));
-      console.log('what is usedSpace' + usedSpace);
-      area.push({ name: avgBroker.name, x: time, y: parseInt(usedSpace, 10)});
+      const bytes = byteSize(average(value.bytes));
+      largestByteSize = bytes.unit;
+      console.log('what is usedSpace' + parseInt(bytes.value));
+      area.push({ name: avgBroker.name, x: time, y: parseInt(bytes.value)});
       softLimit.push({ name: 'Soft limit', x: time, y: 20 });
     });
     chartData.push({ color, softLimitColor, area, softLimit });
     setLegend(legendData);
     setChartData(chartData);
+    setLargestByteSize(largestByteSize);
   }
 
     return (
@@ -185,7 +188,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
         </CardTitle>
         <CardBody>
           <div ref={containerRef}>
-            {chartData && legend && width ? (
+            {chartData && legend && width && largestByteSize ? (
               <Chart
                 ariaDesc={t('metrics.available_disk_space')}
                 ariaTitle="Disk Space"
@@ -216,7 +219,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                 <ChartAxis label={'Time'} tickCount={5} />
                 <ChartAxis
                   dependentAxis
-                  tickFormat={(t) => `${Math.round(t)} Gi`}
+                  tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
                 />
                   <ChartGroup>
                     {chartData.map((value, index) => (
