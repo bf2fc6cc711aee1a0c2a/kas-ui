@@ -133,7 +133,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_in_total', 'kafka_server_brokertopicmetrics_bytes_out_total']);
-
         let incomingBytesTopicArray: Topic[] = [];
         let outgoingBytesTopicArray: Topic[] = [];
         data.data.items?.forEach((item, i) => {
@@ -202,7 +201,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
     let maxValuesInTopics: Array<number> = [];
     topicArray.map((topic, index) => {
       const color = type === 'incoming' ? incomingBytesColors[index] : outgoingBytesColors[index];
-
       legendData.push({
         name: topic.name,
         symbol: {
@@ -212,6 +210,24 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
       largestByteSize = getLargestByteSize(topic.data);
       maxValuesInTopics.push(getMaxValueOfArray(topic.data));
       let line: Array<TopicChartData> = [];
+
+      const getCurrentLengthOfData = () => {
+        let timestampDiff = topic.data[topic.data.length - 1].timestamp - topic.data[0].timestamp;
+        const minutes = timestampDiff / 1000 / 60;
+        return minutes;
+      }
+      let lengthOfData = (6 * 60) - getCurrentLengthOfData();
+      let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
+    
+      if (lengthOfData < 360) {
+        for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
+          const newTimestamp = (topic.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
+          const date = new Date(newTimestamp);
+          const time = format(date, 'hh:mm');
+          line.push({ name: topic.name, x: time, y: 0})
+        }
+      }
+
       topic.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');

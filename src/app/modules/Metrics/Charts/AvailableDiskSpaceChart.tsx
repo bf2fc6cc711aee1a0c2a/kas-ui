@@ -93,6 +93,9 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes']);
+        
+        console.log('what is Data Availabel Disk' + JSON.stringify(data));
+        
         const avgBroker = {
           name: `Available disk space`,
           data: []
@@ -158,22 +161,40 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
       {name: 'Limit', symbol: { fill: chart_color_black_500.value, type: 'threshold'}},
       {name: avgBroker.name, symbol: { fill: colors[0]}}
     ];
+    const average = (nums) => {
+      return nums.reduce((a, b) => (a + b)) / nums.length;
+    }
     const color = colors[0];
     let chartData: Array<ChartData> = [];
     let area: Array<BrokerChartData> = [];
     let softLimit: Array<BrokerChartData> = [];
     let largestByteSize: string = "";
-    const average = (nums) => {
-      return nums.reduce((a, b) => (a + b)) / nums.length;
+
+    const getCurrentLengthOfData = () => {
+      let timestampDiff = avgBroker.data[avgBroker.data.length - 1].timestamp - avgBroker.data[0].timestamp;
+      const minutes = timestampDiff / 1000 / 60;
+      return minutes;
     }
+    let lengthOfData = (6 * 60) - getCurrentLengthOfData();
+    let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
+
+    if (lengthOfData < 360) {
+      for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
+        const newTimestamp = (avgBroker.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
+        const date = new Date(newTimestamp);
+        const time = format(date, 'hh:mm');
+        area.push({ name: avgBroker.name, x: time, y: 0})
+        softLimit.push({ name: 'Limit', x: time, y: 20 });
+      }
+    }
+
     avgBroker.data.map(value => {
       const date = new Date(value.timestamp);
       const time = format(date, 'hh:mm');
       const bytes = byteSize(average(value.bytes));
       largestByteSize = bytes.unit;
-      console.log('what is usedSpace' + parseInt(bytes.value));
       area.push({ name: avgBroker.name, x: time, y: parseInt(bytes.value)});
-      softLimit.push({ name: 'Soft limit', x: time, y: 20 });
+      softLimit.push({ name: 'Limit', x: time, y: 20 });
     });
     chartData.push({ color, softLimitColor, area, softLimit });
     setLegend(legendData);
@@ -209,7 +230,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                 padding={{
                   bottom: 80, // Adjusted to accomodate legend
                   left: 80,
-                  right: 0,
+                  right: 60,
                   top: 25
                 }}
                 themeColor={ChartThemeColor.multiUnordered}

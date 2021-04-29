@@ -99,7 +99,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
                 padding={{
                   bottom: 80,
                   left: 80,
-                  right: 0,
+                  right: 30,
                   top: 25
                 }}
                 themeColor={ChartThemeColor.multiUnordered}

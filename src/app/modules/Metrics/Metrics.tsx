@@ -5,6 +5,7 @@ import {
   IncomingOutgoingBytesPerTopic
 } from '@app/modules/Metrics/Charts';
 import { 
+  Button,
   Grid,
   GridItem,
   PageSection
@@ -12,9 +13,9 @@ import {
 
 export const Metrics = () => {
 
-  const kafkaID: string = '1roSHSqyJhtass3R3WvjAxb8q5w';
-  const kafkaID2: string = '1rknQ7vbgO5LVkkWsQQU4v4Pjg1';
-  const kafkaID3: string = '1rkDflm4QfioB8vUur2a8Zzu2cU';
+
+  const kafkaID: string = '1rr7DIt9MIqbpSgll0slLPuxuo0'; // Christie
+  const kafkaID2: string = '1roSHSqyJhtass3R3WvjAxb8q5w'; // Jenn
 
   return (
     <PageSection>

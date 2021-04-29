@@ -175,13 +175,28 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
       let area: Array<PartitionChartData> = [];
 
       largestByteSize = getLargestByteSize(partition.data);
-      console.log('what is largestByte' + largestByteSize);
+
+      const getCurrentLengthOfData = () => {
+        let timestampDiff = partition.data[partition.data.length - 1].timestamp - partition.data[0].timestamp;
+        const minutes = timestampDiff / 1000 / 60;
+        return minutes;
+      }
+      let lengthOfData = (6 * 60) - getCurrentLengthOfData();
+      let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
+    
+      if (lengthOfData < 360) {
+        for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
+          const newTimestamp = (partition.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
+          const date = new Date(newTimestamp);
+          const time = format(date, 'hh:mm');
+          area.push({ name: partition.name, x: time, y: 0})
+        }
+      }
 
       partition.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
         const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
-        console.log('WHAT IS logSize' + bytes)
         area.push({ name: value.name, x: time, y: bytes});
       });
       chartData.push({ color, area });
@@ -218,7 +233,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
             padding={{
               bottom: 80,
               left: 80,
-              right: 0,
+              right: 30,
               top: 25
             }}
             themeColor={ChartThemeColor.multiUnordered}
