@@ -85,20 +85,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
     );
   };
 
-  const alertMessage = () => {
-    if (isKafkaPending) {
-      return (
-        <Alert
-          isInline
-          variant={AlertVariant.info}
-          title={t('kafka_instance_not_ready_inline_message')}
-          className="pf-u-mt-sm"
-        />
-      );
-    }
-    return <></>;
-  };
-
   return (
     <MASDrawer
       isExpanded={isExpanded}
@@ -110,7 +96,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
         title: { value: name, headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}
-      inlineAlertMessage={alertMessage()}
       notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
     >
       {children}

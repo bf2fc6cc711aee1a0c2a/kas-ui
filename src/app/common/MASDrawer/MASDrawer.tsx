@@ -37,7 +37,6 @@ export type MASDrawerProps = DrawerProps & {
   };
   ['data-ouia-app-id']?: string;
   notRequiredDrawerContentBackground?: boolean | undefined;
-  inlineAlertMessage?: React.ReactNode;
 };
 
 export const MASDrawer: React.FC<MASDrawerProps> = ({
@@ -51,7 +50,6 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
   onExpand,
   notRequiredDrawerContentBackground,
   'data-ouia-app-id': dataOuiaAppId,
-  inlineAlertMessage,
 }: MASDrawerProps) => {
   const { widths, ...restDrawerPanelContentProps } = drawerPanelContentProps || {};
   const { text, title } = drawerHeaderProps || {};
@@ -83,10 +81,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
               <DrawerCloseButton onClick={onClose} />
             </DrawerActions>
           </DrawerHead>
-          <DrawerPanelBody>
-            {inlineAlertMessage}
-            {panelBodyContent}
-          </DrawerPanelBody>
+          <DrawerPanelBody>{panelBodyContent}</DrawerPanelBody>
         </>
       )}
     </DrawerPanelContent>

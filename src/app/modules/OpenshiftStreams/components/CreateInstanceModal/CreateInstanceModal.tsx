@@ -379,20 +379,13 @@ const CreateInstanceModal: React.FunctionComponent = () => {
       dataTestIdSubmit="modalCreateKafka-buttonSubmit"
       dataTestIdCancel="modalCreateKafka-buttonCancel"
     >
-      <Alert
-        className="pf-u-mb-md"
-        variant="info"
-        title="Your preview instance will expire after 48 hours."
-        aria-live="polite"
-        isInline
-      />
       <Flex direction={{ default: 'column', lg: 'row' }}>
         <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
         <Divider isVertical />
         <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
           <DrawerPanelContentInfo />
         </FlexItem>
-      </Flex>   
+      </Flex>
     </MASCreateModal>
   );
 };

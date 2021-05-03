@@ -52,7 +52,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   setOrderBy: (order: string) => void;
   isDrawerOpen?: boolean;
   loggedInUser: string | undefined;
-  isMaxCapacityReached?: boolean | undefined;
   setWaitingForDelete: () => void;
 };
 
@@ -65,26 +64,18 @@ type ConfigDetail = {
 export const getDeleteInstanceModalConfig = (
   t: TFunction,
   status: string | undefined,
-  instanceName: string | undefined,
-  isMaxCapacityReached?: boolean | undefined
+  instanceName: string | undefined
 ): ConfigDetail => {
   const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
     description: '',
   };
-  /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
-   */
-  const additionalMessage = isMaxCapacityReached
-    ? ' You might not be able to create a new instance because all of them are currently provisioned by other users.'
-    : '';
 
   if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_complete', { instanceName }) + additionalMessage;
+    config.description = t('delete_instance_status_complete', { instanceName });
   } else if (
     status === InstanceStatus.ACCEPTED ||
     status === InstanceStatus.PROVISIONING ||
@@ -92,7 +83,7 @@ export const getDeleteInstanceModalConfig = (
   ) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName }) + additionalMessage;
+    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
   return config;
 };
@@ -118,12 +109,8 @@ const StreamsTableView = ({
   orderBy,
   setOrderBy,
   isDrawerOpen,
-  isMaxCapacityReached,
-  buttonTooltipContent,
-  isDisabledCreateButton,
   loggedInUser,
-  labelWithTooltip,
-  setWaitingForDelete
+  setWaitingForDelete,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -435,7 +422,7 @@ const StreamsTableView = ({
         setActiveRow(undefined);
         setWaitingForDelete(true);
         refresh();
-    });
+      });
     } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
@@ -453,8 +440,7 @@ const StreamsTableView = ({
   const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
     t,
     selectedInstance?.status,
-    selectedInstance?.name,
-    isMaxCapacityReached
+    selectedInstance?.name
   );
 
   const getParameterForSortIndex = (index: number) => {
@@ -539,9 +525,6 @@ const StreamsTableView = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
-        isDisabledCreateButton={isDisabledCreateButton}
-        buttonTooltipContent={buttonTooltipContent}
-        labelWithTooltip={labelWithTooltip}
       />
       <MASTable
         tableProps={{

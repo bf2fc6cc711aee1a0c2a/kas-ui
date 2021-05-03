@@ -22,9 +22,7 @@ import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
 import './StreamsToolbar.css';
 import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
-/**
- * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
- */
+
 export type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
@@ -34,9 +32,6 @@ export type StreamsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  isDisabledCreateButton?: boolean;
-  buttonTooltipContent?: string | undefined;
-  labelWithTooltip?: React.ReactNode;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -47,9 +42,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
-  isDisabledCreateButton,
-  buttonTooltipContent,
-  labelWithTooltip,
 }) => {
   const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
   const { t } = useTranslation();
@@ -539,21 +531,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   );
 
   const createButton = () => {
-    if (isDisabledCreateButton) {
-      return (
-        <Tooltip content={buttonTooltipContent}>
-          <Button
-            variant="primary"
-            onClick={() => setIsModalOpen(!isModalOpen)}
-            data-testid={'tableStreams-buttonCreateKafka'}
-            isAriaDisabled={isDisabledCreateButton}
-          >
-            {t('create_kafka_instance')}
-          </Button>
-        </Tooltip>
-      );
-    }
-
     return (
       <Button
         variant="primary"
@@ -567,19 +544,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const toolbarItems: ToolbarItemProps[] = [
     {
-      item: (
-        <>
-          {createButton()}
-        </>
-      )
+      item: <>{createButton()}</>,
     },
-    {
-      item: (
-        <>
-          {labelWithTooltip}
-        </>
-      )
-    }
   ];
 
   if (total && total > 0 && toolbarItems.length > 1) {
