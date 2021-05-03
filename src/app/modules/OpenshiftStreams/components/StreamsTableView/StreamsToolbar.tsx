@@ -288,12 +288,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     let maxFilterCount = 0;
     filteredValue?.forEach((filter: any) => {
       const { filterValue, filterKey } = filter;
-      const status =
-        filterKey === 'status' &&
-        filterValue?.filter(
-          ({ value }) => value === InstanceStatus.PROVISIONING || value === InstanceStatus.DEPROVISION
-        );
-      if (status?.length > 0) {
+      const provisioningStatus =
+        filterKey === 'status' && filterValue?.filter(({ value }) => value === InstanceStatus.PROVISIONING);
+      const deprovisionStatus =
+        filterKey === 'status' && filterValue?.filter(({ value }) => value === InstanceStatus.DEPROVISION);
+
+      if (provisioningStatus?.length > 0 && deprovisionStatus?.length > 0) {
+        maxFilterCount += filterValue?.length + 2;
+      } else if (provisioningStatus?.length > 0 || deprovisionStatus?.length > 0) {
         maxFilterCount += filterValue?.length + 1;
       } else {
         maxFilterCount += filterValue?.length;
