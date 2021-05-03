@@ -396,6 +396,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               isOpen={isCloudProviderFilterExpanded}
               onSelect={onCloudProviderFilterSelect}
               placeholderText={t('filter_by_cloud_provider')}
+              className="select-custom-width"
             >
               {cloudProviderFilterOptions.map((option, index) => (
                 <SelectOption
@@ -435,6 +436,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               isOpen={isRegionFilterExpanded}
               onSelect={onRegionFilterSelect}
               placeholderText={t('filter_by_region')}
+              className="select-custom-width"
             >
               {regionFilterOptions.map((option, index) => (
                 <SelectOption
@@ -511,6 +513,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               isOpen={isStatusFilterExpanded}
               onSelect={onStatusFilterSelect}
               placeholderText={t('filter_by_status')}
+              className="select-custom-width"
             >
               {statusFilterOptions.map((option, index) => (
                 <SelectOption
