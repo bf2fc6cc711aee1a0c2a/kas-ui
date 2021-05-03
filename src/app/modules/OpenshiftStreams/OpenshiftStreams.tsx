@@ -35,7 +35,7 @@ import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../..
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError, ErrorCodes, isMobileTablet } from '@app/utils';
+import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
@@ -190,8 +190,11 @@ const OpenshiftStreams = ({
           filterValue
             .map((val) => {
               const value = val.value.trim();
-              if (value === 'provisioning') {
-                return `${filterKey} = preparing or ${filterKey} = provisioning`;
+              if (value === InstanceStatus.PROVISIONING) {
+                return `${filterKey} = ${InstanceStatus.PREPARING} or ${filterKey} = ${InstanceStatus.PROVISIONING}`;
+              }
+              if (value === InstanceStatus.DEPROVISION) {
+                return `${filterKey} = ${InstanceStatus.DEPROVISION} or ${filterKey} = ${InstanceStatus.DELETED}`;
               }
               return value !== '' ? `${filterKey} ${val.isExact === true ? `= ${value}` : `like %${value}%`}` : '';
             })

@@ -19,7 +19,7 @@ import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import './StreamsToolbar.css';
 import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
 /**
@@ -89,7 +89,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   });
 
   const statusFilterOptions = statusOptions
-    .filter((option) => option.value !== 'preparing')
+    .filter((s) => s.value !== InstanceStatus.PREPARING && s.value !== InstanceStatus.DELETED)
     .map((status) => {
       return { label: t(status.value), value: status.value, disabled: false };
     });
@@ -288,8 +288,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     let maxFilterCount = 0;
     filteredValue?.forEach((filter: any) => {
       const { filterValue, filterKey } = filter;
-      const provisioningStatus = filterKey === 'status' && filterValue?.filter(({ value }) => value === 'provisioning');
-      if (provisioningStatus?.length > 0) {
+      const status =
+        filterKey === 'status' &&
+        filterValue?.filter(
+          ({ value }) => value === InstanceStatus.PROVISIONING || value === InstanceStatus.DEPROVISION
+        );
+      if (status?.length > 0) {
         maxFilterCount += filterValue?.length + 1;
       } else {
         maxFilterCount += filterValue?.length;
