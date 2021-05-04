@@ -21,16 +21,8 @@ import {
   Modal,
   ModalVariant,
 } from '@patternfly/react-core';
-import {
-  StreamsTableView,
-  FilterType,
-  CreateInstanceModal,
-  InstanceDrawer,
-  CreateInstanceModalProvider,
-  InstanceDrawerProps,
-  StreamsTableProps,
-} from './components';
-import { AlertProvider, useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
+import { AlertProvider, useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
@@ -76,10 +68,10 @@ const OpenshiftStreams = ({
 
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
+  const { showModal } = useRootModalContext();
   const localStorage = window.localStorage;
 
   // States
-  const [isOpenCreateInstanceModalState, setIsOpenCreateInstanceModalState] = useState(createDialogOpen());
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
   const [kafkas, setKafkas] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
@@ -160,13 +152,19 @@ const OpenshiftStreams = ({
     }
   };
 
-  const setIsOpenCreateInstanceModal = async (open: boolean) => {
+  const handleCreateInstanceModal = async (open: boolean) => {
     if (open) {
       // Callback before opening create dialog
       // The callback can override the new state of opening
       open = await preCreateInstance(open);
     }
-    setIsOpenCreateInstanceModalState(open);
+    open &&
+      showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+        onCreate,
+        cloudProviders,
+        mainToggle,
+        refresh: refreshKafkas,
+      });
   };
 
   const onCloseDrawer = () => {
@@ -311,7 +309,7 @@ const OpenshiftStreams = ({
 
   const fetchCloudProviders = async () => {
     const accessToken = await authContext?.getToken();
-    if (accessToken !== undefined && accessToken !== '') {
+    if (accessToken) {
       try {
         const apisService = new DefaultApi({
           accessToken,
@@ -461,7 +459,7 @@ const OpenshiftStreams = ({
           <Button
             data-testid="emptyStateStreams-buttonCreateKafka"
             variant={ButtonVariant.primary}
-            onClick={() => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState)}
+            onClick={() => handleCreateInstanceModal(true)}
             isAriaDisabled={isDisabledCreateButton}
           >
             {t('create_kafka_instance')}
@@ -474,7 +472,7 @@ const OpenshiftStreams = ({
       <Button
         data-testid="emptyStateStreams-buttonCreateKafka"
         variant={ButtonVariant.primary}
-        onClick={() => setIsOpenCreateInstanceModal(!isOpenCreateInstanceModalState)}
+        onClick={() => handleCreateInstanceModal(true)}
       >
         {t('create_kafka_instance')}
       </Button>
@@ -581,7 +579,6 @@ const OpenshiftStreams = ({
               {createInstanceButton()}
             </MASEmptyState>
           )}
-          <CreateInstanceModal />
         </PageSection>
       );
     } else if (kafkaInstanceItems && !isDisplayKafkaEmptyState) {
@@ -620,6 +617,8 @@ const OpenshiftStreams = ({
             isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
             labelWithTooltip={createInstanceLabel()}
             currentUserkafkas={currentUserKafkas}
+            onCreate={onCreate}
+            cloudProviders={cloudProviders}
           />
         </PageSection>
       );
@@ -630,56 +629,45 @@ const OpenshiftStreams = ({
   return (
     <>
       <AlertProvider>
-        <CreateInstanceModalProvider
-          value={{
-            isModalOpen: isOpenCreateInstanceModalState,
-            setIsModalOpen: setIsOpenCreateInstanceModal,
-            onCreate,
-            cloudProviders,
-            mainToggle,
-            refresh: refreshKafkas,
-          }}
+        <InstanceDrawer
+          mainToggle={mainToggle}
+          isExpanded={selectedInstance != null}
+          activeTab={activeTab}
+          isLoading={instanceDetail === undefined}
+          instanceDetail={instanceDetail}
+          onClose={onCloseDrawer}
+          data-ouia-app-id="controlPlane-streams"
+          getConnectToRoutePath={getConnectToRoutePath}
+          onConnectToRoute={onConnectToRoute}
+          tokenEndPointUrl={tokenEndPointUrl}
+          notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
         >
-          <InstanceDrawer
-            mainToggle={mainToggle}
-            isExpanded={selectedInstance != null}
-            activeTab={activeTab}
-            isLoading={instanceDetail === undefined}
-            instanceDetail={instanceDetail}
-            onClose={onCloseDrawer}
-            data-ouia-app-id="controlPlane-streams"
-            getConnectToRoutePath={getConnectToRoutePath}
-            onConnectToRoute={onConnectToRoute}
-            tokenEndPointUrl={tokenEndPointUrl}
-            notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
-          >
-            <main className="pf-c-page__main">
-              <PageSection variant={PageSectionVariants.light}>
-                <Level>
-                  <LevelItem>
-                    <TextContent>
-                      <Text component="h1">{t('kafka_instances')}</Text>
-                    </TextContent>
-                  </LevelItem>
-                </Level>
-              </PageSection>
-              {renderStreamsTable()}
-            </main>
-          </InstanceDrawer>
-          <Modal
-            variant={ModalVariant.small}
-            title="Mobile experience"
-            isOpen={isMobileModalOpen}
-            onClose={() => handleMobileModal()}
-            actions={[
-              <Button key="confirm" variant="primary" onClick={() => handleMobileModal()}>
-                Ok
-              </Button>,
-            ]}
-          >
-            The mobile experience isn't fully optimized yet, so some items might not appear correctly.
-          </Modal>
-        </CreateInstanceModalProvider>
+          <main className="pf-c-page__main">
+            <PageSection variant={PageSectionVariants.light}>
+              <Level>
+                <LevelItem>
+                  <TextContent>
+                    <Text component="h1">{t('kafka_instances')}</Text>
+                  </TextContent>
+                </LevelItem>
+              </Level>
+            </PageSection>
+            {renderStreamsTable()}
+          </main>
+        </InstanceDrawer>
+        <Modal
+          variant={ModalVariant.small}
+          title="Mobile experience"
+          isOpen={isMobileModalOpen}
+          onClose={() => handleMobileModal()}
+          actions={[
+            <Button key="confirm" variant="primary" onClick={() => handleMobileModal()}>
+              Ok
+            </Button>,
+          ]}
+        >
+          The mobile experience isn't fully optimized yet, so some items might not appear correctly.
+        </Modal>
       </AlertProvider>
     </>
   );

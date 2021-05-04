@@ -1,23 +1,19 @@
 import React from 'react';
-import {
-  Button,
-  Modal,
-  ModalVariant,
-} from '@patternfly/react-core';
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { getModalAppendTo } from '@app/utils/utils';
 
 export type MASCreateModalProps = {
-  isModalOpen: boolean,
-  children?: React.ReactNode,
-  title: string,
-  handleModalToggle: () => void,
-  onCreate: () => void,
-  isFormValid: boolean,
-  isCreationInProgress: boolean,
-  primaryButtonTitle: string,
-  dataTestIdSubmit?: string,
-  dataTestIdCancel?: string
+  isModalOpen: boolean;
+  children?: React.ReactNode;
+  title: string;
+  handleModalToggle: () => void;
+  onCreate: () => void;
+  isFormValid: boolean;
+  isCreationInProgress: boolean;
+  primaryButtonTitle: string;
+  dataTestIdSubmit?: string;
+  dataTestIdCancel?: string;
 };
 
 export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
@@ -30,9 +26,8 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
   isCreationInProgress,
   primaryButtonTitle,
   dataTestIdSubmit,
-  dataTestIdCancel
+  dataTestIdCancel,
 }: MASCreateModalProps) => {
-
   const { t } = useTranslation();
 
   return (
@@ -52,7 +47,7 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
           isDisabled={!isFormValid || isCreationInProgress}
           spinnerAriaValueText={t('submitting_request')}
           isLoading={isCreationInProgress}
-          data-testid={dataTestIdSubmit && dataTestIdSubmit}
+          data-testid={dataTestIdSubmit}
         >
           {primaryButtonTitle}
         </Button>,
@@ -61,7 +56,7 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
         </Button>,
       ]}
     >
-      { children }
+      {children}
     </Modal>
-  )
-}
+  );
+};

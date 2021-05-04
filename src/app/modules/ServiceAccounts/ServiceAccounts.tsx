@@ -22,10 +22,9 @@ import {
   useAlerts,
   MASFullPageError,
   MASEmptyStateVariant,
+  useRootModalContext,
+  MODAL_TYPES,
 } from '@app/common';
-import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
-import { ResetServiceAccountModal } from './components/ResetServiceAccountModal/ResetServiceAccountModal';
-import { DeleteServiceAccountModal } from './components/DeleteServiceAccountModal';
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
@@ -34,6 +33,7 @@ export type ServiceAccountsProps = {
 const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
+  const { showModal } = useRootModalContext();
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -53,11 +53,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
-  const [isResetServiceAccountModalOpen, setIsResetServiceAccountModalOpen] = useState(false);
-  const [serviceAccountToReset, setServiceAccountToReset] = useState<ServiceAccountListItem>();
-  const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
-  const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
   const [isDisplayServiceAccountEmptyState, setIsDisplayServiceAccountEmptyState] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
@@ -110,17 +105,15 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   }, []);
 
   const handleResetModal = (serviceAccount: ServiceAccountListItem) => {
-    setIsResetServiceAccountModalOpen(!isResetServiceAccountModalOpen);
-    setServiceAccountToReset(serviceAccount);
+    showModal(MODAL_TYPES.RESET_CREDENTIALS, { serviceAccountToReset: serviceAccount });
   };
 
   const handleCreateModal = () => {
-    setIsCreateServiceAccountModalOpen(!isCreateServiceAccountModalOpen);
+    showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT, { fetchServiceAccounts });
   };
 
   const handleDeleteModal = (serviceAccount: ServiceAccountListItem) => {
-    setIsDeleteServiceAccountModalOpen(!isDeleteServiceAccountModalOpen);
-    setServiceAccountToDelete(serviceAccount);
+    showModal(MODAL_TYPES.DELETE_SERVICE_ACCOUNT, { serviceAccountToDelete: serviceAccount, fetchServiceAccounts });
   };
 
   const renderTableView = () => {
@@ -146,7 +139,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               }}
               buttonProps={{
                 title: t('serviceAccount.create_service_account'),
-                onClick: () => handleCreateModal(),
+                onClick: handleCreateModal,
                 ['data-testid']: 'emptyStateStreams-buttonCreateServiceAccount',
               }}
             />
@@ -212,22 +205,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               </TextContent>
             </LevelItem>
           </Level>
-          <CreateServiceAccountModal
-            isOpen={isCreateServiceAccountModalOpen}
-            setIsOpen={setIsCreateServiceAccountModalOpen}
-            fetchServiceAccounts={fetchServiceAccounts}
-          />
-          <ResetServiceAccountModal
-            isOpen={isResetServiceAccountModalOpen}
-            setIsOpen={setIsResetServiceAccountModalOpen}
-            serviceAccountToReset={serviceAccountToReset}
-          />
-          <DeleteServiceAccountModal
-            isOpen={isDeleteServiceAccountModalOpen}
-            setIsOpen={setIsDeleteServiceAccountModalOpen}
-            serviceAccountToDelete={serviceAccountToDelete}
-            fetchServiceAccounts={fetchServiceAccounts}
-          />
         </PageSection>
         {renderTableView()}
       </AlertProvider>
