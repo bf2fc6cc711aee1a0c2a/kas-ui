@@ -69,6 +69,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
   const colors = [chart_color_green_300.value, chart_color_blue_300.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+  const itemsPerRow = width && width > 650 ? 6 : 3;
 
   const convertTopicLabels = (topic) => {
     if(topic === '__strimzi_canary') {
@@ -86,7 +87,6 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
     let currentByteSize = "B";
     data.forEach(value => {
       const byteString = byteSize(value.bytes).unit;
-      console.log('what is bytestring LOG SIZE' + byteString);
       if(byteString === "kB") {
         if (currentByteSize === 'B') {
           currentByteSize = "KB";
@@ -133,18 +133,17 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
-        console.log('what is log size data' + JSON.stringify(data));
         let partitionArray = [];
 
         data.data.items?.forEach((item, i) => {
-          const topicName = item.metric.topic;
+          const topicName = item?.metric?.topic;
 
           const topic = {
             name: convertTopicLabels(topicName),
             data: []
           } as Partition;
 
-          const isTopicInArray = partitionArray.some(t => t.name === convertTopicLabels(topicName));
+          const isTopicInArray = partitionArray.some(topic => topic.name === convertTopicLabels(topicName));
 
           item.values?.forEach(value => {
             if (value.Timestamp == undefined) {
@@ -152,7 +151,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
             }
 
             if(isTopicInArray) {
-              partitionArray.map((topic) => {
+              partitionArray.map((topic: Partition) => {
                 if(topic.name === convertTopicLabels(topicName)) {
                   topic.data.forEach((datum) => {
                     datum.bytes = datum.bytes + value.Value;
@@ -260,6 +259,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
             legendComponent={
               <ChartLegend
                 data={legend}
+                itemsPerRow={itemsPerRow}
               />
             }
             height={300}
@@ -280,16 +280,10 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
             />
             <ChartGroup>
               {chartData.map((value, index) => (
-                
                 <ChartArea
                   key={`chart-area-${index}`}
                   data={value.area}
                   interpolation="monotoneX"
-                  // style={{
-                  //   data: {
-                  //     stroke: value.color
-                  //   }
-                  // }}
                 />
               ))}
             </ChartGroup>

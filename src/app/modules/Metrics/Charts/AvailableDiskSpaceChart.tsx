@@ -56,10 +56,6 @@ type LegendData = {
   symbol: {}
 }
 
-type AvailableDiskSpaceChartProps = {
-  brokers: Broker[]
-}
-
 type KafkaInstanceProps = {
   kafkaID: string
 }
@@ -75,11 +71,11 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
   const [largestByteSize, setLargestByteSize] = useState();
-  const itemsPerRow = 4;
   const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
   const softLimitColor = chart_color_black_500.value;
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+  const itemsPerRow = width && width > 650 ? 6 : 3;
 
   const fetchAvailableDiskSpaceMetrics = async () => {
     const accessToken = await authContext?.getToken();
@@ -110,7 +106,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
             throw new Error('item.values cannot be undefined');
           }
           if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
-            const labels = item.metric;
+            
             const pvcName = labels['persistentvolumeclaim'];
             if (!pvcName.includes('zookeeper')) {
 

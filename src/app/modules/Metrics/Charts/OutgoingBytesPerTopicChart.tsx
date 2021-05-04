@@ -26,12 +26,12 @@ export type Topic = {
   }[]
 }
 
-export type ChartData = {
+export type ChartDataOutgoing = {
   color: string
-  line: TopicChartData[]
+  line: TopicChartDataOutgoing[]
 }
 
-export type TopicChartData = {
+export type TopicChartDataOutgoing = {
   name: string
   x: string
   y: number 
@@ -43,7 +43,7 @@ export type LegendData = {
 }
 
 export type KafkaInstanceProps = {
-  chartData: ChartData[]
+  chartData: ChartDataOutgoing[]
   legend: LegendData[]
   byteSize: string
   maxValueInDataSets: number
@@ -56,6 +56,7 @@ export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
   const [width, setWidth] = useState();
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+  const itemsPerRow = width && width > 650 ? 6 : 3;
 
   useEffect(() => {
     handleResize();
@@ -88,6 +89,7 @@ export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
               legendComponent={
                 <ChartLegend
                   data={legend}
+                  itemsPerRow={itemsPerRow}
                 />
               }
               height={300}

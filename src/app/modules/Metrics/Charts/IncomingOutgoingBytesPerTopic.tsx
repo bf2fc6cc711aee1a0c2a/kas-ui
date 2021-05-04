@@ -67,7 +67,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
   const [outgoingBytesChartData, setOutgoingBytesChartData] = useState<ChartData[]>();
   const [largestByteSize, setLargestByteSize] = useState();
   const [maxValueInDataSets, setMaxValueInDataSets] = useState();
-  // const itemsPerRow = width && width > 400 ? 4 : 2;
   const incomingBytesColors = [chart_color_blue_100.value, chart_color_blue_200.value, chart_color_blue_300.value, chart_color_blue_400.value, chart_color_blue_500.value];
   const outgoingBytesColors = [chart_color_orange_100.value, chart_color_orange_200.value, chart_color_orange_300.value, chart_color_orange_400.value, chart_color_orange_500.value];
 
@@ -128,11 +127,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
     const max = data.reduce(function(prev, current) {
       return (prev.bytes > current.bytes) ? prev : current
     })
-    console.log('what is max' + max.bytes);
     return max.bytes;
   }
-
-  console.log('WHAT IS MAX' + maxValueInDataSets);
 
   const fetchBytesData = async () => {
     const accessToken = await authContext?.getToken();
@@ -146,7 +142,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_in_total', 'kafka_server_brokertopicmetrics_bytes_out_total']);
-        console.log('what is INCOMING data' + JSON.stringify(data));
         let incomingBytesTopicArray: Topic[] = [];
         let outgoingBytesTopicArray: Topic[] = [];
         data.data.items?.forEach((item, i) => {
@@ -166,8 +161,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
             } as Topic;
 
             const isTopicInArray = incomingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
-            console.log('what is isTopicInArray' + isTopicInArray);
-
             item.values?.forEach(value => {
               if (value.Timestamp == undefined) {
                 throw new Error('timestamp cannot be undefined');
@@ -203,7 +196,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           } as Topic;
 
           const isTopicInArray = outgoingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
-          console.log('what is isTopicInArray' + isTopicInArray);
 
           item.values?.forEach(value => {
             if (value.Timestamp == undefined) {
@@ -282,9 +274,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           line.push({ name: topic.name, x: time, y: 0})
         }
       }
-
-      console.log('what is largestByteSize HERE' + largestByteSize)
-
       topic.data.map(value => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
@@ -292,13 +281,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
         line.push({ name: value.name, x: time, y: bytes});
       });
       chartData.push({ color, line });
-
-      console.log('what is maxValuesInTopics' + maxValuesInTopics + '  ' + Math.max(...maxValuesInTopics) + topic.name);
-
     });
     const maxValueData: number = convertToSpecifiedByte(Math.max(...maxValuesInTopics), largestByteSize);
-    console.log('what is maxValueData' + maxValueData);
-
     if (type === 'incoming') {
       setIncomingBytesLegend(legendData);
       setIncomingBytesChartData(chartData);
@@ -314,7 +298,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
       }
     }
   }
-
 
     return (
       <>

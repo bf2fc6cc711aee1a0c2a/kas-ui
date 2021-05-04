@@ -17,15 +17,6 @@ import {
   ChartVoronoiContainer
 } from '@patternfly/react-charts';
 
-type Topic = {
-  name: string
-  data: {
-    name: string
-    timestamp: number
-    bytes: number
-  }[]
-}
-
 type ChartData = {
   color: string
   line: TopicChartData[]
@@ -56,6 +47,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
   const [width, setWidth] = useState();
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+  const itemsPerRow = width && width > 650 ? 6 : 3;
 
   useEffect(() => {
     handleResize();
@@ -89,9 +81,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
                 legendComponent={
                   <ChartLegend
                     data={legend}
-                    orientation="horizontal"
-                    height={400}
-                    // itemsPerRow={3}
+                    itemsPerRow={itemsPerRow}
                     gutter={20}
                   />
                 }
