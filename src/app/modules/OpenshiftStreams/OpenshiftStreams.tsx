@@ -94,6 +94,12 @@ const OpenshiftStreams = ({
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
   const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
+  const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
+  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
+  const [currentUserKafkas, setCurrentUserKafkas] = useState<KafkaRequest[] | undefined>();
+
+  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
+  const { activeTab, instanceDetail } = selectedInstance || {};
 
   const updateSelectedKafkaInstance = () => {
     if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {
@@ -108,8 +114,6 @@ const OpenshiftStreams = ({
   useEffect(() => {
     updateSelectedKafkaInstance();
   }, [kafkaInstanceItems]);
-  const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
-  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     authContext?.getUsername().then((username) => setLoggedInUser(username));
@@ -164,10 +168,6 @@ const OpenshiftStreams = ({
     }
     setIsOpenCreateInstanceModalState(open);
   };
-
-  const drawerRef = React.createRef<any>();
-  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
-  const { activeTab, instanceDetail } = selectedInstance || {};
 
   const onCloseDrawer = () => {
     setSelectedInstance(null);
@@ -261,6 +261,31 @@ const OpenshiftStreams = ({
       }
     }
   };
+
+  const fetchCurrentUserKafkas = async () => {
+    const accessToken = await authContext?.getToken();
+    const filter = `owner = ${loggedInUser}`;
+    if (accessToken && isVisible) {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+        await apisService.listKafkas('', '', '', filter).then((res) => {
+          const kafkaInstances = res.data;
+          setCurrentUserKafkas(kafkaInstances.items);
+        });
+      } catch (error) {
+        handleServerError(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    loggedInUser && fetchCurrentUserKafkas();
+  }, [loggedInUser]);
+
+  useTimeout(() => fetchCurrentUserKafkas(), MAX_POLL_INTERVAL);
 
   /**
    * Todo:remove after summit
@@ -576,7 +601,6 @@ const OpenshiftStreams = ({
             getConnectToRoutePath={getConnectToRoutePath}
             refresh={refreshKafkas}
             kafkaDataLoaded={kafkaDataLoaded}
-            setIsDisplayKafkaEmptyState={setIsDisplayKafkaEmptyState}
             setWaitingForDelete={setWaitingForDelete}
             onDelete={onDelete}
             page={page}
@@ -595,6 +619,7 @@ const OpenshiftStreams = ({
             buttonTooltipContent={getButtonTooltipContent()}
             isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
             labelWithTooltip={createInstanceLabel()}
+            currentUserkafkas={currentUserKafkas}
           />
         </PageSection>
       );

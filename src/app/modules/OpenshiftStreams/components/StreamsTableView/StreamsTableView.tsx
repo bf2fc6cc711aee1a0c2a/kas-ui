@@ -53,7 +53,8 @@ export type StreamsTableProps = StreamsToolbarProps & {
   isDrawerOpen?: boolean;
   loggedInUser: string | undefined;
   isMaxCapacityReached?: boolean | undefined;
-  setWaitingForDelete: () => void;
+  setWaitingForDelete: (arg0: boolean) => void;
+  currentUserkafkas: KafkaRequest[] | undefined;
 };
 
 type ConfigDetail = {
@@ -123,7 +124,8 @@ const StreamsTableView = ({
   isDisabledCreateButton,
   loggedInUser,
   labelWithTooltip,
-  setWaitingForDelete
+  setWaitingForDelete,
+  currentUserkafkas,
 }: StreamsTableProps) => {
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -170,25 +172,30 @@ const StreamsTableView = ({
   }, [isDrawerOpen]);
 
   const addAlertAfterSuccessDeletion = () => {
-    // filter all kafkas with status as deprovision
-    const deprovisonedKafkas = kafkaInstanceItems.filter((kafka) => kafka.status === InstanceStatus.DEPROVISION);
+    if (currentUserkafkas) {
+      // filter all kafkas with status as deprovision
+      const deprovisonedKafkas: any = currentUserkafkas.filter(
+        (k) => k.status === InstanceStatus.DEPROVISION || k.status === InstanceStatus.DELETED
+      );
 
-    // filter all new kafka which is not in deleteKafka state
-    const notPresentKafkas = deprovisonedKafkas
-      .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
-      .map((k) => k.name || '');
-    // create new array by merging old and new kafka with status as deprovion
-    const allDeletedKafkas: string[] = [...deletedKafkas, ...notPresentKafkas];
-    // update deleteKafka with new array
-    setDeletedKafkas(allDeletedKafkas);
+      // filter all new kafka which is not in deleteKafka state
+      const notPresentKafkas = deprovisonedKafkas
+        .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
+        .map((k) => k.name || '');
+      // create new array by merging old and new kafka with status as deprovion
+      const allDeletedKafkas: string[] = [...deletedKafkas, ...notPresentKafkas];
+      // update deleteKafka with new arraycurrentUserkafkaInstanceItems
+      setDeletedKafkas(allDeletedKafkas);
 
-    // add alert for deleted kafkas which are completely deleted from the response
-    allDeletedKafkas.forEach((k) => {
-      if (kafkaInstanceItems.findIndex((item) => item.name === k) < 0) {
-        removeKafkaFromDeleted(k);
-        addAlert(t('kafka_successfully_deleted', { name: k }), AlertVariant.success);
-      }
-    });
+      // add alert for deleted kafkas which are completely deleted from the response
+      allDeletedKafkas.forEach((k) => {
+        const kafkaIndex = currentUserkafkas?.findIndex((item) => item.name === k);
+        if (kafkaIndex < 0) {
+          removeKafkaFromDeleted(k);
+          addAlert(t('kafka_successfully_deleted', { name: k }), AlertVariant.success);
+        }
+      });
+    }
   };
 
   const addAlertAfterSuccessCreation = () => {
@@ -247,7 +254,7 @@ const StreamsTableView = ({
     addAlertAfterSuccessDeletion();
     // handle success alert for creation
     addAlertAfterSuccessCreation();
-  }, [page, perPage, kafkaInstanceItems]);
+  }, [page, perPage, kafkaInstanceItems, currentUserkafkas]);
 
   const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
     if (selectedOption === 'view-instance') {
@@ -435,7 +442,7 @@ const StreamsTableView = ({
         setActiveRow(undefined);
         setWaitingForDelete(true);
         refresh();
-    });
+      });
     } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
