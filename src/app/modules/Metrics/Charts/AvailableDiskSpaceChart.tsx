@@ -29,6 +29,8 @@ import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { format } from 'date-fns';
 import byteSize from 'byte-size';
+import { ChartEmptyState } from './ChartEmptyState';
+import { useTimeout } from '@app/hooks/useTimeout';
 
 type Broker = {
   name: string
@@ -70,6 +72,9 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
   const [width, setWidth] = useState();
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
+  const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
+  const [chartDataLoading, setChartDataLoading] = useState(true);
+
   const [largestByteSize, setLargestByteSize] = useState();
   const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
   const softLimitColor = chart_color_black_500.value;
@@ -96,42 +101,49 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
           name: `Available disk space`,
           data: []
         } as Broker;
-
-        data.data.items?.forEach((item, index) => {
-          const labels = item.metric;
-          if (labels === undefined) {
-            throw new Error('item.metric cannot be undefined');
-          }
-          if (item.values === undefined) {
-            throw new Error('item.values cannot be undefined');
-          }
-          if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
-            
-            const pvcName = labels['persistentvolumeclaim'];
-            if (!pvcName.includes('zookeeper')) {
-
-              item.values?.forEach((value, indexJ) => {
-                if (value.Timestamp == undefined) {
-                  throw new Error('timestamp cannot be undefined');
-              }
-                const hardLimit = 225 * 1024 * 1024 * 1024 * .95;
-                const usedSpaceInBytes = [hardLimit - value.Value];
-
-                if(index > 0) {
-                  let newArray = avgBroker.data[indexJ].bytes.concat(usedSpaceInBytes);
-                  avgBroker.data[indexJ].bytes = newArray;
+        
+        if(data.data.items) {
+          setMetricsDataUnavailable(false);
+          data.data.items.forEach((item, index) => {
+            const labels = item.metric;
+            if (labels === undefined) {
+              throw new Error('item.metric cannot be undefined');
+            }
+            if (item.values === undefined) {
+              throw new Error('item.values cannot be undefined');
+            }
+            if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
+              
+              const pvcName = labels['persistentvolumeclaim'];
+              if (!pvcName.includes('zookeeper')) {
+  
+                item.values?.forEach((value, indexJ) => {
+                  if (value.Timestamp == undefined) {
+                    throw new Error('timestamp cannot be undefined');
                 }
-                else {
-                  avgBroker.data.push({
-                    timestamp: value.Timestamp,
-                    bytes: usedSpaceInBytes,
-                  });
-                }
-            });
+                  const hardLimit = 225 * 1024 * 1024 * 1024 * .95;
+                  const usedSpaceInBytes = [hardLimit - value.Value];
+  
+                  if(index > 0) {
+                    let newArray = avgBroker.data[indexJ].bytes.concat(usedSpaceInBytes);
+                    avgBroker.data[indexJ].bytes = newArray;
+                  }
+                  else {
+                    avgBroker.data.push({
+                      timestamp: value.Timestamp,
+                      bytes: usedSpaceInBytes,
+                    });
+                  }
+              });
+            }
           }
+        });
+        getChartData(avgBroker);
         }
-      });
-      getChartData(avgBroker);
+        else {
+          setMetricsDataUnavailable(true);
+          setChartDataLoading(false);
+        }
       } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
@@ -146,6 +158,8 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
     fetchAvailableDiskSpaceMetrics();
     handleResize();
   }, []);
+
+  useTimeout(() => fetchAvailableDiskSpaceMetrics(), 1000 * 60 * 5);
 
   useEffect(() => {
     handleResize();
@@ -196,72 +210,78 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
     setLegend(legendData);
     setChartData(chartData);
     setLargestByteSize(largestByteSize);
+    setChartDataLoading(false);
   }
 
     return (
       <Card>
-        <CardTitle>
+        <CardTitle component="h2">
           {t('metrics.available_disk_space')}
         </CardTitle>
         <CardBody>
           <div ref={containerRef}>
-            {chartData && legend && width && largestByteSize ? (
-              <Chart
-                ariaDesc={t('metrics.available_disk_space')}
-                ariaTitle="Disk Space"
-                containerComponent={
-                  <ChartVoronoiContainer
-                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                    constrainToVisibleArea
+            { !chartDataLoading ? (
+              !metricsDataUnavailable ? (
+                <Chart
+                  ariaDesc={t('metrics.available_disk_space')}
+                  ariaTitle="Disk Space"
+                  containerComponent={
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                      constrainToVisibleArea
+                    />
+                  }
+                  legendPosition="bottom-left"
+                  legendComponent={
+                    <ChartLegend
+                      data={legend}
+                      itemsPerRow={itemsPerRow}
+                    />
+                  }
+                  height={300}
+                  padding={{
+                    bottom: 80, // Adjusted to accomodate legend
+                    left: 90,
+                    right: 60,
+                    top: 25
+                  }}
+                  themeColor={ChartThemeColor.multiUnordered}
+                  width={width}
+                  minDomain={{ y: 0 }}
+                >
+                  <ChartAxis label={'Time'} tickCount={6} />
+                  <ChartAxis
+                    dependentAxis
+                    tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+                    tickCount={4}
                   />
-                }
-                legendPosition="bottom-left"
-                legendComponent={
-                  <ChartLegend
-                    data={legend}
-                    itemsPerRow={itemsPerRow}
-                  />
-                }
-                height={300}
-                padding={{
-                  bottom: 80, // Adjusted to accomodate legend
-                  left: 90,
-                  right: 60,
-                  top: 25
-                }}
-                themeColor={ChartThemeColor.multiUnordered}
-                width={width}
-                minDomain={{ y: 0 }}
-              >
-                <ChartAxis label={'Time'} tickCount={5} />
-                <ChartAxis
-                  dependentAxis
-                  tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
-                />
-                  <ChartGroup>
-                    {chartData.map((value, index) => (
-                      <ChartArea
-                        key={`chart-area-${index}`}
-                        data={value.area}
-                        interpolation="monotoneX"
-                        style={{
-                          data: {
-                            stroke: value.color
-                          }
-                        }}
-                      />
-                    ))}
-                  </ChartGroup>
-                  <ChartThreshold
-                    key={`chart-softlimit`}
-                    data={chartData[0].softLimit}
-                    style={{
-                      data: {
-                        stroke: chartData[0].softLimitColor
-                      }
-                    }}
-                  />
-              </Chart>
+                    <ChartGroup>
+                      {chartData?.map((value, index) => (
+                        <ChartArea
+                          key={`chart-area-${index}`}
+                          data={value.area}
+                          interpolation="monotoneX"
+                          style={{
+                            data: {
+                              stroke: value.color
+                            }
+                          }}
+                        />
+                      ))}
+                    </ChartGroup>
+                    <ChartThreshold
+                      key={`chart-softlimit`}
+                      data={chartData[0].softLimit}
+                      style={{
+                        data: {
+                          stroke: chartData[0].softLimitColor
+                        }
+                      }}
+                    />
+                </Chart>
+              ) : (
+                <ChartEmptyState/>
+              )
             ) : (
               <Bullseye>
                 <Spinner isSVG/>

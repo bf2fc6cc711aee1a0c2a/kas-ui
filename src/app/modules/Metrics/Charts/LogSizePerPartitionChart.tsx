@@ -26,6 +26,8 @@ import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_b
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
 import { format } from 'date-fns';
 import byteSize from 'byte-size';
+import { ChartEmptyState } from './ChartEmptyState';
+import { useTimeout } from '@app/hooks/useTimeout';
 
 export type Partition = {
   name: string
@@ -66,6 +68,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
   const [largestByteSize, setLargestByteSize] = useState();
+  const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
+  const [chartDataLoading, setChartDataLoading] = useState(true);
+
   const colors = [chart_color_green_300.value, chart_color_blue_300.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
@@ -89,7 +94,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
       const byteString = byteSize(value.bytes).unit;
       if(byteString === "kB") {
         if (currentByteSize === 'B') {
-          currentByteSize = "KB";
+          currentByteSize = "kB";
         }
       }
       if(byteString === "MB") {
@@ -109,7 +114,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
     if(largestByteSize === 'B') {
       return Math.round(bytes * 10) / 10
     }
-    if(largestByteSize === 'KB') {
+    if(largestByteSize === 'kB') {
       return Math.round(bytes / 1024 * 10) / 10
     }
     if(largestByteSize === 'MB') {
@@ -135,46 +140,51 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
         let partitionArray = [];
 
-        data.data.items?.forEach((item, i) => {
-          const topicName = item?.metric?.topic;
+        if(data.data.items) {
+          setMetricsDataUnavailable(false);
+          data.data.items?.forEach((item, i) => {
+            const topicName = item?.metric?.topic;
 
-          const topic = {
-            name: convertTopicLabels(topicName),
-            data: []
-          } as Partition;
+            const topic = {
+              name: convertTopicLabels(topicName),
+              data: []
+            } as Partition;
 
-          const isTopicInArray = partitionArray.some(topic => topic.name === convertTopicLabels(topicName));
+            const isTopicInArray = partitionArray.some(topic => topic.name === convertTopicLabels(topicName));
 
-          item.values?.forEach(value => {
-            if (value.Timestamp == undefined) {
-              throw new Error('timestamp cannot be undefined');
-            }
+            item.values?.forEach(value => {
+              if (value.Timestamp == undefined) {
+                throw new Error('timestamp cannot be undefined');
+              }
 
-            if(isTopicInArray) {
-              partitionArray.map((topic: Partition) => {
-                if(topic.name === convertTopicLabels(topicName)) {
-                  topic.data.forEach((datum) => {
-                    datum.bytes = datum.bytes + value.Value;
-                  })
-                }
-              })
-            }
-            else {
-              topic.data.push({
-                name: convertTopicLabels(topicName),
-                timestamp: value.Timestamp,
-                bytes: value.Value
-              });
+              if(isTopicInArray) {
+                partitionArray.map((topic: Partition) => {
+                  if(topic.name === convertTopicLabels(topicName)) {
+                    topic.data.forEach((datum) => {
+                      datum.bytes = datum.bytes + value.Value;
+                    })
+                  }
+                })
+              }
+              else {
+                topic.data.push({
+                  name: convertTopicLabels(topicName),
+                  timestamp: value.Timestamp,
+                  bytes: value.Value
+                });
+              }
+            })
+
+            if(!isTopicInArray) {
+              partitionArray.push(topic);
             }
           })
-
-          if(!isTopicInArray) {
-            partitionArray.push(topic);
-          }
-        })
-
-      getChartData(partitionArray);
-
+          getChartData(partitionArray);
+        }
+        else {
+          setMetricsDataUnavailable(true);
+          setChartDataLoading(false);
+        }
       } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
@@ -189,6 +199,8 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
     fetchLogSizePerPartition();
     handleResize();
   }, []);
+
+  useTimeout(() => fetchLogSizePerPartition(), 1000 * 60 * 5);
 
   useEffect(() => {
     handleResize();
@@ -236,64 +248,69 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
     setLegend(legendData);
     setChartData(chartData);
     setLargestByteSize(largestByteSize);
+    setChartDataLoading(false);
   }
 
   return (
     <Card>
-      <CardTitle>
+      <CardTitle component="h2">
         {t('metrics.log_size_per_partition')}
       </CardTitle>
       <CardBody>
-      <div ref={containerRef}>
-        {chartData && legend && width && largestByteSize ? (
-          <Chart
-            ariaDesc={t('metrics.log_size_per_partition')}
-            ariaTitle="Log Size"
-            containerComponent={
-              <ChartVoronoiContainer
-                labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                constrainToVisibleArea
-              />
-            }
-            legendPosition="bottom-left"
-            legendComponent={
-              <ChartLegend
-                data={legend}
-                itemsPerRow={itemsPerRow}
-              />
-            }
-            height={300}
-            padding={{
-              bottom: 80,
-              left: 90,
-              right: 30,
-              top: 25
-            }}
-            themeColor={ChartThemeColor.multiUnordered}
-            width={width}
-          >
-            <ChartAxis label={'Time'} tickCount={5} />
-            <ChartAxis
-              dependentAxis
-              tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
-              tickCount={4}
-            />
-            <ChartGroup>
-              {chartData.map((value, index) => (
-                <ChartArea
-                  key={`chart-area-${index}`}
-                  data={value.area}
-                  interpolation="monotoneX"
+        <div ref={containerRef}>
+          {!chartDataLoading ? (
+            !metricsDataUnavailable ? (
+              <Chart
+                ariaDesc={t('metrics.log_size_per_partition')}
+                ariaTitle="Log Size"
+                containerComponent={
+                  <ChartVoronoiContainer
+                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                    constrainToVisibleArea
+                  />
+                }
+                legendPosition="bottom-left"
+                legendComponent={
+                  <ChartLegend
+                    data={legend}
+                    itemsPerRow={itemsPerRow}
+                  />
+                }
+                height={300}
+                padding={{
+                  bottom: 80,
+                  left: 90,
+                  right: 30,
+                  top: 25
+                }}
+                themeColor={ChartThemeColor.multiUnordered}
+                width={width}
+                legendAllowWrap={true}
+              >
+                <ChartAxis label={'Time'} tickCount={6} />
+                <ChartAxis
+                  dependentAxis
+                  tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+                  tickCount={4}
                 />
-              ))}
-            </ChartGroup>
-          </Chart>
+                <ChartGroup>
+                  {chartData.map((value, index) => (
+                    <ChartArea
+                      key={`chart-area-${index}`}
+                      data={value.area}
+                      interpolation="monotoneX"
+                    />
+                  ))}
+                </ChartGroup>
+              </Chart>
+            ) : (
+              <ChartEmptyState/>
+            )
           ) : (
             <Bullseye>
-              <Spinner isSVG />
+              <Spinner isSVG/>
             </Bullseye>
-          )
-          }
+          )}
         </div>
       </CardBody>
     </Card>

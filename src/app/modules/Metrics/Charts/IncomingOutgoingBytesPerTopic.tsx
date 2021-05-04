@@ -10,7 +10,6 @@ import {
   Grid,
   GridItem
 } from '@patternfly/react-core';
-
 import chart_color_blue_100 from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
 import chart_color_blue_200 from '@patternfly/react-tokens/dist/js/chart_color_blue_200';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
@@ -25,6 +24,7 @@ import { format } from 'date-fns';
 import byteSize from 'byte-size';
 import { IncomingBytesPerTopicChart } from './IncomingBytesPerTopicChart';
 import { OutgoingBytesPerTopicChart } from './OutgoingBytesPerTopicChart';
+import { useTimeout } from '@app/hooks/useTimeout';
 
 type Topic = {
   name: string
@@ -67,6 +67,10 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
   const [outgoingBytesChartData, setOutgoingBytesChartData] = useState<ChartData[]>();
   const [largestByteSize, setLargestByteSize] = useState();
   const [maxValueInDataSets, setMaxValueInDataSets] = useState();
+
+  const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
+  const [chartDataLoading, setChartDataLoading] = useState(true);
+
   const incomingBytesColors = [chart_color_blue_100.value, chart_color_blue_200.value, chart_color_blue_300.value, chart_color_blue_400.value, chart_color_blue_500.value];
   const outgoingBytesColors = [chart_color_orange_100.value, chart_color_orange_200.value, chart_color_orange_300.value, chart_color_orange_400.value, chart_color_orange_500.value];
 
@@ -89,7 +93,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
         const byteString = byteSize(value.bytes).unit;
         if(byteString === "kB") {
           if (currentByteSize === "B") {
-            currentByteSize = "KB";
+            currentByteSize = "kB";
           }
         }
         if(byteString === "MB") {
@@ -142,32 +146,74 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_in_total', 'kafka_server_brokertopicmetrics_bytes_out_total']);
+        
+        console.log('what is data' + JSON.stringify(data));
+
         let incomingBytesTopicArray: Topic[] = [];
         let outgoingBytesTopicArray: Topic[] = [];
-        data.data.items?.forEach((item, i) => {
-          const labels = item.metric;
-          if (labels === undefined) {
-            throw new Error('item.metric cannot be undefined');
-          }
-          if (item.values === undefined) {
-            throw new Error('item.values cannot be undefined');
-          }
-          if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
-            const topicName = labels.topic;
 
+        if(data.data.items) {
+          setMetricsDataUnavailable(false);
+          data.data.items?.forEach((item, i) => {
+            const labels = item.metric;
+            if (labels === undefined) {
+              throw new Error('item.metric cannot be undefined');
+            }
+            if (item.values === undefined) {
+              throw new Error('item.values cannot be undefined');
+            }
+            if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
+              const topicName = labels.topic;
+
+              const topic = {
+                name: convertTopicLabels(topicName),
+                data: []
+              } as Topic;
+
+              const isTopicInArray = incomingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
+              item.values?.forEach(value => {
+                if (value.Timestamp == undefined) {
+                  throw new Error('timestamp cannot be undefined');
+                }
+
+                if(isTopicInArray) {
+                  incomingBytesTopicArray.map((topic) => {
+                    if(topic.name === convertTopicLabels(topicName)) {
+                      topic.data.forEach((datum) => {
+                        datum.bytes = datum.bytes + value.Value;
+                      })
+                    }
+                  })
+                }
+                else {
+                  topic.data.push({
+                    name: convertTopicLabels(topicName),
+                    timestamp: value.Timestamp,
+                    bytes: value.Value
+                  });
+                }
+              })
+
+              if(!isTopicInArray) {
+                incomingBytesTopicArray.push(topic);
+              }
+          }
+          if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
+            const topicName = labels.topic;
             const topic = {
               name: convertTopicLabels(topicName),
               data: []
             } as Topic;
 
-            const isTopicInArray = incomingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
+            const isTopicInArray = outgoingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
+
             item.values?.forEach(value => {
               if (value.Timestamp == undefined) {
                 throw new Error('timestamp cannot be undefined');
               }
 
               if(isTopicInArray) {
-                incomingBytesTopicArray.map((topic) => {
+                outgoingBytesTopicArray.map((topic) => {
                   if(topic.name === convertTopicLabels(topicName)) {
                     topic.data.forEach((datum) => {
                       datum.bytes = datum.bytes + value.Value;
@@ -185,48 +231,17 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
             })
 
             if(!isTopicInArray) {
-              incomingBytesTopicArray.push(topic);
+              outgoingBytesTopicArray.push(topic);
             }
-        }
-        if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
-          const topicName = labels.topic;
-          const topic = {
-            name: convertTopicLabels(topicName),
-            data: []
-          } as Topic;
-
-          const isTopicInArray = outgoingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
-
-          item.values?.forEach(value => {
-            if (value.Timestamp == undefined) {
-              throw new Error('timestamp cannot be undefined');
-            }
-
-            if(isTopicInArray) {
-              outgoingBytesTopicArray.map((topic) => {
-                if(topic.name === convertTopicLabels(topicName)) {
-                  topic.data.forEach((datum) => {
-                    datum.bytes = datum.bytes + value.Value;
-                  })
-                }
-              })
-            }
-            else {
-              topic.data.push({
-                name: convertTopicLabels(topicName),
-                timestamp: value.Timestamp,
-                bytes: value.Value
-              });
-            }
-          })
-
-          if(!isTopicInArray) {
-            outgoingBytesTopicArray.push(topic);
           }
-      }
-      });
-      getChartData(incomingBytesTopicArray, 'incoming');
-      getChartData(outgoingBytesTopicArray, 'outgoing');
+          });
+          getChartData(incomingBytesTopicArray, 'incoming');
+          getChartData(outgoingBytesTopicArray, 'outgoing');
+        }
+        else {
+          setMetricsDataUnavailable(true);
+          setChartDataLoading(false);
+        }
       } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
@@ -241,12 +256,13 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
     fetchBytesData();
   }, []);
 
+  useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
+
   const getChartData = (topicArray, type) => {
     let legendData: Array<LegendData> = [];
     let chartData: Array<ChartData> = [];
     let largestByteSize = getLargestByteSize(topicArray);
     let maxValuesInTopics: Array<number> = [];
-
     topicArray.map((topic, index) => {
       const color = type === 'incoming' ? incomingBytesColors[index] : outgoingBytesColors[index];
       legendData.push({
@@ -296,6 +312,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
       if(maxValueData > maxValueInDataSets) {
         setMaxValueInDataSets(maxValueData);
       }
+      setChartDataLoading(false);
     }
   }
 
@@ -308,6 +325,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
               legend={incomingBytesLegend}
               byteSize={largestByteSize}
               maxValueInDataSets={maxValueInDataSets}
+              metricsDataUnavailable={metricsDataUnavailable}
+              chartDataLoading={chartDataLoading}
             />
           </GridItem>
           <GridItem sm={12} lg={6}>
@@ -316,9 +335,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
               legend={outgoingBytesLegend}
               byteSize={largestByteSize}
               maxValueInDataSets={maxValueInDataSets}
+              metricsDataUnavailable={metricsDataUnavailable}
+              chartDataLoading={chartDataLoading}
             />
           </GridItem>
-          </Grid>
-      </>
+        </Grid>
+     </>
   );
 }
