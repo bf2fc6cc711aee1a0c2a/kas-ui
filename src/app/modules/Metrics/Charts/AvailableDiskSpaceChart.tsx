@@ -178,7 +178,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
     let lengthOfData = (6 * 60) - getCurrentLengthOfData();
     let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
 
-    if (lengthOfData < 360) {
+    if (lengthOfData <= 360) {
       for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
         const newTimestamp = (avgBroker.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
         const date = new Date(newTimestamp);
@@ -229,7 +229,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                 height={300}
                 padding={{
                   bottom: 80, // Adjusted to accomodate legend
-                  left: 80,
+                  left: 90,
                   right: 60,
                   top: 25
                 }}

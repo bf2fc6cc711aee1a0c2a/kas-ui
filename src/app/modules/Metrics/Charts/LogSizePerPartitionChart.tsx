@@ -70,6 +70,18 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
 
+  const convertTopicLabels = (topic) => {
+    if(topic === '__strimzi_canary') {
+      return 'Strimzi canary'
+    }
+    if(topic === '__consumer_offsets') {
+      return 'Consumer offsets'
+    }
+    else {
+      return topic
+    }
+  }
+
   const getLargestByteSize = (data) => {
     let currentByteSize = "B";
     data.forEach(value => {
@@ -121,25 +133,46 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
+        console.log('what is log size data' + JSON.stringify(data));
         let partitionArray = [];
 
         data.data.items?.forEach((item, i) => {
-          const partition = {
-            name: `Topic name: Partition ${i + 1}`,
+          const topicName = item.metric.topic;
+
+          const topic = {
+            name: convertTopicLabels(topicName),
             data: []
           } as Partition;
+
+          const isTopicInArray = partitionArray.some(t => t.name === convertTopicLabels(topicName));
+
           item.values?.forEach(value => {
             if (value.Timestamp == undefined) {
               throw new Error('timestamp cannot be undefined');
             }
-            partition.data.push({
-              name: `Topic name: Partition ${i + 1}`,
-              timestamp: value.Timestamp,
-              bytes: value.Value
-            });
-        });
-        partitionArray.push(partition);
-      })
+
+            if(isTopicInArray) {
+              partitionArray.map((topic) => {
+                if(topic.name === convertTopicLabels(topicName)) {
+                  topic.data.forEach((datum) => {
+                    datum.bytes = datum.bytes + value.Value;
+                  })
+                }
+              })
+            }
+            else {
+              topic.data.push({
+                name: convertTopicLabels(topicName),
+                timestamp: value.Timestamp,
+                bytes: value.Value
+              });
+            }
+          })
+
+          if(!isTopicInArray) {
+            partitionArray.push(topic);
+          }
+        })
 
       getChartData(partitionArray);
 
@@ -184,7 +217,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
       let lengthOfData = (6 * 60) - getCurrentLengthOfData();
       let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
     
-      if (lengthOfData < 360) {
+      if (lengthOfData <= 360) {
         for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
           const newTimestamp = (partition.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
           const date = new Date(newTimestamp);
@@ -232,7 +265,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
             height={300}
             padding={{
               bottom: 80,
-              left: 80,
+              left: 90,
               right: 30,
               top: 25
             }}
