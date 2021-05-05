@@ -15,7 +15,7 @@ export const Metrics = () => {
 
 
   const kafkaID: string = '1s5YBrdgvsZDrofp5QFx2OaeGh5'; // Christie
-  const kafkaID2: string = '1roSHSqyJhtass3R3WvjAxb8q5w'; // Jenn
+  const kafkaID2: string = '1s7iu60O7Zrz7bt3UAdzejhEvwu'; // Jenn
 
   return (
     <PageSection>

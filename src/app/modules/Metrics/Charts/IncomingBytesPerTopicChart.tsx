@@ -71,6 +71,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
             <div>
             { !chartDataLoading ? (
               !metricsDataUnavailable ? (
+                chartData && legend && byteSize && maxValueInDataSets &&
                 <Chart
                   ariaDesc={t('metrics.incoming_bytes_per_topic')}
                   ariaTitle="Incoming bytes"

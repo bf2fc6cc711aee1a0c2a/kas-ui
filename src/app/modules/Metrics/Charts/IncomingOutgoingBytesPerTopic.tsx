@@ -147,7 +147,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_in_total', 'kafka_server_brokertopicmetrics_bytes_out_total']);
         
-        console.log('what is data' + JSON.stringify(data));
+        console.log('what is data Incoming Outgoing' + JSON.stringify(data));
 
         let incomingBytesTopicArray: Topic[] = [];
         let outgoingBytesTopicArray: Topic[] = [];

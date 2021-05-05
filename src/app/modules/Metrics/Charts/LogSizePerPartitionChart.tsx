@@ -138,6 +138,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
           return;
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
+        
+        console.log('what is data log size per partition' + JSON.stringify(data));
+
         let partitionArray = [];
 
         if(data.data.items) {
@@ -260,6 +263,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
         <div ref={containerRef}>
           {!chartDataLoading ? (
             !metricsDataUnavailable ? (
+              chartData && legend && byteSize &&
               <Chart
                 ariaDesc={t('metrics.log_size_per_partition')}
                 ariaTitle="Log Size"

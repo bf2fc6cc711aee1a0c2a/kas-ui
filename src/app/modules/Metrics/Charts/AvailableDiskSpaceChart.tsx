@@ -95,7 +95,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kubelet_volume_stats_available_bytes']);
         
-        console.log('what is Data Availabel Disk' + JSON.stringify(data));
+        console.log('what is Data Available Disk' + JSON.stringify(data));
         
         const avgBroker = {
           name: `Available disk space`,
@@ -222,6 +222,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
           <div ref={containerRef}>
             { !chartDataLoading ? (
               !metricsDataUnavailable ? (
+                chartData && legend && byteSize &&
                 <Chart
                   ariaDesc={t('metrics.available_disk_space')}
                   ariaTitle="Disk Space"
@@ -256,7 +257,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                     tickCount={4}
                   />
                     <ChartGroup>
-                      {chartData?.map((value, index) => (
+                      {chartData && chartData.map((value, index) => (
                         <ChartArea
                           key={`chart-area-${index}`}
                           data={value.area}
@@ -271,10 +272,10 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                     </ChartGroup>
                     <ChartThreshold
                       key={`chart-softlimit`}
-                      data={chartData[0].softLimit}
+                      data={chartData && chartData[0].softLimit}
                       style={{
                         data: {
-                          stroke: chartData[0].softLimitColor
+                          stroke: chartData && chartData[0].softLimitColor
                         }
                       }}
                     />
