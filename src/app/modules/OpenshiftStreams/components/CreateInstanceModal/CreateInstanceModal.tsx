@@ -32,7 +32,6 @@ import { MASCreateModal, useRootModalContext } from '@app/common';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
-  id: 'please_select',
   display_name: 'Please Select',
   enabled: true,
 };
@@ -55,7 +54,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   const [isCreationInProgress, setCreationInProgress] = useState(false);
 
   const resetForm = () => {
-    setKafkaFormData({ ...kafkaFormData, name: '', multi_az: true });
+    setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
     setIsFormValid(true);
     setNameValidated({ fieldState: 'default' });
     setCreationInProgress(false);
@@ -73,53 +72,54 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           basePath,
         });
         await apisService.listCloudProviderRegions(id).then((res) => {
-          const providerRegions = res.data;
-          const providers: CloudProvider[] = [emptyProvider].concat(providerRegions.items);
-          setCloudRegions(providerRegions.items != null ? providers : []);
-          const enabledRegions = providerRegions.items.filter((provider: CloudProvider) => provider.enabled);
+          const providerRegions = res.data?.items || [];
+          const enabledRegions = providerRegions?.filter((p: CloudProvider) => p.enabled);
+          //set default selected region if there is one region
           if (enabledRegions.length === 1 && enabledRegions[0].id && provider.name) {
             const region: string = enabledRegions[0].id;
-            setKafkaFormData((prevData) => ({ ...prevData, region }));
+            setKafkaFormData((prevState) => ({ ...prevState, region }));
           }
+          //add empty provider on top in region list
+          enabledRegions.unshift(emptyProvider);
+          setCloudRegions(enabledRegions);
         });
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
+
         addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
       }
     }
   };
 
   useEffect(() => {
-    const enableCloudProviders: CloudProvider[] = cloudProviders.filter((provider: CloudProvider) => provider.enabled);
-    if (enableCloudProviders.length > 0 && enableCloudProviders[0].name) {
-      setKafkaFormData({ ...kafkaFormData, cloud_provider: enableCloudProviders[0].name });
-      fetchCloudRegions(enableCloudProviders[0]);
+    if (cloudProviders.length > 0 && cloudProviders[0].name) {
+      setKafkaFormData((prevState) => ({ ...prevState, cloud_provider: cloudProviders[0].name }));
+      fetchCloudRegions(cloudProviders[0]);
     }
   }, [cloudProviders]);
 
   const onCloudProviderSelect = (cloudProvider: CloudProvider) => {
-    cloudProvider.name && setKafkaFormData({ ...kafkaFormData, cloud_provider: cloudProvider.name });
+    setKafkaFormData((prevState) => ({ ...prevState, cloud_provider: cloudProvider.name || '' }));
     fetchCloudRegions(cloudProvider);
   };
 
   const validateCreateForm = () => {
     let isValid = true;
     const { name, region } = kafkaFormData;
-    if (!name || name.trim() === '') {
+    //validate required field
+    if (!name?.trim()) {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
-    } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
+    }
+    //validate regex
+    else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('common.input_filed_invalid_helper_text') });
     }
+    //validate max length
     if (name.length > MAX_INSTANCE_NAME_LENGTH) {
       isValid = false;
       setNameValidated({
@@ -127,7 +127,8 @@ const CreateInstanceModal: React.FunctionComponent = () => {
         message: t('length_is_greater_than_expected', { maxLength: MAX_INSTANCE_NAME_LENGTH }),
       });
     }
-    if (!region || region.trim() === '') {
+    //validate required field
+    if (!region.trim()) {
       isValid = false;
       setCloudRegionValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
     }
@@ -182,44 +183,37 @@ const CreateInstanceModal: React.FunctionComponent = () => {
     resetForm();
   };
 
-  const handleInstanceNameChange = (name?: string) => {
+  useEffect(() => {
+    if (nameValidated.fieldState !== 'error' && cloudRegionValidated.fieldState !== 'error') {
+      setIsFormValid(true);
+    }
+  }, [nameValidated.fieldState, cloudRegionValidated.fieldState]);
+
+  const onChangeValidateName = (name: string) => {
     let isValid = true;
-    if (name === undefined || name.trim() === '') {
-      isValid = true;
-    } else if (name && !/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
+    setKafkaFormData((prevState) => ({ ...prevState, name }));
+
+    if (name && !/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
     }
 
-    setKafkaFormData({ ...kafkaFormData, name: name || '' });
-    if (name && name.length > MAX_INSTANCE_NAME_LENGTH) {
+    if (name?.length > MAX_INSTANCE_NAME_LENGTH) {
       setNameValidated({
         fieldState: 'error',
         message: t('length_is_greater_than_expected', { maxLength: MAX_INSTANCE_NAME_LENGTH }),
       });
-    } else {
-      if (isValid) {
-        if (nameValidated.fieldState === 'error' && cloudRegionValidated.fieldState !== 'error') setIsFormValid(true);
-        if (nameValidated.fieldState === 'error') {
-          setNameValidated({ fieldState: 'default', message: '' });
-        }
-      } else {
-        setNameValidated({ fieldState: 'error', message: t('common.input_filed_invalid_helper_text') });
-      }
+    } else if (isValid && nameValidated.fieldState === 'error') {
+      setNameValidated({ fieldState: 'default', message: '' });
+    } else if (!isValid) {
+      setNameValidated({ fieldState: 'error', message: t('common.input_filed_invalid_helper_text') });
     }
   };
 
-  const handleCloudRegionChange = (region: string) => {
-    let validRegion: string = region;
-    if (region === 'please_select') {
-      validRegion = '';
-    }
-    if (cloudRegionValidated.fieldState === 'error' && nameValidated.fieldState !== 'error') {
-      setIsFormValid(true);
-    }
-    if (cloudRegionValidated.fieldState === 'error') {
+  const onChangeCloudRegion = (region: string) => {
+    setKafkaFormData((prevState) => ({ ...prevState, region }));
+    if (region && cloudRegionValidated.fieldState === 'error') {
       setCloudRegionValidated({ fieldState: 'default', message: '' });
     }
-    setKafkaFormData({ ...kafkaFormData, region: validRegion });
   };
 
   const getTileIcon = (provider?: string) => {
@@ -234,7 +228,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   const onChangeAvailabilty = (isSelected: boolean, event) => {
     if (isSelected) {
       const value = event.currentTarget.id;
-      setKafkaFormData({ ...kafkaFormData, multi_az: value === 'multi' });
+      setKafkaFormData((prevState) => ({ ...prevState, multi_az: value === 'multi' }));
     }
   };
 
@@ -258,7 +252,7 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           label={t('instance_name')}
           helperText={t('create_instance_name_helper_text')}
           helperTextInvalid={message}
-          helperTextInvalidIcon={message != '' && <ExclamationCircleIcon />}
+          helperTextInvalidIcon={message && <ExclamationCircleIcon />}
           isRequired
           validated={fieldState}
           fieldId="form-instance-name"
@@ -270,23 +264,23 @@ const CreateInstanceModal: React.FunctionComponent = () => {
             id="form-instance-name"
             name="instance-name"
             value={name}
-            onChange={handleInstanceNameChange}
+            onChange={onChangeValidateName}
             autoFocus={true}
           />
         </FormGroup>
         <FormGroup label={t('cloud_provider')} fieldId="form-cloud-provider-name">
-          {cloudProviders.map(
-            (provider: CloudProvider) =>
-              provider.enabled && (
-                <Tile
-                  key={`tile-${provider.name}`}
-                  title={provider?.display_name || ''}
-                  icon={getTileIcon(provider?.name)}
-                  isSelected={cloud_provider === provider.name}
-                  onClick={() => onCloudProviderSelect(provider)}
-                />
-              )
-          )}
+          {cloudProviders.map((provider: CloudProvider) => {
+            const { name, display_name = '' } = provider;
+            return (
+              <Tile
+                key={`tile-${name}`}
+                title={display_name}
+                icon={getTileIcon(name)}
+                isSelected={cloud_provider === name}
+                onClick={() => onCloudProviderSelect(provider)}
+              />
+            );
+          })}
         </FormGroup>
         <FormGroup
           label={t('cloud_region')}
@@ -294,25 +288,19 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           helperTextInvalidIcon={<ExclamationCircleIcon />}
           validated={cloudRegionValidated.fieldState}
           fieldId="form-cloud-region-option"
+          isRequired
         >
           <FormSelect
             validated={cloudRegionValidated.fieldState}
             value={region}
-            onChange={handleCloudRegionChange}
+            onChange={onChangeCloudRegion}
             id="cloud-region-select"
             name="cloud-region"
             aria-label={t('cloud_region')}
           >
-            {cloudRegions.map(
-              (option: CloudRegion, index) =>
-                option.enabled && (
-                  <FormSelectOption
-                    key={index}
-                    value={option.id}
-                    label={option.id ? t(option.id) : option.display_name || ''}
-                  />
-                )
-            )}
+            {cloudRegions.map(({ id, display_name = '' }: CloudRegion, index) => (
+              <FormSelectOption key={index} value={id} label={id ? t(id) : display_name} />
+            ))}
           </FormSelect>
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">

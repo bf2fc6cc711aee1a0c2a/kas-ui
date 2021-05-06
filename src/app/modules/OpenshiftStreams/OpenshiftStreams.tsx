@@ -316,8 +316,9 @@ const OpenshiftStreams = ({
           basePath,
         });
         await apisService.listCloudProviders().then((res) => {
-          const providers = res.data;
-          setCloudProviders(providers.items);
+          const providers = res?.data?.items || [];
+          const enabledCloudProviders: CloudProvider[] = providers?.filter((p: CloudProvider) => p.enabled);
+          setCloudProviders(enabledCloudProviders);
         });
       } catch (error) {
         let reason: string | undefined;
