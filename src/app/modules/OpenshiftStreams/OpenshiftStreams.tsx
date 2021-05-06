@@ -79,7 +79,8 @@ const OpenshiftStreams = ({
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] = useState<SelectedInstance | null>();
-  const [expectedTotal, setExpectedTotal] = useState<number>(0); // state to store the expected total kafka instances based on the operation
+  // state to store the expected total kafka instances based on the operation
+  const [expectedTotal, setExpectedTotal] = useState<number>(0);
   const [isDisplayKafkaEmptyState, setIsDisplayKafkaEmptyState] = useState<boolean | undefined>(undefined);
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
@@ -228,37 +229,58 @@ const OpenshiftStreams = ({
           accessToken,
           basePath,
         });
+
         await apisService.listKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
           const kafkaInstances = res.data;
-          const kafkaInstanceItems = kafkaInstances?.items;
+          const kafkaItems = kafkaInstances?.items || [];
           setKafkaInstancesList(kafkaInstances);
-          setKafkaInstanceItems(kafkaInstanceItems);
+          setKafkaInstanceItems(kafkaItems);
+
           if (kafkaInstancesList?.total !== undefined && kafkaInstancesList.total > expectedTotal) {
             setExpectedTotal(kafkaInstancesList.total);
           }
 
-          if (waitingForDelete && filteredValue.length < 1 && kafkaInstanceItems?.length === 0) {
+          if (waitingForDelete && filteredValue.length < 1 && kafkaItems?.length == 0) {
             setIsDisplayKafkaEmptyState(true);
             setWaitingForDelete(false);
           }
+
           setKafkaDataLoaded(true);
         });
-        // Check to see if at least 1 kafka is present
-        if (!kafkaInstanceItems || kafkaInstanceItems?.length === 0) {
-          await apisService.listKafkas('1', '1').then((res) => {
-            const kafkaItemsLength = res?.data?.items?.length;
-            if (!kafkaItemsLength || kafkaItemsLength < 1) {
-              setIsDisplayKafkaEmptyState(true);
-            } else {
-              setIsDisplayKafkaEmptyState(false);
-            }
-          });
-        }
       } catch (error) {
         handleServerError(error);
       }
     }
   };
+
+  const fetchSingleKafka = async () => {
+    const accessToken = await authContext?.getToken();
+    if (accessToken && isVisible) {
+      try {
+        const apisService = new DefaultApi({
+          accessToken,
+          basePath,
+        });
+
+        await apisService.listKafkas('1', '1').then((res) => {
+          const kafkaItemsLength = res?.data?.items?.length;
+          if (!kafkaItemsLength || kafkaItemsLength < 1) {
+            setIsDisplayKafkaEmptyState(true);
+          } else {
+            setIsDisplayKafkaEmptyState(false);
+          }
+        });
+      } catch (error) {
+        handleServerError(error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!kafkaInstanceItems || kafkaInstanceItems?.length <= 1) {
+      fetchSingleKafka();
+    }
+  }, [kafkaInstanceItems]);
 
   const fetchCurrentUserKafkas = async () => {
     const accessToken = await authContext?.getToken();
@@ -325,11 +347,7 @@ const OpenshiftStreams = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        /**
-         * Todo: show user friendly message according to server code
-         * and translation for specific language
-         *
-         */
+
         addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
       }
     }
@@ -582,7 +600,7 @@ const OpenshiftStreams = ({
           )}
         </PageSection>
       );
-    } else if (kafkaInstanceItems && !isDisplayKafkaEmptyState) {
+    } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
       return (
         <PageSection
           className="mk--main-page__page-section--table"
