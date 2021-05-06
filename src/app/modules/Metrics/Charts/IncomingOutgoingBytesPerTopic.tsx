@@ -25,6 +25,7 @@ import byteSize from 'byte-size';
 import { IncomingBytesPerTopicChart } from './IncomingBytesPerTopicChart';
 import { OutgoingBytesPerTopicChart } from './OutgoingBytesPerTopicChart';
 import { useTimeout } from '@app/hooks/useTimeout';
+import { getLargestByteSize, convertToSpecifiedByte, getMaxValueOfArray} from './utils';
 
 type Topic = {
   name: string
@@ -67,72 +68,13 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
   const [outgoingBytesChartData, setOutgoingBytesChartData] = useState<ChartData[]>();
   const [largestByteSize, setLargestByteSize] = useState();
   const [maxValueInDataSets, setMaxValueInDataSets] = useState();
+  const [noTopics, setNoTopics] = useState();
 
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
   const [chartDataLoading, setChartDataLoading] = useState(true);
 
   const incomingBytesColors = [chart_color_blue_100.value, chart_color_blue_200.value, chart_color_blue_300.value, chart_color_blue_400.value, chart_color_blue_500.value];
   const outgoingBytesColors = [chart_color_orange_100.value, chart_color_orange_200.value, chart_color_orange_300.value, chart_color_orange_400.value, chart_color_orange_500.value];
-
-  const convertTopicLabels = (topic) => {
-    if(topic === '__strimzi_canary') {
-      return 'Strimzi canary'
-    }
-    if(topic === '__consumer_offsets') {
-      return 'Consumer offsets'
-    }
-    else {
-      return topic
-    }
-  }
-
-  const getLargestByteSize = (data) => {
-    let currentByteSize = "B";
-    data.map(datum => {
-      datum.data.forEach(value => {
-        const byteString = byteSize(value.bytes).unit;
-        if(byteString === "kB") {
-          if (currentByteSize === "B") {
-            currentByteSize = "kB";
-          }
-        }
-        if(byteString === "MB") {
-          if (currentByteSize === 'B' || currentByteSize === 'kB') {
-            currentByteSize = "MB";
-          }
-        }
-        if(byteString === "GB") {
-          if (currentByteSize === 'B' || currentByteSize === 'kB' || currentByteSize === 'MB') {
-            currentByteSize = "GB";
-          }
-        }
-      })
-    })
-    return currentByteSize;
-  }
-
-  const convertToSpecifiedByte = (bytes, largestByteSize) => {
-    console.log('what is bytes type' + bytes + largestByteSize);
-    if(largestByteSize === 'B') {
-      return Math.round(bytes * 10) / 10
-    }
-    if(largestByteSize === 'kB') {
-      return Math.round(bytes / 1024 * 10) / 10
-    }
-    if(largestByteSize === 'MB') {
-      return Math.round(bytes / 1024 / 1024 * 10) / 10
-    }
-    if(largestByteSize === 'GB') {
-      return Math.round(bytes / 1024 / 1024 / 1024 * 10) / 10
-    }
-  }
-
-  const getMaxValueOfArray = (data) => {
-    const max = data.reduce(function(prev, current) {
-      return (prev.bytes > current.bytes) ? prev : current
-    })
-    return max.bytes;
-  }
 
   const fetchBytesData = async () => {
     const accessToken = await authContext?.getToken();
@@ -164,13 +106,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
             }
             if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
               const topicName = labels.topic;
-
               const topic = {
-                name: convertTopicLabels(topicName),
+                name: topicName,
                 data: []
               } as Topic;
 
-              const isTopicInArray = incomingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
+              const isTopicInArray = incomingBytesTopicArray.some(t => t.name === topicName);
               item.values?.forEach(value => {
                 if (value.Timestamp == undefined) {
                   throw new Error('timestamp cannot be undefined');
@@ -178,7 +119,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
 
                 if(isTopicInArray) {
                   incomingBytesTopicArray.map((topic) => {
-                    if(topic.name === convertTopicLabels(topicName)) {
+                    if(topic.name === topicName) {
                       topic.data.forEach((datum) => {
                         datum.bytes = datum.bytes + value.Value;
                       })
@@ -187,7 +128,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
                 }
                 else {
                   topic.data.push({
-                    name: convertTopicLabels(topicName),
+                    name: topicName,
                     timestamp: value.Timestamp,
                     bytes: value.Value
                   });
@@ -201,20 +142,18 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
             const topicName = labels.topic;
             const topic = {
-              name: convertTopicLabels(topicName),
+              name: topicName,
               data: []
             } as Topic;
 
-            const isTopicInArray = outgoingBytesTopicArray.some(t => t.name === convertTopicLabels(topicName));
-
+            const isTopicInArray = outgoingBytesTopicArray.some(t => t.name === topicName);
             item.values?.forEach(value => {
               if (value.Timestamp == undefined) {
                 throw new Error('timestamp cannot be undefined');
               }
-
               if(isTopicInArray) {
                 outgoingBytesTopicArray.map((topic) => {
-                  if(topic.name === convertTopicLabels(topicName)) {
+                  if(topic.name === topicName) {
                     topic.data.forEach((datum) => {
                       datum.bytes = datum.bytes + value.Value;
                     })
@@ -223,18 +162,24 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
               }
               else {
                 topic.data.push({
-                  name: convertTopicLabels(topicName),
+                  name: topicName,
                   timestamp: value.Timestamp,
                   bytes: value.Value
                 });
               }
             })
-
             if(!isTopicInArray) {
               outgoingBytesTopicArray.push(topic);
             }
           }
           });
+
+          // Check if atleast on topic exists that isn't Strimzi Canary or Consumer Offsets - Keep this here for testing purposes
+          const atleastOneTopic = incomingBytesTopicArray.some(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' )
+          if(!atleastOneTopic) {
+            setNoTopics(true);
+          }
+
           getChartData(incomingBytesTopicArray, 'incoming');
           getChartData(outgoingBytesTopicArray, 'outgoing');
         }
@@ -327,6 +272,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
               maxValueInDataSets={maxValueInDataSets}
               metricsDataUnavailable={metricsDataUnavailable}
               chartDataLoading={chartDataLoading}
+              noTopics={noTopics}
             />
           </GridItem>
           <GridItem sm={12} lg={6}>
@@ -337,6 +283,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
               maxValueInDataSets={maxValueInDataSets}
               metricsDataUnavailable={metricsDataUnavailable}
               chartDataLoading={chartDataLoading}
+              noTopics={noTopics}
             />
           </GridItem>
         </Grid>

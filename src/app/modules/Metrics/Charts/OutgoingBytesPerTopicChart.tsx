@@ -52,7 +52,7 @@ export type KafkaInstanceProps = {
   chartDataLoading: boolean
 }
 
-export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartData, legend, byteSize, maxValueInDataSets, metricsDataUnavailable, chartDataLoading }: KafkaInstanceProps) => {
+export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartData, legend, byteSize, maxValueInDataSets, metricsDataUnavailable, chartDataLoading, noTopics }: KafkaInstanceProps) => {
 
   console.log('what is chartData' + chartData)
   console.log('what is legend' + legend)
@@ -88,6 +88,7 @@ export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
         <div ref={containerRef}>
           { !chartDataLoading ? (
             !metricsDataUnavailable ? (
+              !noTopics ? (
               chartData && legend && byteSize && maxValueInDataSets &&
               <Chart
                 ariaDesc={t('metrics.outgoing_bytes_per_topic')}
@@ -107,20 +108,22 @@ export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
                 }
                 height={300}
                 padding={{
-                  bottom: 80,
+                  bottom: 110,
                   left: 90,
                   right: 30,
                   top: 25
                 }}
                 themeColor={ChartThemeColor.multiUnordered}
                 width={width}
+                legendAllowWrap={true}
               >
                 <ChartAxis label={'Time'} tickCount={6} />
                 <ChartAxis
                   dependentAxis
                   tickFormat={(t) => `${Math.round(t)} ${byteSize}/s`}
                   tickCount={4}
-                  domain={{ y: [0, maxValueInDataSets]}}
+                  domain={[0, maxValueInDataSets]}
+                  
                 />
                 <ChartGroup>
                   {chartData.map((value, index) => (
@@ -136,8 +139,19 @@ export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
                   ))}
                 </ChartGroup>
                 </Chart>
+                  ) : (
+                    <ChartEmptyState
+                      title="No topics yet"
+                      body="Data will show when topics exist and are in use."
+                      noTopics
+                    />
+                    )
               ) : (
-                <ChartEmptyState/>
+                <ChartEmptyState
+                  title="No data"
+                  body="We’re creating your Kafka instance, so some details aren’t yet available."
+                  noData
+                />
               )
             ) : (
               <Bullseye>

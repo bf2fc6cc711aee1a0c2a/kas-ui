@@ -28,6 +28,7 @@ import { format } from 'date-fns';
 import byteSize from 'byte-size';
 import { ChartEmptyState } from './ChartEmptyState';
 import { useTimeout } from '@app/hooks/useTimeout';
+import { getLargestByteSize, convertToSpecifiedByte} from './utils';
 
 export type Partition = {
   name: string
@@ -70,60 +71,12 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
   const [largestByteSize, setLargestByteSize] = useState();
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
   const [chartDataLoading, setChartDataLoading] = useState(true);
+  const [noTopics, setNoTopics] = useState();
 
   const colors = [chart_color_green_300.value, chart_color_blue_300.value];
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
-
-  const convertTopicLabels = (topic) => {
-    if(topic === '__strimzi_canary') {
-      return 'Strimzi canary'
-    }
-    if(topic === '__consumer_offsets') {
-      return 'Consumer offsets'
-    }
-    else {
-      return topic
-    }
-  }
-
-  const getLargestByteSize = (data) => {
-    let currentByteSize = "B";
-    data.forEach(value => {
-      const byteString = byteSize(value.bytes).unit;
-      if(byteString === "kB") {
-        if (currentByteSize === 'B') {
-          currentByteSize = "kB";
-        }
-      }
-      if(byteString === "MB") {
-        if (currentByteSize === 'B' || currentByteSize === 'kB')
-        currentByteSize = "MB"
-      }
-      if(byteString === "GB") {
-        if (currentByteSize === 'B' || currentByteSize === 'kB' || currentByteSize === 'MB') {
-          currentByteSize = "GB"
-        }
-      }
-    })
-    return currentByteSize;
-  }
-
-  const convertToSpecifiedByte = (bytes, largestByteSize) => {
-    if(largestByteSize === 'B') {
-      return Math.round(bytes * 10) / 10
-    }
-    if(largestByteSize === 'kB') {
-      return Math.round(bytes / 1024 * 10) / 10
-    }
-    if(largestByteSize === 'MB') {
-      return Math.round(bytes / 1024 / 1024 * 10) / 10
-    }
-    if(largestByteSize === 'GB') {
-      return Math.round(bytes / 1024 / 1024 / 1024 * 10) / 10
-    }
-  }
 
   // Functions
   const fetchLogSizePerPartition = async () => {
@@ -141,7 +94,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
         
         console.log('what is data log size per partition' + JSON.stringify(data));
 
-        let partitionArray = [];
+        let partitionArray: Partition[] = [];
 
         if(data.data.items) {
           setMetricsDataUnavailable(false);
@@ -149,11 +102,11 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
             const topicName = item?.metric?.topic;
 
             const topic = {
-              name: convertTopicLabels(topicName),
+              name: topicName,
               data: []
             } as Partition;
 
-            const isTopicInArray = partitionArray.some(topic => topic.name === convertTopicLabels(topicName));
+            const isTopicInArray = partitionArray.some(topic => topic.name === topicName);
 
             item.values?.forEach(value => {
               if (value.Timestamp == undefined) {
@@ -162,7 +115,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
 
               if(isTopicInArray) {
                 partitionArray.map((topic: Partition) => {
-                  if(topic.name === convertTopicLabels(topicName)) {
+                  if(topic.name === topicName) {
                     topic.data.forEach((datum) => {
                       datum.bytes = datum.bytes + value.Value;
                     })
@@ -171,7 +124,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
               }
               else {
                 topic.data.push({
-                  name: convertTopicLabels(topicName),
+                  name: topicName,
                   timestamp: value.Timestamp,
                   bytes: value.Value
                 });
@@ -182,6 +135,11 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
               partitionArray.push(topic);
             }
           })
+          // Check if atleast on topic exists that isn't Strimzi Canary or Consumer Offsets - Keep this here for testing purposes
+          const atleastOneTopic = partitionArray.some(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' )
+          if(!atleastOneTopic) {
+            setNoTopics(true);
+          }
           getChartData(partitionArray);
         }
         else {
@@ -213,15 +171,13 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
   const getChartData = (partitionArray) => {
     let legendData: Array<LegendData> = [];
     let chartData: Array<ChartData> = [];
-    let largestByteSize = "";
+    let largestByteSize = getLargestByteSize(partitionArray);
     partitionArray.map((partition, index) => {
       const color = colors[index];
       legendData.push({
         name: partition.name
       });
       let area: Array<PartitionChartData> = [];
-
-      largestByteSize = getLargestByteSize(partition.data);
 
       const getCurrentLengthOfData = () => {
         let timestampDiff = partition.data[partition.data.length - 1].timestamp - partition.data[0].timestamp;
@@ -263,53 +219,65 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
         <div ref={containerRef}>
           {!chartDataLoading ? (
             !metricsDataUnavailable ? (
-              chartData && legend && byteSize &&
-              <Chart
-                ariaDesc={t('metrics.log_size_per_partition')}
-                ariaTitle="Log Size"
-                containerComponent={
-                  <ChartVoronoiContainer
-                    labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                    constrainToVisibleArea
-                  />
-                }
-                legendPosition="bottom-left"
-                legendComponent={
-                  <ChartLegend
-                    data={legend}
-                    itemsPerRow={itemsPerRow}
-                  />
-                }
-                height={300}
-                padding={{
-                  bottom: 80,
-                  left: 90,
-                  right: 30,
-                  top: 25
-                }}
-                themeColor={ChartThemeColor.multiUnordered}
-                width={width}
-                legendAllowWrap={true}
-              >
-                <ChartAxis label={'Time'} tickCount={6} />
-                <ChartAxis
-                  dependentAxis
-                  tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
-                  tickCount={4}
-                />
-                <ChartGroup>
-                  {chartData.map((value, index) => (
-                    <ChartArea
-                      key={`chart-area-${index}`}
-                      data={value.area}
-                      interpolation="monotoneX"
+              !noTopics ? (
+                chartData && legend && byteSize &&
+                <Chart
+                  ariaDesc={t('metrics.log_size_per_partition')}
+                  ariaTitle="Log Size"
+                  containerComponent={
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                      constrainToVisibleArea
                     />
-                  ))}
-                </ChartGroup>
-              </Chart>
-            ) : (
-              <ChartEmptyState/>
-            )
+                  }
+                  legendPosition="bottom-left"
+                  legendComponent={
+                    <ChartLegend
+                      data={legend}
+                      itemsPerRow={itemsPerRow}
+                    />
+                  }
+                  height={350}
+                  padding={{
+                    bottom: 110,
+                    left: 90,
+                    right: 30,
+                    top: 25
+                  }}
+                  themeColor={ChartThemeColor.multiUnordered}
+                  width={width}
+                  legendAllowWrap={true}
+                >
+                  <ChartAxis label={'Time'} tickCount={6} />
+                  <ChartAxis
+                    dependentAxis
+                    tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+                    tickCount={4}
+                  />
+                  <ChartGroup>
+                    {chartData.map((value, index) => (
+                      <ChartArea
+                        key={`chart-area-${index}`}
+                        data={value.area}
+                        interpolation="monotoneX"
+                      />
+                    ))}
+                  </ChartGroup>
+                </Chart>
+                ) : (
+                  <ChartEmptyState
+                    title="No topics yet"
+                    body="Data will show when topics exist and are in use."
+                    noTopics
+                  />
+                  )
+              ) : (
+                <ChartEmptyState
+                  title="No data"
+                  body="We’re creating your Kafka instance, so some details aren’t yet available."
+                  noData
+              />
+              )
           ) : (
             <Bullseye>
               <Spinner isSVG/>

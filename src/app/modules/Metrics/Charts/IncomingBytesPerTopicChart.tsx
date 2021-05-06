@@ -43,7 +43,7 @@ type KafkaInstanceProps = {
   chartDataLoading: boolean
 }
 
-export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartData, legend, byteSize, maxValueInDataSets, metricsDataUnavailable, chartDataLoading}: KafkaInstanceProps) => {
+export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartData, legend, byteSize, maxValueInDataSets, metricsDataUnavailable, chartDataLoading, noTopics}: KafkaInstanceProps) => {
 
   const containerRef = useRef();
   const { t } = useTranslation();
@@ -71,6 +71,7 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
             <div>
             { !chartDataLoading ? (
               !metricsDataUnavailable ? (
+                !noTopics ? (
                 chartData && legend && byteSize && maxValueInDataSets &&
                 <Chart
                   ariaDesc={t('metrics.incoming_bytes_per_topic')}
@@ -87,12 +88,11 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
                     <ChartLegend
                       data={legend}
                       itemsPerRow={itemsPerRow}
-                      gutter={20}
                     />
                   }
                   height={300}
                   padding={{
-                    bottom: 80,
+                    bottom: 110,
                     left: 90,
                     right: 30,
                     top: 25
@@ -123,8 +123,19 @@ export const IncomingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartD
                     ))}
                   </ChartGroup>
                   </Chart>
+                  ) : (
+                    <ChartEmptyState
+                      title="No topics yet"
+                      body="Data will show when topics exist and are in use."
+                      noTopics
+                    />
+                    )
                 ) : (
-                <ChartEmptyState/>
+                  <ChartEmptyState
+                    title="No data"
+                    body="We’re creating your Kafka instance, so some details aren’t yet available."
+                    noData
+                  />
               )
             ) : (
               <Bullseye>

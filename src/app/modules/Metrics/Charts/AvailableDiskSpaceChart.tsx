@@ -31,6 +31,7 @@ import { format } from 'date-fns';
 import byteSize from 'byte-size';
 import { ChartEmptyState } from './ChartEmptyState';
 import { useTimeout } from '@app/hooks/useTimeout';
+import { getLargestByteSize, convertToSpecifiedByte, getMaxValueOfArray} from './utils';
 
 type Broker = {
   name: string
@@ -74,13 +75,14 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
   const [chartData, setChartData] = useState<ChartData[]>();
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
   const [chartDataLoading, setChartDataLoading] = useState(true);
+  const [maxValueInDataSets, setMaxValueInDataSets] = useState();
 
   const [largestByteSize, setLargestByteSize] = useState();
   const colors = [chart_color_blue_300.value, chart_color_orange_300.value, chart_color_green_300.value];
   const softLimitColor = chart_color_black_500.value;
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
-  const itemsPerRow = width && width > 650 ? 6 : 3;
+  const itemsPerRow = width && width > 650 ? 3 : 2;
 
   const fetchAvailableDiskSpaceMetrics = async () => {
     const accessToken = await authContext?.getToken();
@@ -97,14 +99,10 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
         
         console.log('what is Data Available Disk' + JSON.stringify(data));
         
-        const avgBroker = {
-          name: `Available disk space`,
-          data: []
-        } as Broker;
-        
+        let brokerArray: Broker[] = [];
         if(data.data.items) {
           setMetricsDataUnavailable(false);
-          data.data.items.forEach((item, index) => {
+          data.data.items?.forEach((item, i) => {
             const labels = item.metric;
             if (labels === undefined) {
               throw new Error('item.metric cannot be undefined');
@@ -113,32 +111,30 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
               throw new Error('item.values cannot be undefined');
             }
             if (labels['__name__'] === 'kubelet_volume_stats_available_bytes') {
-              
               const pvcName = labels['persistentvolumeclaim'];
+
               if (!pvcName.includes('zookeeper')) {
-  
-                item.values?.forEach((value, indexJ) => {
+                const broker = {
+                  name: labels['persistentvolumeclaim'],
+                  data: []
+                } as Broker;
+
+                item.values?.forEach(value => {
                   if (value.Timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
-                }
-                  const hardLimit = 225 * 1024 * 1024 * 1024 * .95;
-                  const usedSpaceInBytes = [hardLimit - value.Value];
-  
-                  if(index > 0) {
-                    let newArray = avgBroker.data[indexJ].bytes.concat(usedSpaceInBytes);
-                    avgBroker.data[indexJ].bytes = newArray;
                   }
-                  else {
-                    avgBroker.data.push({
-                      timestamp: value.Timestamp,
-                      bytes: usedSpaceInBytes,
-                    });
-                  }
-              });
+                  broker.data.push({
+                    name: labels['persistentvolumeclaim'],
+                    timestamp: value.Timestamp,
+                    bytes: value.Value
+                  });
+                })
+                brokerArray.push(broker);
+              }
             }
-          }
-        });
-        getChartData(avgBroker);
+            
+          })
+          getChartData(brokerArray);
         }
         else {
           setMetricsDataUnavailable(true);
@@ -166,51 +162,59 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
     window.addEventListener('resize', handleResize);
   }, [width]);
 
-  const getChartData = (avgBroker) => {
-    const legendData: Array<LegendData> = [
-      {name: 'Limit', symbol: { fill: chart_color_black_500.value, type: 'threshold'}},
-      {name: avgBroker.name, symbol: { fill: colors[0]}}
-    ];
-    const average = (nums) => {
-      return nums.reduce((a, b) => (a + b)) / nums.length;
-    }
-    const color = colors[0];
+  const getChartData = (brokerArray) => {
+    let legendData: Array<LegendData> = [{name: 'Limit', symbol: { fill: chart_color_black_500.value, type: 'threshold'}}];
     let chartData: Array<ChartData> = [];
-    let area: Array<BrokerChartData> = [];
-    let softLimit: Array<BrokerChartData> = [];
-    let largestByteSize: string = "";
+    let largestByteSize = getLargestByteSize(brokerArray);
+    let maxValuesInBrokers: Array<number> = [];
+    brokerArray.map((broker, index) => {
+      const color = colors[index];
+      legendData.push({
+        name: broker.name,
+        symbol: { fill: color }
+      });
 
-    const getCurrentLengthOfData = () => {
-      let timestampDiff = avgBroker.data[avgBroker.data.length - 1].timestamp - avgBroker.data[0].timestamp;
-      const minutes = timestampDiff / 1000 / 60;
-      return minutes;
-    }
-    let lengthOfData = (6 * 60) - getCurrentLengthOfData();
-    let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
+      let area: Array<BrokerChartData> = [];
+      let softLimit: Array<BrokerChartData> = [];
+      maxValuesInBrokers.push(getMaxValueOfArray(broker.data));
 
-    if (lengthOfData <= 360) {
-      for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
-        const newTimestamp = (avgBroker.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
-        const date = new Date(newTimestamp);
-        const time = format(date, 'hh:mm');
-        area.push({ name: avgBroker.name, x: time, y: 0})
-        softLimit.push({ name: 'Limit', x: time, y: 20 });
+
+      const getCurrentLengthOfData = () => {
+        let timestampDiff = broker.data[broker.data.length - 1].timestamp - broker.data[0].timestamp;
+        const minutes = timestampDiff / 1000 / 60;
+        return minutes;
       }
-    }
+      let lengthOfData = (6 * 60) - getCurrentLengthOfData();
+      let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
+    
+      if (lengthOfData <= 360) {
+        for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
+          const newTimestamp = (broker.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
+          const date = new Date(newTimestamp);
+          const time = format(date, 'hh:mm');
+          area.push({ name: broker.name, x: time, y: 0})
+          softLimit.push({ name: 'Limit', x: time, y: 20 });
+        }
+      }
 
-    avgBroker.data.map(value => {
-      const date = new Date(value.timestamp);
-      const time = format(date, 'hh:mm');
-      const bytes = byteSize(average(value.bytes));
-      largestByteSize = bytes.unit;
-      area.push({ name: avgBroker.name, x: time, y: parseInt(bytes.value)});
-      softLimit.push({ name: 'Limit', x: time, y: 20 });
+      broker.data.map(value => {
+        const date = new Date(value.timestamp);
+        const time = format(date, 'hh:mm');
+        const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
+        area.push({ name: value.name, x: time, y: bytes});
+        softLimit.push({ name: 'Limit', x: time, y: 20 });
+      });
+      chartData.push({ color, softLimitColor, area, softLimit });
     });
-    chartData.push({ color, softLimitColor, area, softLimit });
+    console.log('what is maxValuesInBrokers' + maxValuesInBrokers)
+    const maxValueData: number = convertToSpecifiedByte(Math.max(...maxValuesInBrokers), largestByteSize);
+    console.log('what is maxValueData' + maxValueData)
+
     setLegend(legendData);
     setChartData(chartData);
     setLargestByteSize(largestByteSize);
     setChartDataLoading(false);
+    setMaxValueInDataSets(maxValueData);
   }
 
     return (
@@ -222,7 +226,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
           <div ref={containerRef}>
             { !chartDataLoading ? (
               !metricsDataUnavailable ? (
-                chartData && legend && byteSize &&
+                chartData && legend && byteSize && maxValueInDataSets &&
                 <Chart
                   ariaDesc={t('metrics.available_disk_space')}
                   ariaTitle="Disk Space"
@@ -235,13 +239,14 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                   legendPosition="bottom-left"
                   legendComponent={
                     <ChartLegend
+                      orientation={'horizontal'}
                       data={legend}
                       itemsPerRow={itemsPerRow}
                     />
                   }
-                  height={300}
+                  height={350}
                   padding={{
-                    bottom: 80, // Adjusted to accomodate legend
+                    bottom: 110, // Adjusted to accomodate legend
                     left: 90,
                     right: 60,
                     top: 25
@@ -249,12 +254,14 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                   themeColor={ChartThemeColor.multiUnordered}
                   width={width}
                   minDomain={{ y: 0 }}
+                  legendAllowWrap={true}
                 >
                   <ChartAxis label={'Time'} tickCount={6} />
                   <ChartAxis
                     dependentAxis
                     tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
                     tickCount={4}
+                    domain={{ y: [0, maxValueInDataSets]}}
                   />
                     <ChartGroup>
                       {chartData && chartData.map((value, index) => (
@@ -281,7 +288,11 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                     />
                 </Chart>
               ) : (
-                <ChartEmptyState/>
+                <ChartEmptyState
+                  title="No data"
+                  body="We’re creating your Kafka instance, so some details aren’t yet available."
+                  noData
+                />
               )
             ) : (
               <Bullseye>
