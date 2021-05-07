@@ -135,12 +135,12 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
               partitionArray.push(topic);
             }
           })
-          // Check if atleast on topic exists that isn't Strimzi Canary or Consumer Offsets - Keep this here for testing purposes
-          const atleastOneTopic = partitionArray.some(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' )
-          if(!atleastOneTopic) {
+          // Check if atleast one topic exists that isn't Strimzi Canary or Consumer Offsets - Keep this here for testing purposes
+          const filteredTopics = partitionArray.filter(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' );
+          if(!filteredTopics) {
             setNoTopics(true);
           }
-          getChartData(partitionArray);
+          getChartData(filteredTopics);
         }
         else {
           setMetricsDataUnavailable(true);
@@ -252,7 +252,6 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
                   <ChartAxis
                     dependentAxis
                     tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
-                    tickCount={4}
                   />
                   <ChartGroup>
                     {chartData.map((value, index) => (

@@ -82,7 +82,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
   const softLimitColor = chart_color_black_500.value;
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
-  const itemsPerRow = width && width > 650 ? 3 : 2;
+  const itemsPerRow = width && width > 650 ? 6 : 3;
 
   const fetchAvailableDiskSpaceMetrics = async () => {
     const accessToken = await authContext?.getToken();
@@ -115,7 +115,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
 
               if (!pvcName.includes('zookeeper')) {
                 const broker = {
-                  name: labels['persistentvolumeclaim'],
+                  name: `Broker` + (i + 1),
                   data: []
                 } as Broker;
 
@@ -124,7 +124,7 @@ export const AvailableDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}:
                     throw new Error('timestamp cannot be undefined');
                   }
                   broker.data.push({
-                    name: labels['persistentvolumeclaim'],
+                    name: `Broker` + (i + 1),
                     timestamp: value.Timestamp,
                     bytes: value.Value
                   });

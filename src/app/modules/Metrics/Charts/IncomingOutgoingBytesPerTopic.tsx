@@ -175,13 +175,16 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           });
 
           // Check if atleast on topic exists that isn't Strimzi Canary or Consumer Offsets - Keep this here for testing purposes
-          const atleastOneTopic = incomingBytesTopicArray.some(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' )
-          if(!atleastOneTopic) {
+          const filteredTopicsIncoming = incomingBytesTopicArray.filter(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' );
+          const filteredTopicsOutgoing = incomingBytesTopicArray.filter(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' );
+
+          console.log('what is filteredTopicsIncoming' + JSON.stringify(filteredTopicsIncoming))
+
+          if(filteredTopicsIncoming.length < 1) {
             setNoTopics(true);
           }
-
-          getChartData(incomingBytesTopicArray, 'incoming');
-          getChartData(outgoingBytesTopicArray, 'outgoing');
+          getChartData(filteredTopicsIncoming, 'incoming');
+          getChartData(filteredTopicsOutgoing, 'outgoing');
         }
         else {
           setMetricsDataUnavailable(true);
