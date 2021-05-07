@@ -246,6 +246,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   return (
     <>
       <MASCreateModal
+        id="modalCreateSAccount"
         isModalOpen={isOpen}
         title={t('serviceAccount.create_a_service_account')}
         handleModalToggle={handleCreateModal}
@@ -253,6 +254,8 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
         isFormValid={isFormValid}
         primaryButtonTitle="Create"
         isCreationInProgress={isCreationInProgress}
+        dataTestIdSubmit="modalCreateServiceAccount-buttonSubmit"
+        dataTestIdCancel="modalCreateServiceAccount-buttonCancel"
       >
         {createForm()}
       </MASCreateModal>
