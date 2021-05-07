@@ -114,5 +114,16 @@
     "react-redux": "^7.2.2",
     "react-router-last-location": "^2.0.1",
     "redux": "^4.0.5"
-  }  
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,css,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
 }
