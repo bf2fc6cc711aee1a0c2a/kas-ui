@@ -17,7 +17,6 @@ import {
 } from '@patternfly/react-core';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import './CreateInstanceModal.css';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -287,7 +286,6 @@ const CreateInstanceModal: React.FunctionComponent = () => {
           label={t('instance_name')}
           helperText={t('create_instance_name_helper_text')}
           helperTextInvalid={message}
-          helperTextInvalidIcon={message != '' && <ExclamationCircleIcon />}
           isRequired
           validated={fieldState}
           fieldId="form-instance-name"
@@ -320,7 +318,6 @@ const CreateInstanceModal: React.FunctionComponent = () => {
         <FormGroup
           label={t('cloud_region')}
           helperTextInvalid={cloudRegionValidated.message}
-          helperTextInvalidIcon={<ExclamationCircleIcon />}
           validated={cloudRegionValidated.fieldState}
           fieldId="form-cloud-region-option"
         >

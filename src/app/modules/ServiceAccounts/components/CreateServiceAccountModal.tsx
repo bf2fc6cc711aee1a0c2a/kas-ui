@@ -5,7 +5,6 @@ import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi } from './../../../../openapi/api';
 import { NewServiceAccount, FormDataValidationState } from './../../../models';
 import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
@@ -208,7 +207,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           isRequired
           fieldId="text-input-name"
           helperTextInvalid={message}
-          helperTextInvalidIcon={message && <ExclamationCircleIcon />}
           validated={fieldState}
           helperText={t('common.input_filed_invalid_helper_text')}
         >
@@ -227,7 +225,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           label="Description"
           fieldId="text-input-description"
           helperTextInvalid={descMessage}
-          helperTextInvalidIcon={descMessage && <ExclamationCircleIcon />}
           validated={descFieldState}
           helperText={t('common.input_text_area_invalid_helper_text')}
         >
