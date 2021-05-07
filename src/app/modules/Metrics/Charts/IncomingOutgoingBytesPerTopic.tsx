@@ -178,8 +178,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
           const filteredTopicsIncoming = incomingBytesTopicArray.filter(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' );
           const filteredTopicsOutgoing = incomingBytesTopicArray.filter(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' );
 
-          console.log('what is filteredTopicsIncoming' + JSON.stringify(filteredTopicsIncoming))
-
           if(filteredTopicsIncoming.length < 1) {
             setNoTopics(true);
           }
