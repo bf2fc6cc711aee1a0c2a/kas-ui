@@ -20,6 +20,7 @@ import {
   Label,
   Modal,
   ModalVariant,
+  Card,
 } from '@patternfly/react-core';
 import {
   StreamsTableView,
@@ -587,40 +588,42 @@ const OpenshiftStreams = ({
     } else if (kafkaInstanceItems && !isDisplayKafkaEmptyState) {
       return (
         <PageSection
-          className="mk--main-page__page-section--table"
-          variant={PageSectionVariants.light}
+          className="mk--main-page__page-section--table pf-m-padding-on-xl"
+          variant={PageSectionVariants.default}
           padding={{ default: 'noPadding' }}
         >
-          {renderAlertMessage()}
-          <StreamsTableView
-            kafkaInstanceItems={kafkaInstanceItems}
-            mainToggle={mainToggle}
-            onViewConnection={onViewConnection}
-            onViewInstance={onViewInstance}
-            onConnectToRoute={onConnectToRoute}
-            getConnectToRoutePath={getConnectToRoutePath}
-            refresh={refreshKafkas}
-            kafkaDataLoaded={kafkaDataLoaded}
-            setWaitingForDelete={setWaitingForDelete}
-            onDelete={onDelete}
-            page={page}
-            perPage={perPage}
-            total={kafkaInstancesList?.total}
-            expectedTotal={expectedTotal}
-            filteredValue={filteredValue}
-            setFilteredValue={setFilteredValue}
-            setFilterSelected={setFilterSelected}
-            filterSelected={filterSelected}
-            orderBy={orderBy}
-            setOrderBy={setOrderBy}
-            isDrawerOpen={selectedInstance !== null}
-            loggedInUser={loggedInUser}
-            isMaxCapacityReached={isMaxCapacityReached}
-            buttonTooltipContent={getButtonTooltipContent()}
-            isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
-            labelWithTooltip={createInstanceLabel()}
-            currentUserkafkas={currentUserKafkas}
-          />
+          <Card>
+            {renderAlertMessage()}
+            <StreamsTableView
+              kafkaInstanceItems={kafkaInstanceItems}
+              mainToggle={mainToggle}
+              onViewConnection={onViewConnection}
+              onViewInstance={onViewInstance}
+              onConnectToRoute={onConnectToRoute}
+              getConnectToRoutePath={getConnectToRoutePath}
+              refresh={refreshKafkas}
+              kafkaDataLoaded={kafkaDataLoaded}
+              setWaitingForDelete={setWaitingForDelete}
+              onDelete={onDelete}
+              page={page}
+              perPage={perPage}
+              total={kafkaInstancesList?.total}
+              expectedTotal={expectedTotal}
+              filteredValue={filteredValue}
+              setFilteredValue={setFilteredValue}
+              setFilterSelected={setFilterSelected}
+              filterSelected={filterSelected}
+              orderBy={orderBy}
+              setOrderBy={setOrderBy}
+              isDrawerOpen={selectedInstance !== null}
+              loggedInUser={loggedInUser}
+              isMaxCapacityReached={isMaxCapacityReached}
+              buttonTooltipContent={getButtonTooltipContent()}
+              isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
+              labelWithTooltip={createInstanceLabel()}
+              currentUserkafkas={currentUserKafkas}
+            />
+          </Card>
         </PageSection>
       );
     }

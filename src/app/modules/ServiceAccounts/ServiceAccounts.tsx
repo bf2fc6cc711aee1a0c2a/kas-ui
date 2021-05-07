@@ -9,6 +9,7 @@ import {
   Level,
   LevelItem,
   TextContent,
+  Card,
 } from '@patternfly/react-core';
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -155,28 +156,30 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
       } else {
         return (
           <PageSection
-            className="mk--main-page__page-section--table"
-            variant={PageSectionVariants.light}
+            className="mk--main-page__page-section--table pf-m-padding-on-xl"
+            variant={PageSectionVariants.default}
             padding={{ default: 'noPadding' }}
           >
-            <ServiceAccountsTableView
-              page={page}
-              perPage={perPage}
-              total={serviceAccountList?.total || 1}
-              expectedTotal={expectedTotal}
-              serviceAccountsDataLoaded={serviceAccountsDataLoaded}
-              serviceAccountItems={serviceAccountItems}
-              orderBy={orderBy}
-              setOrderBy={setOrderBy}
-              filterSelected={filterSelected}
-              setFilterSelected={setFilterSelected}
-              filteredValue={filteredValue}
-              setFilteredValue={setFilteredValue}
-              onResetCredentials={handleResetModal}
-              onDeleteServiceAccount={handleDeleteModal}
-              handleCreateModal={handleCreateModal}
-              mainToggle={mainToggle}
-            />
+            <Card>
+              <ServiceAccountsTableView
+                page={page}
+                perPage={perPage}
+                total={serviceAccountList?.total || 1}
+                expectedTotal={expectedTotal}
+                serviceAccountsDataLoaded={serviceAccountsDataLoaded}
+                serviceAccountItems={serviceAccountItems}
+                orderBy={orderBy}
+                setOrderBy={setOrderBy}
+                filterSelected={filterSelected}
+                setFilterSelected={setFilterSelected}
+                filteredValue={filteredValue}
+                setFilteredValue={setFilteredValue}
+                onResetCredentials={handleResetModal}
+                onDeleteServiceAccount={handleDeleteModal}
+                handleCreateModal={handleCreateModal}
+                mainToggle={mainToggle}
+              />
+            </Card>
           </PageSection>
         );
       }
