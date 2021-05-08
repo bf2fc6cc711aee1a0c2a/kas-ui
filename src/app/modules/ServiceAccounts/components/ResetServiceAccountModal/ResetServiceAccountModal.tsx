@@ -43,7 +43,10 @@ const ResetServiceAccountModal: React.FunctionComponent<{}> = () => {
           hideModal();
           setIsModalLoading(false);
           //open generate credential modal
-          showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
+          showModal(MODAL_TYPES.GENERATE_CREDENTIALS, {
+            credential,
+            title: t('serviceAccount.reset_service_account_credentials'),
+          });
         });
       } catch (error) {
         handleServerError(error);
@@ -64,7 +67,7 @@ const ResetServiceAccountModal: React.FunctionComponent<{}> = () => {
       <Modal
         id="reset-service-account-modal"
         variant={ModalVariant.medium}
-        title={t('serviceAccount.reset_service_account_credentials')}
+        title={`${t('serviceAccount.reset_service_account_credentials')}?`}
         isOpen={true}
         onClose={handleModalToggle}
         appendTo={getModalAppendTo}
