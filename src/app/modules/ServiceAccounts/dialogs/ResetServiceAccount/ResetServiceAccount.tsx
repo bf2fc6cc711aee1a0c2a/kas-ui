@@ -2,13 +2,13 @@ import React, { useContext } from 'react';
 import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi } from './../../../../../openapi/api';
+import { DefaultApi } from '../../../../../openapi/api';
 import { useTranslation } from 'react-i18next';
 import { useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
 
-const ResetServiceAccountModal: React.FunctionComponent<{}> = () => {
+const ResetServiceAccount: React.FunctionComponent<{}> = () => {
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -97,4 +97,4 @@ const ResetServiceAccountModal: React.FunctionComponent<{}> = () => {
   );
 };
 
-export { ResetServiceAccountModal };
+export { ResetServiceAccount };

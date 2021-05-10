@@ -1,18 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea } from '@patternfly/react-core';
+import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi } from './../../../../openapi/api';
-import { NewServiceAccount, FormDataValidationState } from './../../../models';
-import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
+import { DefaultApi } from '../../../../../openapi/api';
+import { NewServiceAccount, FormDataValidationState } from '../../../../models';
+import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@app/common';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { AlertVariant } from '@patternfly/react-core';
-import { useRootModalContext, MODAL_TYPES } from '@app/common';
 
-const CreateServiceAccountModal: React.FunctionComponent<{}> = () => {
+const CreateServiceAccount: React.FunctionComponent<{}> = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   const { store, showModal, hideModal } = useRootModalContext();
   const { fetchServiceAccounts } = store?.modalProps || {};
@@ -251,4 +248,4 @@ const CreateServiceAccountModal: React.FunctionComponent<{}> = () => {
   );
 };
 
-export { CreateServiceAccountModal };
+export { CreateServiceAccount };

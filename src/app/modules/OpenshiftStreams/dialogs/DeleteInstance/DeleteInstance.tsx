@@ -4,7 +4,7 @@ import { TextInput } from '@patternfly/react-core';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export const DeleteInstanceModal: React.FC<{}> = () => {
+export const DeleteInstance: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { title, confirmButtonProps, cancelButtonProps, textProps, instanceStatus, selectedItemData } =

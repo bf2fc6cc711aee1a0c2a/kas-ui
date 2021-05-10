@@ -1,14 +1,13 @@
 import React, { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from './../../../../openapi/api';
-import { MASDeleteModal, useRootModalContext } from '@app/common';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { useTranslation } from 'react-i18next';
+import { DefaultApi, ServiceAccountListItem } from '../../../../../openapi/api';
+import { MASDeleteModal, useRootModalContext, useAlerts } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 
-const DeleteServiceAccountModal: React.FunctionComponent<{}> = () => {
+const DeleteServiceAccount: React.FunctionComponent<{}> = () => {
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -77,4 +76,4 @@ const DeleteServiceAccountModal: React.FunctionComponent<{}> = () => {
   );
 };
 
-export { DeleteServiceAccountModal };
+export { DeleteServiceAccount };

@@ -1,10 +1,6 @@
 import React, { useState, createContext, useContext } from 'react';
-import { CreateInstanceModal, DeleteInstanceModal } from '@app/modules/OpenshiftStreams/components';
-import {
-  CreateServiceAccountModal,
-  DeleteServiceAccountModal,
-  ResetServiceAccountModal,
-} from '@app/modules/ServiceAccounts/components';
+import { CreateInstance, DeleteInstance } from '@app/modules/OpenshiftStreams/dialogs';
+import { CreateServiceAccount, DeleteServiceAccount, ResetServiceAccount } from '@app/modules/ServiceAccounts/dialogs';
 import { MASGenerateCredentialsModal } from '@app/common';
 
 export const MODAL_TYPES = {
@@ -17,11 +13,11 @@ export const MODAL_TYPES = {
 };
 
 const MODAL_COMPONENTS: any = {
-  [MODAL_TYPES.CREATE_KAFKA_INSTANCE]: CreateInstanceModal,
-  [MODAL_TYPES.DELETE_KAFKA_INSTANCE]: DeleteInstanceModal,
-  [MODAL_TYPES.CREATE_SERVICE_ACCOUNT]: CreateServiceAccountModal,
-  [MODAL_TYPES.DELETE_SERVICE_ACCOUNT]: DeleteServiceAccountModal,
-  [MODAL_TYPES.RESET_CREDENTIALS]: ResetServiceAccountModal,
+  [MODAL_TYPES.CREATE_KAFKA_INSTANCE]: CreateInstance,
+  [MODAL_TYPES.DELETE_KAFKA_INSTANCE]: DeleteInstance,
+  [MODAL_TYPES.CREATE_SERVICE_ACCOUNT]: CreateServiceAccount,
+  [MODAL_TYPES.DELETE_SERVICE_ACCOUNT]: DeleteServiceAccount,
+  [MODAL_TYPES.RESET_CREDENTIALS]: ResetServiceAccount,
   [MODAL_TYPES.GENERATE_CREDENTIALS]: MASGenerateCredentialsModal,
 };
 

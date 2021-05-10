@@ -18,7 +18,7 @@ import {
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import './CreateInstanceModal.css';
+import './CreateInstance.css';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
 import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
@@ -36,7 +36,7 @@ const emptyProvider: CloudProvider = {
   enabled: true,
 };
 
-const CreateInstanceModal: React.FunctionComponent = () => {
+const CreateInstance: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
@@ -356,4 +356,4 @@ const CreateInstanceModal: React.FunctionComponent = () => {
   );
 };
 
-export { CreateInstanceModal };
+export { CreateInstance };
