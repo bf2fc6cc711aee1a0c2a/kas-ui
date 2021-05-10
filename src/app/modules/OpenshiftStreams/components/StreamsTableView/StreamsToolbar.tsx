@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
   TextInput,
@@ -17,11 +18,11 @@ import {
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
-import { useTranslation } from 'react-i18next';
-import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
 import './StreamsToolbar.css';
+import { FilterType, FilterValue } from './StreamsTableView';
 import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
+
 /**
  * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
  */
@@ -36,7 +37,7 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
   buttonTooltipContent?: string | undefined;
-  labelWithTooltip?: React.ReactNode;
+  labelWithTooltip?: Element | undefined;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -51,8 +52,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   buttonTooltipContent,
   labelWithTooltip,
 }) => {
+
   const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
   const { t } = useTranslation();
+  const nameInputRef = useRef<HTMLInputElement>();
+  const ownerInputRef = useRef<HTMLInputElement>();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -63,9 +67,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
-
-  const nameInputRef = useRef<HTMLInputElement>();
-  const ownerInputRef = useRef<HTMLInputElement>();
 
   // Options for server-side filtering
   const mainFilterOptions = [
@@ -323,6 +324,33 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     return <div>{t('input_field_invalid_message', { name: fieldName })}</div>;
   };
 
+  const createButton = () => {
+    if (isDisabledCreateButton) {
+      return (
+        <Tooltip content={buttonTooltipContent}>
+          <Button
+            variant="primary"
+            onClick={() => setIsModalOpen(!isModalOpen)}
+            data-testid={'tableStreams-buttonCreateKafka'}
+            isAriaDisabled={isDisabledCreateButton}
+          >
+            {t('create_kafka_instance')}
+          </Button>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Button
+        variant="primary"
+        onClick={() => setIsModalOpen(!isModalOpen)}
+        data-testid={'tableStreams-buttonCreateKafka'}
+      >
+        {t('create_kafka_instance')}
+      </Button>
+    );
+  };
+
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant="filter-group">
@@ -538,47 +566,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
-  const createButton = () => {
-    if (isDisabledCreateButton) {
-      return (
-        <Tooltip content={buttonTooltipContent}>
-          <Button
-            variant="primary"
-            onClick={() => setIsModalOpen(!isModalOpen)}
-            data-testid={'tableStreams-buttonCreateKafka'}
-            isAriaDisabled={isDisabledCreateButton}
-          >
-            {t('create_kafka_instance')}
-          </Button>
-        </Tooltip>
-      );
-    }
-
-    return (
-      <Button
-        variant="primary"
-        onClick={() => setIsModalOpen(!isModalOpen)}
-        data-testid={'tableStreams-buttonCreateKafka'}
-      >
-        {t('create_kafka_instance')}
-      </Button>
-    );
-  };
-
   const toolbarItems: ToolbarItemProps[] = [
     {
-      item: (
-        <>
-          {createButton()}
-        </>
-      )
+      item: createButton()
     },
     {
-      item: (
-        <>
-          {labelWithTooltip}
-        </>
-      )
+      item: labelWithTooltip
     }
   ];
 

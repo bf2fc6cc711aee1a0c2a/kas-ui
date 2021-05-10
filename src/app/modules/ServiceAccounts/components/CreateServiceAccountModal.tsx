@@ -1,16 +1,16 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea } from '@patternfly/react-core';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import { AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
+import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
+import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
+import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal';
 import { DefaultApi } from './../../../../openapi/api';
 import { NewServiceAccount, FormDataValidationState } from './../../../models';
-import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import { useTranslation } from 'react-i18next';
-import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { AlertVariant } from '@patternfly/react-core';
-import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal';
 
 export type CreateServiceAccountModalProps = {
   isOpen: boolean;
@@ -23,6 +23,11 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   setIsOpen,
   fetchServiceAccounts,
 }: CreateServiceAccountModalProps) => {
+
+  const { t } = useTranslation();
+  const authContext = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
+  const { addAlert } = useAlerts();
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -32,11 +37,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   const [isCreationInProgress, setCreationInProgress] = useState(false);
   const [credential, setCredential] = useState();
   const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
-
-  const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
 
   const resetForm = () => {
     setNameValidated({ fieldState: 'default' });
@@ -151,13 +151,11 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
 
   const createServiceAccount = async () => {
     let isValid = validateCreateForm();
+    const accessToken = await authContext?.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
     }
-
-    const accessToken = await authContext?.getToken();
-
     if (accessToken) {
       try {
         const apisService = new DefaultApi({
@@ -177,7 +175,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
         handleServerError(error);
       }
     }
-
     setCreationInProgress(false);
   };
 
@@ -195,7 +192,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
     const { message, fieldState } = nameValidated;
     const { name, description } = serviceAccountFormData;
     const { message: descMessage, fieldState: descFieldState } = descriptionValidated;
-
     return (
       <Form onSubmit={onFormSubmit}>
         {!isFormValid && (

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, createContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   AlertVariant,
@@ -15,20 +16,19 @@ import {
   FlexItem,
   Divider,
 } from '@patternfly/react-core';
-import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import './CreateInstanceModal.css';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
-import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
-import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
-import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { isValidToken, ErrorCodes } from '@app/utils';
 import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
+import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
+import { NewKafka, FormDataValidationState } from '../../../../models';
+import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
+import './CreateInstanceModal.css';
 
 export type CreateInstanceModalProps = {
   isModalOpen: boolean;

@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from './../../../../openapi/api';
 import { MASDeleteModal } from '@app/common/MASDeleteModal/MASDeleteModal';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { useTranslation } from 'react-i18next';
 import { isServiceApiError } from '@app/utils';
+import { DefaultApi, ServiceAccountListItem } from './../../../../openapi/api';
 
 export type DeleteServiceAccountModalProps = {
   isOpen: boolean;
@@ -21,6 +21,7 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
   fetchServiceAccounts,
   serviceAccountToDelete,
 }: DeleteServiceAccountModalProps) => {
+
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -80,9 +81,7 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
         isLoading,
       }}
     >
-      <p>
-        <b>{serviceAccountToDelete?.name}</b> {t('serviceAccount.will_be_deleted')}
-      </p>
+      <p><b>{serviceAccountToDelete?.name}</b> {t('serviceAccount.will_be_deleted')}</p>
     </MASDeleteModal>
   );
 };

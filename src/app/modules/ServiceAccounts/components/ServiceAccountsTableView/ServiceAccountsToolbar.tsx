@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import {
   ToolbarGroup,
   ToolbarItem,
@@ -18,6 +16,7 @@ import {
   ButtonVariant,
   ValidatedOptions,
 } from '@patternfly/react-core';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
 
 export type ServiceAccountsToolbarProps = {
@@ -52,8 +51,8 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   setFilteredValue,
   handleCreateModal,
 }: ServiceAccountsToolbarProps) => {
-  const { t } = useTranslation();
 
+  const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
 
@@ -63,7 +62,6 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
   const [nameInputValue, setNameInputValue] = useState<string | undefined>();
   const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const mainFilterOptions = [
     { label: t('name'), value: 'name', disabled: false },

@@ -1,14 +1,14 @@
 import React, { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from './../../../../../openapi/api';
 import { isValidToken } from '@app/utils';
-import { useTranslation } from 'react-i18next';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { isServiceApiError, ErrorCodes } from '@app/utils';
 import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal';
 import { getModalAppendTo } from '@app/utils/utils';
+import { DefaultApi, ServiceAccountListItem } from './../../../../../openapi/api';
 
 export type ResetServiceAccountModalProps = {
   isOpen: boolean;
@@ -21,12 +21,13 @@ const ResetServiceAccountModal: React.FunctionComponent<ResetServiceAccountModal
   setIsOpen,
   serviceAccountToReset,
 }: ResetServiceAccountModalProps) => {
+
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { addAlert } = useAlerts();
 
-  const [isModalLoading, setIsModalLoading] = React.useState(false);
+  const [isModalLoading, setIsModalLoading] = useState(false);
   const [credential, setCredential] = useState();
   const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
 

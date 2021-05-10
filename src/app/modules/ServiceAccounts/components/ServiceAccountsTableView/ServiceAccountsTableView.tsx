@@ -13,11 +13,11 @@ import {
   cellWidth,
 } from '@patternfly/react-table';
 import { Skeleton, PaginationVariant } from '@patternfly/react-core';
+import { AuthContext } from '@app/auth/AuthContext';
 import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
-import { AuthContext } from '@app/auth/AuthContext';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;

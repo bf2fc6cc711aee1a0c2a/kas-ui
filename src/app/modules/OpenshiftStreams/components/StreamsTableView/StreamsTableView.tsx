@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { TFunction } from 'i18next';
+import { useHistory, Link } from 'react-router-dom';
 import {
   IAction,
   IExtraData,
@@ -15,17 +15,16 @@ import {
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
+import { ApiContext } from '@app/api/ApiContext';
+import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
+import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { AuthContext } from '@app/auth/AuthContext';
 import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
+import './StatusColumn.css';
+import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
 import { CreateInstanceModal } from '../CreateInstanceModal';
 import { DeleteInstanceModal } from '../DeleteInstanceModal';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
-import { AuthContext } from '@app/auth/AuthContext';
-import './StatusColumn.css';
-import { ApiContext } from '@app/api/ApiContext';
-import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
-import { useHistory } from 'react-router-dom';
 
 export type FilterValue = {
   value: string;
@@ -125,14 +124,20 @@ const StreamsTableView = ({
   labelWithTooltip,
   setWaitingForDelete
 }: StreamsTableProps) => {
+
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { t } = useTranslation();
+  const searchParams = new URLSearchParams(location.search);
+  const history = useHistory();
+  const { addAlert } = useAlerts();
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const [activeRow, setActiveRow] = useState<string>();
-
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
+  const [items, setItems] = useState<Array<KafkaRequest>>([]);
+
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
     { title: t('cloud_provider'), transforms: [sortable] },
@@ -141,11 +146,6 @@ const StreamsTableView = ({
     { title: t('status'), transforms: [sortable] },
     { title: t('time_created'), transforms: [sortable] },
   ];
-  const [items, setItems] = useState<Array<KafkaRequest>>([]);
-  const searchParams = new URLSearchParams(location.search);
-  const history = useHistory();
-
-  const { addAlert } = useAlerts();
 
   const removeKafkaFromDeleted = (name: string) => {
     const index = deletedKafkas.findIndex((k) => k === name);
@@ -229,11 +229,8 @@ const StreamsTableView = ({
     setItems(incompleteKafkas);
   };
 
+  // Redirect the user to a previous page if there are no kafka instances for a page number / size
   useEffect(() => {
-    /*
-      the logic is to redirect the user to previous page
-      if there are no content for the particular page number and page size
-    */
     if (page > 1) {
       if (kafkaInstanceItems.length === 0) {
         setSearchParam('page', (page - 1).toString());
@@ -327,24 +324,22 @@ const StreamsTableView = ({
 
   const renderNameLink = ({ name, row }) => {
     return (
-      <>
-        {mainToggle ? (
-          <a href="http://uxd-mk-data-plane-cmolloy.apps.uxd-os-research.shz4.p1.openshiftapps.com/openshiftstreams">
-            {name}
-          </a>
-        ) : (
-          <Link
-            to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
-            onClick={(e) => {
-              e.preventDefault();
-              onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
-            }}
-            data-testid="tableStreams-linkKafka"
-          >
-            {name}
-          </Link>
-        )}
-      </>
+      mainToggle ? (
+        <a href="http://uxd-mk-data-plane-cmolloy.apps.uxd-os-research.shz4.p1.openshiftapps.com/openshiftstreams">
+          {name}
+        </a>
+      ) : (
+        <Link
+          to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
+          onClick={(e) => {
+            e.preventDefault();
+            onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
+          }}
+          data-testid="tableStreams-linkKafka"
+        >
+          {name}
+        </Link>
+      )
     );
   };
 
@@ -352,7 +347,6 @@ const StreamsTableView = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!kafkaDataLoaded) {
-      // for loading state
       const cells: (React.ReactNode | IRowCell)[] = [];
       //get exact number of skeleton cells based on total columns
       for (let i = 0; i < tableColumns.length; i++) {
@@ -366,7 +360,6 @@ const StreamsTableView = ({
       }
       return tableRow;
     }
-
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
@@ -402,10 +395,6 @@ const StreamsTableView = ({
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
     const { status } = instance;
     setSelectedInstance(instance);
-    /**
-     * Hide confirm modal for status 'failed' and call delete api
-     * Show confirm modal for all status except 'failed' and call delete api
-     */
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
@@ -422,7 +411,6 @@ const StreamsTableView = ({
     if (instanceId === undefined) {
       throw new Error('kafka instance id is not set');
     }
-
     const accessToken = await authContext?.getToken();
     const apisService = new DefaultApi({
       accessToken,

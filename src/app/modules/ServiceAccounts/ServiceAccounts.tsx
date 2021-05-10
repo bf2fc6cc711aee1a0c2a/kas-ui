@@ -6,15 +6,11 @@ import {
   PageSectionVariants,
   Text,
   AlertVariant,
-  Level,
-  LevelItem,
   TextContent,
 } from '@patternfly/react-core';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
-import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import {
   MASEmptyState,
   MASLoading,
@@ -23,6 +19,8 @@ import {
   MASFullPageError,
   MASEmptyStateVariant,
 } from '@app/common';
+import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
+import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
 import { ResetServiceAccountModal } from './components/ResetServiceAccountModal/ResetServiceAccountModal';
 import { DeleteServiceAccountModal } from './components/DeleteServiceAccountModal';
@@ -32,22 +30,20 @@ export type ServiceAccountsProps = {
 };
 
 const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
+
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
-
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
-
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
 
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  // state to store the expected total  service accounts based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
   const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
   const [orderBy, setOrderBy] = useState<string>('name asc');
@@ -58,7 +54,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountToReset, setServiceAccountToReset] = useState<ServiceAccountListItem>();
   const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
   const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
-  const [isDisplayServiceAccountEmptyState, setIsDisplayServiceAccountEmptyState] = useState<boolean>(false);
+  const [isServiceAccountsEmpty, setIsServiceAccountsEmpty] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -94,9 +90,9 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
            * Todo: handle below logic in separate API call when backend start support pagination
            */
           if (!itemsLength || itemsLength < 1) {
-            setIsDisplayServiceAccountEmptyState(true);
+            setIsServiceAccountsEmpty(true);
           } else {
-            setIsDisplayServiceAccountEmptyState(false);
+            setIsServiceAccountsEmpty(false);
           }
         });
       } catch (error) {
@@ -131,7 +127,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         </PageSection>
       );
     } else {
-      if (isDisplayServiceAccountEmptyState) {
+      if (isServiceAccountsEmpty) {
         return (
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
@@ -183,9 +179,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
     }
   };
 
-  /**
-   *  Unauthorized page in case user is not authorized
-   */
   if (isUserUnauthorized) {
     return (
       <MASFullPageError
@@ -201,37 +194,31 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   }
 
   return (
-    <>
-      <AlertProvider>
-        <PageSection variant={PageSectionVariants.light}>
-          <Level>
-            <LevelItem>
-              <TextContent>
-                <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
-                <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
-              </TextContent>
-            </LevelItem>
-          </Level>
-          <CreateServiceAccountModal
-            isOpen={isCreateServiceAccountModalOpen}
-            setIsOpen={setIsCreateServiceAccountModalOpen}
-            fetchServiceAccounts={fetchServiceAccounts}
-          />
-          <ResetServiceAccountModal
-            isOpen={isResetServiceAccountModalOpen}
-            setIsOpen={setIsResetServiceAccountModalOpen}
-            serviceAccountToReset={serviceAccountToReset}
-          />
-          <DeleteServiceAccountModal
-            isOpen={isDeleteServiceAccountModalOpen}
-            setIsOpen={setIsDeleteServiceAccountModalOpen}
-            serviceAccountToDelete={serviceAccountToDelete}
-            fetchServiceAccounts={fetchServiceAccounts}
-          />
-        </PageSection>
-        {renderTableView()}
-      </AlertProvider>
-    </>
+    <AlertProvider>
+      <PageSection variant={PageSectionVariants.light}>
+          <TextContent>
+            <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
+            <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
+          </TextContent>
+        <CreateServiceAccountModal
+          isOpen={isCreateServiceAccountModalOpen}
+          setIsOpen={setIsCreateServiceAccountModalOpen}
+          fetchServiceAccounts={fetchServiceAccounts}
+        />
+        <ResetServiceAccountModal
+          isOpen={isResetServiceAccountModalOpen}
+          setIsOpen={setIsResetServiceAccountModalOpen}
+          serviceAccountToReset={serviceAccountToReset}
+        />
+        <DeleteServiceAccountModal
+          isOpen={isDeleteServiceAccountModalOpen}
+          setIsOpen={setIsDeleteServiceAccountModalOpen}
+          serviceAccountToDelete={serviceAccountToDelete}
+          fetchServiceAccounts={fetchServiceAccounts}
+        />
+      </PageSection>
+      {renderTableView()}
+    </AlertProvider>
   );
 };
 
