@@ -60,7 +60,7 @@ const MASTable: FunctionComponent<MASTableProps> = ({
       }}
     >
       <PFTable
-        className={css('mas--streams-table-view__table', className)}
+        className={css(hasDefaultCustomRowWrapper && 'mas--streams-table-view__table', className)}
         cells={cells}
         variant={variant}
         rows={rows}
