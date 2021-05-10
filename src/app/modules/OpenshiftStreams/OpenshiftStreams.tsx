@@ -424,6 +424,7 @@ const OpenshiftStreams = ({
           variant="info"
           isInline
           title={`${kafka?.name} was created on ${dayjs(kafka?.created_at).format('LLLL')}`}
+          className="pf-u-mt-lg"
         >
           This preview instance will expire 48 hours after creation.
         </Alert>
@@ -593,7 +594,6 @@ const OpenshiftStreams = ({
           padding={{ default: 'noPadding' }}
         >
           <Card>
-            {renderAlertMessage()}
             <StreamsTableView
               kafkaInstanceItems={kafkaInstanceItems}
               mainToggle={mainToggle}
@@ -665,6 +665,7 @@ const OpenshiftStreams = ({
                     </TextContent>
                   </LevelItem>
                 </Level>
+                {renderAlertMessage()}
               </PageSection>
               {renderStreamsTable()}
             </main>

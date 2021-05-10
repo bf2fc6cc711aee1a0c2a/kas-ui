@@ -20,3 +20,9 @@
 .select-custom-width {
   min-width: 265px;
 }
+
+@media (min-width: 1200px) {
+  .pf-c-toolbar.pf-m-inset-lg-on-xl {
+    --pf-c-toolbar--inset: var(--pf-global--spacer--xl);
+  }
+}
