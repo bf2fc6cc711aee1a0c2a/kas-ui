@@ -842,13 +842,13 @@ export interface ServiceAccountListAllOf {
      * @type {string}
      * @memberof ServiceAccountListAllOf
      */
-    kind?: string;
+    kind: string;
     /**
      * 
      * @type {Array<ServiceAccountListItem>}
      * @memberof ServiceAccountListAllOf
      */
-    items?: Array<ServiceAccountListItem>;
+    items: Array<ServiceAccountListItem>;
 }
 /**
  * 

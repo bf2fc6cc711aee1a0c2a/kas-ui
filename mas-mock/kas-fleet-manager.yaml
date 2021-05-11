@@ -1,5 +1,5 @@
+openapi: 3.0.0 # need this as first line to allow some IDEs to know this is an openapi document.
 # All endpoints defined here will be discoverable by all users. If there is a need to keep some endpoints "private", add them to the "managed-services-api-private.yaml" file
-openapi: 3.0.0
 info:
   title: Kafka Service Fleet Manager
   version: 0.0.1
@@ -935,9 +935,6 @@ components:
               format: date-time
               description: 'service account creation timestamp'
               type: string
-            owner:
-              description: ''
-              type: string
             description:
               type: string
               description: 'description of the service account'
@@ -947,7 +944,7 @@ components:
           example:
             kind: "ServiceAccountList"
             items:
-              $ref: '#/components/examples/ServiceAccountListItemExample'
+              - $ref: '#/components/examples/ServiceAccountListItemExample'
           properties:
             kind:
               type: string
@@ -956,6 +953,9 @@ components:
               items:
                 allOf:
                   - $ref: "#/components/schemas/ServiceAccountListItem"
+          required:
+            - kind
+            - items
     # user-facing metrics related #
     MetricsRangeQueryList:
       allOf:
@@ -1189,7 +1189,7 @@ components:
         region: "us-east-1"
         owner:  "api_kafka_service"
         name: "serviceapi"
-        bootstrapServerHost: "serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org"
+        bootstrapServerHost: "serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.mk-bttg0jn170hp.x5u8.s1.devshift.org"
         created_at: "2020-10-05T12:51:24.053142Z"
         updated_at: "2020-10-05T12:56:36.362208Z"
         version: "2.6.0"
@@ -1204,7 +1204,7 @@ components:
         region: "us-east-1"
         owner:  "api_kafka_service"
         name: "serviceapi"
-        bootstrapServerHost: "serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org"
+        bootstrapServerHost: "serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.mk-bttg0jn170hp.x5u8.s1.devshift.org"
         created_at: "2020-10-05T12:51:24.053142Z"
         updated_at: "2020-10-05T12:56:36.362208Z"
         failed_reason: "a reason the kafka request creation failed"
