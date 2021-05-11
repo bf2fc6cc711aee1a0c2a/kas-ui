@@ -311,7 +311,7 @@
     "unauthorized_access_to_service_accounts_info": "日本語 To access Service Accounts, contact your organization administrators.",
     "client_secret_will_be_reset": "日本語 Client secret for <b>{{serviceAccountId}}</b> with client ID <b>{{clientID}}</b> will be reset.",
     "reset": "日本語 Reset",
-    "reset_service_account_credentials": "日本語 Reset service account credentials?",
+    "reset_service_account_credentials": "日本語 Reset service account credentials",
     "create_a_service_account": "日本語 Create a service account",
     "service_account_creation_success_message": "日本語 Service account successfully created",
     "will_be_deleted": "日本語 will be deleted.",

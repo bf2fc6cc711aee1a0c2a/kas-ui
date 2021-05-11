@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { ServiceAccounts, ServiceAccountsProps } from './ServiceAccounts';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
-import { AlertContext, AlertContextProps } from '@app/common/MASAlerts/MASAlerts';
+import { AlertContext, AlertContextProps, RootModal } from '@app/common';
 import { ApiContext } from '@app/api/ApiContext';
 import kasi18n from '../../../i18n/i18n';
 
@@ -43,7 +43,9 @@ const ServiceAccountsFederated = ({
         >
           <AlertContext.Provider value={alertContext}>
             <AuthContext.Provider value={authContext}>
-              <ServiceAccounts getConnectToInstancePath={getConnectToInstancePath} />
+              <RootModal>
+                <ServiceAccounts getConnectToInstancePath={getConnectToInstancePath} />
+              </RootModal>
             </AuthContext.Provider>
           </AlertContext.Provider>
         </ApiContext.Provider>

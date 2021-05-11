@@ -6,7 +6,7 @@ export class NewKafka {
 
   constructor() {
     this.cloud_provider = '';
-    this.multi_az = false;
+    this.multi_az = true;
     this.region = '';
     this.name = '';
   }

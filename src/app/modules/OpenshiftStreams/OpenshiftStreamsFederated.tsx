@@ -2,7 +2,7 @@ import React from 'react';
 import { OpenshiftStreams, OpenShiftStreamsProps } from '@app/modules/OpenshiftStreams/OpenshiftStreams';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
 import { AlertVariant } from '@patternfly/react-core';
-import { AlertContext, AlertContextProps } from '@app/common/MASAlerts/MASAlerts';
+import { AlertContext, AlertContextProps, RootModal } from '@app/common';
 import { ApiContext } from '@app/api/ApiContext';
 import { BrowserRouter } from 'react-router-dom';
 import kasi18n from '../../../i18n/i18n';
@@ -48,13 +48,15 @@ const OpenshiftStreamsFederated = ({
         >
           <AlertContext.Provider value={alertContext}>
             <AuthContext.Provider value={authContext}>
-              <OpenshiftStreams
-                onConnectToRoute={onConnectToRoute}
-                getConnectToRoutePath={getConnectToRoutePath}
-                preCreateInstance={preCreateInstance}
-                createDialogOpen={createDialogOpen}
-                tokenEndPointUrl={tokenEndPointUrl}
-              />
+              <RootModal>
+                <OpenshiftStreams
+                  onConnectToRoute={onConnectToRoute}
+                  getConnectToRoutePath={getConnectToRoutePath}
+                  preCreateInstance={preCreateInstance}
+                  createDialogOpen={createDialogOpen}
+                  tokenEndPointUrl={tokenEndPointUrl}
+                />
+              </RootModal>
             </AuthContext.Provider>
           </AlertContext.Provider>
         </ApiContext.Provider>
