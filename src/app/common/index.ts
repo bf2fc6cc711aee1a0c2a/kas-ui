@@ -10,4 +10,6 @@ export * from './MASToolbar';
 export * from './MASFullPageError';
 export * from './MASPageNotFound';
 export * from './MASGenerateCredentialsModal';
+export * from './MASCreateModal';
+export * from './RootModal';
 

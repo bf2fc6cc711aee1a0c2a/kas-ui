@@ -49,7 +49,7 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
           isDisabled={!isFormValid || isCreationInProgress}
           spinnerAriaValueText={t('submitting_request')}
           isLoading={isCreationInProgress}
-          data-testid={dataTestIdSubmit && dataTestIdSubmit}
+          data-testid={dataTestIdSubmit}
         >
           {primaryButtonTitle}
         </Button>,

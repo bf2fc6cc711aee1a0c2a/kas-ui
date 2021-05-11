@@ -1,37 +1,23 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea } from '@patternfly/react-core';
+import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi } from './../../../../openapi/api';
-import { NewServiceAccount, FormDataValidationState } from './../../../models';
-import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
+import { DefaultApi } from '../../../../../openapi/api';
+import { NewServiceAccount, FormDataValidationState } from '../../../../models';
+import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { AlertVariant } from '@patternfly/react-core';
-import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal';
 
-export type CreateServiceAccountModalProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  fetchServiceAccounts?: () => void;
-};
-
-const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountModalProps> = ({
-  isOpen,
-  setIsOpen,
-  fetchServiceAccounts,
-}: CreateServiceAccountModalProps) => {
+const CreateServiceAccount: React.FunctionComponent<{}> = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
+  const { store, showModal, hideModal } = useRootModalContext();
+  const { fetchServiceAccounts } = store?.modalProps || {};
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [descriptionValidated, setDescriptionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [credential, setCredential] = useState();
-  const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
-
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
@@ -165,9 +151,11 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
         });
         setCreationInProgress(true);
         await apisService.createServiceAccount(serviceAccountFormData).then((res) => {
-          setCredential(res?.data);
-          setIsOpen(false);
-          setIsGenerateCredentialsModalOpen(true);
+          const credential = res?.data;
+          //close current modal i.e. create service account
+          hideModal();
+          //open generate credential modal
+          showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
           resetForm();
           addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
           fetchServiceAccounts && fetchServiceAccounts();
@@ -182,7 +170,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
 
   const handleCreateModal = () => {
     resetForm();
-    setIsOpen(!isOpen);
+    hideModal();
   };
 
   const onFormSubmit = (event) => {
@@ -244,7 +232,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
     <>
       <MASCreateModal
         id="modalCreateSAccount"
-        isModalOpen={isOpen}
+        isModalOpen={true}
         title={t('serviceAccount.create_a_service_account')}
         handleModalToggle={handleCreateModal}
         onCreate={createServiceAccount}
@@ -256,14 +244,8 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
       >
         {createForm()}
       </MASCreateModal>
-      <MASGenerateCredentialsModal
-        isOpen={isGenerateCredentialsModalOpen}
-        setIsOpen={setIsGenerateCredentialsModalOpen}
-        credential={credential}
-        setCredential={setCredential}
-      />
     </>
   );
 };
 
-export { CreateServiceAccountModal };
+export { CreateServiceAccount };

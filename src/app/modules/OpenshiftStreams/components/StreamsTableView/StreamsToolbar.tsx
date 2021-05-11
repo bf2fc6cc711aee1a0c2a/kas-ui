@@ -16,12 +16,13 @@ import {
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
+import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
+import { CloudProvider } from '../../../../../openapi';
 import './StreamsToolbar.css';
-import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
+
 /**
  * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
  */
@@ -37,6 +38,9 @@ export type StreamsToolbarProps = {
   isDisabledCreateButton?: boolean;
   buttonTooltipContent?: string | undefined;
   labelWithTooltip?: React.ReactNode;
+  onCreate?: () => void;
+  refresh?: () => void;
+  cloudProviders?: Array<CloudProvider>;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -50,9 +54,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   isDisabledCreateButton,
   buttonTooltipContent,
   labelWithTooltip,
+  onCreate,
+  refresh,
+  cloudProviders,
 }) => {
-  const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
   const { t } = useTranslation();
+  const { showModal } = useRootModalContext();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -544,13 +551,21 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
+  const handleCreateModal = () => {
+    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+      onCreate,
+      cloudProviders,
+      refresh,
+    });
+  };
+
   const createButton = () => {
     if (isDisabledCreateButton) {
       return (
         <Tooltip content={buttonTooltipContent}>
           <Button
             variant="primary"
-            onClick={() => setIsModalOpen(!isModalOpen)}
+            onClick={handleCreateModal}
             data-testid={'tableStreams-buttonCreateKafka'}
             isAriaDisabled={isDisabledCreateButton}
           >
@@ -561,11 +576,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     }
 
     return (
-      <Button
-        variant="primary"
-        onClick={() => setIsModalOpen(!isModalOpen)}
-        data-testid={'tableStreams-buttonCreateKafka'}
-      >
+      <Button variant="primary" onClick={handleCreateModal} data-testid={'tableStreams-buttonCreateKafka'}>
         {t('create_kafka_instance')}
       </Button>
     );

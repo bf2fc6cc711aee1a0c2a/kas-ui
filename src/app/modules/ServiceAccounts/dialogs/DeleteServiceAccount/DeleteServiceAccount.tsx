@@ -1,35 +1,24 @@
 import React, { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from './../../../../openapi/api';
-import { MASDeleteModal } from '@app/common/MASDeleteModal/MASDeleteModal';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { useTranslation } from 'react-i18next';
+import { DefaultApi, ServiceAccountListItem } from '../../../../../openapi/api';
+import { MASDeleteModal, useRootModalContext, useAlerts } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 
-export type DeleteServiceAccountModalProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  fetchServiceAccounts: () => void;
-  serviceAccountToDelete: ServiceAccountListItem | undefined;
-};
-
-const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountModalProps> = ({
-  isOpen,
-  setIsOpen,
-  fetchServiceAccounts,
-  serviceAccountToDelete,
-}: DeleteServiceAccountModalProps) => {
+const DeleteServiceAccount: React.FunctionComponent<{}> = () => {
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { addAlert } = useAlerts();
+  const { store, hideModal } = useRootModalContext();
+  const { fetchServiceAccounts, serviceAccountToDelete } = store?.modalProps || {};
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleModalToggle = () => {
-    setIsOpen(!isOpen);
+    hideModal();
   };
 
   const deleteServiceAccount = async (serviceAccount: ServiceAccountListItem | undefined) => {
@@ -71,7 +60,7 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
 
   return (
     <MASDeleteModal
-      isModalOpen={isOpen}
+      isModalOpen={true}
       handleModalToggle={handleModalToggle}
       title={t('serviceAccount.delete_service_account') + '?'}
       confirmButtonProps={{
@@ -87,4 +76,4 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
   );
 };
 
-export { DeleteServiceAccountModal };
+export { DeleteServiceAccount };
