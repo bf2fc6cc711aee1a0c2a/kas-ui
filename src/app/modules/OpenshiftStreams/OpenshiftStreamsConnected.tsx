@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { OpenshiftStreams } from './OpenshiftStreams';
 import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
 import { ApiContext } from '@app/api/ApiContext';
+import { RootModal } from '@app/common/RootModal';
 
 declare const __BASE_PATH__: string;
 
@@ -24,13 +25,15 @@ export const OpenshiftStreamsConnected = () => {
       }}
     >
       <AlertProvider>
-        <OpenshiftStreams
-          onConnectToRoute={onConnectToRoute}
-          getConnectToRoutePath={getConnectToRoutePath}
-          preCreateInstance={(open) => Promise.resolve(open)}
-          createDialogOpen={() => false}
-          tokenEndPointUrl="fake-token-url"
-        />
+        <RootModal>
+          <OpenshiftStreams
+            onConnectToRoute={onConnectToRoute}
+            getConnectToRoutePath={getConnectToRoutePath}
+            preCreateInstance={(open) => Promise.resolve(open)}
+            createDialogOpen={() => false}
+            tokenEndPointUrl="fake-token-url"
+          />
+        </RootModal>
       </AlertProvider>
     </ApiContext.Provider>
   );

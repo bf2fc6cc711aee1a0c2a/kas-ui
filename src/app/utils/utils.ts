@@ -85,12 +85,6 @@ const MAX_SERVICE_ACCOUNT_DESC_LENGTH = 255;
 
 const MIN_POLL_INTERVAL = 1000;
 const MAX_POLL_INTERVAL = 5000;
-const isValidToken = (accessToken: string | undefined) => {
-  if (accessToken !== undefined && accessToken !== '') {
-    return true;
-  }
-  return false;
-};
 
 // function to get exact number of skeleton count required for the current page
 const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: number) => {
@@ -168,7 +162,6 @@ export {
   statusOptions,
   InstanceStatus,
   MAX_INSTANCE_NAME_LENGTH,
-  isValidToken,
   MAX_FILTER_LIMIT,
   MIN_POLL_INTERVAL,
   MAX_POLL_INTERVAL,
