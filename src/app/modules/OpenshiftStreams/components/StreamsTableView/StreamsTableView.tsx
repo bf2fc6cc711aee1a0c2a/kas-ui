@@ -350,7 +350,7 @@ const StreamsTableView = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!kafkaDataLoaded) {
-      return getSkeletonForRows({loadingCount,SkeletonCompoenet:<Skeleton/>,columnLength:tableColumns.length});
+      return getSkeletonForRows({loadingCount,skeleton:<Skeleton/>,columnLength:tableColumns.length});
     }
 
     kafkaInstanceItems.forEach((row: IRowData) => {

@@ -122,7 +122,7 @@ const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: numbe
   return loadingRowCount !== 0 ? loadingRowCount : perPage;
 };
 
-const sortValues = (items: any[] | undefined, key: string, order = 'asc') => {
+const sortValues = (items: any[] | undefined, key: string, order: string = 'asc') => {
   const compareValue = (a: any, b: any) => {
     if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
       // property doesn't exist on either object
@@ -159,7 +159,7 @@ const isMobileTablet = () => {
   return check;
 }
 
-const getSkeletonForRows =({loadingCount,SkeletonCompoenet,columnLength})=>{
+const getSkeletonForRows =({loadingCount,skeleton,columnLength})=>{
   const tableRow: (IRowData | string[])[] | undefined = [];
   // const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
   // if (!kafkaDataLoaded) {
@@ -167,7 +167,7 @@ const getSkeletonForRows =({loadingCount,SkeletonCompoenet,columnLength})=>{
     const cells: (React.ReactNode | IRowCell)[] = [];
     //get exact number of skeletonCompoenet cells based on total columns
     for (let i = 0; i < columnLength; i++) {
-      cells.push({ title: SkeletonCompoenet });
+      cells.push({ title: skeleton });
     }
     // get exact of skeleton rows based on expected total count of instances
     for (let i = 0; i < loadingCount; i++) {
