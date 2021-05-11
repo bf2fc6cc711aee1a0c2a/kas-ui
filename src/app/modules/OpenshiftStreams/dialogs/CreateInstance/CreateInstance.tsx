@@ -17,7 +17,7 @@ import {
 } from '@patternfly/react-core';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
-import './CreateInstanceModal.css';
+import './CreateInstance.css';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
 import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
