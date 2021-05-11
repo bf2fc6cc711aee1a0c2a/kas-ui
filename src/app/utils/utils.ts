@@ -21,7 +21,7 @@ enum InstanceStatus {
   PROVISIONING = 'provisioning',
   FAILED = 'failed',
   DEPROVISION = 'deprovision',
-  DELETED = 'deleted',
+  DELETED = 'deleting',
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
@@ -42,7 +42,7 @@ const statusOptions: KeyValueOptions[] = [
   { value: 'provisioning', label: 'Creation in progress' },
   { value: 'preparing', label: 'Creation in progress' },
   { value: 'deprovision', label: 'Deletion in progress' },
-  { value: 'deleted', label: 'Deletion in progress' },
+  { value: 'deleting', label: 'Deletion in progress' },
 ];
 
 const getCloudProviderDisplayName = (value: string) => {
