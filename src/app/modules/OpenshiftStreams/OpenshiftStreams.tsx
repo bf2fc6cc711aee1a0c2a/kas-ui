@@ -20,6 +20,7 @@ import {
   Label,
   Modal,
   ModalVariant,
+  Card,
 } from '@patternfly/react-core';
 import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
 import { AlertProvider, useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
@@ -440,6 +441,7 @@ const OpenshiftStreams = ({
           variant="info"
           isInline
           title={`${kafka?.name} was created on ${dayjs(kafka?.created_at).format('LLLL')}`}
+          className="pf-u-mt-lg"
         >
           This preview instance will expire 48 hours after creation.
         </Alert>
@@ -603,42 +605,43 @@ const OpenshiftStreams = ({
     } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
       return (
         <PageSection
-          className="mk--main-page__page-section--table"
-          variant={PageSectionVariants.light}
+          className="mk--main-page__page-section--table pf-m-padding-on-xl"
+          variant={PageSectionVariants.default}
           padding={{ default: 'noPadding' }}
         >
-          {renderAlertMessage()}
-          <StreamsTableView
-            kafkaInstanceItems={kafkaInstanceItems}
-            mainToggle={mainToggle}
-            onViewConnection={onViewConnection}
-            onViewInstance={onViewInstance}
-            onConnectToRoute={onConnectToRoute}
-            getConnectToRoutePath={getConnectToRoutePath}
-            refresh={refreshKafkas}
-            kafkaDataLoaded={kafkaDataLoaded}
-            setWaitingForDelete={setWaitingForDelete}
-            onDelete={onDelete}
-            page={page}
-            perPage={perPage}
-            total={kafkaInstancesList?.total}
-            expectedTotal={expectedTotal}
-            filteredValue={filteredValue}
-            setFilteredValue={setFilteredValue}
-            setFilterSelected={setFilterSelected}
-            filterSelected={filterSelected}
-            orderBy={orderBy}
-            setOrderBy={setOrderBy}
-            isDrawerOpen={selectedInstance !== null}
-            loggedInUser={loggedInUser}
-            isMaxCapacityReached={isMaxCapacityReached}
-            buttonTooltipContent={getButtonTooltipContent()}
-            isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
-            labelWithTooltip={createInstanceLabel()}
-            currentUserkafkas={currentUserKafkas}
-            onCreate={onCreate}
-            cloudProviders={cloudProviders}
-          />
+          <Card>
+            <StreamsTableView
+              kafkaInstanceItems={kafkaInstanceItems}
+              mainToggle={mainToggle}
+              onViewConnection={onViewConnection}
+              onViewInstance={onViewInstance}
+              onConnectToRoute={onConnectToRoute}
+              getConnectToRoutePath={getConnectToRoutePath}
+              refresh={refreshKafkas}
+              kafkaDataLoaded={kafkaDataLoaded}
+              setWaitingForDelete={setWaitingForDelete}
+              onDelete={onDelete}
+              page={page}
+              perPage={perPage}
+              total={kafkaInstancesList?.total}
+              expectedTotal={expectedTotal}
+              filteredValue={filteredValue}
+              setFilteredValue={setFilteredValue}
+              setFilterSelected={setFilterSelected}
+              filterSelected={filterSelected}
+              orderBy={orderBy}
+              setOrderBy={setOrderBy}
+              isDrawerOpen={selectedInstance !== null}
+              loggedInUser={loggedInUser}
+              isMaxCapacityReached={isMaxCapacityReached}
+              buttonTooltipContent={getButtonTooltipContent()}
+              isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
+              labelWithTooltip={createInstanceLabel()}
+              currentUserkafkas={currentUserKafkas}
+              onCreate={onCreate}
+              cloudProviders={cloudProviders}
+            />
+          </Card>
         </PageSection>
       );
     }
@@ -646,49 +649,48 @@ const OpenshiftStreams = ({
   };
 
   return (
-    <>
-      <AlertProvider>
-        <InstanceDrawer
-          mainToggle={mainToggle}
-          isExpanded={selectedInstance != null}
-          activeTab={activeTab}
-          isLoading={instanceDetail === undefined}
-          instanceDetail={instanceDetail}
-          onClose={onCloseDrawer}
-          data-ouia-app-id="controlPlane-streams"
-          getConnectToRoutePath={getConnectToRoutePath}
-          onConnectToRoute={onConnectToRoute}
-          tokenEndPointUrl={tokenEndPointUrl}
-          notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
-        >
-          <main className="pf-c-page__main">
-            <PageSection variant={PageSectionVariants.light}>
-              <Level>
-                <LevelItem>
-                  <TextContent>
-                    <Text component="h1">{t('kafka_instances')}</Text>
-                  </TextContent>
-                </LevelItem>
-              </Level>
-            </PageSection>
-            {renderStreamsTable()}
-          </main>
-        </InstanceDrawer>
-        <Modal
-          variant={ModalVariant.small}
-          title="Mobile experience"
-          isOpen={isMobileModalOpen}
-          onClose={() => handleMobileModal()}
-          actions={[
-            <Button key="confirm" variant="primary" onClick={() => handleMobileModal()}>
-              Ok
-            </Button>,
-          ]}
-        >
-          The mobile experience isn't fully optimized yet, so some items might not appear correctly.
-        </Modal>
-      </AlertProvider>
-    </>
+    <AlertProvider>
+      <InstanceDrawer
+        mainToggle={mainToggle}
+        isExpanded={selectedInstance != null}
+        activeTab={activeTab}
+        isLoading={instanceDetail === undefined}
+        instanceDetail={instanceDetail}
+        onClose={onCloseDrawer}
+        data-ouia-app-id="controlPlane-streams"
+        getConnectToRoutePath={getConnectToRoutePath}
+        onConnectToRoute={onConnectToRoute}
+        tokenEndPointUrl={tokenEndPointUrl}
+        notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
+      >
+        <main className="pf-c-page__main">
+          <PageSection variant={PageSectionVariants.light}>
+            <Level>
+              <LevelItem>
+                <TextContent>
+                  <Text component="h1">{t('kafka_instances')}</Text>
+                </TextContent>
+              </LevelItem>
+            </Level>
+            {renderAlertMessage()}
+          </PageSection>
+          {renderStreamsTable()}
+        </main>
+      </InstanceDrawer>
+      <Modal
+        variant={ModalVariant.small}
+        title="Mobile experience"
+        isOpen={isMobileModalOpen}
+        onClose={() => handleMobileModal()}
+        actions={[
+          <Button key="confirm" variant="primary" onClick={() => handleMobileModal()}>
+            Ok
+          </Button>,
+        ]}
+      >
+        The mobile experience isn't fully optimized yet, so some items might not appear correctly.
+      </Modal>
+    </AlertProvider>
   );
 };
 

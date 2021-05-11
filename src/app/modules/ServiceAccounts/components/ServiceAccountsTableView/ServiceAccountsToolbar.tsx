@@ -350,7 +350,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         id: 'instance-toolbar',
         clearAllFilters: onClearAllFilters,
         collapseListedFiltersBreakpoint: 'md',
-        inset: { lg: 'insetLg' },
+        inset: { xl: 'insetLg' },
       }}
       toolbarItems={toolbarItems}
     />

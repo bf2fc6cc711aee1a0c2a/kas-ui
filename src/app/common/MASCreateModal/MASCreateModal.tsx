@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getModalAppendTo } from '@app/utils/utils';
 
 export type MASCreateModalProps = {
+  id?: string;
   isModalOpen: boolean;
   children?: React.ReactNode;
   title: string;
@@ -27,12 +28,13 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
   primaryButtonTitle,
   dataTestIdSubmit,
   dataTestIdCancel,
+  id = 'modalCreateKafka',
 }: MASCreateModalProps) => {
   const { t } = useTranslation();
 
   return (
     <Modal
-      id="modalCreateKafka"
+      id={id}
       variant={ModalVariant.medium}
       title={title}
       isOpen={isModalOpen}
