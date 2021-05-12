@@ -8,6 +8,8 @@ import {
   Text,
   ButtonProps,
   TextProps,
+  TextInput,
+  TextInputProps,
 } from '@patternfly/react-core';
 import { getModalAppendTo } from '@app/utils/utils';
 import './MASDeleteModal.css';
@@ -34,6 +36,11 @@ export type MASDeleteModalProps = {
   textProps?: Omit<TextProps, 'children'> & {
     description?: string;
   };
+  textInputProps?: TextInputProps & {
+    showTextInput: boolean;
+    label: string;
+    value: string | undefined;
+  };
 };
 
 export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
@@ -46,6 +53,7 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   textProps,
   children,
   selectedItemData = '',
+  textInputProps,
 }: MASDeleteModalProps) => {
   const {
     variant = ModalVariant.small,
@@ -76,6 +84,7 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   } = cancelButtonProps || {};
 
   const { className = 'mas--delete-item__modal--text', description, ...restTextProps } = textProps || {};
+  const { label = '', name, value, onChange, onKeyPress, showTextInput, ...restInputFieldProps } = textInputProps || {};
 
   return (
     <Modal
@@ -112,6 +121,21 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
     >
       {description && (
         <Text className={className} dangerouslySetInnerHTML={{ __html: description || '' }} {...restTextProps} />
+      )}
+      {showTextInput && (
+        <>
+          <label htmlFor="mas-name-input" dangerouslySetInnerHTML={{ __html: label }} />
+          <TextInput
+            id="mas--name__input"
+            name="mas-name-input"
+            type="text"
+            value={value}
+            onChange={onChange}
+            onKeyPress={onKeyPress}
+            autoFocus={true}
+            {...restInputFieldProps}
+          />
+        </>
       )}
       {children}
     </Modal>
