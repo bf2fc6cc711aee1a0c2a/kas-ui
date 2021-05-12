@@ -1,10 +1,23 @@
-# Control Plane UI
+# KAS-UI
 
-Welcome to the repository for the Control Plane UI. The lead developer is [Christie Molloy](https://github.com/christiemolloy) and lead designer is [Jenn Giardino](https://github.com/jgiardino), please feel free to contact us!
+Welcome to the repository that hosts the UIs for Control Plane, Service Accounts, Service Registry, and Metrics.
+
+The team lead is [Christie Molloy](https://github.com/christiemolloy) working with developer [Ajay Pratap](https://github.com/ajaypratap003) and the lead designer is [Jenn Giardino](https://github.com/jgiardino), please feel free to contact us!
+
 
 ## Contributing
 
 If you are contributing please check out the [Contributing Guidelines.](https://github.com/bf2fc6cc711aee1a0c2a/kas-ui/blob/master/CONTRIBUTING.md)
+
+
+## Integration
+
+The individual UIs for Kafka Instances, Service Accounts, Data Plane, and Guides are exported as Federated Modules which are then imported into the Application Services UI, hosted here on [Gitlab](https://gitlab.cee.redhat.com/mk-ci-cd/application-services-ui). This UI facilitates the integration between each of the individual UIs so that we can pass props and link between them. These individual UIs are then hosted as navigation items in [cloud.redhat.com](https://github.com/RedHatInsights).
+
+
+## CI/CD
+
+The Managed Kafka CI/CD Guide is [documented here](https://docs.google.com/document/d/1IHVHjg59zrjY0t4LwyNk5auUw0dWhzD3f59ytB5Ik14/edit#heading=h.5xpj1a9a3mxn) and updated frequently.
 
 
 ## Quick-start
@@ -68,6 +81,7 @@ http://localhost:9000/?pseudolocalization=true&lng=en
 # Change language to Japanese (if you don't want to change your browser language)
 http://localhost:9000/?lng=ja
 ```
+
 
 ## API
 
