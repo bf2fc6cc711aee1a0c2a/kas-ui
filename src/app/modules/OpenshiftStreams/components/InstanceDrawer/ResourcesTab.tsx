@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -13,7 +13,7 @@ import {
   ButtonVariant,
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
-import { CreateServiceAccountModal } from '@app/modules/ServiceAccounts/components';
+import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { KafkaRequest } from '../../../../../openapi/api';
 
 export type ResourcesTabProps = {
@@ -37,8 +37,11 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
 }: ResourcesTabProps) => {
 
   const { t } = useTranslation();
+  const { showModal } = useRootModalContext();
 
-  const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
+  const handleCreateServiceAccountModal = () => {
+    showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT);
+  };
 
   return (
     <div className="mas--details__drawer--tab-content">
@@ -77,7 +80,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
       </TextContent>
       <Button
         variant="secondary"
-        onClick={() => setIsCreateServiceAccountModalOpen(true)}
+        onClick={handleCreateServiceAccountModal}
         data-testid="drawerStreams-buttonCreateServiceAccount"
         isInline
       >
@@ -119,10 +122,6 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           <ClipboardCopy>https://:30123</ClipboardCopy>
         </>
       )}
-      <CreateServiceAccountModal
-        isOpen={isCreateServiceAccountModalOpen}
-        setIsOpen={setIsCreateServiceAccountModalOpen}
-      />
     </div>
   );
 };

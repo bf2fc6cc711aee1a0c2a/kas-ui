@@ -6,17 +6,16 @@ import {
   IRowData,
   ISeparator,
   IRowCell,
-  sortable,
   ISortBy,
   SortByDirection,
   IExtraColumnData,
   cellWidth,
 } from '@patternfly/react-table';
-import { Skeleton, PaginationVariant } from '@patternfly/react-core';
+import { Skeleton } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
-import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
+import { MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { getLoadingRowsCount, getFormattedDate } from '@app/utils';
-import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
+import { ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
@@ -48,6 +47,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   handleCreateModal,
   mainToggle,
 }: ServiceAccountsTableViewProps) => {
+
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
 
@@ -227,7 +227,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           'aria-label': t('serviceAccount.service_account_list'),
           actionResolver: actionResolver,
           onSort: onSort,
-          sortBy: sortBy(),
+          sortBy: sortBy()
         }}
       />
       {serviceAccountItems && serviceAccountItems?.length < 1 && serviceAccountsDataLoaded && (

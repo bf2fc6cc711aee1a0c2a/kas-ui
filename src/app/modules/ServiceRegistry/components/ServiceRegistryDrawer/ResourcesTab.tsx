@@ -22,7 +22,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ mainToggle }: Resour
       </TextContent>
       <Form>
         {registriesInfo?.map(({ title, code }, index) => (
-          <FormGroup label={title} fieldId={`copy-clipboard-${index}`}>
+          <FormGroup label={title} fieldId={`copy-clipboard-${index}`} key={`${code}'-'${index}`}>
             <ClipboardCopy
               id={`copy-clipboard-${index}`}
               hoverTip={t('common.copy_clipboard')}

@@ -1,42 +1,28 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea } from '@patternfly/react-core';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import { AlertVariant } from '@patternfly/react-core';
+import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { DefaultApi } from '../../../../../openapi/api';
+import { NewServiceAccount, FormDataValidationState } from '../../../../models';
+import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@app/common';
+import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
-import { MASCreateModal } from '@app/common/MASCreateModal/MASCreateModal';
-import { MASGenerateCredentialsModal } from '@app/common/MASGenerateCredentialsModal';
-import { DefaultApi } from './../../../../openapi/api';
-import { NewServiceAccount, FormDataValidationState } from './../../../models';
 
-export type CreateServiceAccountModalProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  fetchServiceAccounts?: () => void;
-};
+const CreateServiceAccount: React.FunctionComponent<{}> = () => {
 
-const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountModalProps> = ({
-  isOpen,
-  setIsOpen,
-  fetchServiceAccounts,
-}: CreateServiceAccountModalProps) => {
-
+  const newServiceAccount: NewServiceAccount = new NewServiceAccount();
+  const { store, showModal, hideModal } = useRootModalContext();
+  const { fetchServiceAccounts } = store?.modalProps || {};
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { addAlert } = useAlerts();
-  const newServiceAccount: NewServiceAccount = new NewServiceAccount();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [descriptionValidated, setDescriptionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [credential, setCredential] = useState();
-  const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
 
   const resetForm = () => {
     setNameValidated({ fieldState: 'default' });
@@ -164,9 +150,11 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
         });
         setCreationInProgress(true);
         await apisService.createServiceAccount(serviceAccountFormData).then((res) => {
-          setCredential(res?.data);
-          setIsOpen(false);
-          setIsGenerateCredentialsModalOpen(true);
+          const credential = res?.data;
+          //close current modal i.e. create service account
+          hideModal();
+          //open generate credential modal
+          showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
           resetForm();
           addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
           fetchServiceAccounts && fetchServiceAccounts();
@@ -180,7 +168,7 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
 
   const handleCreateModal = () => {
     resetForm();
-    setIsOpen(!isOpen);
+    hideModal();
   };
 
   const onFormSubmit = (event) => {
@@ -204,7 +192,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           isRequired
           fieldId="text-input-name"
           helperTextInvalid={message}
-          helperTextInvalidIcon={message && <ExclamationCircleIcon />}
           validated={fieldState}
           helperText={t('common.input_filed_invalid_helper_text')}
         >
@@ -223,7 +210,6 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
           label="Description"
           fieldId="text-input-description"
           helperTextInvalid={descMessage}
-          helperTextInvalidIcon={descMessage && <ExclamationCircleIcon />}
           validated={descFieldState}
           helperText={t('common.input_text_area_invalid_helper_text')}
         >
@@ -240,26 +226,21 @@ const CreateServiceAccountModal: React.FunctionComponent<CreateServiceAccountMod
   };
 
   return (
-    <>
-      <MASCreateModal
-        isModalOpen={isOpen}
-        title={t('serviceAccount.create_a_service_account')}
-        handleModalToggle={handleCreateModal}
-        onCreate={createServiceAccount}
-        isFormValid={isFormValid}
-        primaryButtonTitle="Create"
-        isCreationInProgress={isCreationInProgress}
-      >
-        {createForm()}
-      </MASCreateModal>
-      <MASGenerateCredentialsModal
-        isOpen={isGenerateCredentialsModalOpen}
-        setIsOpen={setIsGenerateCredentialsModalOpen}
-        credential={credential}
-        setCredential={setCredential}
-      />
-    </>
+    <MASCreateModal
+      id="modalCreateSAccount"
+      isModalOpen={true}
+      title={t('serviceAccount.create_a_service_account')}
+      handleModalToggle={handleCreateModal}
+      onCreate={createServiceAccount}
+      isFormValid={isFormValid}
+      primaryButtonTitle="Create"
+      isCreationInProgress={isCreationInProgress}
+      dataTestIdSubmit="modalCreateServiceAccount-buttonSubmit"
+      dataTestIdCancel="modalCreateServiceAccount-buttonCancel"
+    >
+      {createForm()}
+    </MASCreateModal>
   );
 };
 
-export { CreateServiceAccountModal };
+export { CreateServiceAccount };

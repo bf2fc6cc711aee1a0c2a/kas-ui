@@ -17,7 +17,7 @@ import {
   ValidatedOptions,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
-import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
+import { MASToolbar, ToolbarItemProps } from '@app/common';
 
 export type ServiceAccountsToolbarProps = {
   filterSelected?: string;
@@ -44,9 +44,6 @@ export type FilterType = {
 const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   filterSelected,
   setFilterSelected,
-  total,
-  page,
-  perPage,
   filteredValue,
   setFilteredValue,
   handleCreateModal,
@@ -168,7 +165,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
-    let newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
     const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
     let filterChip: string | undefined = chip.toString();
@@ -348,7 +345,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         id: 'instance-toolbar',
         clearAllFilters: onClearAllFilters,
         collapseListedFiltersBreakpoint: 'md',
-        inset: { lg: 'insetLg' },
+        inset: { xl: 'insetLg' },
       }}
       toolbarItems={toolbarItems}
     />

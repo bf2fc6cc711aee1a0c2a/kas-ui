@@ -7,6 +7,7 @@ import {
   Text,
   AlertVariant,
   TextContent,
+  Card,
 } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
@@ -18,12 +19,11 @@ import {
   useAlerts,
   MASFullPageError,
   MASEmptyStateVariant,
+  useRootModalContext,
+  MODAL_TYPES,
 } from '@app/common';
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
-import { CreateServiceAccountModal } from './components/CreateServiceAccountModal';
-import { ResetServiceAccountModal } from './components/ResetServiceAccountModal/ResetServiceAccountModal';
-import { DeleteServiceAccountModal } from './components/DeleteServiceAccountModal';
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
@@ -33,6 +33,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
 
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
+  const { showModal } = useRootModalContext();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
@@ -49,11 +50,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const [isCreateServiceAccountModalOpen, setIsCreateServiceAccountModalOpen] = useState(false);
-  const [isResetServiceAccountModalOpen, setIsResetServiceAccountModalOpen] = useState(false);
-  const [serviceAccountToReset, setServiceAccountToReset] = useState<ServiceAccountListItem>();
-  const [isDeleteServiceAccountModalOpen, setIsDeleteServiceAccountModalOpen] = useState(false);
-  const [serviceAccountToDelete, setServiceAccountToDelete] = useState<ServiceAccountListItem>();
   const [isServiceAccountsEmpty, setIsServiceAccountsEmpty] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
@@ -63,7 +59,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
       reason = error.response?.data.reason;
       errorCode = error.response?.data?.code;
     }
-    //check unauthorize user
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
@@ -106,17 +101,15 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   }, []);
 
   const handleResetModal = (serviceAccount: ServiceAccountListItem) => {
-    setIsResetServiceAccountModalOpen(!isResetServiceAccountModalOpen);
-    setServiceAccountToReset(serviceAccount);
+    showModal(MODAL_TYPES.RESET_CREDENTIALS, { serviceAccountToReset: serviceAccount });
   };
 
   const handleCreateModal = () => {
-    setIsCreateServiceAccountModalOpen(!isCreateServiceAccountModalOpen);
+    showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT, { fetchServiceAccounts });
   };
 
   const handleDeleteModal = (serviceAccount: ServiceAccountListItem) => {
-    setIsDeleteServiceAccountModalOpen(!isDeleteServiceAccountModalOpen);
-    setServiceAccountToDelete(serviceAccount);
+    showModal(MODAL_TYPES.DELETE_SERVICE_ACCOUNT, { serviceAccountToDelete: serviceAccount, fetchServiceAccounts });
   };
 
   const renderTableView = () => {
@@ -142,7 +135,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               }}
               buttonProps={{
                 title: t('serviceAccount.create_service_account'),
-                onClick: () => handleCreateModal(),
+                onClick: handleCreateModal,
                 ['data-testid']: 'emptyStateStreams-buttonCreateServiceAccount',
               }}
             />
@@ -151,28 +144,30 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
       } else {
         return (
           <PageSection
-            className="mk--main-page__page-section--table"
-            variant={PageSectionVariants.light}
+            className="mk--main-page__page-section--table pf-m-padding-on-xl"
+            variant={PageSectionVariants.default}
             padding={{ default: 'noPadding' }}
           >
-            <ServiceAccountsTableView
-              page={page}
-              perPage={perPage}
-              total={serviceAccountList?.total || 1}
-              expectedTotal={expectedTotal}
-              serviceAccountsDataLoaded={serviceAccountsDataLoaded}
-              serviceAccountItems={serviceAccountItems}
-              orderBy={orderBy}
-              setOrderBy={setOrderBy}
-              filterSelected={filterSelected}
-              setFilterSelected={setFilterSelected}
-              filteredValue={filteredValue}
-              setFilteredValue={setFilteredValue}
-              onResetCredentials={handleResetModal}
-              onDeleteServiceAccount={handleDeleteModal}
-              handleCreateModal={handleCreateModal}
-              mainToggle={mainToggle}
-            />
+            <Card>
+              <ServiceAccountsTableView
+                page={page}
+                perPage={perPage}
+                total={serviceAccountList?.total || 1}
+                expectedTotal={expectedTotal}
+                serviceAccountsDataLoaded={serviceAccountsDataLoaded}
+                serviceAccountItems={serviceAccountItems}
+                orderBy={orderBy}
+                setOrderBy={setOrderBy}
+                filterSelected={filterSelected}
+                setFilterSelected={setFilterSelected}
+                filteredValue={filteredValue}
+                setFilteredValue={setFilteredValue}
+                onResetCredentials={handleResetModal}
+                onDeleteServiceAccount={handleDeleteModal}
+                handleCreateModal={handleCreateModal}
+                mainToggle={mainToggle}
+              />
+            </Card>
           </PageSection>
         );
       }
@@ -196,26 +191,10 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   return (
     <AlertProvider>
       <PageSection variant={PageSectionVariants.light}>
-          <TextContent>
-            <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
-            <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
-          </TextContent>
-        <CreateServiceAccountModal
-          isOpen={isCreateServiceAccountModalOpen}
-          setIsOpen={setIsCreateServiceAccountModalOpen}
-          fetchServiceAccounts={fetchServiceAccounts}
-        />
-        <ResetServiceAccountModal
-          isOpen={isResetServiceAccountModalOpen}
-          setIsOpen={setIsResetServiceAccountModalOpen}
-          serviceAccountToReset={serviceAccountToReset}
-        />
-        <DeleteServiceAccountModal
-          isOpen={isDeleteServiceAccountModalOpen}
-          setIsOpen={setIsDeleteServiceAccountModalOpen}
-          serviceAccountToDelete={serviceAccountToDelete}
-          fetchServiceAccounts={fetchServiceAccounts}
-        />
+        <TextContent>
+          <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
+          <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
+        </TextContent>
       </PageSection>
       {renderTableView()}
     </AlertProvider>

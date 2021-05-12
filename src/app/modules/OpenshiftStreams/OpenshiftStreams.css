@@ -1,5 +1,8 @@
-.mk--main-page__page-section--table.pf-c-page__main-section {
-  padding-bottom: 69px;
+@media screen and (min-width: 1200px) {
+  .mk--main-page__page-section--table.pf-c-page__main-section {
+    /* add bottom padding for pendo icon */
+    padding-bottom: 69px;
+  }
 }
 
 .mk--openstreams__banner.pf-c-button.pf-m-link {

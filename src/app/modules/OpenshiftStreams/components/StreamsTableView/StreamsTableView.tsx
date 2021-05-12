@@ -14,17 +14,23 @@ import {
   IExtraColumnData,
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
-import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { ApiContext } from '@app/api/ApiContext';
 import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
+import {
+  MASPagination,
+  MASTable,
+  MASEmptyState,
+  MASEmptyStateVariant,
+  useRootModalContext,
+  MODAL_TYPES,
+} from '@app/common';
 import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { CreateInstanceModal } from '../CreateInstanceModal';
-import { DeleteInstanceModal } from '../DeleteInstanceModal';
+import './StatusColumn.css';
 
 export type FilterValue = {
   value: string;
@@ -52,7 +58,8 @@ export type StreamsTableProps = StreamsToolbarProps & {
   isDrawerOpen?: boolean;
   loggedInUser: string | undefined;
   isMaxCapacityReached?: boolean | undefined;
-  setWaitingForDelete: () => void;
+  setWaitingForDelete: (arg0: boolean) => void;
+  currentUserkafkas: KafkaRequest[] | undefined;
 };
 
 type ConfigDetail = {
@@ -122,7 +129,10 @@ const StreamsTableView = ({
   isDisabledCreateButton,
   loggedInUser,
   labelWithTooltip,
-  setWaitingForDelete
+  setWaitingForDelete,
+  currentUserkafkas,
+  cloudProviders,
+  onCreate,
 }: StreamsTableProps) => {
 
   const authContext = useContext(AuthContext);
@@ -132,7 +142,7 @@ const StreamsTableView = ({
   const history = useHistory();
   const { addAlert } = useAlerts();
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const [activeRow, setActiveRow] = useState<string>();
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
@@ -170,25 +180,30 @@ const StreamsTableView = ({
   }, [isDrawerOpen]);
 
   const addAlertAfterSuccessDeletion = () => {
-    // filter all kafkas with status as deprovision
-    const deprovisonedKafkas = kafkaInstanceItems.filter((kafka) => kafka.status === InstanceStatus.DEPROVISION);
+    if (currentUserkafkas) {
+      // filter all kafkas with status as deprovision
+      const deprovisonedKafkas: any = currentUserkafkas.filter(
+        (k) => k.status === InstanceStatus.DEPROVISION || k.status === InstanceStatus.DELETED
+      );
 
-    // filter all new kafka which is not in deleteKafka state
-    const notPresentKafkas = deprovisonedKafkas
-      .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
-      .map((k) => k.name || '');
-    // create new array by merging old and new kafka with status as deprovion
-    const allDeletedKafkas: string[] = [...deletedKafkas, ...notPresentKafkas];
-    // update deleteKafka with new array
-    setDeletedKafkas(allDeletedKafkas);
+      // filter all new kafka which is not in deleteKafka state
+      const notPresentKafkas = deprovisonedKafkas
+        .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
+        .map((k) => k.name || '');
+      // create new array by merging old and new kafka with status as deprovion
+      const allDeletedKafkas: string[] = [...deletedKafkas, ...notPresentKafkas];
+      // update deleteKafka with new arraycurrentUserkafkaInstanceItems
+      setDeletedKafkas(allDeletedKafkas);
 
-    // add alert for deleted kafkas which are completely deleted from the response
-    allDeletedKafkas.forEach((k) => {
-      if (kafkaInstanceItems.findIndex((item) => item.name === k) < 0) {
-        removeKafkaFromDeleted(k);
-        addAlert(t('kafka_successfully_deleted', { name: k }), AlertVariant.success);
-      }
-    });
+      // add alert for deleted kafkas which are completely deleted from the response
+      allDeletedKafkas.forEach((k) => {
+        const kafkaIndex = currentUserkafkas?.findIndex((item) => item.name === k);
+        if (kafkaIndex < 0) {
+          removeKafkaFromDeleted(k);
+          addAlert(t('kafka_successfully_deleted', { name: k }), AlertVariant.success);
+        }
+      });
+    }
   };
 
   const addAlertAfterSuccessCreation = () => {
@@ -244,7 +259,7 @@ const StreamsTableView = ({
     addAlertAfterSuccessDeletion();
     // handle success alert for creation
     addAlertAfterSuccessCreation();
-  }, [page, perPage, kafkaInstanceItems]);
+  }, [page, perPage, kafkaInstanceItems, currentUserkafkas]);
 
   const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
     if (selectedOption === 'view-instance') {
@@ -393,12 +408,30 @@ const StreamsTableView = ({
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
-    const { status } = instance;
+    const { status, name } = instance;
     setSelectedInstance(instance);
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
-      setIsDeleteModalOpen(!isDeleteModalOpen);
+      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
+        t,
+        status,
+        name,
+        isMaxCapacityReached
+      );
+
+      showModal(MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
+        instanceStatus: status,
+        selectedItemData: instance,
+        title,
+        confirmButtonProps: {
+          onClick: onDeleteInstance,
+          label: confirmActionLabel,
+        },
+        textProps: {
+          description,
+        },
+      });
     }
   };
 
@@ -417,13 +450,14 @@ const StreamsTableView = ({
       basePath,
     });
     onDelete();
-    setIsDeleteModalOpen(false);
+    hideModal();
+
     try {
       await apisService.deleteKafkaById(instanceId, true).then(() => {
         setActiveRow(undefined);
         setWaitingForDelete(true);
         refresh();
-    });
+      });
     } catch (error) {
       let reason: string | undefined;
       if (isServiceApiError(error)) {
@@ -437,13 +471,6 @@ const StreamsTableView = ({
       addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
     }
   };
-
-  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
-    t,
-    selectedInstance?.status,
-    selectedInstance?.name,
-    isMaxCapacityReached
-  );
 
   const getParameterForSortIndex = (index: number) => {
     switch (index) {
@@ -530,6 +557,9 @@ const StreamsTableView = ({
         isDisabledCreateButton={isDisabledCreateButton}
         buttonTooltipContent={buttonTooltipContent}
         labelWithTooltip={labelWithTooltip}
+        cloudProviders={cloudProviders}
+        onCreate={onCreate}
+        refresh={refresh}
       />
       <MASTable
         tableProps={{
@@ -578,21 +608,6 @@ const StreamsTableView = ({
           }}
         />
       )}
-      <DeleteInstanceModal
-        isModalOpen={isDeleteModalOpen}
-        instanceStatus={selectedInstance?.status}
-        selectedItemData={selectedInstance}
-        handleModalToggle={() => setIsDeleteModalOpen(!isDeleteModalOpen)}
-        title={title}
-        confirmButtonProps={{
-          onClick: onDeleteInstance,
-          label: confirmActionLabel,
-        }}
-        textProps={{
-          description,
-        }}
-      />
-      <CreateInstanceModal />
     </>
   );
 };
