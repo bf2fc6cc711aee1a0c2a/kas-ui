@@ -100,21 +100,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     .map((status) => {
       return { label: t(status.value), value: status.value, disabled: false };
     });
-
-    const cloudProviderFilterOptions = cloudProviderOptions.map((cloudProvider) => {
-      return { label: t(cloudProvider.value), value: cloudProvider.value, disabled: false };
-    });
-  
-    const regionFilterOptions = cloudRegionOptions.map((region) => {
-      return { label: t(region.value), value: region.value, disabled: false };
-    });
-  
-    const statusFilterOptions = statusOptions
-      .filter((s) => s.value !== InstanceStatus.PREPARING && s.value !== InstanceStatus.DELETED)
-      .map((status) => {
-        return { label: t(status.value), value: status.value, disabled: false };
-      });
-  
+    
 
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);
