@@ -31,6 +31,7 @@ export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
 };
 
+
 const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
