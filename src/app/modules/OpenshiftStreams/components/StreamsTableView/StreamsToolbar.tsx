@@ -22,7 +22,8 @@ import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '../../../../../openapi';
 import './StreamsToolbar.css';
-
+import { CloudProvider } from '../../../../../openapi';
+import './StreamsToolbar.css';
 /**
  * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
  */
@@ -100,7 +101,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     .map((status) => {
       return { label: t(status.value), value: status.value, disabled: false };
     });
-    
 
   const onFilterToggle = () => {
     setIsFilterExpanded(!isFilterExpanded);

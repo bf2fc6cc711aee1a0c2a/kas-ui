@@ -30,7 +30,8 @@
     "clean": "rimraf dist",
     "storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook",
-    "i18n": "i18next 'src/**/**/*.{ts,tsx}' [-oc] -c './i18next-parser.config.js' -o './src/locales/$LOCALE/$NAMESPACE.json'"
+    "i18n": "i18next 'src/**/**/*.{ts,tsx}' [-oc] -c './i18next-parser.config.js' -o './src/locales/$LOCALE/$NAMESPACE.json'",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.1.26",
@@ -116,5 +117,9 @@
     "react-redux": "^7.2.2",
     "react-router-last-location": "^2.0.1",
     "redux": "^4.0.5"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{tsx,ts}": "prettier --write"
   }
 }
