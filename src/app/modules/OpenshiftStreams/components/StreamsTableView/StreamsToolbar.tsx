@@ -22,10 +22,51 @@ import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '../../../../../openapi';
 import './StreamsToolbar.css';
+import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  InputGroup,
+  TextInput,
+  Button,
+  ButtonVariant,
+  Select,
+  SelectVariant,
+  SelectOption,
+  ToolbarGroup,
+  SelectOptionObject,
+  ToolbarChip,
+  ValidatedOptions,
+  Tooltip,
+  ToolbarFilter,
+} from '@patternfly/react-core';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
+import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES } from '@app/common';
+import { FilterType, FilterValue } from './StreamsTableView';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
+import { CloudProvider } from '../../../../../openapi';
+import './StreamsToolbar.css';
 
 /**
  * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
  */
+export type StreamsToolbarProps = {
+  mainToggle: boolean;
+  filterSelected?: string;
+  setFilterSelected: (value: string) => void;
+  total: number;
+  page: number;
+  perPage: number;
+  filteredValue: Array<FilterType>;
+  setFilteredValue: (filteredValue: Array<FilterType>) => void;
+  isDisabledCreateButton?: boolean;
+  buttonTooltipContent?: string | undefined;
+  labelWithTooltip?: Element | undefined;
+  onCreate?: () => void;
+  refresh?: () => void;
+  cloudProviders?: Array<CloudProvider>;
+};
+
 export type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
