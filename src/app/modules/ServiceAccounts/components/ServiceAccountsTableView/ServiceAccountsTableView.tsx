@@ -208,7 +208,6 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   };
 
   return (
-    sdafsdfasdf
     <>
       <ServiceAccountsToolbar
         filterSelected={filterSelected}
