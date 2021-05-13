@@ -22,30 +22,6 @@ import { useTranslation } from 'react-i18next';
 import { MASEmptyState, MASLoading, useRootModalContext } from '@app/common';
 import { getModalAppendTo } from '@app/utils/utils';
 import './MASGenerateCredentialsModal.css';
-import React, { useState, FunctionComponent } from 'react';
-import {
-  Modal,
-  ModalVariant,
-  Bullseye,
-  Button,
-  ClipboardCopy,
-  Checkbox,
-  EmptyStateVariant,
-  InputGroup,
-  InputGroupText,
-  TitleSizes,
-  TextContent,
-  Text,
-  TextVariants,
-} from '@patternfly/react-core';
-import KeyIcon from '@patternfly/react-icons/dist/js/icons/key-icon';
-import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
-import '@patternfly/react-styles/css/utilities/Flex/flex.css';
-import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';
-import { useTranslation } from 'react-i18next';
-import { MASEmptyState, MASLoading, useRootModalContext } from '@app/common';
-import { getModalAppendTo } from '@app/utils/utils';
-import './MASGenerateCredentialsModal.css';
 
 const MASGenerateCredentialsModal: FunctionComponent<{}> = () => {
   const { t } = useTranslation();
