@@ -19,6 +19,7 @@
     "start:federate": "HOST=localhost PORT=9000 PROTOCOL=http webpack serve --hot --color --progress --config webpack.dev.js",
     "test": "jest",
     "eslint": "eslint --ext .tsx,.js ./src/",
+    "eslint:fix": "npm run lint:js -- --fix",
     "lint": "npm run eslint",
     "format": "prettier --check --write ./src/**/*.{tsx,ts}",
     "type-check": "tsc --noEmit",
