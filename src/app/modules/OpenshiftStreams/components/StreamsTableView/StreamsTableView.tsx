@@ -141,7 +141,7 @@ const StreamsTableView = ({
 
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
   const [activeRow, setActiveRow] = useState<string>();
-
+  const testvar;
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
