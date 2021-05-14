@@ -14,7 +14,7 @@ import {
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
+import { ErrorCodes, sortValues, serverError } from '@app/utils';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import {
   MASEmptyState,
@@ -57,18 +57,13 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [isDisplayServiceAccountEmptyState, setIsDisplayServiceAccountEmptyState] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
-    let reason: string | undefined;
-    let errorCode: string | undefined;
-    if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;
-      errorCode = error.response?.data?.code;
-    }
-    //check unauthorize user
-    if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
-      setIsUserUnauthorized(true);
-    } else {
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
-    }
+    serverError({
+      error,
+      addAlert,
+      errorCode: ErrorCodes.UNAUTHORIZED_USER,
+      setState: setIsUserUnauthorized,
+      message: t('common.something_went_wrong'),
+    });
   };
 
   const fetchServiceAccounts = async () => {

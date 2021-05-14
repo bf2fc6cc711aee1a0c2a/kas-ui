@@ -29,7 +29,7 @@ import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
-import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
+import { InstanceStatus, serverError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
 import { useHistory } from 'react-router-dom';
 
 export type FilterValue = {
@@ -471,16 +471,11 @@ const StreamsTableView = ({
         refresh();
       });
     } catch (error) {
-      let reason: string | undefined;
-      if (isServiceApiError(error)) {
-        reason = error.response?.data.reason;
-      }
-      /**
-       * Todo: show user friendly message according to server code
-       * and translation for specific language
-       *
-       */
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+      serverError({
+        error,
+        addAlert,
+        message: t('something_went_wrong'),
+      });
     }
   };
 

@@ -23,7 +23,7 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
-import { isServiceApiError } from '@app/utils/error';
+import { isServiceApiError, serverError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { ErrorCodes } from '@app/utils';
@@ -83,12 +83,11 @@ const CreateInstance: React.FunctionComponent = () => {
           setCloudRegions(enabledRegions);
         });
       } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-
-        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+        serverError({
+          error,
+          addAlert,
+          message: t('something_went_wrong'),
+        });
       }
     }
   };

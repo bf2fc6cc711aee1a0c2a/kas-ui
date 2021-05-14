@@ -6,7 +6,7 @@ import { DefaultApi } from '../../../../../openapi/api';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
 import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@app/common';
 import { useTranslation } from 'react-i18next';
-import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
+import { serverError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
 
 const CreateServiceAccount: React.FunctionComponent<{}> = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
@@ -55,14 +55,6 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
     } else if (!isValid) {
       setNameValidated({ fieldState: 'error', message: t('common.input_filed_invalid_helper_text') });
     }
-  };
-
-  const handleServerError = (error: any) => {
-    let reason: string | undefined;
-    if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;
-    }
-    addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
   };
 
   const handleTextInputDescription = (description: string) => {
@@ -161,7 +153,11 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
           fetchServiceAccounts && fetchServiceAccounts();
         });
       } catch (error) {
-        handleServerError(error);
+        serverError({
+          error,
+          addAlert,
+          message: t('something_went_wrong'),
+        });
       }
     }
 

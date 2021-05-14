@@ -28,7 +28,7 @@ import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../..
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
+import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus, serverError } from '@app/utils';
 import './OpenshiftStreams.css';
 import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
@@ -206,18 +206,13 @@ const OpenshiftStreams = ({
   };
 
   const handleServerError = (error: any) => {
-    let reason: string | undefined;
-    let errorCode: string | undefined;
-    if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;
-      errorCode = error.response?.data?.code;
-    }
-    //check unauthorize user
-    if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
-      setIsUserUnauthorized(true);
-    } else {
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
-    }
+    serverError({
+      error,
+      addAlert,
+      errorCode: ErrorCodes.UNAUTHORIZED_USER,
+      setState: setIsUserUnauthorized,
+      message: t('common.something_went_wrong'),
+    });
   };
 
   // Functions

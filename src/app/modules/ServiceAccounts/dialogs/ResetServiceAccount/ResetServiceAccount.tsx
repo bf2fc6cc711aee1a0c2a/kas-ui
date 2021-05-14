@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi } from '../../../../../openapi/api';
 import { useTranslation } from 'react-i18next';
 import { useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
-import { isServiceApiError } from '@app/utils';
+import { serverError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
 
 const ResetServiceAccount: React.FunctionComponent<{}> = () => {
@@ -17,14 +17,6 @@ const ResetServiceAccount: React.FunctionComponent<{}> = () => {
   const { serviceAccountToReset } = store?.modalProps || {};
 
   const [isModalLoading, setIsModalLoading] = React.useState(false);
-
-  const handleServerError = (error: any) => {
-    let reason: string | undefined;
-    if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;
-    }
-    addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
-  };
 
   const resetServiceAccount = async (serviceAccount) => {
     const serviceAccountId = serviceAccount?.id;
@@ -49,7 +41,11 @@ const ResetServiceAccount: React.FunctionComponent<{}> = () => {
           });
         });
       } catch (error) {
-        handleServerError(error);
+        serverError({
+          error,
+          addAlert,
+          message: t('something_went_wrong'),
+        });
         setIsModalLoading(false);
       }
     }
