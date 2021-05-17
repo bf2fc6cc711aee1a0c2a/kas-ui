@@ -29,7 +29,13 @@ import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
 import './StatusColumn.css';
 import { ApiContext } from '@app/api/ApiContext';
-import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
+import {
+  InstanceStatus,
+  isServiceApiError,
+  getLoadingRowsCount,
+  getFormattedDate,
+  getSkeletonForRows,
+} from '@app/utils';
 import { useHistory } from 'react-router-dom';
 
 export type FilterValue = {
@@ -367,19 +373,7 @@ const StreamsTableView = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!kafkaDataLoaded) {
-      // for loading state
-      const cells: (React.ReactNode | IRowCell)[] = [];
-      //get exact number of skeleton cells based on total columns
-      for (let i = 0; i < tableColumns.length; i++) {
-        cells.push({ title: <Skeleton /> });
-      }
-      // get exact of skeleton rows based on expected total count of instances
-      for (let i = 0; i < loadingCount; i++) {
-        tableRow.push({
-          cells: cells,
-        });
-      }
-      return tableRow;
+      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
 
     kafkaInstanceItems.forEach((row: IRowData) => {

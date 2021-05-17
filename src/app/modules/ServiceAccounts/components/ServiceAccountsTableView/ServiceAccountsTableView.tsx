@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-table';
 import { Skeleton, PaginationVariant } from '@patternfly/react-core';
 import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
-import { getLoadingRowsCount, getFormattedDate } from '@app/utils';
+import { getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
 import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
 import { AuthContext } from '@app/auth/AuthContext';
@@ -80,19 +80,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!serviceAccountsDataLoaded) {
-      // for loading state
-      const cells: (React.ReactNode | IRowCell)[] = [];
-      //get exact number of skeleton cells based on total columns
-      for (let i = 0; i < tableColumns.length; i++) {
-        cells.push({ title: <Skeleton /> });
-      }
-      // get exact of skeleton rows based on expected total count of instances
-      for (let i = 0; i < loadingCount; i++) {
-        tableRow.push({
-          cells: cells,
-        });
-      }
-      return tableRow;
+      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
