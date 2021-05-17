@@ -8,7 +8,7 @@ import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@ap
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
 
-const CreateServiceAccount: React.FunctionComponent<{}> = () => {
+const CreateServiceAccount = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   const { store, showModal, hideModal } = useRootModalContext();
   const { fetchServiceAccounts } = store?.modalProps || {};

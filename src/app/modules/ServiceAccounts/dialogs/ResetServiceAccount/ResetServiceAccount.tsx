@@ -8,7 +8,7 @@ import { useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
 
-const ResetServiceAccount: React.FunctionComponent<{}> = () => {
+const ResetServiceAccount = () => {
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
