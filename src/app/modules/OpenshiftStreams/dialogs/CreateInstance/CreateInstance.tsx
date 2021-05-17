@@ -14,6 +14,7 @@ import {
   Flex,
   FlexItem,
   Divider,
+  Tooltip,
 } from '@patternfly/react-core';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
@@ -302,21 +303,25 @@ const CreateInstance = () => {
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
           <ToggleGroup aria-label={t('availability_zone_selection')}>
-            <ToggleGroupItem
-              text={t('single')}
-              value={'single'}
-              isDisabled
-              buttonId="single"
-              isSelected={isMultiSelected}
-              onChange={onChangeAvailabilty}
-            />
-            <ToggleGroupItem
-              text={t('multi')}
-              value="multi"
-              buttonId="multi"
-              isSelected={isMultiSelected}
-              onChange={onChangeAvailabilty}
-            />
+            <Tooltip content={t('kafkaInstance.availabilty_zones_tooltip_message')}>
+              <ToggleGroupItem
+                text={t('single')}
+                value={'single'}
+                isDisabled
+                buttonId="single"
+                isSelected={isMultiSelected}
+                onChange={onChangeAvailabilty}
+              />
+            </Tooltip>
+            <Tooltip content={t('kafkaInstance.availabilty_zones_tooltip_message')}>
+              <ToggleGroupItem
+                text={t('multi')}
+                value="multi"
+                buttonId="multi"
+                isSelected={isMultiSelected}
+                onChange={onChangeAvailabilty}
+              />
+            </Tooltip>
           </ToggleGroup>
         </FormGroup>
       </Form>
