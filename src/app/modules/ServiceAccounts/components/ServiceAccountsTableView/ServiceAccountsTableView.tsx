@@ -80,7 +80,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!serviceAccountsDataLoaded) {
-      return getSkeletonForRows({loadingCount ,skeleton:<Skeleton/>,columnLength:tableColumns.length});
+      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {

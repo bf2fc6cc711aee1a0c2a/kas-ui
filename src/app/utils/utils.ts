@@ -159,23 +159,20 @@ const isMobileTablet = () => {
   return check;
 }
 
-const getSkeletonForRows =({loadingCount,skeleton,columnLength})=>{
-  const tableRow: (IRowData | string[])[] | undefined = [];
-  // const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
-  // if (!kafkaDataLoaded) {
-    // for loading state
-    const cells: (React.ReactNode | IRowCell)[] = [];
-    //get exact number of skeletonCompoenet cells based on total columns
-    for (let i = 0; i < columnLength; i++) {
-      cells.push({ title: skeleton });
-    }
-    // get exact of skeleton rows based on expected total count of instances
-    for (let i = 0; i < loadingCount; i++) {
-      tableRow.push({
-        cells: cells,
-      });
-    }
-    return tableRow;
+const getSkeletonForRows = ({ loadingCount, skeleton, length }: { loadingCount: number, skeleton: React.ReactNode, length: number }) => {
+  const rows: (IRowData | string[])[] | undefined = [];
+  const cells: (React.ReactNode | IRowCell)[] = [];
+  //get exact number of skeletonCompoenet cells based on total columns
+  for (let i = 0; i < length; i++) {
+    cells.push({ title: skeleton });
+  }
+  // get exact of skeleton rows based on expected total count of instances
+  for (let i = 0; i < loadingCount; i++) {
+    rows.push({
+      cells: cells,
+    });
+  }
+  return rows;
 }
 
 export {
