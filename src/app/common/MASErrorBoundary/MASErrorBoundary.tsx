@@ -1,12 +1,18 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { UnexpectedError } from './UnexpectedError';
-interface Props {
-  children: ReactNode;
-}
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withTranslation, WithTranslation } from 'react-i18next';
+import { PageSection, Button } from '@patternfly/react-core';
+import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
+import './MASErrorBoundary.css';
 
-interface State {
-  hasError: boolean;
-}
+type Props = WithTranslation &
+  RouteComponentProps & {
+    children?: ReactNode;
+  };
+
+type State = {
+  hasError?: boolean;
+};
 
 class MASErrorBoundary extends Component<Props, State> {
   state: State = {
@@ -22,16 +28,41 @@ class MASErrorBoundary extends Component<Props, State> {
     console.error('error:', error, errorInfo);
   }
 
-  updateState = (hasError: boolean) => {
-    this.setState({ hasError });
+  onClickButton = () => {
+    const { history } = this.props;
+    this.setState({ hasError: false });
+    history && history.push('/');
   };
 
   render() {
-    if (this.state.hasError) {
-      return <UnexpectedError updateState={this.updateState} />;
+    const { t } = this.props;
+    const { hasError } = this.state;
+
+    if (hasError) {
+      return (
+        <PageSection padding={{ default: 'noPadding' }} isFilled>
+          <MASEmptyState
+            emptyStateProps={{
+              variant: MASEmptyStateVariant.UnexpectedError,
+            }}
+            emptyStateIconProps={{
+              className: 'icon-color',
+            }}
+            titleProps={{
+              title: t('common.something_went_wrong'),
+            }}
+            emptyStateBodyProps={{
+              body: t('unexpected_error'),
+            }}
+          >
+            <Button onClick={this.onClickButton}>{t('go_to_kafka_instances')}</Button>
+          </MASEmptyState>
+        </PageSection>
+      );
     }
     return this.props.children;
   }
 }
 
-export { MASErrorBoundary };
+const MASErrorBoundaryComponent = withRouter(withTranslation()(MASErrorBoundary));
+export { MASErrorBoundaryComponent as MASErrorBoundary };

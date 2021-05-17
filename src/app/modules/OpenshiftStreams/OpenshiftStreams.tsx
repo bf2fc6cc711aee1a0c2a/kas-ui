@@ -30,13 +30,14 @@ import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
 import './OpenshiftStreams.css';
-import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
+import { MASLoading, MASEmptyState } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
+import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
@@ -407,15 +408,15 @@ const OpenshiftStreams = ({
    */
   if (isUserUnauthorized) {
     return (
-      <MASFullPageError
-        titleProps={{
-          title: t('access_permissions_needed'),
-          headingLevel: 'h2',
-        }}
-        emptyStateBodyProps={{
-          body: t('to_access_kafka_instances_contact_your_organization_administrators'),
-        }}
-      />
+      <PageSection variant={PageSectionVariants.default} padding={{ default: 'noPadding' }} isFilled>
+        <MASEmptyState
+          titleProps={{ title: t('access_permissions_needed'), headingLevel: 'h2' }}
+          emptyStateIconProps={{
+            icon: LockIcon,
+          }}
+          emptyStateBodyProps={{ body: t('to_access_kafka_instances_contact_your_organization_administrators') }}
+        />
+      </PageSection>
     );
   }
 
