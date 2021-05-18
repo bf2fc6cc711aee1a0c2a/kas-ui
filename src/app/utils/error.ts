@@ -13,8 +13,8 @@ const isServiceApiError = (error: Error): error is AxiosError<IApiErrorData> => 
 }
 
 enum ErrorCodes {
-  UNAUTHORIZED_USER = "MGD-SERV-API-4",
-  DUPLICATE_INSTANCE_NAME = "MGD-SERV-API-36"
+  UNAUTHORIZED_USER = "KAFKAS-MGMT-4",
+  DUPLICATE_INSTANCE_NAME = "KAFKAS-MGMT-36"
 }
 
 export {
