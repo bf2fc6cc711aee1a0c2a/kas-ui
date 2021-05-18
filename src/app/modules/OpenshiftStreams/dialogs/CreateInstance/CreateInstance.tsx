@@ -36,7 +36,7 @@ const emptyProvider: CloudProvider = {
   enabled: true,
 };
 
-const CreateInstance: React.FunctionComponent = () => {
+const CreateInstance = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};

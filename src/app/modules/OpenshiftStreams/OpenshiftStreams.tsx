@@ -706,7 +706,7 @@ const OpenshiftStreams = ({
           </Button>,
         ]}
       >
-        The mobile experience isn't fully optimized yet, so some items might not appear correctly.
+        The mobile experience isn&apos;t fully optimized yet, so some items might not appear correctly.
       </Modal>
     </AlertProvider>
   );

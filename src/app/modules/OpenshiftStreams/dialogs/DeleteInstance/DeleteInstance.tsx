@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TextInput } from '@patternfly/react-core';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export const DeleteInstance: React.FC<{}> = () => {
+export const DeleteInstance = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { title, confirmButtonProps, cancelButtonProps, textProps, instanceStatus, selectedItemData } =
@@ -51,24 +50,14 @@ export const DeleteInstance: React.FC<{}> = () => {
       handleModalToggle={handleToggle}
       textProps={textProps}
       selectedItemData={selectedItemData}
-    >
-      {instanceStatus === InstanceStatus.READY && (
-        <>
-          <label
-            htmlFor="instance-name-input"
-            dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
-          />
-          <TextInput
-            id="mk--instance-name__input"
-            name="instance-name-input"
-            type="text"
-            value={instanceNameInput}
-            onChange={handleInstanceName}
-            onKeyPress={onKeyPress}
-            autoFocus={true}
-          />
-        </>
-      )}
-    </MASDeleteModal>
+      textInputProps={{
+        showTextInput: instanceStatus === InstanceStatus.READY,
+        label: t('instance_name_label', { name: selectedInstanceName }),
+        value: instanceNameInput,
+        onChange: handleInstanceName,
+        onKeyPress,
+        autoFocus: true,
+      }}
+    ></MASDeleteModal>
   );
 };

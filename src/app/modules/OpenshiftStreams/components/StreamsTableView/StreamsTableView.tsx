@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
 import { ApiContext } from '@app/api/ApiContext';
-import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate } from '@app/utils';
+import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
 import {
@@ -30,7 +30,6 @@ import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import './StatusColumn.css';
 
 export type FilterValue = {
   value: string;
@@ -339,22 +338,16 @@ const StreamsTableView = ({
 
   const renderNameLink = ({ name, row }) => {
     return (
-      mainToggle ? (
-        <a href="http://uxd-mk-data-plane-cmolloy.apps.uxd-os-research.shz4.p1.openshiftapps.com/openshiftstreams">
-          {name}
-        </a>
-      ) : (
-        <Link
-          to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
-          onClick={(e) => {
-            e.preventDefault();
-            onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
-          }}
-          data-testid="tableStreams-linkKafka"
-        >
-          {name}
-        </Link>
-      )
+      <Link
+        to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
+        onClick={(e) => {
+          e.preventDefault();
+          onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
+        }}
+        data-testid="tableStreams-linkKafka"
+      >
+        {name}
+      </Link>
     );
   };
 
@@ -362,18 +355,7 @@ const StreamsTableView = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!kafkaDataLoaded) {
-      const cells: (React.ReactNode | IRowCell)[] = [];
-      //get exact number of skeleton cells based on total columns
-      for (let i = 0; i < tableColumns.length; i++) {
-        cells.push({ title: <Skeleton /> });
-      }
-      // get exact of skeleton rows based on expected total count of instances
-      for (let i = 0; i < loadingCount; i++) {
-        tableRow.push({
-          cells: cells,
-        });
-      }
-      return tableRow;
+      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;

@@ -9,7 +9,6 @@ import { getModalAppendTo } from '@app/utils/utils';
 import { DefaultApi } from '../../../../../openapi/api';
 
 const ResetServiceAccount: React.FunctionComponent<{}> = () => {
-
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);

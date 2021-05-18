@@ -7,7 +7,7 @@ import { MASDeleteModal, useRootModalContext, useAlerts } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { DefaultApi, ServiceAccountListItem } from '../../../../../openapi/api';
 
-const DeleteServiceAccount: React.FunctionComponent<{}> = () => {
+const DeleteServiceAccount = () => {
   const { t } = useTranslation();
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
