@@ -303,18 +303,16 @@ const CreateInstance = () => {
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
           <ToggleGroup aria-label={t('availability_zone_selection')}>
-            <ToggleGroupItem
-              text={t('single')}
-              value={'single'}
-              isDisabled
-              buttonId="single"
-              isSelected={isMultiSelected}
-              onChange={onChangeAvailabilty}
-            />
-            <Tooltip
-              content={t('kafkaInstance.availabilty_zones_tooltip_message')}
-              reference={() => document.getElementById('single')}
-            />
+            <Tooltip content={t('kafkaInstance.availabilty_zones_tooltip_message')}>
+              <ToggleGroupItem
+                text={t('single')}
+                value={'single'}
+                isDisabled
+                buttonId="single"
+                isSelected={isMultiSelected}
+                onChange={onChangeAvailabilty}
+              />
+            </Tooltip>
             <ToggleGroupItem
               text={t('multi')}
               value="multi"
