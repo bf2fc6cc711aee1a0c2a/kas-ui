@@ -170,7 +170,8 @@ module.exports = (env, argv) => {
         exposes: {
           "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",
           "./ServiceRegistry":"./src/app/modules/ServiceRegistry/ServiceRegistryFederated",
-          "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated"
+          "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated",
+          "./InstanceDrawer":"./src/app/modules/OpenshiftStreams/components/InstanceDrawer/InstanceDrawerFederated"
         },
         shared: {
           ...dependencies,
