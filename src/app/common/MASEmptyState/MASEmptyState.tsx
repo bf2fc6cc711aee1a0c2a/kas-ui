@@ -59,6 +59,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   emptyStateBodyProps,
   children,
 }: MASEmptyStateProps) => {
+
   const { variant: buttonVariant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
   const { title, ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
@@ -69,7 +70,6 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
 
   const getVariantConfig = () => {
     let varaintConfig: any = {};
-
     switch (masEmptyStateVariant) {
       case MASEmptyStateVariant.GettingStarted:
         varaintConfig = {
@@ -128,33 +128,30 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
     }
-
     return varaintConfig;
   };
 
   const { variant, icon, titleSize, headingLevel } = getVariantConfig();
 
   return (
-    <>
-      <PFEmptyState
-        variant={variant}
-        className={css('pf-u-pt-2xl pf-u-pt-3xl-on-md', className)}
-        {...restEmptyStateProps}
-      >
-        <EmptyStateIcon icon={icon} {...emptyStateIconProps} />
-        {title && (
-          <Title headingLevel={headingLevel} size={titleSize} {...restTitleProps}>
-            {title}
-          </Title>
-        )}
-        {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
-        {buttonProps?.title && (
-          <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
-            {buttonProps?.title}
-          </Button>
-        )}
-        {children}
-      </PFEmptyState>
-    </>
+    <PFEmptyState
+      variant={variant}
+      className={css('pf-u-pt-2xl pf-u-pt-3xl-on-md', className)}
+      {...restEmptyStateProps}
+    >
+      <EmptyStateIcon icon={icon} {...emptyStateIconProps} />
+      {title && (
+        <Title headingLevel={headingLevel} size={titleSize} {...restTitleProps}>
+          {title}
+        </Title>
+      )}
+      {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
+      {buttonProps?.title && (
+        <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
+          {buttonProps?.title}
+        </Button>
+      )}
+      {children}
+    </PFEmptyState>
   );
 };

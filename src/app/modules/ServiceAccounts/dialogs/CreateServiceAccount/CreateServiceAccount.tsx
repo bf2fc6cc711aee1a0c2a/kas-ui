@@ -8,20 +8,20 @@ import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@ap
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
 
-const CreateServiceAccount = () => {
+const CreateServiceAccount: React.FunctionComponent<{}> = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   const { store, showModal, hideModal } = useRootModalContext();
   const { fetchServiceAccounts } = store?.modalProps || {};
+  const { t } = useTranslation();
+  const authContext = useContext(AuthContext);
+  const { basePath } = useContext(ApiContext);
+  const { addAlert } = useAlerts();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [descriptionValidated, setDescriptionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
 
   const resetForm = () => {
     setNameValidated({ fieldState: 'default' });
@@ -135,14 +135,12 @@ const CreateServiceAccount = () => {
   };
 
   const createServiceAccount = async () => {
-    const isValid = validateCreateForm();
+    let isValid = validateCreateForm();
+    const accessToken = await authContext?.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
     }
-
-    const accessToken = await authContext?.getToken();
-
     if (accessToken) {
       try {
         const apisService = new DefaultApi({
@@ -164,7 +162,6 @@ const CreateServiceAccount = () => {
         handleServerError(error);
       }
     }
-
     setCreationInProgress(false);
   };
 
@@ -182,7 +179,6 @@ const CreateServiceAccount = () => {
     const { message, fieldState } = nameValidated;
     const { name, description } = serviceAccountFormData;
     const { message: descMessage, fieldState: descFieldState } = descriptionValidated;
-
     return (
       <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
@@ -229,22 +225,20 @@ const CreateServiceAccount = () => {
   };
 
   return (
-    <>
-      <MASCreateModal
-        id="modalCreateSAccount"
-        isModalOpen={true}
-        title={t('serviceAccount.create_a_service_account')}
-        handleModalToggle={handleCreateModal}
-        onCreate={createServiceAccount}
-        isFormValid={isFormValid}
-        primaryButtonTitle="Create"
-        isCreationInProgress={isCreationInProgress}
-        dataTestIdSubmit="modalCreateServiceAccount-buttonSubmit"
-        dataTestIdCancel="modalCreateServiceAccount-buttonCancel"
-      >
-        {createForm()}
-      </MASCreateModal>
-    </>
+    <MASCreateModal
+      id="modalCreateSAccount"
+      isModalOpen={true}
+      title={t('serviceAccount.create_a_service_account')}
+      handleModalToggle={handleCreateModal}
+      onCreate={createServiceAccount}
+      isFormValid={isFormValid}
+      primaryButtonTitle="Create"
+      isCreationInProgress={isCreationInProgress}
+      dataTestIdSubmit="modalCreateServiceAccount-buttonSubmit"
+      dataTestIdCancel="modalCreateServiceAccount-buttonCancel"
+    >
+      {createForm()}
+    </MASCreateModal>
   );
 };
 

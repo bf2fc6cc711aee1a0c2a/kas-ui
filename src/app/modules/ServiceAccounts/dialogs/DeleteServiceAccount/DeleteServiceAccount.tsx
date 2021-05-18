@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from '../../../../../openapi/api';
 import { MASDeleteModal, useRootModalContext, useAlerts } from '@app/common';
 import { isServiceApiError } from '@app/utils';
+import { DefaultApi, ServiceAccountListItem } from '../../../../../openapi/api';
 
 const DeleteServiceAccount = () => {
   const { t } = useTranslation();
@@ -69,9 +69,7 @@ const DeleteServiceAccount = () => {
         isLoading,
       }}
     >
-      <p>
-        <b>{serviceAccountToDelete?.name}</b> {t('serviceAccount.will_be_deleted')}
-      </p>
+      <p><b>{serviceAccountToDelete?.name}</b> {t('serviceAccount.will_be_deleted')}</p>
     </MASDeleteModal>
   );
 };

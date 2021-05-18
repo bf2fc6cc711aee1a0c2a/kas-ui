@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
   TextInput,
@@ -17,7 +18,6 @@ import {
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES } from '@app/common';
-import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '../../../../../openapi';
@@ -37,7 +37,7 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
   buttonTooltipContent?: string | undefined;
-  labelWithTooltip?: React.ReactNode;
+  labelWithTooltip?: Element | undefined;
   onCreate?: () => void;
   refresh?: () => void;
   cloudProviders?: Array<CloudProvider>;
@@ -58,7 +58,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   refresh,
   cloudProviders,
 }) => {
+
   const { t } = useTranslation();
+  const nameInputRef = useRef<HTMLInputElement>();
+  const ownerInputRef = useRef<HTMLInputElement>();
   const { showModal } = useRootModalContext();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
@@ -70,9 +73,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
-
-  const nameInputRef = useRef<HTMLInputElement>();
-  const ownerInputRef = useRef<HTMLInputElement>();
 
   // Options for server-side filtering
   const mainFilterOptions = [
@@ -574,7 +574,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </Tooltip>
       );
     }
-
     return (
       <Button variant="primary" onClick={handleCreateModal} data-testid={'tableStreams-buttonCreateKafka'}>
         {t('create_kafka_instance')}
@@ -584,10 +583,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const toolbarItems: ToolbarItemProps[] = [
     {
-      item: <>{createButton()}</>,
+      item: createButton(),
     },
     {
-      item: <>{labelWithTooltip}</>,
+      item: labelWithTooltip,
     },
   ];
 
