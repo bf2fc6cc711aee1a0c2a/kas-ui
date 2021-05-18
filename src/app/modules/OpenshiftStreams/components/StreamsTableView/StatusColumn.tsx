@@ -13,7 +13,6 @@ type StatusColumnProps = {
 };
 
 const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
-
   const { t } = useTranslation();
 
   const getStatus = () => {
@@ -36,17 +35,16 @@ const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
       case statusOptions[3].value: // 'provisioning'
       case statusOptions[4].value: // 'preparing'
         return <Spinner size="md" aria-label={instanceName} aria-valuetext="Creation in progress" />;
-      case statusOptions[5].value: // 'deprovision'
-      case statusOptions[6].value: // 'deleted'
-        return;
       default:
-        return <PendingIcon />;
+        return;
     }
   };
 
+  const statusIcon = getStatusIcon();
+
   return (
     <Flex>
-      <FlexItem spacer={{ default: 'spacerSm' }}>{getStatusIcon()}</FlexItem>
+      {statusIcon && <FlexItem spacer={{ default: 'spacerSm' }}>{statusIcon}</FlexItem>}
       <FlexItem>{getStatus()}</FlexItem>
     </Flex>
   );
