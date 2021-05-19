@@ -1,11 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import PendingIcon from '@patternfly/react-icons/dist/js/icons/pending-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
-import './StatusColumn.css';
-import { useTranslation } from 'react-i18next';
 import { statusOptions } from '@app/utils/utils';
+import './StatusColumn.css';
 
 type StatusColumnProps = {
   status: string;
@@ -14,6 +14,7 @@ type StatusColumnProps = {
 
 const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
   const { t } = useTranslation();
+
   const getStatus = () => {
     const filteredstatus = statusOptions.filter((st) => st.value === status?.toLowerCase());
     if (filteredstatus.length === 1) {
@@ -36,16 +37,16 @@ const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
         return <Spinner size="md" aria-label={instanceName} aria-valuetext="Creation in progress" />;
       case statusOptions[5].value: // 'deprovision'
       case statusOptions[6].value: // 'deleted'
-        return;
       default:
         return <PendingIcon />;
     }
   };
 
-  const icon = getStatusIcon();
+  const statusIcon = getStatusIcon();
+
   return (
     <Flex>
-      {icon && <FlexItem spacer={{ default: 'spacerSm' }}>{icon}</FlexItem>}
+      {statusIcon && <FlexItem spacer={{ default: 'spacerSm' }}>{statusIcon}</FlexItem>}
       <FlexItem>{getStatus()}</FlexItem>
     </Flex>
   );
