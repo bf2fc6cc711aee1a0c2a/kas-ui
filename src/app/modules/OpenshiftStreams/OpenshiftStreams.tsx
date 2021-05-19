@@ -30,17 +30,11 @@ import { AuthContext } from '@app/auth/AuthContext';
 import { ApiContext } from '@app/api/ApiContext';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
-import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
+import { MASLoading, MASEmptyState } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
-import {
-  StreamsTableView,
-  FilterType,
-  InstanceDrawer,
-  InstanceDrawerProps,
-  StreamsTableProps,
-} from './components';
+import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
 import './OpenshiftStreams.css';
 
@@ -61,7 +55,6 @@ const OpenshiftStreams = ({
   preCreateInstance,
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
-
   dayjs.extend(localizedFormat);
 
   const authContext = useContext(AuthContext);
@@ -391,10 +384,10 @@ const OpenshiftStreams = ({
   useEffect(() => {
     if (isMobileTablet()) {
       if (localStorage) {
-        const count = localStorage.getItem("openSessions") || 0;
+        const count = localStorage.getItem('openSessions') || 0;
         const newCount = parseInt(count) + 1;
         if (count < 1) {
-          localStorage.setItem("openSessions", newCount);
+          localStorage.setItem('openSessions', newCount);
           setIsMobileModalOpen(true);
         }
       }
@@ -428,15 +421,15 @@ const OpenshiftStreams = ({
 
   if (isUserUnauthorized) {
     return (
-      <MASFullPageError
-        titleProps={{
-          title: t('access_permissions_needed'),
-          headingLevel: 'h2',
-        }}
-        emptyStateBodyProps={{
-          body: t('to_access_kafka_instances_contact_your_organization_administrators'),
-        }}
-      />
+      <PageSection variant={PageSectionVariants.default} padding={{ default: 'noPadding' }} isFilled>
+        <MASEmptyState
+          titleProps={{ title: t('access_permissions_needed'), headingLevel: 'h2' }}
+          emptyStateIconProps={{
+            icon: LockIcon,
+          }}
+          emptyStateBodyProps={{ body: t('to_access_kafka_instances_contact_your_organization_administrators') }}
+        />
+      </PageSection>
     );
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
@@ -37,7 +37,7 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
   buttonTooltipContent?: string | undefined;
-  labelWithTooltip?: Element | undefined;
+  labelWithTooltip?: ReactElement | undefined;
   onCreate?: () => void;
   refresh?: () => void;
   cloudProviders?: Array<CloudProvider>;
@@ -58,7 +58,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   refresh,
   cloudProviders,
 }) => {
-
   const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();

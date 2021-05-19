@@ -35,8 +35,10 @@ const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
       case statusOptions[3].value: // 'provisioning'
       case statusOptions[4].value: // 'preparing'
         return <Spinner size="md" aria-label={instanceName} aria-valuetext="Creation in progress" />;
+      case statusOptions[5].value: // 'deprovision'
+      case statusOptions[6].value: // 'deleted'
       default:
-        return;
+        return <PendingIcon />;
     }
   };
 
