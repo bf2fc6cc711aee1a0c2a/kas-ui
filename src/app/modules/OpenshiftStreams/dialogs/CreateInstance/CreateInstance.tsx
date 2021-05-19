@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   AlertVariant,
@@ -14,20 +15,21 @@ import {
   Flex,
   FlexItem,
   Divider,
+  Tooltip,
 } from '@patternfly/react-core';
-import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
-import './CreateInstance.css';
 import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
 import { AuthContext } from '@app/auth/AuthContext';
-import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
-import { useTranslation } from 'react-i18next';
 import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
-import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { ErrorCodes } from '@app/utils';
 import { MASCreateModal, useRootModalContext } from '@app/common';
+import { ErrorCodes } from '@app/utils';
+import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
+import { NewKafka, FormDataValidationState } from '../../../../models';
+import './CreateInstance.css';
+import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
+
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -35,14 +37,13 @@ const emptyProvider: CloudProvider = {
   enabled: true,
 };
 
-const CreateInstance: React.FunctionComponent = () => {
+const CreateInstance = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
   const authContext = useContext(AuthContext);
   const { basePath } = useContext(ApiContext);
   const { addAlert } = useAlerts();
-
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -302,20 +303,26 @@ const CreateInstance: React.FunctionComponent = () => {
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
           <ToggleGroup aria-label={t('availability_zone_selection')}>
-            <ToggleGroupItem
-              text={t('single')}
-              value={'single'}
-              isDisabled
-              buttonId="single"
-              isSelected={isMultiSelected}
-              onChange={onChangeAvailabilty}
-            />
+            <Tooltip content={t('kafkaInstance.availabilty_zones_tooltip_message')}>
+              <ToggleGroupItem
+                text={t('single')}
+                value={'single'}
+                isDisabled
+                buttonId="single"
+                isSelected={isMultiSelected}
+                onChange={onChangeAvailabilty}
+              />
+            </Tooltip>
             <ToggleGroupItem
               text={t('multi')}
               value="multi"
               buttonId="multi"
               isSelected={isMultiSelected}
               onChange={onChangeAvailabilty}
+            />
+            <Tooltip
+              content={t('kafkaInstance.availabilty_zones_tooltip_message')}
+              reference={() => document.getElementById('multi')}
             />
           </ToggleGroup>
         </FormGroup>

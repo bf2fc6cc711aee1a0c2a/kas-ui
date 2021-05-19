@@ -241,6 +241,9 @@
   "kafka_instance_not_ready_inline_message": "日本語 We're creating your kafka instance, so some details aren't yet available.",
   "bootstrap_server_description": "日本語 Establish the initial connection between your client and Kafka instance.",
   "more_info_about_sasl_oauthbearer": "日本語 More information about SASL/OAUTHBEARER",
+  "kafkaInstance": {
+    "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
+  },
   "common": {
     "loding": "日本語 Loading",
     "java": "日本語 JAVA",
