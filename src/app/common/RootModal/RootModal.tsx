@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext } from 'react';
-import { CreateInstance, DeleteInstance } from '@app/modules/OpenshiftStreams/dialogs';
+import { CreateInstance, DeleteInstance, DeleteInstanceConnected } from '@app/modules/OpenshiftStreams/dialogs';
 import { CreateServiceAccount, DeleteServiceAccount, ResetServiceAccount } from '@app/modules/ServiceAccounts/dialogs';
 import { MASGenerateCredentialsModal } from '@app/common';
 
@@ -10,6 +10,7 @@ export const MODAL_TYPES = {
   DELETE_SERVICE_ACCOUNT: 'DELETE_SERVICE_ACCOUNT',
   RESET_CREDENTIALS: 'RESET_CREDENTIALS',
   GENERATE_CREDENTIALS: 'GENERATE_CREDENTIALS',
+  DELETE_KAFKA_FROM_DATA_PLANE: 'DELETE_KAFKA_FROM_DATA_PLANE',
 };
 
 const MODAL_COMPONENTS: any = {
@@ -19,6 +20,7 @@ const MODAL_COMPONENTS: any = {
   [MODAL_TYPES.DELETE_SERVICE_ACCOUNT]: DeleteServiceAccount,
   [MODAL_TYPES.RESET_CREDENTIALS]: ResetServiceAccount,
   [MODAL_TYPES.GENERATE_CREDENTIALS]: MASGenerateCredentialsModal,
+  [MODAL_TYPES.DELETE_KAFKA_FROM_DATA_PLANE]: DeleteInstanceConnected,
 };
 
 type RootModalContext = {
