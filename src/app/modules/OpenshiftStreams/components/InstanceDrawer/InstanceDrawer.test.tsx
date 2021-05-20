@@ -6,6 +6,7 @@ import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
+import { MemoryRouter } from "react-router";
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
@@ -42,19 +43,28 @@ const setup = (
   instance?: KafkaRequest
 ) => {
   return render(
-    <Drawer isExpanded={true} onExpand={onExpand}>
-      <DrawerContent
-        panelContent={
-          <InstanceDrawer
-            isExpanded={isExpanded}
-            mainToggle={mainToggle}
-            onClose={onClose}
-            activeTab={activeTab}
-            instanceDetail={instance || instanceDetail}
-          />
-        }
-      />
-    </Drawer>
+    <MemoryRouter>
+      <Drawer isExpanded={true} onExpand={onExpand}>
+        <DrawerContent
+          panelContent={
+            <InstanceDrawer
+              isExpanded={isExpanded}
+              mainToggle={mainToggle}
+              onClose={onClose}
+              activeTab={activeTab}
+              instanceDetail={instance || instanceDetail}
+              children={<></>}
+              isLoading={instanceDetail === undefined}
+              data-ouia-app-id="controlPlane-streams"
+              getConnectToRoutePath={jest.fn()}
+              onConnectToRoute={jest.fn()}
+              tokenEndPointUrl={'sooss'}
+              notRequiredDrawerContentBackground={true}
+            />
+          }
+        />
+      </Drawer>
+    </MemoryRouter>
   );
 };
 describe('Instance Drawer', () => {
@@ -65,13 +75,25 @@ describe('Instance Drawer', () => {
 
   it('should render loading if no instance is available', () => {
     const { getByTestId, getByRole } = render(
-      <Drawer isExpanded={true} onExpand={jest.fn()}>
-        <DrawerContent
-          panelContent={
-            <InstanceDrawer isExpanded={true} mainToggle={false} onClose={jest.fn()} activeTab={'Details'} />
-          }
-        />
-      </Drawer>
+      <MemoryRouter>
+        <Drawer isExpanded={true} onExpand={jest.fn()}>
+          <DrawerContent
+            panelContent={
+              <InstanceDrawer
+                getConnectToRoutePath={jest.fn()}
+                onConnectToRoute={jest.fn()}
+                tokenEndPointUrl={'sooss'}
+                children={<></>}
+                isExpanded={true}
+                isLoading={instanceDetail === undefined}
+                mainToggle={false}
+                onClose={jest.fn()}
+                activeTab={'Details'}
+              />
+            }
+          />
+        </Drawer>
+      </MemoryRouter>
     );
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
     expect(getByRole('status')).toBeInTheDocument();

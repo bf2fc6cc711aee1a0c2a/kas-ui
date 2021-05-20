@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
-import i18nForTest from '../../../../../test-utils/i18n';
+import i18nForTest from '../../../../../../test-utils/i18n';
 import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
 
 const kafkaInstanceItems = [

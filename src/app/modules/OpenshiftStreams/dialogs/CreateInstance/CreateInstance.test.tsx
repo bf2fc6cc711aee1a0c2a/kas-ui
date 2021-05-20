@@ -21,7 +21,6 @@ const listCloudProviderRegions: AxiosResponse<CloudRegionList> = {
   },
 } as AxiosResponse<CloudRegionList>;
 
-
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
   return {

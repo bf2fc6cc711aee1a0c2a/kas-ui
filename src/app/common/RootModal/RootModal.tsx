@@ -38,9 +38,14 @@ const initalState: RootModalContext = {
 const RootModalContext = createContext(initalState);
 export const useRootModalContext = (): RootModalContext => useContext(RootModalContext);
 
+type RootModalStore = {
+  modalType: string;
+  modalProps: any;
+} 
+
 export const RootModal = ({ children }) => {
-  const [store, setStore] = useState();
-  const { modalType, modalProps } = store || {};
+  const [store, setStore] = useState<RootModalStore>();
+  const { modalType = '', modalProps } = store || {};
 
   const showModal = (modalType: string, modalProps: any = {}) => {
     setStore({
@@ -53,14 +58,14 @@ export const RootModal = ({ children }) => {
   const hideModal = () => {
     setStore({
       ...store,
-      modalType: null,
+      modalType: '',
       modalProps: {},
     });
   };
 
   const renderComponent = () => {
     const ModalComponent = MODAL_COMPONENTS[modalType];
-    if (!modalType || !ModalComponent) {
+    if (!modalType.length || !ModalComponent) {
       return null;
     }
     return <ModalComponent id="global-modal" {...modalProps} />;

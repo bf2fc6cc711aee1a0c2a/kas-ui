@@ -38,7 +38,7 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
       >
         <ToolbarContent>
           { toggleGroupProps && (
-            <ToolbarToggleGroup toggleIcon={toggleGroupProps.toggleIcon} breakpoint='md' {...toggleGroupProps}>
+            <ToolbarToggleGroup toggleIcon={toggleGroupProps.toggleIcon} {...toggleGroupProps}>
               {toggleGroupItems}
             </ToolbarToggleGroup>
           )}

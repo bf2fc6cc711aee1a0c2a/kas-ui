@@ -329,7 +329,7 @@ const CreateInstance: React.FunctionComponent = () => {
             />
             <Tooltip
               content={t('kafkaInstance.availabilty_zones_tooltip_message')}
-              reference={() => document.getElementById('multi')}
+              reference={(() => document.getElementById('multi') || document.createElement('span'))}
             />
           </ToggleGroup>
         </FormGroup>
