@@ -9,14 +9,10 @@ import {
   TextContent,
   Card,
 } from '@patternfly/react-core';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
 import {
   MASEmptyState,
   MASLoading,
-  AlertProvider,
-  useAlerts,
   MASFullPageError,
   MASEmptyStateVariant,
   useRootModalContext,
@@ -24,6 +20,7 @@ import {
 } from '@app/common';
 import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
+import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
@@ -32,15 +29,15 @@ export type ServiceAccountsProps = {
 const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
 
   const { t } = useTranslation();
-  const { addAlert } = useAlerts();
+  const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
+  const auth = useAuth();
+  const { kas: { apiBasePath: basePath } } = useConfig();
 
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
@@ -67,7 +64,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   };
 
   const fetchServiceAccounts = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
         const apisService = new DefaultApi({
@@ -189,7 +186,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   }
 
   return (
-    <AlertProvider>
+    <>
       <PageSection variant={PageSectionVariants.light}>
         <TextContent>
           <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
@@ -197,7 +194,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         </TextContent>
       </PageSection>
       {renderTableView()}
-    </AlertProvider>
+    </>
   );
 };
 

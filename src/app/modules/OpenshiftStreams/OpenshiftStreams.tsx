@@ -25,9 +25,7 @@ import {
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
-import { AlertProvider, useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
+import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
 import { MASLoading, MASEmptyState } from '@app/common';
@@ -37,6 +35,7 @@ import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickst
 import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
 import './OpenshiftStreams.css';
+import { AuthContext, useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
@@ -57,8 +56,8 @@ const OpenshiftStreams = ({
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
 
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
+  const auth = useContext(AuthContext);
+  const { kas: { apiBasePath: basePath } } = useConfig();
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -66,7 +65,7 @@ const OpenshiftStreams = ({
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
   const { t } = useTranslation();
-  const { addAlert } = useAlerts();
+  const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
   const localStorage = window.localStorage;
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
@@ -108,7 +107,7 @@ const OpenshiftStreams = ({
   }, [kafkaInstanceItems]);
 
   useEffect(() => {
-    authContext?.getUsername().then((username) => setLoggedInUser(username));
+    auth?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
 
   useEffect(() => {
@@ -133,7 +132,7 @@ const OpenshiftStreams = ({
   };
 
   const fetchKafkaServiceStatus = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
 
     if (accessToken) {
       try {
@@ -220,7 +219,7 @@ const OpenshiftStreams = ({
 
   // Functions
   const fetchKafkas = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
 
     if (accessToken && isVisible) {
       try {
@@ -253,7 +252,7 @@ const OpenshiftStreams = ({
   };
 
   const fetchSingleKafka = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken && isVisible) {
       try {
         const apisService = new DefaultApi({
@@ -282,7 +281,7 @@ const OpenshiftStreams = ({
   }, [kafkaInstanceItems]);
 
   const fetchCurrentUserKafkas = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     const filter = `owner = ${loggedInUser}`;
     if (accessToken && isVisible) {
       try {
@@ -310,7 +309,7 @@ const OpenshiftStreams = ({
    * Todo:remove after summit
    */
   const fetchKafkasOnborading = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     const filter = loggedInUser ? `owner = ${loggedInUser}` : '';
     if (accessToken && isVisible) {
       try {
@@ -329,7 +328,7 @@ const OpenshiftStreams = ({
   };
 
   const fetchCloudProviders = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
         const apisService = new DefaultApi({
@@ -355,7 +354,7 @@ const OpenshiftStreams = ({
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [authContext, page, perPage, filteredValue, orderBy]);
+  }, [auth, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
@@ -374,7 +373,7 @@ const OpenshiftStreams = ({
   }, [kafkaInstanceItems]);
 
   useEffect(() => {
-    authContext?.getUsername().then((username) => setLoggedInUser(username));
+    auth?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
 
   useEffect(() => {
@@ -660,7 +659,7 @@ const OpenshiftStreams = ({
   };
 
   return (
-    <AlertProvider>
+    <>
       <InstanceDrawer
         mainToggle={mainToggle}
         isExpanded={selectedInstance != null}
@@ -701,7 +700,7 @@ const OpenshiftStreams = ({
       >
         The mobile experience isn&apos;t fully optimized yet, so some items might not appear correctly.
       </Modal>
-    </AlertProvider>
+    </>
   );
 };
 

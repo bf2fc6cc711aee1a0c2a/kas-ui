@@ -1,22 +1,7 @@
 import React, { useState, createContext, ReactNode, useContext, useEffect } from 'react';
 import { MASAlertType, MASAlertToastGroup } from './MASAlertToastGroup';
 import { AlertVariant } from '@patternfly/react-core';
-
-export type AlertContextProps = {
-  addAlert: (
-    message: string,
-    variant?: AlertVariant,
-    body?: string | React.ReactElement,
-    dataTestId?: string,
-    skipAutoClose?: boolean
-  ) => void;
-};
-
-export const AlertContext = createContext<AlertContextProps>({
-  addAlert: () => {},
-});
-
-export const useAlerts = () => useContext(AlertContext);
+import { AlertContext } from "@bf2/ui-shared";
 
 type TimeOut = {
   key: number;

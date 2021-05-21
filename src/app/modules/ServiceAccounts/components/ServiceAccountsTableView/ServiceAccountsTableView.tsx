@@ -12,11 +12,11 @@ import {
   cellWidth,
 } from '@patternfly/react-table';
 import { Skeleton } from '@patternfly/react-core';
-import { AuthContext } from '@app/auth/AuthContext';
 import { MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
 import { ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
+import { useAuth } from "@bf2/ui-shared";
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -49,12 +49,12 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 }: ServiceAccountsTableViewProps) => {
 
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
+  const auth = useAuth();
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    authContext?.getUsername().then((username) => setLoggedInUser(username));
+    auth?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
 
   const tableColumns = [

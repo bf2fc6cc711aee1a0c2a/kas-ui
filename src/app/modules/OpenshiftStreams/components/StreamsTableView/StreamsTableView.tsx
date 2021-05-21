@@ -14,10 +14,7 @@ import {
   IExtraColumnData,
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
-import { ApiContext } from '@app/api/ApiContext';
 import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { AuthContext } from '@app/auth/AuthContext';
 import {
   MASPagination,
   MASTable,
@@ -30,6 +27,7 @@ import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
+import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 export type FilterValue = {
   value: string;
@@ -134,12 +132,12 @@ const StreamsTableView = ({
   onCreate,
 }: StreamsTableProps) => {
 
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
+  const auth = useAuth();
+  const { kas: { apiBasePath: basePath } } = useConfig();
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
-  const { addAlert } = useAlerts();
+  const { addAlert } = useAlert();
 
   const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
@@ -426,7 +424,7 @@ const StreamsTableView = ({
     if (instanceId === undefined) {
       throw new Error('kafka instance id is not set');
     }
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     const apisService = new DefaultApi({
       accessToken,
       basePath,

@@ -1,21 +1,20 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
 import { DefaultApi } from '../../../../../openapi/api';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
-import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@app/common';
+import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
+import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
-const CreateServiceAccount: React.FunctionComponent<{}> = () => {
+const CreateServiceAccount: React.FunctionComponent = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   const { store, showModal, hideModal } = useRootModalContext();
   const { fetchServiceAccounts } = store?.modalProps || {};
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
+  const auth = useAuth();
+  const { kas: { apiBasePath: basePath } } = useConfig();
+  const { addAlert } = useAlert();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [descriptionValidated, setDescriptionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
@@ -135,8 +134,8 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
   };
 
   const createServiceAccount = async () => {
-    let isValid = validateCreateForm();
-    const accessToken = await authContext?.getToken();
+    const isValid = validateCreateForm();
+    const accessToken = await auth?.kas.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
