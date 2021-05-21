@@ -17,8 +17,9 @@ const DeleteInstanceConnected = () => {
   const { store, hideModal } = useRootModalContext();
   const { selectedItemData: instanceDetail, onConnectToRoute, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
-
   const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
     t,
     status,
@@ -38,16 +39,19 @@ const DeleteInstanceConnected = () => {
     const accessToken = await authContext?.getToken();
     if (accessToken && id) {
       try {
+        setIsLoading(true);
         const apisService = new DefaultApi({
           accessToken,
           basePath,
         });
         await apisService.deleteKafkaById(id, true).then((res) => {
+          setIsLoading(false);
           onCloseModal();
           //redirect on kafka list page
           onConnectToRoute({}, 'kafkas');
         });
       } catch (error) {
+        setIsLoading(false);
         handleServerError(error);
       }
     }
@@ -88,6 +92,7 @@ const DeleteInstanceConnected = () => {
     confirmButtonProps: {
       onClick: onDeleteInstance,
       label: confirmActionLabel,
+      isLoading,
     },
     textProps: {
       description,
