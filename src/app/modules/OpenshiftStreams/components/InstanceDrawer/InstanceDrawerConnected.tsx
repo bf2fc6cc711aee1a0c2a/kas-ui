@@ -28,6 +28,7 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
     showModal(MODAL_TYPES.DELETE_KAFKA_FROM_DATA_PLANE, {
       selectedItemData: instanceDetail,
       setIsOpenDeleteInstanceModal,
+      onConnectToRoute,
     });
   };
 

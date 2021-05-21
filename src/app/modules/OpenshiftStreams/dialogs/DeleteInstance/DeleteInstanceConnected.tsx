@@ -48,7 +48,7 @@ const DeleteInstanceConnected = () => {
           setIsLoading(false);
           onCloseModal();
           //redirect on kafka list page
-          onConnectToRoute({}, 'kafkas');
+          onConnectToRoute && onConnectToRoute({}, 'kafkas');
         });
       } catch (error) {
         setIsLoading(false);
