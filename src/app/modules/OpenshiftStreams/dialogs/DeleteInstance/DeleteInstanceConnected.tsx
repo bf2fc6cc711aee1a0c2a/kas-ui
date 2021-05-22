@@ -1,19 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
+import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
 import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
-import { useRootModalContext, useAlerts } from '@app/common';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
+import { useRootModalContext } from '@app/common';
 import { DefaultApi } from '../../../../../openapi/api';
 import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 
 const DeleteInstanceConnected = () => {
-  const { addAlert } = useAlerts();
+  const { addAlert } = useAlert();
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
   const { store, hideModal } = useRootModalContext();
   const { selectedItemData: instanceDetail, onConnectToRoute, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
@@ -36,7 +37,7 @@ const DeleteInstanceConnected = () => {
   };
 
   const onDeleteInstance = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken && id) {
       try {
         setIsLoading(true);
@@ -66,7 +67,7 @@ const DeleteInstanceConnected = () => {
   };
 
   const fetchKafkaServiceStatus = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
 
     if (accessToken) {
       try {

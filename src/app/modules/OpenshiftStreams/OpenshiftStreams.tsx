@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -35,7 +35,7 @@ import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickst
 import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
 import './OpenshiftStreams.css';
-import { AuthContext, useAlert, useAuth, useConfig } from "@bf2/ui-shared";
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
@@ -56,8 +56,10 @@ const OpenshiftStreams = ({
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
 
-  const auth = useContext(AuthContext);
-  const { kas: { apiBasePath: basePath } } = useConfig();
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
