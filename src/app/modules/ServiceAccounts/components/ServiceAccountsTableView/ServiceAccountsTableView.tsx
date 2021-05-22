@@ -6,18 +6,17 @@ import {
   IRowData,
   ISeparator,
   IRowCell,
-  sortable,
   ISortBy,
   SortByDirection,
   IExtraColumnData,
   cellWidth,
 } from '@patternfly/react-table';
-import { Skeleton, PaginationVariant } from '@patternfly/react-core';
-import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
+import { Skeleton } from '@patternfly/react-core';
+import { MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
-import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
+import { ServiceAccountListItem } from '../../../../../openapi/api';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
-import { AuthContext } from '@app/auth/AuthContext';
+import { useAuth } from "@bf2/ui-shared";
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -48,13 +47,14 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   handleCreateModal,
   mainToggle,
 }: ServiceAccountsTableViewProps) => {
+
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
+  const auth = useAuth();
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    authContext?.getUsername().then((username) => setLoggedInUser(username));
+    auth?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
 
   const tableColumns = [
@@ -215,7 +215,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           'aria-label': t('serviceAccount.service_account_list'),
           actionResolver: actionResolver,
           onSort: onSort,
-          sortBy: sortBy(),
+          sortBy: sortBy()
         }}
       />
       {serviceAccountItems && serviceAccountItems?.length < 1 && serviceAccountsDataLoaded && (

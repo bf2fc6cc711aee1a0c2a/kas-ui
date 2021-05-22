@@ -6,55 +6,48 @@ import {
   PageSectionVariants,
   Text,
   AlertVariant,
-  Level,
-  LevelItem,
   TextContent,
   Card,
 } from '@patternfly/react-core';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
-import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import {
   MASEmptyState,
   MASLoading,
-  AlertProvider,
-  useAlerts,
   MASFullPageError,
   MASEmptyStateVariant,
   useRootModalContext,
   MODAL_TYPES,
 } from '@app/common';
+import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
+import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
+import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
 };
 
 const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
-  const { t } = useTranslation();
-  const { addAlert } = useAlerts();
-  const { showModal } = useRootModalContext();
 
+  const { t } = useTranslation();
+  const { addAlert } = useAlert();
+  const { showModal } = useRootModalContext();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
-
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
+  const auth = useAuth();
+  const { kas: { apiBasePath: basePath } } = useConfig();
 
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  // state to store the expected total  service accounts based on the operation
   const [expectedTotal, setExpectedTotal] = useState<number>(0);
   const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
   const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const [isDisplayServiceAccountEmptyState, setIsDisplayServiceAccountEmptyState] = useState<boolean>(false);
+  const [isServiceAccountsEmpty, setIsServiceAccountsEmpty] = useState<boolean>(false);
 
   const handleServerError = (error: any) => {
     let reason: string | undefined;
@@ -63,7 +56,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
       reason = error.response?.data.reason;
       errorCode = error.response?.data?.code;
     }
-    //check unauthorize user
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
@@ -72,7 +64,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   };
 
   const fetchServiceAccounts = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
         const apisService = new DefaultApi({
@@ -90,9 +82,9 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
            * Todo: handle below logic in separate API call when backend start support pagination
            */
           if (!itemsLength || itemsLength < 1) {
-            setIsDisplayServiceAccountEmptyState(true);
+            setIsServiceAccountsEmpty(true);
           } else {
-            setIsDisplayServiceAccountEmptyState(false);
+            setIsServiceAccountsEmpty(false);
           }
         });
       } catch (error) {
@@ -125,7 +117,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         </PageSection>
       );
     } else {
-      if (isDisplayServiceAccountEmptyState) {
+      if (isServiceAccountsEmpty) {
         return (
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
@@ -179,9 +171,6 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
     }
   };
 
-  /**
-   *  Unauthorized page in case user is not authorized
-   */
   if (isUserUnauthorized) {
     return (
       <MASFullPageError
@@ -198,19 +187,13 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
 
   return (
     <>
-      <AlertProvider>
-        <PageSection variant={PageSectionVariants.light}>
-          <Level>
-            <LevelItem>
-              <TextContent>
-                <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
-                <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
-              </TextContent>
-            </LevelItem>
-          </Level>
-        </PageSection>
-        {renderTableView()}
-      </AlertProvider>
+      <PageSection variant={PageSectionVariants.light}>
+        <TextContent>
+          <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
+          <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
+        </TextContent>
+      </PageSection>
+      {renderTableView()}
     </>
   );
 };

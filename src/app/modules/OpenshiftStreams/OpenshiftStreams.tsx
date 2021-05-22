@@ -22,21 +22,20 @@ import {
   ModalVariant,
   Card,
 } from '@patternfly/react-core';
-import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
-import { AlertProvider, useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
-import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
-import './OpenshiftStreams.css';
-import { MASLoading, MASEmptyState, MASFullPageError } from '@app/common';
-import { usePageVisibility } from '@app/hooks/usePageVisibility';
-import { MAX_POLL_INTERVAL } from '@app/utils';
-import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
 import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
+import { useRootModalContext, MODAL_TYPES } from '@app/common';
+import { useTimeout } from '@app/hooks/useTimeout';
+import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
+import { MASLoading, MASEmptyState } from '@app/common';
+import { usePageVisibility } from '@app/hooks/usePageVisibility';
+import { MAX_POLL_INTERVAL } from '@app/utils';
+import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
+import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
+import './OpenshiftStreams.css';
+import { AuthContext, useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
@@ -53,24 +52,23 @@ const OpenshiftStreams = ({
   onConnectToRoute,
   getConnectToRoutePath,
   preCreateInstance,
-  createDialogOpen,
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
 
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
+  const auth = useContext(AuthContext);
+  const { kas: { apiBasePath: basePath } } = useConfig();
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
-
   const { t } = useTranslation();
-  const { addAlert } = useAlerts();
+  const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
   const localStorage = window.localStorage;
+  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
 
   // States
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
@@ -92,7 +90,6 @@ const OpenshiftStreams = ({
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
   const [currentUserKafkas, setCurrentUserKafkas] = useState<KafkaRequest[] | undefined>();
 
-  const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
   const { activeTab, instanceDetail } = selectedInstance || {};
 
   const updateSelectedKafkaInstance = () => {
@@ -110,7 +107,7 @@ const OpenshiftStreams = ({
   }, [kafkaInstanceItems]);
 
   useEffect(() => {
-    authContext?.getUsername().then((username) => setLoggedInUser(username));
+    auth?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
 
   useEffect(() => {
@@ -135,7 +132,7 @@ const OpenshiftStreams = ({
   };
 
   const fetchKafkaServiceStatus = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
 
     if (accessToken) {
       try {
@@ -222,7 +219,7 @@ const OpenshiftStreams = ({
 
   // Functions
   const fetchKafkas = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
 
     if (accessToken && isVisible) {
       try {
@@ -255,7 +252,7 @@ const OpenshiftStreams = ({
   };
 
   const fetchSingleKafka = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken && isVisible) {
       try {
         const apisService = new DefaultApi({
@@ -284,7 +281,7 @@ const OpenshiftStreams = ({
   }, [kafkaInstanceItems]);
 
   const fetchCurrentUserKafkas = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     const filter = `owner = ${loggedInUser}`;
     if (accessToken && isVisible) {
       try {
@@ -312,7 +309,7 @@ const OpenshiftStreams = ({
    * Todo:remove after summit
    */
   const fetchKafkasOnborading = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     const filter = loggedInUser ? `owner = ${loggedInUser}` : '';
     if (accessToken && isVisible) {
       try {
@@ -331,7 +328,7 @@ const OpenshiftStreams = ({
   };
 
   const fetchCloudProviders = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
         const apisService = new DefaultApi({
@@ -357,7 +354,7 @@ const OpenshiftStreams = ({
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
-  }, [authContext, page, perPage, filteredValue, orderBy]);
+  }, [auth, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
     fetchCloudProviders();
@@ -369,6 +366,31 @@ const OpenshiftStreams = ({
    */
   useEffect(() => {
     fetchKafkasOnborading();
+  }, []);
+
+  useEffect(() => {
+    updateSelectedKafkaInstance();
+  }, [kafkaInstanceItems]);
+
+  useEffect(() => {
+    auth?.getUsername().then((username) => setLoggedInUser(username));
+  }, []);
+
+  useEffect(() => {
+    fetchKafkaServiceStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isMobileTablet()) {
+      if (localStorage) {
+        const count = localStorage.getItem('openSessions') || 0;
+        const newCount = parseInt(count) + 1;
+        if (count < 1) {
+          localStorage.setItem('openSessions', newCount);
+          setIsMobileModalOpen(true);
+        }
+      }
+    }
   }, []);
 
   useTimeout(() => fetchKafkasOnborading(), MAX_POLL_INTERVAL);
@@ -385,37 +407,28 @@ const OpenshiftStreams = ({
     fetchKafkas();
   };
 
+  // Function to pre-empt the number of kafka instances for Skeleton Loading in the table (add 1)
   const onCreate = () => {
-    /*
-        increase the expected total by 1
-        as create operation will lead to adding a kafka in the list of response
-      */
     setExpectedTotal(kafkaInstancesList.total + 1);
   };
 
+  // Function to pre-empt the number of kafka instances for Skeleton Loading in the table (delete 1)
   const onDelete = () => {
     setKafkaDataLoaded(false);
-    /*
-        decrease the expected total by 1
-        as create operation will lead to removing a kafka in the list of response
-      */
     setExpectedTotal(kafkaInstancesList.total - 1);
   };
 
-  /**
-   * Show Unathorize page in case user is not authorize
-   */
   if (isUserUnauthorized) {
     return (
-      <MASFullPageError
-        titleProps={{
-          title: t('access_permissions_needed'),
-          headingLevel: 'h2',
-        }}
-        emptyStateBodyProps={{
-          body: t('to_access_kafka_instances_contact_your_organization_administrators'),
-        }}
-      />
+      <PageSection variant={PageSectionVariants.default} padding={{ default: 'noPadding' }} isFilled>
+        <MASEmptyState
+          titleProps={{ title: t('access_permissions_needed'), headingLevel: 'h2' }}
+          emptyStateIconProps={{
+            icon: LockIcon,
+          }}
+          emptyStateBodyProps={{ body: t('to_access_kafka_instances_contact_your_organization_administrators') }}
+        />
+      </PageSection>
     );
   }
 
@@ -431,7 +444,7 @@ const OpenshiftStreams = ({
   };
 
   /**
-   * Todo: Hey, remove me after summit
+   * Todo: remove after summit
    */
   const renderAlertMessage = () => {
     const kafka = getLoggedInUserKafkaInstance();
@@ -474,7 +487,6 @@ const OpenshiftStreams = ({
     const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
     if (isDisabledCreateButton) {
       const content = getButtonTooltipContent();
-
       return (
         <Tooltip content={content}>
           <Button
@@ -488,7 +500,6 @@ const OpenshiftStreams = ({
         </Tooltip>
       );
     }
-
     return (
       <Button
         data-testid="emptyStateStreams-buttonCreateKafka"
@@ -503,7 +514,6 @@ const OpenshiftStreams = ({
   /**
    * Todo: remove after summit
    */
-
   const getLabelTooltipContent = () => {
     let content = '';
     if (isMaxCapacityReached) {
@@ -649,7 +659,7 @@ const OpenshiftStreams = ({
   };
 
   return (
-    <AlertProvider>
+    <>
       <InstanceDrawer
         mainToggle={mainToggle}
         isExpanded={selectedInstance != null}
@@ -690,7 +700,7 @@ const OpenshiftStreams = ({
       >
         The mobile experience isn&apos;t fully optimized yet, so some items might not appear correctly.
       </Modal>
-    </AlertProvider>
+    </>
   );
 };
 
