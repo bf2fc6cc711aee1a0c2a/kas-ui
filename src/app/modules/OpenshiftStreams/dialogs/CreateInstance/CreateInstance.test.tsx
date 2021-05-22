@@ -19,7 +19,7 @@ const listCloudProviderRegions: any = {
   },
 };
 
-jest.mock('../../../openapi/api', () => {
+jest.mock('@openapi/api', () => {
   // Works and lets you check for constructor calls:
   return {
     DefaultApi: jest.fn().mockImplementation(() => {

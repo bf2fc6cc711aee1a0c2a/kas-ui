@@ -33,7 +33,7 @@ import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '@openapi/api';
 import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 

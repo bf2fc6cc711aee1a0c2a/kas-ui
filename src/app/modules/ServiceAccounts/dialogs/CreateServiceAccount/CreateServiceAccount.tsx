@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
-import { DefaultApi } from '../../../../../openapi/api';
+import { DefaultApi } from '@openapi/api';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
 import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';

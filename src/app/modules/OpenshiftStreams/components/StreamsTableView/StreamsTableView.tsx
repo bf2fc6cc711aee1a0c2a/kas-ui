@@ -23,7 +23,7 @@ import {
   useRootModalContext,
   MODAL_TYPES,
 } from '@app/common';
-import { DefaultApi, KafkaRequest } from '../../../../../openapi/api';
+import { DefaultApi, KafkaRequest } from '@openapi/api';
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
