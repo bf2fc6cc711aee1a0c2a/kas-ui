@@ -1,18 +1,17 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
-import { useAlerts, useRootModalContext, MODAL_TYPES } from '@app/common';
+import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
 import { DefaultApi } from '../../../../../openapi/api';
+import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
-const ResetServiceAccount: React.FunctionComponent<{}> = () => {
+const ResetServiceAccount: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
+  const auth = useAuth();
+  const { kas: { apiBasePath: basePath } } = useConfig();
+  const { addAlert } = useAlert();
   const { store, showModal, hideModal } = useRootModalContext();
   const { serviceAccountToReset } = store?.modalProps || {};
 
@@ -28,7 +27,7 @@ const ResetServiceAccount: React.FunctionComponent<{}> = () => {
 
   const resetServiceAccount = async (serviceAccount) => {
     const serviceAccountId = serviceAccount?.id;
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
         const apisService = new DefaultApi({

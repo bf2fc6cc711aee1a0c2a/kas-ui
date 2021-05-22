@@ -18,9 +18,6 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { MASCreateModal, useRootModalContext } from '@app/common';
@@ -29,6 +26,7 @@ import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
+import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 
 const emptyProvider: CloudProvider = {
@@ -41,9 +39,9 @@ const CreateInstance = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
+  const auth = useAuth();
+  const { kas: { apiBasePath: basePath } } = useConfig();
+  const { addAlert } = useAlert();
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -62,7 +60,7 @@ const CreateInstance = () => {
 
   // Function to fetch cloud Regions based on selected filter
   const fetchCloudRegions = async (provider: CloudProvider) => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     const id = provider.id;
 
     if (accessToken && id) {
@@ -137,7 +135,7 @@ const CreateInstance = () => {
 
   const onCreateInstance = async () => {
     const isValid = validateCreateForm();
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
