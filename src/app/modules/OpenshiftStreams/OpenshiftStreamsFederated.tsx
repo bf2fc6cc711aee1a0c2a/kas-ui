@@ -2,7 +2,7 @@ import React from 'react';
 import { OpenshiftStreams, OpenShiftStreamsProps } from '@app/modules/OpenshiftStreams/OpenshiftStreams';
 import { RootModal, AlertProvider } from '@app/common';
 import { BrowserRouter } from 'react-router-dom';
-import kasi18n from '../../../i18n/i18n';
+import kasi18n from '@i18n/i18n';
 import { I18nextProvider } from 'react-i18next';
 
 // Version of OpenshiftStreams for federation

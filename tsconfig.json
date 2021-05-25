@@ -20,6 +20,7 @@
     "paths": {
       "@app/*": ["src/app/*"],
       "@openapi/*": ["src/openapi/*"],
+      "@i18n/*": ["src/i18n/*"],
       "@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"]
     },
     "importHelpers": true,
