@@ -53,14 +53,15 @@ const setup = (
               onClose={onClose}
               activeTab={activeTab}
               instanceDetail={instance || instanceDetail}
-              children={<></>}
               isLoading={instanceDetail === undefined}
               data-ouia-app-id="controlPlane-streams"
               getConnectToRoutePath={jest.fn()}
               onConnectToRoute={jest.fn()}
               tokenEndPointUrl={'sooss'}
               notRequiredDrawerContentBackground={true}
-            />
+            >
+              <></>
+            </InstanceDrawer>
           }
         />
       </Drawer>
@@ -83,13 +84,12 @@ describe('Instance Drawer', () => {
                 getConnectToRoutePath={jest.fn()}
                 onConnectToRoute={jest.fn()}
                 tokenEndPointUrl={'sooss'}
-                children={<></>}
                 isExpanded={true}
                 isLoading={instanceDetail === undefined}
                 mainToggle={false}
                 onClose={jest.fn()}
                 activeTab={'Details'}
-              />
+              ><></></InstanceDrawer>
             }
           />
         </Drawer>
