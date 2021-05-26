@@ -137,7 +137,8 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
           })
           // Check if atleast one topic exists that isn't Strimzi Canary or Consumer Offsets - Keep this here for testing purposes
           const filteredTopics = partitionArray.filter(topic => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets' );
-          if(!filteredTopics) {
+          console.log('what is filteredTopics for logsize' + filteredTopics)
+          if(filteredTopics.length < 1) {
             setNoTopics(true);
           }
           getChartData(filteredTopics);
@@ -169,6 +170,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
   }, [width]);
 
   const getChartData = (partitionArray) => {
+
+    console.log('what is partitionArray' + partitionArray)
+
     let legendData: Array<LegendData> = [];
     let chartData: Array<ChartData> = [];
     let largestByteSize = getLargestByteSize(partitionArray);

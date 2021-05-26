@@ -336,7 +336,7 @@
     "sasl_plain_description": " Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance."
   },
   "metrics": {
-    "available_disk_space": "Available disk space",
+    "used_disk_space": "Used disk space",
     "log_size_per_partition": "Log size per partition",
     "incoming_bytes_per_topic": "Incoming bytes per topic",
     "outgoing_bytes_per_topic": "Outgoing bytes per topic"

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  AvailableDiskSpaceChart,
+  UsedDiskSpaceChart,
   LogSizePerPartitionChart,
   IncomingOutgoingBytesPerTopic
 } from '@app/modules/Metrics/Charts';
@@ -14,14 +14,14 @@ import {
 export const Metrics = () => {
 
 
-  const kafkaID: string = '1sDDlIS2rQAFYajLBOoV1QKEKCS'; // Christie
+  const kafkaID: string = '1sz9wq5VNwDPoTDJmsGDvtN4UnI'; // Christie
   const kafkaID2: string = '1sAjoh9EO1P3PiEPTcADdt343jB'; // Jenn
 
   return (
     <PageSection>
       <Grid hasGutter>
         <GridItem>
-          <AvailableDiskSpaceChart kafkaID={kafkaID}/>
+          <UsedDiskSpaceChart kafkaID={kafkaID}/>
         </GridItem>
         <IncomingOutgoingBytesPerTopic kafkaID={kafkaID}/>
         <GridItem>

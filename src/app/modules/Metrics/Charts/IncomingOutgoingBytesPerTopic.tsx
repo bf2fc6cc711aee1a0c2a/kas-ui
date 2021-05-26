@@ -263,31 +263,29 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
   }
 
     return (
-      <>
-        <Grid lg={12} hasGutter>
-          <GridItem sm={12} lg={6}>
-            <IncomingBytesPerTopicChart
-              chartData={incomingBytesChartData}
-              legend={incomingBytesLegend}
-              byteSize={largestByteSize}
-              maxValueInDataSets={maxValueInDataSets}
-              metricsDataUnavailable={metricsDataUnavailable}
-              chartDataLoading={chartDataLoading}
-              noTopics={noTopics}
-            />
-          </GridItem>
-          <GridItem sm={12} lg={6}>
-            <OutgoingBytesPerTopicChart
-              chartData={outgoingBytesChartData}
-              legend={outgoingBytesLegend}
-              byteSize={largestByteSize}
-              maxValueInDataSets={maxValueInDataSets}
-              metricsDataUnavailable={metricsDataUnavailable}
-              chartDataLoading={chartDataLoading}
-              noTopics={noTopics}
-            />
-          </GridItem>
-        </Grid>
-     </>
+      <Grid lg={12} hasGutter>
+        <GridItem sm={12} lg={6}>
+          <IncomingBytesPerTopicChart
+            chartData={incomingBytesChartData}
+            legend={incomingBytesLegend}
+            byteSize={largestByteSize}
+            maxValueInDataSets={maxValueInDataSets}
+            metricsDataUnavailable={metricsDataUnavailable}
+            chartDataLoading={chartDataLoading}
+            noTopics={noTopics}
+          />
+        </GridItem>
+        <GridItem sm={12} lg={6}>
+          <OutgoingBytesPerTopicChart
+            chartData={outgoingBytesChartData}
+            legend={outgoingBytesLegend}
+            byteSize={largestByteSize}
+            maxValueInDataSets={maxValueInDataSets}
+            metricsDataUnavailable={metricsDataUnavailable}
+            chartDataLoading={chartDataLoading}
+            noTopics={noTopics}
+          />
+        </GridItem>
+      </Grid>
   );
 }
