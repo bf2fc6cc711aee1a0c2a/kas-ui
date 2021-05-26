@@ -36,6 +36,7 @@ import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, Stre
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '@openapi/api';
 import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
