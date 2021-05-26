@@ -25,7 +25,7 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
   const { showModal } = useRootModalContext();
 
   const showDeleteInstanceModal = () => {
-    showModal(MODAL_TYPES.DELETE_KAFKA_FROM_DATA_PLANE, {
+    showModal(MODAL_TYPES.DELETE_KAFKA_EXTERNALLY, {
       selectedItemData: instanceDetail,
       setIsOpenDeleteInstanceModal,
       onConnectToRoute,
