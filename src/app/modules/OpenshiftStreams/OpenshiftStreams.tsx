@@ -421,7 +421,7 @@ const OpenshiftStreams = ({
     setExpectedTotal(kafkaInstancesList.total - 1);
   };
 
-  if (!isUserUnauthorized) {
+  if (isUserUnauthorized) {
     return (
       <PageSection variant={PageSectionVariants.default} padding={{ default: 'noPadding' }} isFilled>
         <MASEmptyState
