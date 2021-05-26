@@ -1,14 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import {
-  PageSection,
-  PageSectionVariants,
-  Text,
-  AlertVariant,
-  TextContent,
-  Card,
-} from '@patternfly/react-core';
+import { PageSection, PageSectionVariants, Text, AlertVariant, TextContent, Card } from '@patternfly/react-core';
 import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
 import {
   MASEmptyState,
@@ -18,16 +11,15 @@ import {
   useRootModalContext,
   MODAL_TYPES,
 } from '@app/common';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
+import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '@openapi/api';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
-import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 export type ServiceAccountsProps = {
   getConnectToInstancePath?: (data: any) => string;
 };
 
 const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
-
   const { t } = useTranslation();
   const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
@@ -37,7 +29,9 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
   const auth = useAuth();
-  const { kas: { apiBasePath: basePath } } = useConfig();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
 
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();

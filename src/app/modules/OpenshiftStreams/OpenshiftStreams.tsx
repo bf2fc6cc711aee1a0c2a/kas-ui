@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -33,9 +33,9 @@ import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
-import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
+import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '@openapi/api';
 import './OpenshiftStreams.css';
-import { AuthContext, useAlert, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
@@ -57,7 +57,7 @@ const OpenshiftStreams = ({
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
 
-  const auth = useContext(AuthContext);
+  const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();

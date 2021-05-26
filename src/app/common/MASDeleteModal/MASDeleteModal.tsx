@@ -70,6 +70,7 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
     onClick: onClickConfirmButton,
     isDisabled: isDisabledConfirmButton,
     label: confirmActionLabel = 'Delete',
+    isLoading,
     ...restConfirmButtonProps
   } = confirmButtonProps || {};
 
@@ -103,6 +104,7 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
           variant={buttonConfirmVariant}
           onClick={() => onClickConfirmButton && onClickConfirmButton(selectedItemData)}
           isDisabled={isDisabledConfirmButton}
+          isLoading={isLoading}
           {...restConfirmButtonProps}
         >
           {confirmActionLabel}

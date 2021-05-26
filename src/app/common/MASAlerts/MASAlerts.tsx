@@ -1,7 +1,7 @@
-import React, { useState, createContext, ReactNode, useContext, useEffect } from 'react';
+import React, { useState, ReactNode, useEffect } from 'react';
 import { MASAlertType, MASAlertToastGroup } from './MASAlertToastGroup';
 import { AlertVariant } from '@patternfly/react-core';
-import { AlertContext } from "@bf2/ui-shared";
+import { AlertContext } from '@bf2/ui-shared';
 
 type TimeOut = {
   key: number;

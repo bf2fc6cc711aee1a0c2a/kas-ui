@@ -3,11 +3,25 @@ import { useTranslation } from 'react-i18next';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export const DeleteInstance = () => {
-  const { t } = useTranslation();
+export const DeleteInstance: React.FC = () => {
   const { store, hideModal } = useRootModalContext();
-  const { title, confirmButtonProps, cancelButtonProps, textProps, instanceStatus, selectedItemData } =
-    store?.modalProps || {};
+  const props = { ...store?.modalProps, hideModal };
+
+  return <DeleteInstanceModal {...props} />;
+};
+
+export const DeleteInstanceModal = (props) => {
+  const {
+    title,
+    confirmButtonProps,
+    cancelButtonProps,
+    textProps,
+    instanceStatus,
+    selectedItemData,
+    onClose,
+    hideModal,
+  } = props || {};
+  const { t } = useTranslation();
   const selectedInstanceName = selectedItemData?.name;
 
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
@@ -35,6 +49,7 @@ export const DeleteInstance = () => {
   const handleToggle = () => {
     setInstanceNameInput('');
     hideModal();
+    onClose && onClose();
   };
 
   return (
