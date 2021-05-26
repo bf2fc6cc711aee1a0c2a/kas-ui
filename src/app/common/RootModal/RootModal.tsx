@@ -36,7 +36,7 @@ const initalState: RootModalContext = {
 };
 
 const RootModalContext = createContext(initalState);
-export const useRootModalContext = () => useContext(RootModalContext);
+export const useRootModalContext = (): RootModalContext => useContext(RootModalContext);
 
 export const RootModal = ({ children }) => {
   const [store, setStore] = useState();

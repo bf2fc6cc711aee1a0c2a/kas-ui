@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
 import { DefaultApi } from '@openapi/api';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
@@ -56,7 +56,7 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     }
   };
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: Error) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;

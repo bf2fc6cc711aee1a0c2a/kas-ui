@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
 import { useRootModalContext, MODAL_TYPES } from '@app/common';
@@ -17,7 +17,7 @@ const ResetServiceAccount: React.FunctionComponent = () => {
 
   const [isModalLoading, setIsModalLoading] = useState(false);
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: Error) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;

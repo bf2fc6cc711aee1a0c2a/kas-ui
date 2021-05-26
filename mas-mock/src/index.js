@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const OpenAPIBackend = require("openapi-backend").default;
 const express = require("express");
 const handlers = require("./handlers");

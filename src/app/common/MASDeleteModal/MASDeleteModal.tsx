@@ -78,14 +78,12 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
     id: cancelButtonId = 'mas--cancel__button',
     key: cancelButtonKey = '"cancel-button',
     variant: cancelButtonVariant = ButtonVariant.link,
-    onClick: onClickCancelButton,
-    isDisabled: isDisabledCancelButton,
     label: cancelActionLabel = 'Cancel',
     ...restCancelButtonProps
   } = cancelButtonProps || {};
 
   const { className = 'mas--delete-item__modal--text', description, ...restTextProps } = textProps || {};
-  const { label = '', name, value, onChange, onKeyPress, showTextInput, ...restInputFieldProps } = textInputProps || {};
+  const { label = '', value, onChange, onKeyPress, showTextInput, ...restInputFieldProps } = textInputProps || {};
 
   return (
     <Modal

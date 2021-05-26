@@ -53,7 +53,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 
   useEffect(() => {
     auth?.getUsername().then((username) => setLoggedInUser(username));
-  }, []);
+  }, [auth]);
 
   const tableColumns = [
     { title: t('common.name') },
@@ -91,7 +91,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     return tableRow;
   };
 
-  const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
+  const getActionResolver = (rowData: IRowData) => {
     if (!serviceAccountsDataLoaded) {
       return [];
     }
@@ -141,7 +141,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   };
 
   const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData, _extraData);
+    return getActionResolver(rowData);
   };
 
   const getParameterForSortIndex = (index: number) => {
@@ -178,7 +178,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
   };
 
-  const onSort = (_event: any, columnIndex: number, sortByDirection: SortByDirection, extraData: IExtraColumnData) => {
+  const onSort = (_event: any, columnIndex: number, sortByDirection: SortByDirection) => {
     setOrderBy && setOrderBy(`${getParameterForSortIndex(columnIndex)} ${sortByDirection}`);
   };
 

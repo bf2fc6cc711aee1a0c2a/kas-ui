@@ -49,7 +49,7 @@ type SelectedInstance = {
   activeTab: 'Details' | 'Connection';
 };
 
-const OpenshiftStreams = ({
+const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   onConnectToRoute,
   getConnectToRoutePath,
   preCreateInstance,
@@ -105,35 +105,6 @@ const OpenshiftStreams = ({
     }
   };
 
-  useEffect(() => {
-    updateSelectedKafkaInstance();
-  }, [kafkaInstanceItems]);
-
-  useEffect(() => {
-    auth?.getUsername().then((username) => setLoggedInUser(username));
-  }, []);
-
-  useEffect(() => {
-    fetchKafkaServiceStatus();
-  }, []);
-
-  useEffect(() => {
-    if (isMobileTablet()) {
-      if (localStorage) {
-        const count = localStorage.getItem('openSessions') || 0;
-        const newCount = parseInt(count) + 1;
-        if (count < 1) {
-          localStorage.setItem('openSessions', newCount);
-          setIsMobileModalOpen(true);
-        }
-      }
-    }
-  }, []);
-
-  const handleMobileModal = () => {
-    setIsMobileModalOpen(!isMobileModalOpen);
-  };
-
   const fetchKafkaServiceStatus = async () => {
     const accessToken = await auth?.kas.getToken();
 
@@ -153,6 +124,37 @@ const OpenshiftStreams = ({
       }
     }
   };
+
+  useEffect(() => {
+    updateSelectedKafkaInstance();
+  }, [kafkaInstanceItems]);
+
+  useEffect(() => {
+    auth?.getUsername().then((username) => setLoggedInUser(username));
+  }, [auth]);
+
+  useEffect(() => {
+    fetchKafkaServiceStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isMobileTablet()) {
+      if (localStorage) {
+        const count = parseInt(localStorage.getItem('openSessions') || '0');
+        const newCount = count + 1;
+        if (count < 1) {
+          localStorage.setItem('openSessions', `${newCount}`);
+          setIsMobileModalOpen(true);
+        }
+      }
+    }
+  }, [localStorage]);
+
+  const handleMobileModal = () => {
+    setIsMobileModalOpen(!isMobileModalOpen);
+  };
+
+
 
   const handleCreateInstanceModal = async (open: boolean) => {
     if (open) {
@@ -205,7 +207,7 @@ const OpenshiftStreams = ({
     return filters.join(' or ');
   };
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: Error) => {
     let reason: string | undefined;
     let errorCode: string | undefined;
     if (isServiceApiError(error)) {
@@ -362,7 +364,7 @@ const OpenshiftStreams = ({
   useEffect(() => {
     fetchCloudProviders();
     fetchKafkas();
-  }, []);
+  }, [fetchCloudProviders]);
 
   /**
    * Todo:remove after summit
@@ -377,7 +379,7 @@ const OpenshiftStreams = ({
 
   useEffect(() => {
     auth?.getUsername().then((username) => setLoggedInUser(username));
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     fetchKafkaServiceStatus();
@@ -394,7 +396,7 @@ const OpenshiftStreams = ({
         }
       }
     }
-  }, []);
+  }, [localStorage]);
 
   useTimeout(() => fetchKafkasOnborading(), MAX_POLL_INTERVAL);
 

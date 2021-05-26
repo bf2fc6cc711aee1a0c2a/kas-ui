@@ -23,7 +23,7 @@ import { MASEmptyState, MASLoading, useRootModalContext } from '@app/common';
 import { getModalAppendTo } from '@app/utils/utils';
 import './MASGenerateCredentialsModal.css';
 
-const MASGenerateCredentialsModal = () => {
+const MASGenerateCredentialsModal: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { credential, isLoading, title } = store?.modalProps || {};

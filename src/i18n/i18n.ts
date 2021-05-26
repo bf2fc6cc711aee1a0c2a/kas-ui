@@ -4,11 +4,10 @@ import detector from 'i18next-browser-languagedetector';
 import httpBackend from 'i18next-http-backend';
 import Pseudo from 'i18next-pseudo';
 import dayjs from 'dayjs';
-import * as relativeTime from 'dayjs/plugin/relativeTime';
 
 // import locales for any languages you're supporting (English is included by default)
 import 'dayjs/locale/ja';
-let kasi18n = i18n.createInstance();
+const kasi18n = i18n.createInstance();
 
 const params = new URLSearchParams(window.location.search);
 const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';

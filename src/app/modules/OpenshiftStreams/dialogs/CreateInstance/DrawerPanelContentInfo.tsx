@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
-const DrawerPanelContentInfo = () => {
+const DrawerPanelContentInfo: React.FunctionComponent = () => {
 
   const { t } = useTranslation();
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);

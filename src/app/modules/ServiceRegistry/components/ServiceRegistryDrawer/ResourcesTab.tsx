@@ -6,7 +6,7 @@ export type ResourcesTabProps = {
   mainToggle?: boolean;
 };
 
-export const ResourcesTab: React.FC<ResourcesTabProps> = ({ mainToggle }: ResourcesTabProps) => {
+export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
   const { t } = useTranslation();
   const registriesInfo = [
     { title: t('serviceRegistry.tab_resources_content_1'), code: 'https://registry.my-domain.com/api' },

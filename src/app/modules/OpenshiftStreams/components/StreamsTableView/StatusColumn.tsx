@@ -12,7 +12,7 @@ type StatusColumnProps = {
   instanceName: string;
 };
 
-const StatusColumn = ({ status, instanceName }: StatusColumnProps) => {
+const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({ status, instanceName }) => {
   const { t } = useTranslation();
 
   const getStatus = () => {

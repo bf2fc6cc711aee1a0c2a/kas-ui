@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Alert,
@@ -35,7 +35,7 @@ const emptyProvider: CloudProvider = {
   enabled: true,
 };
 
-const CreateInstance = () => {
+const CreateInstance: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
@@ -97,7 +97,7 @@ const CreateInstance = () => {
       setKafkaFormData((prevState) => ({ ...prevState, cloud_provider: cloudProviders[0].name }));
       fetchCloudRegions(cloudProviders[0]);
     }
-  }, [cloudProviders]);
+  }, [cloudProviders, fetchCloudRegions]);
 
   const onCloudProviderSelect = (cloudProvider: CloudProvider) => {
     setKafkaFormData((prevState) => ({ ...prevState, cloud_provider: cloudProvider.name || '' }));
@@ -151,7 +151,7 @@ const CreateInstance = () => {
         onCreate();
         setCreationInProgress(true);
 
-        await apisService.createKafka(true, kafkaFormData).then((res) => {
+        await apisService.createKafka(true, kafkaFormData).then(() => {
           resetForm();
           hideModal();
           refresh();

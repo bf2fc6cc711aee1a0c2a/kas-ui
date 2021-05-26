@@ -69,10 +69,10 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   const NotFoundImg = () => <img src={NotFoundIcon} alt="Not found page" width="128px" />;
 
   const getVariantConfig = () => {
-    let varaintConfig: any = {};
+    let variantConfig: any = {};
     switch (masEmptyStateVariant) {
       case MASEmptyStateVariant.GettingStarted:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.xl,
           icon: SpaceShuttleIcon,
           titleSize: TitleSizes['4xl'],
@@ -80,7 +80,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.NoAccess:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.large,
           icon: LockIcon,
           titleSize: TitleSizes.xl,
@@ -88,7 +88,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.NoItems:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.large,
           icon: PlusCircleIcon,
           titleSize: TitleSizes.xl,
@@ -96,7 +96,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.NoResult:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.large,
           icon: SearchIcon,
           titleSize: TitleSizes.lg,
@@ -104,7 +104,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.UnexpectedError:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.full,
           icon: ExclamationCircleIcon,
           titleSize: TitleSizes.lg,
@@ -112,7 +112,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.PageNotFound:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.full,
           icon: NotFoundImg,
           titleSize: TitleSizes.lg,
@@ -120,7 +120,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       default:
-        varaintConfig = {
+        variantConfig = {
           variant: masEmptyStateVariant || EmptyStateVariant.full,
           icon: emptyStateIconProps?.icon,
           titleSize: titleProps?.size,
@@ -128,7 +128,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
     }
-    return varaintConfig;
+    return variantConfig;
   };
 
   const { variant, icon, titleSize, headingLevel } = getVariantConfig();

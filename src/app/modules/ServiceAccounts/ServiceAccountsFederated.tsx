@@ -7,13 +7,13 @@ import kasi18n from '@i18n/i18n';
 
 // Federation version of ServiceAccounts
 
-const ServiceAccountsFederated = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
+const ServiceAccountsFederated: React.FunctionComponent<ServiceAccountsProps> = () => {
   return (
     <BrowserRouter>
       <I18nextProvider i18n={kasi18n}>
         <AlertProvider>
           <RootModal>
-            <ServiceAccounts getConnectToInstancePath={getConnectToInstancePath} />
+            <ServiceAccounts />
           </RootModal>
         </AlertProvider>
       </I18nextProvider>
