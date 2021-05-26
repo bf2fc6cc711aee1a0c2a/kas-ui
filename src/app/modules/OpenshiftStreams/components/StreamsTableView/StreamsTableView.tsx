@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { useHistory, Link } from 'react-router-dom';
@@ -7,7 +7,6 @@ import {
   IExtraData,
   IRowData,
   ISeparator,
-  IRowCell,
   sortable,
   ISortBy,
   SortByDirection,
@@ -100,7 +99,7 @@ export const getDeleteInstanceModalConfig = (
   return config;
 };
 
-const StreamsTableView = ({
+const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   mainToggle,
   kafkaInstanceItems,
   onViewInstance,
@@ -130,7 +129,7 @@ const StreamsTableView = ({
   currentUserkafkas,
   cloudProviders,
   onCreate,
-}: StreamsTableProps) => {
+}) => {
 
   const auth = useAuth();
   const { kas: { apiBasePath: basePath } } = useConfig();
@@ -179,7 +178,7 @@ const StreamsTableView = ({
   const addAlertAfterSuccessDeletion = () => {
     if (currentUserkafkas) {
       // filter all kafkas with status as deprovision
-      const deprovisonedKafkas: any = currentUserkafkas.filter(
+      const deprovisonedKafkas: KafkaRequest[] = currentUserkafkas.filter(
         (k) => k.status === InstanceStatus.DEPROVISION || k.status === InstanceStatus.DELETED
       );
 
@@ -258,7 +257,7 @@ const StreamsTableView = ({
     addAlertAfterSuccessCreation();
   }, [page, perPage, kafkaInstanceItems, currentUserkafkas]);
 
-  const onSelectKebabDropdownOption = (event: any, originalData: KafkaRequest, selectedOption: string) => {
+  const onSelectKebabDropdownOption = (event: React.ChangeEvent<HTMLSelectElement>, originalData: KafkaRequest, selectedOption: string) => {
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
       //set selected row for view instance and connect instance
@@ -273,7 +272,7 @@ const StreamsTableView = ({
     event?.target?.parentElement?.parentElement?.previousSibling?.focus();
   };
 
-  const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
+  const getActionResolver = (rowData: IRowData) => {
     if (!kafkaDataLoaded) {
       return [];
     }
@@ -298,7 +297,7 @@ const StreamsTableView = ({
         title: t('view_details'),
         id: 'view-instance',
         ['data-testid']: 'tableStreams-actionDetails',
-        onClick: (event: any) =>
+        onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
           isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'view-instance'),
         ...additionalProps,
         tooltipProps: {

@@ -7,7 +7,7 @@ import { Config, ConfigContext } from "@bf2/ui-shared";
 
 declare const __BASE_PATH__: string;
 
-export const OpenshiftStreamsConnected = () => {
+export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
   const history = useHistory();
 
   const getConnectToRoutePath = (kafka, routePath) => {

@@ -5,10 +5,9 @@ import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { ServiceRegistryHeader, ServiceRegistryDrawer } from './components';
 
 export type ServiceRegistryProps = {
-  getConnectToInstancePath?: (data: any) => string;
 };
 
-export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryProps) => {
+export const ServiceRegistry = () => {
   const { t } = useTranslation();
 
   const [isExpandedDrawer, setIsExpandedDrawer] = useState<boolean>(false);

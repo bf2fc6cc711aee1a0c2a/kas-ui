@@ -22,7 +22,7 @@ export type DetailsTabProps = {
   instanceDetail?: KafkaRequest;
 };
 
-export const DetailsTab = ({ mainToggle, instanceDetail }: DetailsTabProps) => {
+export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({ mainToggle, instanceDetail }: DetailsTabProps) => {
 
   dayjs.extend(localizedFormat);
   const { t } = useTranslation();

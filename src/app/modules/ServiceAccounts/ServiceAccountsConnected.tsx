@@ -5,7 +5,7 @@ import { Config, ConfigContext } from "@bf2/ui-shared";
 
 declare const __BASE_PATH__: string;
 
-export const ServiceAccountsConnected = () => {
+export const ServiceAccountsConnected: React.FunctionComponent = () => {
   return (
     <ConfigContext.Provider value={{
       kas: {

@@ -11,7 +11,7 @@ export interface IKeycloakContext {
 
 export const KeycloakContext = React.createContext<IKeycloakContext>({ keycloak: undefined });
 
-export const KeycloakAuthProvider = (props) => {
+export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
 
   const getUsername = () => {
     return getParsedKeyCloakToken().then(token => token['username']);

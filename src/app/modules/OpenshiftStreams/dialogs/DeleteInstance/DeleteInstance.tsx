@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export const DeleteInstance: React.FC = () => {
+export const DeleteInstance: React.FunctionComponent = () => {
   const { store, hideModal } = useRootModalContext();
   const props = { ...store?.modalProps, hideModal };
 

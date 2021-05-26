@@ -15,7 +15,7 @@ type AlertToastGroupProps = {
   onCloseAlert: (key: number) => void;
 };
 
-export function MASAlertToastGroup({ alerts, onCloseAlert }: AlertToastGroupProps) {
+export const MASAlertToastGroup: React.FunctionComponent<AlertToastGroupProps> = ({ alerts, onCloseAlert }: AlertToastGroupProps) => {
   return (
     <AlertGroup isToast>
       {alerts.map(({ key, variant, title, body, dataTestId }) => (

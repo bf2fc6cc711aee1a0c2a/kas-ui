@@ -8,7 +8,7 @@ type TimeOut = {
   timeOut: NodeJS.Timeout | undefined;
 };
 
-export const AlertProvider = ({ children }: { children: ReactNode }) => {
+export const AlertProvider: React.FunctionComponent = ({ children }) => {
   const [alerts, setAlerts] = useState<MASAlertType[]>([]);
   const [timers, setTimers] = useState<TimeOut[]>([]);
 
@@ -22,7 +22,7 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
       });
     setTimers([...timers, ...timeOuts]);
     return () => timers.forEach((timer) => timer?.timeOut && clearTimeout(timer.timeOut));
-  }, [alerts]);
+  }, [alerts, timers]);
 
   const createId = () => new Date().getTime();
 

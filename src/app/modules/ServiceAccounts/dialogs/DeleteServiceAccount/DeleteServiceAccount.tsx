@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
@@ -6,7 +6,7 @@ import { isServiceApiError } from '@app/utils';
 import { DefaultApi, ServiceAccountListItem } from '@openapi/api';
 import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
-const DeleteServiceAccount = () => {
+const DeleteServiceAccount: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const auth = useAuth();
   const { kas: { apiBasePath: basePath } } = useConfig();
@@ -34,7 +34,7 @@ const DeleteServiceAccount = () => {
       setIsLoading(true);
 
       try {
-        await apisService.deleteServiceAccount(serviceAccountId).then((response) => {
+        await apisService.deleteServiceAccount(serviceAccountId).then(() => {
           handleModalToggle();
           setIsLoading(false);
 

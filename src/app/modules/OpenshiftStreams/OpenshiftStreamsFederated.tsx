@@ -7,13 +7,13 @@ import { I18nextProvider } from 'react-i18next';
 
 // Version of OpenshiftStreams for federation
 
-const OpenshiftStreamsFederated = ({
+const OpenshiftStreamsFederated: React.FunctionComponent<OpenShiftStreamsProps> = ({
   onConnectToRoute,
   getConnectToRoutePath,
   preCreateInstance,
   createDialogOpen,
-  tokenEndPointUrl,
-}: OpenShiftStreamsProps) => {
+  tokenEndPointUrl
+}) => {
   return (
     // TODO don't add BrowserRouter here - see  https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/74
     <BrowserRouter>

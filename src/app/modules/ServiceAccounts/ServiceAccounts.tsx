@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { PageSection, PageSectionVariants, Text, AlertVariant, TextContent, Card } from '@patternfly/react-core';
@@ -16,10 +16,10 @@ import { ServiceAccountsTableView, FilterType } from './components/ServiceAccoun
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 export type ServiceAccountsProps = {
-  getConnectToInstancePath?: (data: any) => string;
 };
 
-const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
+const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
+
   const { t } = useTranslation();
   const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
@@ -36,14 +36,12 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
   const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  const [expectedTotal, setExpectedTotal] = useState<number>(0);
-  const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
   const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isServiceAccountsEmpty, setIsServiceAccountsEmpty] = useState<boolean>(false);
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: Error) => {
     let reason: string | undefined;
     let errorCode: string | undefined;
     if (isServiceApiError(error)) {
@@ -144,8 +142,8 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
                 page={page}
                 perPage={perPage}
                 total={serviceAccountList?.total || 1}
-                expectedTotal={expectedTotal}
-                serviceAccountsDataLoaded={serviceAccountsDataLoaded}
+                expectedTotal={0}
+                serviceAccountsDataLoaded={true}
                 serviceAccountItems={serviceAccountItems}
                 orderBy={orderBy}
                 setOrderBy={setOrderBy}

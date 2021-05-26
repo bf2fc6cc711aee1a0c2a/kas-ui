@@ -1,7 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export function getBrowserVisibilityProp() {
-  const doc: any = document;
+type XDocument = Document & {
+  msHidden: string
+  webkitHidden: string
+};
+
+export function getBrowserVisibilityProp(): string {
+  const doc: XDocument = document as XDocument;
   if (typeof doc.hidden !== 'undefined') {
     // Opera 12.10 and Firefox 18 and later support
     return 'visibilitychange';
@@ -12,8 +17,8 @@ export function getBrowserVisibilityProp() {
   }
   return '';
 }
-export function getBrowserDocumentHiddenProp() {
-    const doc: any = document;
+export function getBrowserDocumentHiddenProp(): string {
+    const doc: XDocument = document as XDocument;
   if (typeof doc.hidden !== 'undefined') {
     return 'hidden';
   } else if (typeof doc.msHidden !== 'undefined') {
@@ -23,11 +28,11 @@ export function getBrowserDocumentHiddenProp() {
   }
   return '';
 }
-export function getIsDocumentHidden() {
+export function getIsDocumentHidden(): boolean {
   return !document[getBrowserDocumentHiddenProp()];
 }
 
-export function usePageVisibility() {
+export function usePageVisibility(): { isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>>} {
   const [isVisible, setIsVisible] = useState(getIsDocumentHidden());
   const onVisibilityChange = () => setIsVisible(getIsDocumentHidden());
   useEffect(() => {
