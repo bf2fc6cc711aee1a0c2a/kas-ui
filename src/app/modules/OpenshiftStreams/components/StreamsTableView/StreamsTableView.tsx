@@ -284,7 +284,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       onSelectDeleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
-    event?.target?.parentElement?.parentElement?.previousSibling?.focus();
+    const previousNode = event?.target?.parentElement?.parentElement?.previousSibling;
+    if (previousNode !== undefined && previousNode !== null) {
+      (previousNode as HTMLElement).focus();
+    }
   };
 
   const getActionResolver = (rowData: IRowData) => {
@@ -397,8 +400,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     return tableRow;
   };
 
-  const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData, _extraData);
+  const actionResolver = (rowData: IRowData) => {
+    return getActionResolver(rowData);
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {

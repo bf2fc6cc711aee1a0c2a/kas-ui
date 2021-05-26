@@ -5,7 +5,7 @@ import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
+import { Auth, AuthContext } from "@bf2/ui-shared";
 
 const kafkaInstanceItems = [
   {
@@ -38,10 +38,12 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
 describe('<StreamsTableView/>', () => {
   const setup = (
     args: any,
-    authValue: IAuthContext = {
-      getToken: () => Promise.resolve('test-token'),
+    authValue = {
+      kas:{
+        getToken: () => Promise.resolve('test-token')
+      },
       getUsername: () => Promise.resolve('api_kafka_service'),
-    }
+    } as Auth
   ) => {
     render(
       <MemoryRouter>

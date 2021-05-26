@@ -134,7 +134,7 @@ const getFormattedDate = (date: string | Date, translatePostfix: string): string
   return formatDistance(date, new Date()) + ' ' + translatePostfix;
 }
 
-const getModalAppendTo = (): HTMLElement | undefined => document.querySelector('#qs-content') as HTMLElement || document.body;
+const getModalAppendTo = (): HTMLElement => document.querySelector('#qs-content') as HTMLElement || document.body;
 
 const isMobileTablet = (): boolean => {
   let check = false;
