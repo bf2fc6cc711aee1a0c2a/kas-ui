@@ -35,7 +35,8 @@ import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickst
 import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider } from '../../../openapi/api';
 import './OpenshiftStreams.css';
-import { AuthContext, useAlert, useAuth, useConfig } from "@bf2/ui-shared";
+import { AuthContext, useAlert, useConfig } from '@bf2/ui-shared';
+import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
@@ -57,7 +58,9 @@ const OpenshiftStreams = ({
   dayjs.extend(localizedFormat);
 
   const auth = useContext(AuthContext);
-  const { kas: { apiBasePath: basePath } } = useConfig();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -418,7 +421,7 @@ const OpenshiftStreams = ({
     setExpectedTotal(kafkaInstancesList.total - 1);
   };
 
-  if (isUserUnauthorized) {
+  if (!isUserUnauthorized) {
     return (
       <PageSection variant={PageSectionVariants.default} padding={{ default: 'noPadding' }} isFilled>
         <MASEmptyState
