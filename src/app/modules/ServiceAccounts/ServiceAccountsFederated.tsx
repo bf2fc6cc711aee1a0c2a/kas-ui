@@ -11,11 +11,9 @@ const ServiceAccountsFederated: React.FunctionComponent<ServiceAccountsProps> = 
   return (
     <BrowserRouter>
       <I18nextProvider i18n={kasi18n}>
-        <AlertProvider>
-          <RootModal>
-            <ServiceAccounts />
-          </RootModal>
-        </AlertProvider>
+        <RootModal>
+          <ServiceAccounts />
+        </RootModal>
       </I18nextProvider>
     </BrowserRouter>
   );
