@@ -3,7 +3,7 @@ import { TextContent, Text, TextVariants, Button } from '@patternfly/react-core'
 import { CopyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-export const SampleCodeTab = () => {
+export const SampleCodeTab: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const editors = [
     { type: t('common.java'), code: 'code goes here' },
@@ -19,7 +19,7 @@ export const SampleCodeTab = () => {
           <Text component={TextVariants.small}>{t('serviceRegistry.tab_sample_code_title_info')}</Text>
         </TextContent>
         {editors?.map(({ type, code }) => (
-          <div className="pf-c-code-editor pf-m-read-only">
+          <div className="pf-c-code-editor pf-m-read-only" key={type}>
             <div className="pf-c-code-editor__header pf-u-pt-lg">
               <div className="pf-c-code-editor__controls">
                 <Button variant="control" aria-label="Action">

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -111,7 +112,8 @@ module.exports = (env, argv) => {
         exposes: {
           "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",
           "./ServiceRegistry":"./src/app/modules/ServiceRegistry/ServiceRegistryFederated",
-          "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated"
+          "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated",
+          "./InstanceDrawer":"./src/app/modules/OpenshiftStreams/components/InstanceDrawer/InstanceDrawerFederated"
         },
         shared: {
           ...dependencies,
@@ -125,6 +127,11 @@ module.exports = (env, argv) => {
             singleton: true,
             requiredVersion: dependencies["react-dom"],
           },
+          "@bf2/ui-shared": {
+            eager: true,
+            singleton: true,
+            requiredVersion: dependencies["@bf2/ui-shared"]
+          }
         },
       })
     ],

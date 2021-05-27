@@ -1,20 +1,22 @@
 import React from 'react';
 import { ServiceAccounts } from './ServiceAccounts';
-import { ApiContext } from '@app/api/ApiContext';
-import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
+import { AlertProvider, RootModal } from '@app/common';
+import { Config, ConfigContext } from "@bf2/ui-shared";
 
 declare const __BASE_PATH__: string;
 
-export const ServiceAccountsConnected = () => {
+export const ServiceAccountsConnected: React.FunctionComponent = () => {
   return (
-    <ApiContext.Provider
-      value={{
-        basePath: __BASE_PATH__,
-      }}
-    >
+    <ConfigContext.Provider value={{
+      kas: {
+        apiBasePath: __BASE_PATH__
+      }
+    } as Config}>
       <AlertProvider>
-        <ServiceAccounts />
+        <RootModal>
+          <ServiceAccounts />
+        </RootModal>
       </AlertProvider>
-    </ApiContext.Provider>
+    </ConfigContext.Provider>
   );
 };

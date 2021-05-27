@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextContent,
@@ -9,16 +10,11 @@ import {
   Label,
   Popover,
   Skeleton,
-  AlertVariant,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { MASGenerateCredentialsModal, useAlerts } from '@app/common';
-import { ApiContext } from '@app/api/ApiContext';
-import { AuthContext } from '@app/auth/AuthContext';
-import { isServiceApiError } from '@app/utils/error';
-import { DefaultApi, ServiceAccountRequest, KafkaRequest } from '../../../../../openapi/api';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
+import { useRootModalContext, MODAL_TYPES } from '@app/common';
+import { KafkaRequest } from '@openapi/api';
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;
@@ -40,43 +36,10 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   tokenEndPointUrl,
 }: ResourcesTabProps) => {
   const { t } = useTranslation();
-  const { basePath } = useContext(ApiContext);
-  const authContext = useContext(AuthContext);
-  const { addAlert } = useAlerts();
+  const { showModal } = useRootModalContext();
 
-  const [isGenerateCredentialsModalOpen, setIsGenerateCredentialsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [credential, setCredential] = useState<any | undefined>();
-
-  const generateCredential = async () => {
-    const accessToken = await authContext?.getToken();
-    const serviceAccountRequest: ServiceAccountRequest = {
-      name: instance?.name || '',
-    };
-    const apisService = new DefaultApi({
-      accessToken,
-      basePath,
-    });
-
-    try {
-      await apisService.createServiceAccount(serviceAccountRequest).then((res) => {
-        setCredential(res?.data);
-        setIsLoading(false);
-        setIsGenerateCredentialsModalOpen(true);
-      });
-    } catch (err) {
-      setIsLoading(false);
-      let reason;
-      if (isServiceApiError(err)) {
-        reason = err.response?.data.reason;
-      }
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
-    }
-  };
-
-  const handleGenerateCredentialsModal = () => {
-    setIsLoading(true);
-    generateCredential();
+  const handleCreateServiceAccountModal = () => {
+    showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT);
   };
 
   return (
@@ -95,7 +58,6 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           {externalServer}
         </ClipboardCopy>
       )}
-
       <TextContent className="pf-u-pb-sm">
         <Text component={TextVariants.h3} className="pf-u-mt-xl">
           {t('serviceAccount.service_accounts_small')}
@@ -117,9 +79,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
       </TextContent>
       <Button
         variant="secondary"
-        onClick={handleGenerateCredentialsModal}
-        spinnerAriaValueText={isLoading ? 'Loading' : undefined}
-        isLoading={isLoading}
+        onClick={handleCreateServiceAccountModal}
         data-testid="drawerStreams-buttonCreateServiceAccount"
         isInline
       >
@@ -161,13 +121,6 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           <ClipboardCopy>https://:30123</ClipboardCopy>
         </>
       )}
-      <MASGenerateCredentialsModal
-        isOpen={isGenerateCredentialsModalOpen}
-        setIsOpen={setIsGenerateCredentialsModalOpen}
-        isLoading={isLoading}
-        credential={credential}
-        setCredential={setCredential}
-      />
     </div>
   );
 };

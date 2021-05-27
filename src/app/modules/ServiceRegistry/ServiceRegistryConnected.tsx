@@ -1,20 +1,20 @@
 import React from 'react';
 import { ServiceRegistry } from './ServiceRegistry';
-import { ApiContext } from '@app/api/ApiContext';
 import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
+import { Config, ConfigContext } from "@bf2/ui-shared";
 
 declare const __BASE_PATH__: string;
 
-export const ServiceRegistryConnected = () => {
+export const ServiceRegistryConnected: React.FunctionComponent = () => {
   return (
-    <ApiContext.Provider
-      value={{
-        basePath: __BASE_PATH__,
-      }}
-    >
+    <ConfigContext.Provider value={{
+      kas: {
+        apiBasePath: __BASE_PATH__
+      }
+    } as Config}>
       <AlertProvider>
         <ServiceRegistry />
       </AlertProvider>
-    </ApiContext.Provider>
+    </ConfigContext.Provider>
   );
 };

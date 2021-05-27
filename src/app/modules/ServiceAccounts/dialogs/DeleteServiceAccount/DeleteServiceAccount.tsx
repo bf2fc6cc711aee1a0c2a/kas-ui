@@ -1,35 +1,23 @@
-import React, { useState, useContext } from 'react';
-import { AlertVariant } from '@patternfly/react-core';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from './../../../../openapi/api';
-import { MASDeleteModal } from '@app/common/MASDeleteModal/MASDeleteModal';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AlertVariant } from '@patternfly/react-core';
+import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { isServiceApiError } from '@app/utils';
+import { DefaultApi, ServiceAccountListItem } from '@openapi/api';
+import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
-export type DeleteServiceAccountModalProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  fetchServiceAccounts: () => void;
-  serviceAccountToDelete: ServiceAccountListItem | undefined;
-};
-
-const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountModalProps> = ({
-  isOpen,
-  setIsOpen,
-  fetchServiceAccounts,
-  serviceAccountToDelete,
-}: DeleteServiceAccountModalProps) => {
+const DeleteServiceAccount: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
+  const auth = useAuth();
+  const { kas: { apiBasePath: basePath } } = useConfig();
+  const { addAlert } = useAlert();
+  const { store, hideModal } = useRootModalContext();
+  const { fetchServiceAccounts, serviceAccountToDelete } = store?.modalProps || {};
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleModalToggle = () => {
-    setIsOpen(!isOpen);
+    hideModal();
   };
 
   const deleteServiceAccount = async (serviceAccount: ServiceAccountListItem | undefined) => {
@@ -37,7 +25,7 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
     if (serviceAccountId === undefined) {
       throw new Error('service account id not defined');
     }
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       const apisService = new DefaultApi({
         accessToken,
@@ -46,7 +34,7 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
       setIsLoading(true);
 
       try {
-        await apisService.deleteServiceAccount(serviceAccountId).then((response) => {
+        await apisService.deleteServiceAccount(serviceAccountId).then(() => {
           handleModalToggle();
           setIsLoading(false);
 
@@ -71,7 +59,7 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
 
   return (
     <MASDeleteModal
-      isModalOpen={isOpen}
+      isModalOpen={true}
       handleModalToggle={handleModalToggle}
       title={t('serviceAccount.delete_service_account') + '?'}
       confirmButtonProps={{
@@ -80,11 +68,9 @@ const DeleteServiceAccountModal: React.FunctionComponent<DeleteServiceAccountMod
         isLoading,
       }}
     >
-      <p>
-        <b>{serviceAccountToDelete?.name}</b> {t('serviceAccount.will_be_deleted')}
-      </p>
+      <p><b>{serviceAccountToDelete?.name}</b> {t('serviceAccount.will_be_deleted')}</p>
     </MASDeleteModal>
   );
 };
 
-export { DeleteServiceAccountModal };
+export { DeleteServiceAccount };

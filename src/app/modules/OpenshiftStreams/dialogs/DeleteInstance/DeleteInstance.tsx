@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TextInput } from '@patternfly/react-core';
-import { MASDeleteModal, MASDeleteModalProps } from '@app/common';
+import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export type DeleteInstanceModalProps = MASDeleteModalProps & {
-  instanceStatus?: string;
+export const DeleteInstance: React.FunctionComponent = () => {
+  const { store, hideModal } = useRootModalContext();
+  const props = { ...store?.modalProps, hideModal };
+
+  return <DeleteInstanceModal {...props} />;
 };
 
-export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
-  isModalOpen,
-  title,
-  confirmButtonProps,
-  cancelButtonProps,
-  handleModalToggle,
-  textProps,
-  instanceStatus,
-  selectedItemData,
-}: DeleteInstanceModalProps) => {
+export const DeleteInstanceModal = (props) => {
+  const {
+    title,
+    confirmButtonProps,
+    cancelButtonProps,
+    textProps,
+    instanceStatus,
+    selectedItemData,
+    onClose,
+    hideModal,
+  } = props || {};
   const { t } = useTranslation();
   const selectedInstanceName = selectedItemData?.name;
 
@@ -45,12 +48,13 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
 
   const handleToggle = () => {
     setInstanceNameInput('');
-    handleModalToggle && handleModalToggle();
+    hideModal();
+    onClose && onClose();
   };
 
   return (
     <MASDeleteModal
-      isModalOpen={isModalOpen}
+      isModalOpen={true}
       title={title}
       confirmButtonProps={{
         isDisabled: isConfirmButtonDisabled(),
@@ -60,24 +64,15 @@ export const DeleteInstanceModal: React.FC<DeleteInstanceModalProps> = ({
       cancelButtonProps={cancelButtonProps}
       handleModalToggle={handleToggle}
       textProps={textProps}
-    >
-      {instanceStatus === InstanceStatus.READY && (
-        <>
-          <label
-            htmlFor="instance-name-input"
-            dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
-          />
-          <TextInput
-            id="mk--instance-name__input"
-            name="instance-name-input"
-            type="text"
-            value={instanceNameInput}
-            onChange={handleInstanceName}
-            onKeyPress={onKeyPress}
-            autoFocus={true}
-          />
-        </>
-      )}
-    </MASDeleteModal>
+      selectedItemData={selectedItemData}
+      textInputProps={{
+        showTextInput: instanceStatus === InstanceStatus.READY,
+        label: t('instance_name_label', { name: selectedInstanceName }),
+        value: instanceNameInput,
+        onChange: handleInstanceName,
+        onKeyPress,
+        autoFocus: true,
+      }}
+    ></MASDeleteModal>
   );
 };

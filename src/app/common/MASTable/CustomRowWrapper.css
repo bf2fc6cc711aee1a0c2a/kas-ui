@@ -19,7 +19,7 @@
   margin-bottom: var(--pf-global--spacer--xs); /* Makes bottom box shadow visible */
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 769px) {
   .pf-c-table-row__item td:first-child::before {
     position: absolute;
     top: var(--pf-c-table-row__item--before--Top);

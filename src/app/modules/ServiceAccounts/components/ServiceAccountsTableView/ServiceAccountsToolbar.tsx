@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import {
   ToolbarGroup,
   ToolbarItem,
@@ -18,7 +16,8 @@ import {
   ButtonVariant,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import { MASToolbar, ToolbarItemProps } from '@app/common';
 
 export type ServiceAccountsToolbarProps = {
   filterSelected?: string;
@@ -45,15 +44,12 @@ export type FilterType = {
 const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   filterSelected,
   setFilterSelected,
-  total,
-  page,
-  perPage,
   filteredValue,
   setFilteredValue,
   handleCreateModal,
 }: ServiceAccountsToolbarProps) => {
-  const { t } = useTranslation();
 
+  const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
 
@@ -63,7 +59,6 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
   const [nameInputValue, setNameInputValue] = useState<string | undefined>();
   const [ownerInputValue, setOwnerInputValue] = useState<string | undefined>();
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const mainFilterOptions = [
     { label: t('name'), value: 'name', disabled: false },
@@ -170,7 +165,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
-    let newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
     const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
     let filterChip: string | undefined = chip.toString();
@@ -350,7 +345,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         id: 'instance-toolbar',
         clearAllFilters: onClearAllFilters,
         collapseListedFiltersBreakpoint: 'md',
-        inset: { lg: 'insetLg' },
+        inset: { xl: 'insetLg' },
       }}
       toolbarItems={toolbarItems}
     />

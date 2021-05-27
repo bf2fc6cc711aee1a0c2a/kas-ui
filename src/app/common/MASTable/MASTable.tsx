@@ -27,6 +27,7 @@ const MASTable: FunctionComponent<MASTableProps> = ({
   activeRow,
   onRowClick,
   rowDataTestId,
+  loggedInUser,
 }) => {
   const {
     cells,
@@ -37,7 +38,6 @@ const MASTable: FunctionComponent<MASTableProps> = ({
     'aria-label': ariaLabel,
     variant,
     className,
-    rowWrapper,
     hasDefaultCustomRowWrapper = false,
     ...restProps
   } = tableProps;
@@ -55,10 +55,11 @@ const MASTable: FunctionComponent<MASTableProps> = ({
         activeRow,
         onRowClick,
         rowDataTestId,
+        loggedInUser,
       }}
     >
       <PFTable
-        className={css('mas--streams-table-view__table', className)}
+        className={css(hasDefaultCustomRowWrapper && 'mas--streams-table-view__table', className)}
         cells={cells}
         variant={variant}
         rows={rows}

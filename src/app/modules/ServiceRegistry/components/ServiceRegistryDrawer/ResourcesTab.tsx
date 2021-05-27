@@ -6,7 +6,7 @@ export type ResourcesTabProps = {
   mainToggle?: boolean;
 };
 
-export const ResourcesTab: React.FC<ResourcesTabProps> = ({ mainToggle }: ResourcesTabProps) => {
+export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
   const { t } = useTranslation();
   const registriesInfo = [
     { title: t('serviceRegistry.tab_resources_content_1'), code: 'https://registry.my-domain.com/api' },
@@ -22,7 +22,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({ mainToggle }: Resour
       </TextContent>
       <Form>
         {registriesInfo?.map(({ title, code }, index) => (
-          <FormGroup label={title} fieldId={`copy-clipboard-${index}`}>
+          <FormGroup label={title} fieldId={`copy-clipboard-${index}`} key={`${code}'-'${index}`}>
             <ClipboardCopy
               id={`copy-clipboard-${index}`}
               hoverTip={t('common.copy_clipboard')}

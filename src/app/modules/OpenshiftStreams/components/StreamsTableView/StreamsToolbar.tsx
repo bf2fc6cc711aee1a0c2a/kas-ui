@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
   TextInput,
@@ -16,13 +17,15 @@ import {
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
-import { useTranslation } from 'react-i18next';
+import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { FilterType, FilterValue } from './StreamsTableView';
-import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT } from '@app/utils';
+import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
+import { CloudProvider } from '../../../../../openapi';
 import './StreamsToolbar.css';
-import { useCreateInstanceModal } from '../../components/CreateInstanceModal';
 
+/**
+ * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
+ */
 export type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
@@ -34,6 +37,10 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
   buttonTooltipContent?: string | undefined;
+  labelWithTooltip?: ReactElement | undefined;
+  onCreate?: () => void;
+  refresh?: () => void;
+  cloudProviders?: Array<CloudProvider>;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -46,9 +53,15 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   setFilteredValue,
   isDisabledCreateButton,
   buttonTooltipContent,
+  labelWithTooltip,
+  onCreate,
+  refresh,
+  cloudProviders,
 }) => {
-  const { isModalOpen, setIsModalOpen } = useCreateInstanceModal();
   const { t } = useTranslation();
+  const nameInputRef = useRef<HTMLInputElement>();
+  const ownerInputRef = useRef<HTMLInputElement>();
+  const { showModal } = useRootModalContext();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -59,9 +72,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
-
-  const nameInputRef = useRef<HTMLInputElement>();
-  const ownerInputRef = useRef<HTMLInputElement>();
 
   // Options for server-side filtering
   const mainFilterOptions = [
@@ -85,7 +95,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   });
 
   const statusFilterOptions = statusOptions
-    .filter((option) => option.value !== 'preparing')
+    .filter((s) => s.value !== InstanceStatus.PREPARING && s.value !== InstanceStatus.DELETED)
     .map((status) => {
       return { label: t(status.value), value: status.value, disabled: false };
     });
@@ -251,7 +261,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
-    let newFilteredValue: FilterType[] = Object.assign([], filteredValue);
+    const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
     const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
     const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
     let filterChip: string | undefined = chip.toString();
@@ -284,8 +294,14 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     let maxFilterCount = 0;
     filteredValue?.forEach((filter: any) => {
       const { filterValue, filterKey } = filter;
-      const provisioningStatus = filterKey === 'status' && filterValue?.filter(({ value }) => value === 'provisioning');
-      if (provisioningStatus?.length > 0) {
+      const provisioningStatus =
+        filterKey === 'status' && filterValue?.filter(({ value }) => value === InstanceStatus.PROVISIONING);
+      const deprovisionStatus =
+        filterKey === 'status' && filterValue?.filter(({ value }) => value === InstanceStatus.DEPROVISION);
+
+      if (provisioningStatus?.length > 0 && deprovisionStatus?.length > 0) {
+        maxFilterCount += filterValue?.length + 2;
+      } else if (provisioningStatus?.length > 0 || deprovisionStatus?.length > 0) {
         maxFilterCount += filterValue?.length + 1;
       } else {
         maxFilterCount += filterValue?.length;
@@ -392,6 +408,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               isOpen={isCloudProviderFilterExpanded}
               onSelect={onCloudProviderFilterSelect}
               placeholderText={t('filter_by_cloud_provider')}
+              className="select-custom-width"
             >
               {cloudProviderFilterOptions.map((option, index) => (
                 <SelectOption
@@ -431,6 +448,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               isOpen={isRegionFilterExpanded}
               onSelect={onRegionFilterSelect}
               placeholderText={t('filter_by_region')}
+              className="select-custom-width"
             >
               {regionFilterOptions.map((option, index) => (
                 <SelectOption
@@ -507,6 +525,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               isOpen={isStatusFilterExpanded}
               onSelect={onStatusFilterSelect}
               placeholderText={t('filter_by_status')}
+              className="select-custom-width"
             >
               {statusFilterOptions.map((option, index) => (
                 <SelectOption
@@ -531,13 +550,21 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
+  const handleCreateModal = () => {
+    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+      onCreate,
+      cloudProviders,
+      refresh,
+    });
+  };
+
   const createButton = () => {
     if (isDisabledCreateButton) {
       return (
         <Tooltip content={buttonTooltipContent}>
           <Button
             variant="primary"
-            onClick={() => setIsModalOpen(!isModalOpen)}
+            onClick={handleCreateModal}
             data-testid={'tableStreams-buttonCreateKafka'}
             isAriaDisabled={isDisabledCreateButton}
           >
@@ -546,13 +573,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </Tooltip>
       );
     }
-
     return (
-      <Button
-        variant="primary"
-        onClick={() => setIsModalOpen(!isModalOpen)}
-        data-testid={'tableStreams-buttonCreateKafka'}
-      >
+      <Button variant="primary" onClick={handleCreateModal} data-testid={'tableStreams-buttonCreateKafka'}>
         {t('create_kafka_instance')}
       </Button>
     );
@@ -562,9 +584,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     {
       item: createButton(),
     },
+    {
+      item: labelWithTooltip,
+    },
   ];
 
-  if (total && total > 0 && toolbarItems.length === 1) {
+  if (total && total > 0 && toolbarItems.length > 1) {
     toolbarItems.push({
       item: (
         <MASPagination
@@ -596,7 +621,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         id: 'instance-toolbar',
         clearAllFilters: onClear,
         collapseListedFiltersBreakpoint: 'md',
-        inset: { lg: 'insetLg' },
+        inset: { xl: 'insetLg' },
       }}
       toggleGroupProps={{ toggleIcon: <FilterIcon />, breakpoint: 'md' }}
       toggleGroupItems={toggleGroupItems}

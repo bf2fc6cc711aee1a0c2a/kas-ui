@@ -2,11 +2,13 @@ import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
-import { CreateInstanceModal, CreateInstanceModalProps } from './CreateInstanceModal';
+import { CreateInstance } from './CreateInstance';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { AuthContext } from '@app/auth/AuthContext';
+import { Auth, AuthContext } from "@bf2/ui-shared";
+import { CloudRegionList } from "../../../../../openapi";
+import { AxiosResponse } from "axios";
 
-const listCloudProviderRegions: any = {
+const listCloudProviderRegions: AxiosResponse<CloudRegionList> = {
   data: {
     items: [
       {
@@ -17,9 +19,10 @@ const listCloudProviderRegions: any = {
       },
     ],
   },
-};
+} as AxiosResponse<CloudRegionList>;
 
-jest.mock('../../../openapi/api', () => {
+
+jest.mock('@openapi/api', () => {
   // Works and lets you check for constructor calls:
   return {
     DefaultApi: jest.fn().mockImplementation(() => {
@@ -32,23 +35,25 @@ jest.mock('../../../openapi/api', () => {
   };
 });
 
-const setupRender = (props: CreateInstanceModalProps) => {
+const setupRender = (props: any) => {
   render(
     <I18nextProvider i18n={i18nForTest}>
       <AuthContext.Provider
         value={{
-          getToken: () => Promise.resolve('test-token'),
+          kas: {
+            getToken: () => Promise.resolve('test-token'),
+          },
           getUsername: () => Promise.resolve('api_kafka_service'),
-        }}
+        } as Auth}
       >
-        <CreateInstanceModal {...props} />
+        <CreateInstance {...props} />
       </AuthContext.Provider>
     </I18nextProvider>
   );
 };
 
-describe('<CreateInstanceModal/>', () => {
-  const props: CreateInstanceModalProps = {
+describe('<CreateInstance/>', () => {
+  const props: any = {
     createStreamsInstance: true,
     mainToggle: true,
     cloudProviders: [

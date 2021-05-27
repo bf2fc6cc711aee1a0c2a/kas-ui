@@ -1,5 +1,8 @@
-.mk--main-page__page-section--table.pf-c-page__main-section {
-  padding-bottom: 69px;
+@media screen and (min-width: 1200px) {
+  .mk--main-page__page-section--table.pf-c-page__main-section {
+    /* add bottom padding for pendo icon */
+    padding-bottom: 69px;
+  }
 }
 
 .mk--openstreams__banner.pf-c-button.pf-m-link {
@@ -10,4 +13,11 @@
 .mk--openstreams__banner.pf-c-button.pf-m-link:hover {
   font-weight: var(--pf-global--FontWeight--semi-bold);
   --pf-c-button--m-link--Color: var(--pf-global--Color--100);
+}
+
+.pf-c-select__toggle:before {
+  border-top: 1px solid var(--pf-c-select__toggle--before--BorderTopColor);
+  border-right: 1px solid var(--pf-c-select__toggle--before--BorderRightColor);
+  border-bottom: 1px solid var(--pf-c-select__toggle--before--BorderBottomColor);
+  border-left: 1px solid var(--pf-c-select__toggle--before--BorderLeftColor);
 }
