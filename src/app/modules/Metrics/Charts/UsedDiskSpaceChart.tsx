@@ -200,10 +200,11 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: Kafk
     avgBroker.data.map(value => {
       const date = new Date(value.timestamp);
       const time = format(date, 'hh:mm');
-      const averageBytes = average(value.usedSpaceAvg);
-      const bytes = convertToSpecifiedByte(averageBytes, largestByteSize);
+      const aggregateBytes = value.usedSpaceAvg.reduce(function(a, b) { return a + b }, 0);
+
+      const bytes = convertToSpecifiedByte(aggregateBytes, largestByteSize);
       area.push({ name: avgBroker.name, x: time, y: bytes });
-      softLimit.push({ name: 'Soft limit', x: time, y: usageLimit });
+      softLimit.push({ name: 'limit', x: time, y: usageLimit });
     });
     chartData.push({ areaColor, softLimitColor, area, softLimit });
 

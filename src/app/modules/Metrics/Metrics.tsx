@@ -14,7 +14,7 @@ import {
 export const Metrics = () => {
 
 
-  const kafkaID: string = '1sz9wq5VNwDPoTDJmsGDvtN4UnI'; // Christie
+  const kafkaID: string = '1t46zfZ0pnhx9aRa0BwFHCfdVmp'; // Christie
   const kafkaID2: string = '1sAjoh9EO1P3PiEPTcADdt343jB'; // Jenn
 
   return (
@@ -23,7 +23,9 @@ export const Metrics = () => {
         <GridItem>
           <UsedDiskSpaceChart kafkaID={kafkaID}/>
         </GridItem>
-        <IncomingOutgoingBytesPerTopic kafkaID={kafkaID}/>
+        <GridItem>
+          <IncomingOutgoingBytesPerTopic kafkaID={kafkaID}/>
+        </GridItem>
         <GridItem>
           <LogSizePerPartitionChart kafkaID={kafkaID}/>
         </GridItem>
