@@ -126,18 +126,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   };
 
   useEffect(() => {
-    updateSelectedKafkaInstance();
-  }, [kafkaInstanceItems]);
-
-  useEffect(() => {
-    auth?.getUsername().then((username) => setLoggedInUser(username));
-  }, [auth]);
-
-  useEffect(() => {
-    fetchKafkaServiceStatus();
-  }, []);
-
-  useEffect(() => {
     if (isMobileTablet()) {
       if (localStorage) {
         const count = parseInt(localStorage.getItem('openSessions') || '0');
@@ -148,13 +136,11 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         }
       }
     }
-  }, [localStorage]);
+  }, []);
 
   const handleMobileModal = () => {
     setIsMobileModalOpen(!isMobileModalOpen);
   };
-
-
 
   const handleCreateInstanceModal = async (open: boolean) => {
     if (open) {
@@ -364,7 +350,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   useEffect(() => {
     fetchCloudProviders();
     fetchKafkas();
-  }, [fetchCloudProviders]);
+  }, []);
 
   /**
    * Todo:remove after summit
@@ -384,19 +370,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   useEffect(() => {
     fetchKafkaServiceStatus();
   }, []);
-
-  useEffect(() => {
-    if (isMobileTablet()) {
-      if (localStorage) {
-        const count = localStorage.getItem('openSessions') || 0;
-        const newCount = parseInt(count) + 1;
-        if (count < 1) {
-          localStorage.setItem('openSessions', newCount);
-          setIsMobileModalOpen(true);
-        }
-      }
-    }
-  }, [localStorage]);
 
   useTimeout(() => fetchKafkasOnborading(), MAX_POLL_INTERVAL);
 

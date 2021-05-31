@@ -18,7 +18,7 @@ export function getBrowserVisibilityProp(): string {
   return '';
 }
 export function getBrowserDocumentHiddenProp(): string {
-    const doc: XDocument = document as XDocument;
+  const doc: XDocument = document as XDocument;
   if (typeof doc.hidden !== 'undefined') {
     return 'hidden';
   } else if (typeof doc.msHidden !== 'undefined') {
@@ -32,7 +32,7 @@ export function getIsDocumentHidden(): boolean {
   return !document[getBrowserDocumentHiddenProp()];
 }
 
-export function usePageVisibility(): { isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>>} {
+export function usePageVisibility(): { isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>> } {
   const [isVisible, setIsVisible] = useState(getIsDocumentHidden());
   const onVisibilityChange = () => setIsVisible(getIsDocumentHidden());
   useEffect(() => {
@@ -41,6 +41,6 @@ export function usePageVisibility(): { isVisible: boolean, setIsVisible: React.D
     return () => {
       document.removeEventListener(visibilityChange, onVisibilityChange);
     };
-  });
-  return {isVisible,setIsVisible};
+  }, []);
+  return { isVisible, setIsVisible };
 }

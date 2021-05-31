@@ -26,8 +26,7 @@ import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
-
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -40,7 +39,9 @@ const CreateInstance: React.FunctionComponent = () => {
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
   const auth = useAuth();
-  const { kas: { apiBasePath: basePath } } = useConfig();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
   const { addAlert } = useAlert();
   const newKafka: NewKafka = new NewKafka();
 
@@ -97,7 +98,7 @@ const CreateInstance: React.FunctionComponent = () => {
       setKafkaFormData((prevState) => ({ ...prevState, cloud_provider: cloudProviders[0].name }));
       fetchCloudRegions(cloudProviders[0]);
     }
-  }, [cloudProviders, fetchCloudRegions]);
+  }, [cloudProviders]);
 
   const onCloudProviderSelect = (cloudProvider: CloudProvider) => {
     setKafkaFormData((prevState) => ({ ...prevState, cloud_provider: cloudProvider.name || '' }));
