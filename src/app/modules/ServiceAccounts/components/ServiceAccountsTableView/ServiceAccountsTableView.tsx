@@ -53,7 +53,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 
   useEffect(() => {
     auth?.getUsername().then((username) => setLoggedInUser(username));
-  }, [auth]);
+  }, []);
 
   const tableColumns = [
     { title: t('common.name') },

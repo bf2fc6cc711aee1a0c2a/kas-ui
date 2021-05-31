@@ -22,7 +22,7 @@ export const AlertProvider: React.FunctionComponent = ({ children }) => {
       });
     setTimers([...timers, ...timeOuts]);
     return () => timers.forEach((timer) => timer?.timeOut && clearTimeout(timer.timeOut));
-  }, [alerts, timers]);
+  }, [alerts]);
 
   const createId = () => new Date().getTime();
 

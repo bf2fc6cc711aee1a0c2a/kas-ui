@@ -12,7 +12,7 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenShiftStreamsProps> 
   getConnectToRoutePath,
   preCreateInstance,
   createDialogOpen,
-  tokenEndPointUrl
+  tokenEndPointUrl,
 }) => {
   return (
     // TODO don't add BrowserRouter here - see  https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend/issues/74
