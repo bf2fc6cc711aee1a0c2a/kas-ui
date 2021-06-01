@@ -20,7 +20,7 @@ import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
-import { CloudProvider } from '../../../../../openapi';
+import { CloudProvider } from '@rhoas/kafka-management-sdk';
 import './StreamsToolbar.css';
 
 /**

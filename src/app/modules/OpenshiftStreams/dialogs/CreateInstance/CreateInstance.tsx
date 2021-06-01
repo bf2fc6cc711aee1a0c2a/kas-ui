@@ -22,7 +22,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { MASCreateModal, useRootModalContext } from '@app/common';
 import { ErrorCodes } from '@app/utils';
-import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
+import { DefaultApi, CloudProvider, CloudRegion } from '@rhoas/kafka-management-sdk';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';

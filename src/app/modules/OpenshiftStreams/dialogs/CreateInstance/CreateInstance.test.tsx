@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
 import i18nForTest from '../../../../../../test-utils/i18n';
 import { Auth, AuthContext } from "@bf2/ui-shared";
-import { CloudRegionList } from "../../../../../openapi";
+import { CloudRegionList } from "@rhoas/kafka-management-sdk";
 import { AxiosResponse } from "axios";
 
 const listCloudProviderRegions: AxiosResponse<CloudRegionList> = {
