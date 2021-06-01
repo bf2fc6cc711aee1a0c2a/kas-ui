@@ -53,15 +53,6 @@ export type KafkaInstanceProps = {
 }
 
 export const OutgoingBytesPerTopicChart: React.FC<KafkaInstanceProps> = ({chartData, legend, byteSize, maxValueInDataSets, metricsDataUnavailable, chartDataLoading, noTopics }: KafkaInstanceProps) => {
-
-  console.log('what is chartData' + chartData)
-  console.log('what is legend' + legend)
-  console.log('what is byteSize' + byteSize)
-  console.log('what is maxValueInDataSets' + maxValueInDataSets)
-  console.log('what is metricsDataUnavailable' + metricsDataUnavailable)
-  console.log('what is chartDataLoading' + chartDataLoading)
-
-
   const containerRef = useRef();
   const { t } = useTranslation();
   const [width, setWidth] = useState();

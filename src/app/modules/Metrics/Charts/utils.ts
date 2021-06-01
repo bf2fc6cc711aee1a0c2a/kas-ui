@@ -1,10 +1,30 @@
 import byteSize from 'byte-size';
 
-export const getLargestByteSize = (data) => {
+export const getLargestByteSize = (data1, data2) => {
   let currentByteSize = "B";
-  data.map(datum => {
-    datum.data.forEach(value => {
-      const byteString = byteSize(value.bytes).unit;
+  data1.data.map(datum => {
+    datum.bytes.forEach(value => {
+      const byteString = byteSize(value).unit;
+      if(byteString === "kB") {
+        if (currentByteSize === "B") {
+          currentByteSize = "kB";
+        }
+      }
+      if(byteString === "MB") {
+        if (currentByteSize === 'B' || currentByteSize === 'kB') {
+          currentByteSize = "MB";
+        }
+      }
+      if(byteString === "GB") {
+        if (currentByteSize === 'B' || currentByteSize === 'kB' || currentByteSize === 'MB') {
+          currentByteSize = "GB";
+        }
+      }
+    })
+  })
+  data2.data.map(datum => {
+    datum.bytes.forEach(value => {
+      const byteString = byteSize(value).unit;
       if(byteString === "kB") {
         if (currentByteSize === "B") {
           currentByteSize = "kB";
