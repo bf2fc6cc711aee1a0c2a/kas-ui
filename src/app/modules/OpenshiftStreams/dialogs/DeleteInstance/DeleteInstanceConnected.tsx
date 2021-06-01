@@ -4,7 +4,7 @@ import { AlertVariant } from '@patternfly/react-core';
 import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
 import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
 import { useRootModalContext } from '@app/common';
-import { DefaultApi } from '@openapi/api';
+import { DefaultApi } from '@rhoas/kafka-management-sdk';
 import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 

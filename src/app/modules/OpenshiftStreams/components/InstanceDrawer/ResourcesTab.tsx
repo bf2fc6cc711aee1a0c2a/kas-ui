@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 import { useRootModalContext, MODAL_TYPES } from '@app/common';
-import { KafkaRequest } from '@openapi/api';
+import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;

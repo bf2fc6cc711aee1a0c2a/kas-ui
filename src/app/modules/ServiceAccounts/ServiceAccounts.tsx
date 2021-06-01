@@ -11,7 +11,7 @@ import {
   useRootModalContext,
   MODAL_TYPES,
 } from '@app/common';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '@openapi/api';
+import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '@rhoas/kafka-management-sdk';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 

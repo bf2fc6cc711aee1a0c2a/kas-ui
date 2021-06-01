@@ -24,7 +24,7 @@ const kafkaInstanceItems = [
   },
 ];
 
-jest.mock('@openapi/api', () => {
+jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
   return {
     DefaultApi: jest.fn().mockImplementation(() => {

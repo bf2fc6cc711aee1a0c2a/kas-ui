@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import dayjs from 'dayjs';
-import { KafkaRequest } from 'src/openapi';
+import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 
 export type DetailsTabProps = {
   mainToggle?: boolean;
