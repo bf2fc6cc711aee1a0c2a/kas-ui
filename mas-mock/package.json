@@ -17,8 +17,8 @@
     "openapi-backend": "^3.6.0"
   },
   "devDependencies": {
-    "axios": "^0.18.1",
-    "jest": "^23.6.0",
+    "axios": "^0.21.1",
+    "jest": "^27.0.3",
     "openapi-editor": "^0.2.0",
     "wait-on": "^3.2.0"
   }
