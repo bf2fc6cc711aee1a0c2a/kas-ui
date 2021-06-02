@@ -84,9 +84,10 @@
     "webpack-merge": "5.7.3"
   },
   "dependencies": {
-    "@rhoas/kafka-management-sdk": "0.1.0",
     "@bf2/ui-shared": "0.0.13",
     "@cloudmosaic/quickstarts": "0.0.20",
+    "@rhoas/kafka-management-sdk": "0.1.0",
+    "date-fns": "2.22.1",
     "@patternfly/patternfly": "4.96.2",
     "@patternfly/react-core": "4.115.2",
     "@patternfly/react-icons": "4.9.9",
