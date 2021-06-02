@@ -63,7 +63,11 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+    addAlert({
+      title: t('something_went_wrong'),
+      variant: AlertVariant.danger,
+      description: reason
+    });
   };
 
   const handleTextInputDescription = (description: string) => {
@@ -159,8 +163,8 @@ const CreateServiceAccount: React.FunctionComponent = () => {
           showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
           resetForm();
           addAlert({
-            variant: AlertVariant.success,
             title: t('serviceAccount.service_account_creation_success_message'),
+            variant: AlertVariant.success
           });
           fetchServiceAccounts && fetchServiceAccounts();
         });

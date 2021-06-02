@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { Auth, AuthContext } from "@bf2/ui-shared";
+import { Auth, AuthContext, Config, ConfigContext } from "@bf2/ui-shared";
 import { CloudRegionList } from "@rhoas/kafka-management-sdk";
 import { AxiosResponse } from "axios";
 
@@ -37,6 +37,12 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
 const setupRender = (props: any) => {
   render(
     <I18nextProvider i18n={i18nForTest}>
+      <ConfigContext.Provider value={{
+        kas: {
+          apiBasePath: ""
+        }
+      } as Config}>
+
       <AuthContext.Provider
         value={{
           kas: {
@@ -47,6 +53,7 @@ const setupRender = (props: any) => {
       >
         <CreateInstance {...props} />
       </AuthContext.Provider>
+      </ConfigContext.Provider>
     </I18nextProvider>
   );
 };

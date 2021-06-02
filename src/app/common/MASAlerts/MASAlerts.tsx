@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MASAlertToastGroup } from './MASAlertToastGroup';
+import React, { useEffect, useState } from 'react';
+import { MASAlertToastGroup } from '@app/common';
 import { AlertContext, AlertProps } from '@bf2/ui-shared';
 
 type TimeOut = {
@@ -26,7 +26,7 @@ export const AlertProvider: React.FunctionComponent = ({ children }) => {
 
   const createId = () => new Date().getTime();
 
-  const hideAlert = (key: string) => {
+  const hideAlert = (key: string | undefined) => {
     setAlerts((alerts) => [...alerts.filter((el) => el.id !== key)]);
     setTimers((timers) => [...timers.filter((timer) => timer.key === key)]);
   };
@@ -38,7 +38,7 @@ export const AlertProvider: React.FunctionComponent = ({ children }) => {
 
   return (
     <AlertContext.Provider value={{ addAlert }}>
-      <MASAlertToastGroup alerts={alerts} onCloseAlert={hideAlert} />
+      <MASAlertToastGroup alerts={alerts} onCloseAlert={hideAlert}/>
       {children}
     </AlertContext.Provider>
   );

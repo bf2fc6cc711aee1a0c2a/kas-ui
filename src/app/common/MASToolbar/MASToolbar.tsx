@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 
 export type ToolbarItemProps = Omit<PFToolbarItemProps, 'children'> & {
-  item: JSX.Element;
+  item: JSX.Element | undefined;
 };
 export type MASToolbarProps = {
   toolbarProps: Omit<ToolbarProps, 'children' | 'ref'>;

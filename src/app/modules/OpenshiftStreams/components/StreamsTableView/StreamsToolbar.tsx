@@ -410,7 +410,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               placeholderText={t('filter_by_cloud_provider')}
               className="select-custom-width"
             >
-              {cloudProviderFilterOptions.map((option, index) => (
+              {cloudProviderFilterOptions.map((option, index) => {
+                const reference = document.getElementById('cloud-provider-select');
+                return (
                 <SelectOption
                   isDisabled={
                     option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
@@ -422,12 +424,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     <Tooltip
                       isVisible={isMaxFilter}
                       content={tooltipContent()}
-                      reference={() => document.getElementById('cloud-provider-select')}
+                      reference={reference || undefined}
                     />
                   )}
                   {option.label}
                 </SelectOption>
-              ))}
+              )})}
             </Select>
           )}
         </ToolbarFilter>
@@ -450,7 +452,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               placeholderText={t('filter_by_region')}
               className="select-custom-width"
             >
-              {regionFilterOptions.map((option, index) => (
+              {regionFilterOptions.map((option, index) => {
+                const reference = document.getElementById('region-select');
+                return (
                 <SelectOption
                   isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
                   key={index}
@@ -460,12 +464,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     <Tooltip
                       isVisible={isMaxFilter}
                       content={tooltipContent()}
-                      reference={() => document.getElementById('region-select')}
+                      reference={reference || undefined}
                     />
                   )}
                   {option.label}
                 </SelectOption>
-              ))}
+              )})}
             </Select>
           )}
         </ToolbarFilter>
@@ -527,22 +531,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               placeholderText={t('filter_by_status')}
               className="select-custom-width"
             >
-              {statusFilterOptions.map((option, index) => (
-                <SelectOption
-                  isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
-                  key={index}
-                  value={option.value}
-                >
-                  {isMaxFilter && (
-                    <Tooltip
-                      isVisible={isMaxFilter}
-                      content={tooltipContent()}
-                      reference={() => document.getElementById('status-select')}
-                    />
-                  )}
-                  {option.label}
-                </SelectOption>
-              ))}
+              {statusFilterOptions.map((option, index) => {
+                const reference = document.getElementById('status-select');
+                return (
+                  <SelectOption
+                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
+                    key={index}
+                    value={option.value}
+                  >
+                    {isMaxFilter && (
+                      <Tooltip
+                        isVisible={isMaxFilter}
+                        content={tooltipContent()}
+                        reference={reference || undefined}
+                      />
+                    )}
+                    {option.label}
+                  </SelectOption>
+                )
+              })}
             </Select>
           )}
         </ToolbarFilter>

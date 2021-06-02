@@ -1,38 +1,37 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { useHistory, Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import {
   IAction,
-  IExtraData,
+  IExtraColumnData,
   IRowData,
   ISeparator,
-  sortable,
   ISortBy,
+  sortable,
   SortByDirection,
-  IExtraColumnData,
 } from '@patternfly/react-table';
-import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
+import { PaginationVariant, Skeleton } from '@patternfly/react-core';
 import {
-  InstanceStatus,
-  isServiceApiError,
-  getLoadingRowsCount,
   getFormattedDate,
+  getLoadingRowsCount,
   getSkeletonForRows,
+  InstanceStatus,
+  isServiceApiError
 } from '@app/utils';
 import {
-  MASPagination,
-  MASTable,
   MASEmptyState,
   MASEmptyStateVariant,
-  useRootModalContext,
+  MASPagination,
+  MASTable,
   MODAL_TYPES,
+  useRootModalContext,
 } from '@app/common';
 import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management-sdk';
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { AlertVariant, useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 export type FilterValue = {
   value: string;
@@ -106,36 +105,36 @@ export const getDeleteInstanceModalConfig = (
 };
 
 const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
-  mainToggle,
-  kafkaInstanceItems,
-  onViewInstance,
-  onViewConnection,
-  onConnectToRoute,
-  getConnectToRoutePath,
-  refresh,
-  page,
-  perPage,
-  total,
-  kafkaDataLoaded,
-  onDelete,
-  expectedTotal,
-  filteredValue,
-  setFilteredValue,
-  setFilterSelected,
-  filterSelected,
-  orderBy,
-  setOrderBy,
-  isDrawerOpen,
-  isMaxCapacityReached,
-  buttonTooltipContent,
-  isDisabledCreateButton,
-  loggedInUser,
-  labelWithTooltip,
-  setWaitingForDelete,
-  currentUserkafkas,
-  cloudProviders,
-  onCreate,
-}) => {
+                                                                        mainToggle,
+                                                                        kafkaInstanceItems,
+                                                                        onViewInstance,
+                                                                        onViewConnection,
+                                                                        onConnectToRoute,
+                                                                        getConnectToRoutePath,
+                                                                        refresh,
+                                                                        page,
+                                                                        perPage,
+                                                                        total,
+                                                                        kafkaDataLoaded,
+                                                                        onDelete,
+                                                                        expectedTotal,
+                                                                        filteredValue,
+                                                                        setFilteredValue,
+                                                                        setFilterSelected,
+                                                                        filterSelected,
+                                                                        orderBy,
+                                                                        setOrderBy,
+                                                                        isDrawerOpen,
+                                                                        isMaxCapacityReached,
+                                                                        buttonTooltipContent,
+                                                                        isDisabledCreateButton,
+                                                                        loggedInUser,
+                                                                        labelWithTooltip,
+                                                                        setWaitingForDelete,
+                                                                        currentUserkafkas,
+                                                                        cloudProviders,
+                                                                        onCreate,
+                                                                      }) => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
@@ -203,7 +202,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         const kafkaIndex = currentUserkafkas?.findIndex((item) => item.name === k);
         if (kafkaIndex < 0) {
           removeKafkaFromDeleted(k);
-          addAlert({ variant: AlertVariant.success, title: t('kafka_successfully_deleted') });
+          addAlert({
+            title: t('kafka_successfully_deleted', { name: k }),
+            variant: AlertVariant.success
+          });
         }
       });
     }
@@ -222,21 +224,19 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         if (instances && instances.length > 0) {
           if (instances[0].status === InstanceStatus.READY) {
             addAlert({
-              variant: AlertVariant.success,
               title: t('kafka_successfully_created'),
-              description: (
-                <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
-              ),
-              dataTestId: 'toastCreateKafka-success',
+              variant: AlertVariant.success,
+              description: <span
+                dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }}/>,
+              dataTestId: 'toastCreateKafka-success'
             });
           } else if (instances[0].status === InstanceStatus.FAILED) {
             addAlert({
-              variant: AlertVariant.danger,
               title: t('kafka_not_created'),
-              description: (
-                <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
-              ),
-              dataTestId: 'toastCreateKafka-failed',
+              variant: AlertVariant.danger,
+              description: <span
+                dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }}/>,
+              dataTestId: 'toastCreateKafka-failed'
             });
           }
         }
@@ -370,7 +370,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!kafkaDataLoaded) {
-      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
+      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton/>, length: tableColumns.length });
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
@@ -388,7 +388,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           regionDisplayName,
           owner,
           {
-            title: <StatusColumn status={status} instanceName={name} />,
+            title: <StatusColumn status={status} instanceName={name}/>,
           },
           {
             title: getFormattedDate(created_at, t('ago')),
@@ -467,7 +467,11 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
        * and translation for specific language
        *
        */
-      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+      addAlert({
+        title: t('common.something_went_wrong'),
+        variant: AlertVariant.danger,
+        description: reason
+      });
     }
   };
 

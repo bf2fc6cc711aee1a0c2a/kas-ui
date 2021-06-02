@@ -65,7 +65,11 @@ const DeleteInstanceConnected = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+    addAlert({
+      title: t('something_went_wrong'),
+      variant: AlertVariant.danger,
+      description: reason
+    });
   };
 
   const fetchKafkaServiceStatus = async () => {
