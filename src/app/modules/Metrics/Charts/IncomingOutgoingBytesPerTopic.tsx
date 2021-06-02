@@ -169,13 +169,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
 
         if(incomingTopics.data.length < 1 && outgoingTopics.data.length < 1) {
           setNoTopics(true);
+          setChartDataLoading(false);
         }
         else {
           getChartData(incomingTopics, outgoingTopics);
         }
-
       }
-
       else {
         setMetricsDataUnavailable(true);
         setChartDataLoading(false);
@@ -353,7 +352,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
                       body="Data will show when topics exist and are in use."
                       noTopics
                     />
-                    )
+                  )
                 ) : (
                   <ChartEmptyState
                     title="No data"

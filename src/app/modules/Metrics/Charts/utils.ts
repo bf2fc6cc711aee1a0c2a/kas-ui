@@ -66,16 +66,3 @@ export const getMaxValueOfArray = (data) => {
   })
   return max.bytes;
 }
-
-
-// const convertTopicLabels = (topic) => {
-//   if(topic === '__strimzi_canary') {
-//     return 'Strimzi canary'
-//   }
-//   if(topic === '__consumer_offsets') {
-//     return 'Consumer offsets'
-//   }
-//   else {
-//     return topic
-//   }
-// }
