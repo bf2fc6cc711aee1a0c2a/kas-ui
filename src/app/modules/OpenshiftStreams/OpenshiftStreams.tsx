@@ -110,10 +110,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
 
     if (accessToken) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
 
         await apisService.getServiceStatus().then((res) => {
           const maxCapacityReached = res?.data?.kafkas?.max_capacity_reached || mainToggle;
@@ -204,8 +206,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      console.log(reason)
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
     }
   };
 
@@ -215,10 +216,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
 
     if (accessToken && isVisible) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
 
         await apisService.getKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
           const kafkaInstances = res.data;
@@ -247,10 +250,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     const accessToken = await auth?.kas.getToken();
     if (accessToken && isVisible) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
 
         await apisService.getKafkas('1', '1').then((res) => {
           const kafkaItemsLength = res?.data?.items?.length;
@@ -277,10 +282,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     const filter = `owner = ${loggedInUser}`;
     if (accessToken && isVisible) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         await apisService.getKafkas('', '', '', filter).then((res) => {
           const kafkaInstances = res.data;
           setCurrentUserKafkas(kafkaInstances.items);
@@ -305,10 +312,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     const filter = loggedInUser ? `owner = ${loggedInUser}` : '';
     if (accessToken && isVisible) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         await apisService.getKafkas('1', '1', '', filter).then((res) => {
           const kafkaInstances = res.data;
           setKafkas(kafkaInstances.items);
@@ -323,10 +332,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         await apisService.getCloudProviders().then((res) => {
           const providers = res?.data?.items || [];
           const enabledCloudProviders: CloudProvider[] = providers?.filter((p: CloudProvider) => p.enabled);
@@ -337,8 +348,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-
-        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
       }
     }
   };

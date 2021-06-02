@@ -41,10 +41,12 @@ const DeleteInstanceConnected = () => {
     if (accessToken && id) {
       try {
         setIsLoading(true);
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         await apisService.deleteKafkaById(id, true).then((res) => {
           setIsLoading(false);
           onCloseModal();
@@ -63,7 +65,7 @@ const DeleteInstanceConnected = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
   };
 
   const fetchKafkaServiceStatus = async () => {
@@ -71,10 +73,12 @@ const DeleteInstanceConnected = () => {
 
     if (accessToken) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
 
         await apisService.getServiceStatus().then((res) => {
           const maxCapacityReached = res?.data?.kafkas?.max_capacity_reached;

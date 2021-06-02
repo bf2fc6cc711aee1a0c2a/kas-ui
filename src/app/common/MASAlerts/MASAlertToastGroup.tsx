@@ -1,36 +1,32 @@
 import React from 'react';
+import { AlertProps } from '@bf2/ui-shared';
 import { AlertGroup, Alert, AlertActionCloseButton, AlertVariant } from '@patternfly/react-core';
 
-export type MASAlertType = {
-  key: number;
-  title: string;
-  variant: AlertVariant;
-  body?: string | React.ReactElement;
-  dataTestId?: string;
-  skipAutoClose?: boolean;
-};
-
 type AlertToastGroupProps = {
-  alerts: MASAlertType[];
-  onCloseAlert: (key: number) => void;
+  alerts: AlertProps[];
+  onCloseAlert: (key: string) => void;
 };
 
-export const MASAlertToastGroup: React.FunctionComponent<AlertToastGroupProps> = ({ alerts, onCloseAlert }: AlertToastGroupProps) => {
+export const MASAlertToastGroup: React.FunctionComponent<AlertToastGroupProps> = ({
+  alerts,
+  onCloseAlert,
+}: AlertToastGroupProps) => {
   return (
     <AlertGroup isToast>
-      {alerts.map(({ key, variant, title, body, dataTestId }) => (
+      {alerts.map(({ id, variant, title, description, dataTestId, ...rest }) => (
         <Alert
-          key={key}
+          key={id}
           isLiveRegion
           variant={AlertVariant[variant]}
           variantLabel=""
           title={title}
-          actionClose={<AlertActionCloseButton title={title} onClose={() => onCloseAlert(key)} />}
+          actionClose={<AlertActionCloseButton title={title} onClose={() => onCloseAlert(id)} />}
           data-testid={dataTestId}
+          {...rest}
         >
-          {body}
+          {description}
         </Alert>
       ))}
     </AlertGroup>
   );
-}
+};

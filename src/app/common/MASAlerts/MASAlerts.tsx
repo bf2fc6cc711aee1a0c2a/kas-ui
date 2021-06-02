@@ -1,24 +1,24 @@
-import React, { useState, ReactNode, useEffect } from 'react';
-import { MASAlertType, MASAlertToastGroup } from './MASAlertToastGroup';
-import { AlertVariant } from '@patternfly/react-core';
-import { AlertContext } from '@bf2/ui-shared';
+import React, { useState, useEffect } from 'react';
+import { MASAlertToastGroup } from './MASAlertToastGroup';
+import { AlertContext, AlertProps } from '@bf2/ui-shared';
 
 type TimeOut = {
-  key: number;
+  key: string | undefined;
   timeOut: NodeJS.Timeout | undefined;
 };
 
 export const AlertProvider: React.FunctionComponent = ({ children }) => {
-  const [alerts, setAlerts] = useState<MASAlertType[]>([]);
+  const [alerts, setAlerts] = useState<AlertProps[]>([]);
   const [timers, setTimers] = useState<TimeOut[]>([]);
 
   useEffect(() => {
     const timersKeys = timers.map((timer) => timer.key);
     const timeOuts = alerts
-      .filter((alert) => !timersKeys.includes(alert.key))
+      .filter((alert) => !timersKeys.includes(alert?.id))
       .map((alert) => {
-        const timeOut = alert?.skipAutoClose ? undefined : setTimeout(() => hideAlert(alert.key), 8000);
-        return { key: alert.key, timeOut };
+        const { id = '' } = alert;
+        const timeOut = setTimeout(() => hideAlert(id), 8000);
+        return { key: alert.id, timeOut };
       });
     setTimers([...timers, ...timeOuts]);
     return () => timers.forEach((timer) => timer?.timeOut && clearTimeout(timer.timeOut));
@@ -26,19 +26,14 @@ export const AlertProvider: React.FunctionComponent = ({ children }) => {
 
   const createId = () => new Date().getTime();
 
-  const hideAlert = (key: number) => {
-    setAlerts((alerts) => [...alerts.filter((el) => el.key !== key)]);
+  const hideAlert = (key: string) => {
+    setAlerts((alerts) => [...alerts.filter((el) => el.id !== key)]);
     setTimers((timers) => [...timers.filter((timer) => timer.key === key)]);
   };
 
-  const addAlert = (
-    title: string,
-    variant: AlertVariant = AlertVariant.default,
-    body?: string | React.ReactElement,
-    dataTestId?: string,
-    skipAutoClose?: boolean
-  ) => {
-    setAlerts([...alerts, { key: createId(), title, variant, body, dataTestId, skipAutoClose }]);
+  const addAlert = (props: AlertProps) => {
+    const id = createId().toString();
+    setAlerts([...alerts, { ...props, id }]);
   };
 
   return (

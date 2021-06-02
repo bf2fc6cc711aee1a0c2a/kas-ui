@@ -11,15 +11,19 @@ import {
   useRootModalContext,
   MODAL_TYPES,
 } from '@app/common';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList, SecurityApi, Configuration } from '@rhoas/kafka-management-sdk';
+import {
+  DefaultApi,
+  ServiceAccountListItem,
+  ServiceAccountList,
+  SecurityApi,
+  Configuration,
+} from '@rhoas/kafka-management-sdk';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
-export type ServiceAccountsProps = {
-};
+export type ServiceAccountsProps = {};
 
 const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
-
   const { t } = useTranslation();
   const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
@@ -51,7 +55,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
     }
   };
 
@@ -59,10 +63,12 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new SecurityApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new SecurityApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         await apisService.get().then((response) => {
           const serviceAccounts = response?.data;
           const items = serviceAccounts?.items || [];
