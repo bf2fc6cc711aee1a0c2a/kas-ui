@@ -100,6 +100,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_server_brokertopicmetrics_bytes_in_total', 'kafka_server_brokertopicmetrics_bytes_out_total']);
 
+        console.log('what is the data coming' + JSON.stringifydata)
+
+
         const incomingTopics = {
           name: "Total incoming topics",
           data: []
@@ -134,13 +137,13 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
                   throw new Error('timestamp cannot be undefined');
                 }
                 if(incomingCount > 0) {
-                  let newArray = incomingTopics.data[indexJ].bytes.concat(value.Value);
+                  let newArray = incomingTopics.data[indexJ].bytes.concat(value.value);
                   incomingTopics.data[indexJ].bytes = newArray;
                 }
                 else {
                   incomingTopics.data.push({
                     timestamp: value.Timestamp,
-                    bytes: [value.Value],
+                    bytes: [value.value],
                   });
                 }
               })
@@ -152,13 +155,13 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
                   throw new Error('timestamp cannot be undefined');
                 }
                 if(outgoingCount > 0) {
-                  let newArray = outgoingTopics.data[indexJ].bytes.concat(value.Value);
+                  let newArray = outgoingTopics.data[indexJ].bytes.concat(value.value);
                   outgoingTopics.data[indexJ].bytes = newArray;
                 }
                 else {
                   outgoingTopics.data.push({
                     timestamp: value.Timestamp,
-                    bytes: [value.Value]
+                    bytes: [value.value]
                   });
                 }
               });
