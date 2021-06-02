@@ -22,7 +22,7 @@ import {
   useRootModalContext,
   MODAL_TYPES,
 } from '@app/common';
-import { DefaultApi, KafkaRequest } from '@openapi/api';
+import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management-sdk';
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
@@ -424,10 +424,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       throw new Error('kafka instance id is not set');
     }
     const accessToken = await auth?.kas.getToken();
-    const apisService = new DefaultApi({
+    const apisService = new DefaultApi(new Configuration({
       accessToken,
       basePath,
-    });
+    }));
     onDelete();
     hideModal();
 

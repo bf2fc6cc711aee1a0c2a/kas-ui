@@ -11,7 +11,7 @@ import {
   useRootModalContext,
   MODAL_TYPES,
 } from '@app/common';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '@openapi/api';
+import { DefaultApi, ServiceAccountListItem, ServiceAccountList, SecurityApi, Configuration } from '@rhoas/kafka-management-sdk';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
@@ -59,11 +59,11 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
+        const apisService = new SecurityApi(new Configuration({
           accessToken,
           basePath,
-        });
-        await apisService.listServiceAccounts().then((response) => {
+        }));
+        await apisService.get().then((response) => {
           const serviceAccounts = response?.data;
           const items = serviceAccounts?.items || [];
           const itemsLength = items?.length;

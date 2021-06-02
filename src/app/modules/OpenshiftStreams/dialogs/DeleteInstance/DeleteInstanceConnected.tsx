@@ -4,7 +4,7 @@ import { AlertVariant } from '@patternfly/react-core';
 import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
 import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
 import { useRootModalContext } from '@app/common';
-import { DefaultApi } from '@openapi/api';
+import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 
@@ -41,10 +41,10 @@ const DeleteInstanceConnected = () => {
     if (accessToken && id) {
       try {
         setIsLoading(true);
-        const apisService = new DefaultApi({
+        const apisService = new DefaultApi(new Configuration({
           accessToken,
           basePath,
-        });
+        }));
         await apisService.deleteKafkaById(id, true).then((res) => {
           setIsLoading(false);
           onCloseModal();
@@ -71,12 +71,12 @@ const DeleteInstanceConnected = () => {
 
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
+        const apisService = new DefaultApi(new Configuration({
           accessToken,
           basePath,
-        });
+        }));
 
-        await apisService.serviceStatus().then((res) => {
+        await apisService.getServiceStatus().then((res) => {
           const maxCapacityReached = res?.data?.kafkas?.max_capacity_reached;
           setIsMaxCapacityReached(maxCapacityReached);
         });

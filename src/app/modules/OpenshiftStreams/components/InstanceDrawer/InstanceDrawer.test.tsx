@@ -5,9 +5,9 @@ import { render } from '@testing-library/react';
 import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
-import { KafkaRequest } from 'src/openapi';
+import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 
-jest.mock('@openapi/api', () => {
+jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
   return {
     DefaultApi: jest.fn().mockImplementation(() => {

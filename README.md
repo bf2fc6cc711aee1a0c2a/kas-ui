@@ -92,11 +92,6 @@ npm run start # API running at http://localhost:8000
 BASE_PATH=http://localhost:8000 npm run start:dev # start the UI
 ```
 
-## Generating OpenAPI docs
-
-```
-npm run api:generate
-```
 
 ## User testing URL
 
