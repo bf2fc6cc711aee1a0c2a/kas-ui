@@ -22,7 +22,7 @@ import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { MASCreateModal, useRootModalContext } from '@app/common';
 import { ErrorCodes } from '@app/utils';
-import { DefaultApi, CloudProvider, CloudRegion } from '@rhoas/kafka-management-sdk';
+import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/kafka-management-sdk';
 import { NewKafka, FormDataValidationState } from '../../../../models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
@@ -66,11 +66,11 @@ const CreateInstance: React.FunctionComponent = () => {
 
     if (accessToken && id) {
       try {
-        const apisService = new DefaultApi({
+        const apisService = new DefaultApi(new Configuration({
           accessToken,
           basePath,
-        });
-        await apisService.listCloudProviderRegions(id).then((res) => {
+        }));
+        await apisService.getCloudProviderRegions(id).then((res) => {
           const providerRegions = res.data?.items || [];
           const enabledRegions = providerRegions?.filter((p: CloudProvider) => p.enabled);
           //set default selected region if there is one region
@@ -144,10 +144,10 @@ const CreateInstance: React.FunctionComponent = () => {
 
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
+        const apisService = new DefaultApi(new Configuration({
           accessToken,
           basePath,
-        });
+        }));
 
         onCreate();
         setCreationInProgress(true);

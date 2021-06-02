@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { isServiceApiError } from '@app/utils';
-import { DefaultApi, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
+import { Configuration, DefaultApi, SecurityApi, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 const DeleteServiceAccount: React.FunctionComponent = () => {
@@ -27,14 +27,14 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
     }
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
-      const apisService = new DefaultApi({
+      const apisService = new SecurityApi(new Configuration({
         accessToken,
         basePath,
-      });
+      }));
       setIsLoading(true);
 
       try {
-        await apisService.deleteServiceAccount(serviceAccountId).then(() => {
+        await apisService.deleteServiceAccountById(serviceAccountId).then(() => {
           handleModalToggle();
           setIsLoading(false);
 

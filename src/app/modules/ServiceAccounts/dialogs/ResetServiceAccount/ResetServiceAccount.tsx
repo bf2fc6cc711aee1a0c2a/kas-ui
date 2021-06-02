@@ -4,7 +4,7 @@ import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-cor
 import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
-import { DefaultApi } from '@rhoas/kafka-management-sdk';
+import { Configuration, DefaultApi, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
 
 const ResetServiceAccount: React.FunctionComponent = () => {
@@ -30,10 +30,10 @@ const ResetServiceAccount: React.FunctionComponent = () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
+        const apisService = new SecurityApi(new Configuration({
           accessToken,
           basePath,
-        });
+        }));
         setIsModalLoading(true);
         await apisService.resetServiceAccountCreds(serviceAccountId).then((response) => {
           const credential = response?.data;

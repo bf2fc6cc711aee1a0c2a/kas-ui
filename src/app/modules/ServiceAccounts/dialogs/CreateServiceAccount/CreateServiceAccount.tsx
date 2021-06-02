@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
-import { DefaultApi } from '@rhoas/kafka-management-sdk';
+import { Configuration, DefaultApi, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
 import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
@@ -142,10 +142,10 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     }
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
+        const apisService = new SecurityApi(new Configuration({
           accessToken,
           basePath,
-        });
+        }));
         setCreationInProgress(true);
         await apisService.createServiceAccount(serviceAccountFormData).then((res) => {
           const credential = res?.data;
