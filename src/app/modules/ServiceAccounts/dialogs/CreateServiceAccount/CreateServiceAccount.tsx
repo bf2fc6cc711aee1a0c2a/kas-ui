@@ -158,7 +158,10 @@ const CreateServiceAccount: React.FunctionComponent = () => {
           //open generate credential modal
           showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
           resetForm();
-          addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
+          addAlert({
+            variant: AlertVariant.success,
+            title: t('serviceAccount.service_account_creation_success_message'),
+          });
           fetchServiceAccounts && fetchServiceAccounts();
         });
       } catch (error) {

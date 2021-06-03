@@ -108,7 +108,7 @@ const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: numbe
   return loadingRowCount !== 0 ? loadingRowCount : perPage;
 };
 
-const sortValues = <T>(items: T[] | undefined, key: string, order = 'asc'): unknown[] | undefined => {
+const sortValues = <T>(items: T[] | undefined, key: string, order = 'asc'): T[] | undefined => {
   const compareValue = (a: T, b: T) => {
     if (!Object.prototype.hasOwnProperty.call(a, key) || Object.prototype.hasOwnProperty.call(b, key)) {
       // property doesn't exist on either object
