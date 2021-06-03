@@ -4,7 +4,7 @@ import { AlertGroup, Alert, AlertActionCloseButton, AlertVariant } from '@patter
 
 type AlertToastGroupProps = {
   alerts: AlertProps[];
-  onCloseAlert: (key: string) => void;
+  onCloseAlert: (key: string | undefined) => void;
 };
 
 export const MASAlertToastGroup: React.FunctionComponent<AlertToastGroupProps> = ({

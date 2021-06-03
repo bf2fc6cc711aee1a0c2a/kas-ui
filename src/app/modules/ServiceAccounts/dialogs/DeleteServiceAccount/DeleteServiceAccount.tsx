@@ -42,8 +42,8 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
           handleModalToggle();
           setIsLoading(false);
           addAlert({
-            variant: AlertVariant.success,
             title: t('serviceAccount.service_account_successfully_deleted', { name: serviceAccount?.name }),
+            variant: AlertVariant.success
           });
           fetchServiceAccounts();
         });
@@ -55,7 +55,11 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
 
         handleModalToggle();
         setIsLoading(false);
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert({
+          title: t('common.something_went_wrong'),
+          variant: AlertVariant.danger,
+          description: reason
+        });
       }
     }
   };
