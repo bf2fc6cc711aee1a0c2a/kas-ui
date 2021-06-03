@@ -9,9 +9,7 @@ import { ServiceAccountsTableView, FilterType } from './components/ServiceAccoun
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
-export type ServiceAccountsProps = {};
-
-const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
+const ServiceAccounts: React.FC = () => {
   const { t } = useTranslation();
   const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
