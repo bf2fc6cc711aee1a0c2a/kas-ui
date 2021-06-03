@@ -5,12 +5,14 @@ import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
 import { Configuration, DefaultApi, SecurityApi } from '@rhoas/kafka-management-sdk';
-import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 const ResetServiceAccount: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const auth = useAuth();
-  const { kas: { apiBasePath: basePath } } = useConfig();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
   const { addAlert } = useAlert();
   const { store, showModal, hideModal } = useRootModalContext();
   const { serviceAccountToReset } = store?.modalProps || {};
@@ -22,7 +24,7 @@ const ResetServiceAccount: React.FunctionComponent = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
   };
 
   const resetServiceAccount = async (serviceAccount) => {
@@ -30,10 +32,12 @@ const ResetServiceAccount: React.FunctionComponent = () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new SecurityApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new SecurityApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         setIsModalLoading(true);
         await apisService.resetServiceAccountCreds(serviceAccountId).then((response) => {
           const credential = response?.data;

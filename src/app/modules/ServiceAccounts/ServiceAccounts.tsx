@@ -3,23 +3,13 @@ import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { PageSection, PageSectionVariants, Text, AlertVariant, TextContent, Card } from '@patternfly/react-core';
 import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
-import {
-  MASEmptyState,
-  MASLoading,
-  MASFullPageError,
-  MASEmptyStateVariant,
-  useRootModalContext,
-  MODAL_TYPES,
-} from '@app/common';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList, SecurityApi, Configuration } from '@rhoas/kafka-management-sdk';
+import { MASEmptyState, MASLoading, MASEmptyStateVariant, useRootModalContext, MODAL_TYPES } from '@app/common';
+import { ServiceAccountListItem, ServiceAccountList, SecurityApi, Configuration } from '@rhoas/kafka-management-sdk';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
-export type ServiceAccountsProps = {
-};
-
-const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
-
+const ServiceAccounts: React.FC = () => {
   const { t } = useTranslation();
   const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
@@ -34,7 +24,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
   } = useConfig();
 
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
-  const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
+  const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[] | undefined>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
@@ -51,7 +41,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
     }
   };
 
@@ -59,16 +49,22 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new SecurityApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
-        await apisService.get().then((response) => {
-          const serviceAccounts = response?.data;
+        const apisService = new SecurityApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
+        await apisService.getServiceAccounts().then((response) => {
+          const serviceAccounts: ServiceAccountList = response?.data;
           const items = serviceAccounts?.items || [];
           const itemsLength = items?.length;
           setServiceAccountList(serviceAccounts);
-          const sortedServiceAccounts = sortValues(items, 'name', 'asc');
+          const sortedServiceAccounts: ServiceAccountListItem[] | undefined = sortValues<ServiceAccountListItem>(
+            items,
+            'name',
+            'asc'
+          );
           setServiceAccountItems(sortedServiceAccounts);
           /**
            * Todo: handle below logic in separate API call when backend start support pagination
@@ -165,15 +161,20 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = () => {
 
   if (isUserUnauthorized) {
     return (
-      <MASFullPageError
-        titleProps={{
-          title: t('serviceAccount.unauthorized_access_to_service_accounts_title'),
-          headingLevel: 'h2',
-        }}
-        emptyStateBodyProps={{
-          body: t('serviceAccount.unauthorized_access_to_service_accounts_info'),
-        }}
-      />
+      <PageSection variant={PageSectionVariants.default} padding={{ default: 'noPadding' }} isFilled>
+        <MASEmptyState
+          titleProps={{
+            title: t('serviceAccount.unauthorized_access_to_service_accounts_title'),
+            headingLevel: 'h2',
+          }}
+          emptyStateIconProps={{
+            icon: LockIcon,
+          }}
+          emptyStateBodyProps={{
+            body: t('serviceAccount.unauthorized_access_to_service_accounts_info'),
+          }}
+        />
+      </PageSection>
     );
   }
 

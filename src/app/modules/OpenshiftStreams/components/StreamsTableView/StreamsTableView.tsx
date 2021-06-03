@@ -13,7 +13,13 @@ import {
   IExtraColumnData,
 } from '@patternfly/react-table';
 import { AlertVariant, PaginationVariant, Skeleton } from '@patternfly/react-core';
-import { InstanceStatus, isServiceApiError, getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
+import {
+  InstanceStatus,
+  isServiceApiError,
+  getLoadingRowsCount,
+  getFormattedDate,
+  getSkeletonForRows,
+} from '@app/utils';
 import {
   MASPagination,
   MASTable,
@@ -26,7 +32,7 @@ import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 export type FilterValue = {
   value: string;
@@ -130,9 +136,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   cloudProviders,
   onCreate,
 }) => {
-
   const auth = useAuth();
-  const { kas: { apiBasePath: basePath } } = useConfig();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
@@ -196,7 +203,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         const kafkaIndex = currentUserkafkas?.findIndex((item) => item.name === k);
         if (kafkaIndex < 0) {
           removeKafkaFromDeleted(k);
-          addAlert(t('kafka_successfully_deleted', { name: k }), AlertVariant.success);
+          addAlert({ variant: AlertVariant.success, title: t('kafka_successfully_deleted') });
         }
       });
     }
@@ -214,19 +221,23 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         );
         if (instances && instances.length > 0) {
           if (instances[0].status === InstanceStatus.READY) {
-            addAlert(
-              t('kafka_successfully_created'),
-              AlertVariant.success,
-              <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />,
-              'toastCreateKafka-success'
-            );
+            addAlert({
+              variant: AlertVariant.success,
+              title: t('kafka_successfully_created'),
+              description: (
+                <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
+              ),
+              dataTestId: 'toastCreateKafka-success',
+            });
           } else if (instances[0].status === InstanceStatus.FAILED) {
-            addAlert(
-              t('kafka_not_created'),
-              AlertVariant.danger,
-              <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />,
-              'toastCreateKafka-failed'
-            );
+            addAlert({
+              variant: AlertVariant.danger,
+              title: t('kafka_not_created'),
+              description: (
+                <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
+              ),
+              dataTestId: 'toastCreateKafka-failed',
+            });
           }
         }
       });
@@ -257,7 +268,11 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     addAlertAfterSuccessCreation();
   }, [page, perPage, kafkaInstanceItems, currentUserkafkas]);
 
-  const onSelectKebabDropdownOption = (event: React.ChangeEvent<HTMLSelectElement>, originalData: KafkaRequest, selectedOption: string) => {
+  const onSelectKebabDropdownOption = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    originalData: KafkaRequest,
+    selectedOption: string
+  ) => {
     if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
       //set selected row for view instance and connect instance
@@ -424,10 +439,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       throw new Error('kafka instance id is not set');
     }
     const accessToken = await auth?.kas.getToken();
-    const apisService = new DefaultApi(new Configuration({
-      accessToken,
-      basePath,
-    }));
+    const apisService = new DefaultApi(
+      new Configuration({
+        accessToken,
+        basePath,
+      })
+    );
     onDelete();
     hideModal();
 
@@ -447,7 +464,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
        * and translation for specific language
        *
        */
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
     }
   };
 

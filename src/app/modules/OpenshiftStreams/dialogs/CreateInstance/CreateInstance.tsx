@@ -66,10 +66,12 @@ const CreateInstance: React.FunctionComponent = () => {
 
     if (accessToken && id) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         await apisService.getCloudProviderRegions(id).then((res) => {
           const providerRegions = res.data?.items || [];
           const enabledRegions = providerRegions?.filter((p: CloudProvider) => p.enabled);
@@ -87,8 +89,7 @@ const CreateInstance: React.FunctionComponent = () => {
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-
-        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
       }
     }
   };
@@ -144,10 +145,12 @@ const CreateInstance: React.FunctionComponent = () => {
 
     if (accessToken) {
       try {
-        const apisService = new DefaultApi(new Configuration({
-          accessToken,
-          basePath,
-        }));
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
 
         onCreate();
         setCreationInProgress(true);
@@ -168,7 +171,12 @@ const CreateInstance: React.FunctionComponent = () => {
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
           } else {
-            addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
+            addAlert({
+              variant: AlertVariant.danger,
+              title: t('common.something_went_wrong'),
+              description: reason,
+              dataTestId: 'toastCreateKafka-failed',
+            });
           }
         }
 
