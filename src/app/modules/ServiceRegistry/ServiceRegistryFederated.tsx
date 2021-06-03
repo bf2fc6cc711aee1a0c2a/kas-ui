@@ -1,13 +1,13 @@
 import React from 'react';
 import { ServiceRegistry, ServiceRegistryProps } from '@app/modules/ServiceRegistry/ServiceRegistry';
 import { RootModal } from '@app/common';
-import kasi18n from '@i18n/i18n';
 import { I18nextProvider } from 'react-i18next';
+import { initI18N } from "@i18n/i18n";
 // Version of ServiceRegistry for federation
 
 const ServiceRegistryFederated: React.FunctionComponent<ServiceRegistryProps> = () => {
   return (
-    <I18nextProvider i18n={kasi18n}>
+    <I18nextProvider i18n={initI18N()}>
       <RootModal>
         <ServiceRegistry />
       </RootModal>

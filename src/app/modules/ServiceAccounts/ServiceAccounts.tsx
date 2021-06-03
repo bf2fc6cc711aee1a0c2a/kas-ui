@@ -137,7 +137,7 @@ const ServiceAccounts: React.FC = () => {
               <ServiceAccountsTableView
                 page={page}
                 perPage={perPage}
-                total={serviceAccountList?.total || 1}
+                total={/*serviceAccountList?.total ||*/ 1}
                 expectedTotal={0}
                 serviceAccountsDataLoaded={true}
                 serviceAccountItems={serviceAccountItems}

@@ -11,7 +11,7 @@ import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { MASLoading } from '@app/common';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
-import kasi18n from '@i18n/i18n';
+import kasi18n, { initI18N } from '@i18n/i18n';
 import { MASErrorBoundary } from '@app/common';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
@@ -33,7 +33,7 @@ const App: React.FunctionComponent = () => {
   // TODO - index doing router is not desired.
   // Split to App.tsx etc.
   return (
-    <I18nextProvider i18n={kasi18n}>
+    <I18nextProvider i18n={initI18N()}>
       <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
         <KeycloakAuthProvider>
           <Router>
