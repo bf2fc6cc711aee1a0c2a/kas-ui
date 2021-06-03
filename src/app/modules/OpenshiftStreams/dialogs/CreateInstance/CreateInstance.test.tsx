@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { Auth, AuthContext, Config, ConfigContext } from "@bf2/ui-shared";
+import { AlertContext, Auth, AuthContext, Config, ConfigContext } from "@bf2/ui-shared";
 import { CloudRegionList } from "@rhoas/kafka-management-sdk";
 import { AxiosResponse } from "axios";
 
@@ -51,7 +51,11 @@ const setupRender = (props: any) => {
           getUsername: () => Promise.resolve('api_kafka_service'),
         } as Auth}
       >
-        <CreateInstance {...props} />
+        <AlertContext.Provider value={{
+          addAlert: () => {}
+        }}>
+          <CreateInstance {...props} />
+        </AlertContext.Provider>
       </AuthContext.Provider>
       </ConfigContext.Provider>
     </I18nextProvider>

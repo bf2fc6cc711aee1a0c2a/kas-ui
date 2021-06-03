@@ -4,7 +4,7 @@ import { AlertContext, AlertProps } from '@bf2/ui-shared';
 
 type TimeOut = {
   key: string | undefined;
-  timeOut: NodeJS.Timeout | undefined;
+  timeOut: ReturnType<typeof setTimeout> | undefined;
 };
 
 export const AlertProvider: React.FunctionComponent = ({ children }) => {
@@ -17,8 +17,8 @@ export const AlertProvider: React.FunctionComponent = ({ children }) => {
       .filter((alert) => !timersKeys.includes(alert?.id))
       .map((alert) => {
         const { id = '' } = alert;
-        const timeOut = setTimeout(() => hideAlert(id), 8000);
-        return { key: alert.id, timeOut };
+        const timeOut: ReturnType<typeof setTimeout> = setTimeout(() => hideAlert(id), 8000);
+        return { key: alert.id, timeOut } as TimeOut;
       });
     setTimers([...timers, ...timeOuts]);
     return () => timers.forEach((timer) => timer?.timeOut && clearTimeout(timer.timeOut));

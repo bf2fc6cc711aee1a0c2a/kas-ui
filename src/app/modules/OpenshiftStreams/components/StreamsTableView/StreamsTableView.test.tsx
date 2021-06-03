@@ -5,7 +5,7 @@ import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { Auth, AuthContext } from "@bf2/ui-shared";
+import { AlertContext, Auth, AuthContext, Config, ConfigContext } from "@bf2/ui-shared";
 
 const kafkaInstanceItems = [
   {
@@ -48,9 +48,19 @@ describe('<StreamsTableView/>', () => {
     render(
       <MemoryRouter>
         <I18nextProvider i18n={i18nForTest}>
-          <AuthContext.Provider value={authValue}>
-            <StreamsTableView {...args} />
-          </AuthContext.Provider>
+          <ConfigContext.Provider value={{
+            kas: {
+              apiBasePath: ""
+            }
+          } as Config}>
+            <AuthContext.Provider value={authValue}>
+              <AlertContext.Provider value={{
+                addAlert: () => {}
+              }}>
+                <StreamsTableView {...args} />
+              </AlertContext.Provider>
+            </AuthContext.Provider>
+          </ConfigContext.Provider>
         </I18nextProvider>
       </MemoryRouter>
     );
@@ -63,6 +73,7 @@ describe('<StreamsTableView/>', () => {
     onViewInstance: jest.fn(),
     onViewConnection: jest.fn(),
     getOnConnectToInstancePath: jest.fn(),
+    getConnectToRoutePath: jest.fn(),
     onConnectToRoute: jest.fn(),
     mainToggle: false,
     refresh: jest.fn(),
