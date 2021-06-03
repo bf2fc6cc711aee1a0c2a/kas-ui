@@ -323,5 +323,11 @@
     "sasl_oauthbearer_description": "日本語 Use your service account credentials and a token endpoint URL to authenticate your client with the Kafka instance.",
     "sasl_plain_popover_content": "日本語 Explanation that this is available for tools that do not support the Oauth method.",
     "sasl_plain_description": "日本語 Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance."
+  },
+  "metrics": {
+    "available_disk_space": "日本語 Available disk space",
+    "log_size_per_partition": "日本語 Log size per partition",
+    "incoming_bytes_per_topic": "日本語 Incoming bytes per topic",
+    "outgoing_bytes_per_topic": "日本語 Outgoing bytes per topic"
   }
 }

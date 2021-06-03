@@ -8,6 +8,7 @@ import { LastLocationProvider, useLastLocation } from 'react-router-last-locatio
 import { OpenshiftStreamsConnected } from '@app/modules/OpenshiftStreams';
 import { ServiceRegistryConnected } from '@app/modules/ServiceRegistry';
 import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
+import { MetricsConnected } from '@app/modules/Metrics'
 
 let routeFocusTimer: number;
 
@@ -52,6 +53,13 @@ const routes: AppRouteConfig[] = [
     label: 'Service Accounts',
     path: '/service-accounts',
     title: 'Service Accounts',
+  },
+  {
+    component: MetricsConnected,
+    exact: true,
+    label: 'Metrics',
+    path: '/metrics',
+    title: 'Metrics',
   },
 ];
 
