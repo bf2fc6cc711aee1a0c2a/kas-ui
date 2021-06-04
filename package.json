@@ -14,6 +14,7 @@
     "dr:surge": "node dr-surge.js",
     "build": "webpack --config webpack.prod.js && npm run dr:surge",
     "start": "node server.js",
+    "mock": "asapi",
     "start:dev": "webpack serve --https --hot --color --progress --config webpack.dev.js",
     "start:federate": "HOST=localhost PORT=9000 PROTOCOL=http webpack serve --hot --color --progress --config webpack.dev.js",
     "test": "jest",
@@ -28,6 +29,7 @@
     "i18n": "i18next 'src/**/**/*.{ts,tsx}' [-oc] -c './i18next-parser.config.js' -o './src/locales/$LOCALE/$NAMESPACE.json'"
   },
   "devDependencies": {
+    "@rhoas/api-mock": "0.1.2",
     "@testing-library/jest-dom": "5.13.0",
     "@testing-library/react": "11.2.7",
     "@testing-library/user-event": "13.1.9",
@@ -97,7 +99,7 @@
     "i18next-http-backend": "1.2.6",
     "i18next-parser": "4.2.0",
     "i18next-pseudo": "2.2.1",
-    "keycloak-js": "13.0.1",
+    "keycloak-js": "9.0.3",
     "msw": "0.29.0",
     "openapi-backend": "3.9.2",
     "path": "0.12.7",
