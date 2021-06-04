@@ -86,9 +86,7 @@ We also provide a mock server which can be useful for developing locally if you 
 To start the mock server
 
 ```
-cd mas-mock
-npm install
-npm run start # API running at http://localhost:8000
+npm run mock
 BASE_PATH=http://localhost:8000 npm run start:dev # start the UI
 ```
 
