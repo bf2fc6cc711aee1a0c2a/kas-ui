@@ -5,8 +5,7 @@
   ],
   "groupName": "all",
    "ignoreDeps": [
-    "keycloak-js",
-    
+    "keycloak-js"
   ],
   "automerge": false,
   "major": {
