@@ -5,7 +5,7 @@ import { I18nextProvider } from 'react-i18next';
 import { initI18N } from '@i18n/i18n';
 // Version of ServiceRegistry for federation
 
-const ServiceRegistryFederated: React.FC = () => {
+const ServiceRegistryFederated: React.FunctionComponent = () => {
   return (
     <I18nextProvider i18n={initI18N()}>
       <RootModal>
