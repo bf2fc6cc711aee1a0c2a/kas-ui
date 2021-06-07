@@ -4,10 +4,9 @@ import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { AlertContext, Auth, AuthContext, Config, ConfigContext } from "@bf2/ui-shared";
-import { CloudRegionList } from "@rhoas/kafka-management-sdk";
-import { AxiosResponse } from "axios";
-
+import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@bf2/ui-shared';
+import { CloudRegionList } from '@rhoas/kafka-management-sdk';
+import { AxiosResponse } from 'axios';
 
 const listCloudProviderRegions: AxiosResponse<CloudRegionList> = {
   data: {
@@ -38,26 +37,33 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
 const setupRender = (props: any) => {
   render(
     <I18nextProvider i18n={i18nForTest}>
-      <ConfigContext.Provider value={{
-        kas: {
-          apiBasePath: ""
+      <ConfigContext.Provider
+        value={
+          {
+            kas: {
+              apiBasePath: '',
+            },
+          } as Config
         }
-      } as Config}>
-
-      <AuthContext.Provider
-        value={{
-          kas: {
-            getToken: () => Promise.resolve('test-token'),
-          },
-          getUsername: () => Promise.resolve('api_kafka_service'),
-        } as Auth}
       >
-        <AlertContext.Provider value={{
-          addAlert: () => {}
-        }}>
-          <CreateInstance {...props} />
-        </AlertContext.Provider>
-      </AuthContext.Provider>
+        <AuthContext.Provider
+          value={
+            {
+              kas: {
+                getToken: () => Promise.resolve('test-token'),
+              },
+              getUsername: () => Promise.resolve('api_kafka_service'),
+            } as Auth
+          }
+        >
+          <AlertContext.Provider
+            value={{
+              addAlert: () => {},
+            }}
+          >
+            <CreateInstance {...props} />
+          </AlertContext.Provider>
+        </AuthContext.Provider>
       </ConfigContext.Provider>
     </I18nextProvider>
   );

@@ -16,7 +16,6 @@ declare const window: Window & {
 };
 
 export const initI18N = () => {
-
   const params = new URLSearchParams(window.location.search);
   const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
@@ -88,5 +87,4 @@ export const initI18N = () => {
   });
 
   return kasi18n;
-
-}
+};

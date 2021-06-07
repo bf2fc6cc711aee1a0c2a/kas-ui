@@ -6,7 +6,7 @@ import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
-import { MemoryRouter } from "react-router";
+import { MemoryRouter } from 'react-router';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
@@ -76,7 +76,7 @@ describe('Instance Drawer', () => {
   });*/
 
   // TODO Fix test
- /*it('should render loading if no instance is available', () => {
+  /*it('should render loading if no instance is available', () => {
     const { getByTestId, getByRole } = render(
       <MemoryRouter>
         <Drawer isExpanded={true} onExpand={jest.fn()}>
@@ -198,7 +198,6 @@ describe('Drawer Connection Tab', () => {
     expect(getByText('drawer_resource_tab_body_description_2')).toBeInTheDocument();
     expect(getByText('bootstrap_server')).toBeInTheDocument();
   });*/
-
   // TODO Fix test
   /*it('should render connection tab with resource and sample code tabs in toggle on', () => {
     const { getByText, getByRole } = setup(jest.fn(), true, true, jest.fn(), 'Connection');
@@ -218,7 +217,6 @@ describe('Drawer Connection Tab', () => {
     const resourcesTabClasses = resourceButton?.parentElement?.className?.split(' ');
     expect(resourcesTabClasses).toContain('pf-m-current');
   });*/
-
   // TODO Fix test
   /*it('should render connection tab with sample code as active tab in toggle on', () => {
     const { getByText, getByRole } = setup(jest.fn(), true, true, jest.fn(), 'Connection');
@@ -239,7 +237,6 @@ describe('Drawer Connection Tab', () => {
     const sampleCodeTabClasses = sampleButton?.parentElement?.className?.split(' ');
     expect(sampleCodeTabClasses).toContain('pf-m-current');
   });*/
-
   // TODO Fix test
   /*it('should render server responded bootstrap server host', () => {
     const instance = { ...instanceDetail };
@@ -250,7 +247,6 @@ describe('Drawer Connection Tab', () => {
     const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
     expect(clipboardInput.value).toEqual(instance.bootstrapServerHost);
   });*/
-
   // TODO Fix test
   /*it('should render bootstrap server host with default port', () => {
     const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Connection');
@@ -258,7 +254,6 @@ describe('Drawer Connection Tab', () => {
     const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
     expect(clipboardInput.value).toEqual(instanceDetail.bootstrapServerHost + ':443');
   });*/
-
   // TODO Fix test
   /*it('should render bootstrap server host with default port', () => {
     const instance = { ...instanceDetail };

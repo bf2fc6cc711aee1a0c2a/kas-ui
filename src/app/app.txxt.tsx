@@ -3,7 +3,6 @@ import { App } from '@app/index';
 import { mount, shallow } from 'enzyme';
 import { Button } from '@patternfly/react-core';
 
-
 // TODO Fix test
 describe('App tests', () => {
   // TODO Fix test

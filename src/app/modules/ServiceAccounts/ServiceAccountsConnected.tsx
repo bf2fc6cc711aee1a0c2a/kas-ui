@@ -1,17 +1,21 @@
 import React from 'react';
 import { ServiceAccounts } from './ServiceAccounts';
 import { AlertProvider, RootModal } from '@app/common';
-import { Config, ConfigContext } from "@bf2/ui-shared";
+import { Config, ConfigContext } from '@bf2/ui-shared';
 
 declare const __BASE_PATH__: string;
 
 export const ServiceAccountsConnected: React.FunctionComponent = () => {
   return (
-    <ConfigContext.Provider value={{
-      kas: {
-        apiBasePath: __BASE_PATH__
+    <ConfigContext.Provider
+      value={
+        {
+          kas: {
+            apiBasePath: __BASE_PATH__,
+          },
+        } as Config
       }
-    } as Config}>
+    >
       <AlertProvider>
         <RootModal>
           <ServiceAccounts />

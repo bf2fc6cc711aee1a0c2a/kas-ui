@@ -66,7 +66,7 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     addAlert({
       title: t('something_went_wrong'),
       variant: AlertVariant.danger,
-      description: reason
+      description: reason,
     });
   };
 
@@ -164,7 +164,7 @@ const CreateServiceAccount: React.FunctionComponent = () => {
           resetForm();
           addAlert({
             title: t('serviceAccount.service_account_creation_success_message'),
-            variant: AlertVariant.success
+            variant: AlertVariant.success,
           });
           fetchServiceAccounts && fetchServiceAccounts();
         });

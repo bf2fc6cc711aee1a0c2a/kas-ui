@@ -4,7 +4,6 @@ import { TextContent, Text, TextVariants, Button } from '@patternfly/react-core'
 import CopyIcon from '@patternfly/react-icons/dist/js/icons/copy-icon';
 
 export const SampleCodeTab: React.FunctionComponent = () => {
-
   const { t } = useTranslation();
 
   return (

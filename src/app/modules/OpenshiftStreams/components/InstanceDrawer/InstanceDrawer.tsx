@@ -34,7 +34,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   tokenEndPointUrl,
   notRequiredDrawerContentBackground,
 }) => {
-
   dayjs.extend(localizedFormat);
   const { t } = useTranslation();
   const { name, status } = instanceDetail || {};

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import { OpenshiftStreams } from './OpenshiftStreams';
 import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
 import { RootModal } from '@app/common/RootModal';
-import { Config, ConfigContext } from "@bf2/ui-shared";
+import { Config, ConfigContext } from '@bf2/ui-shared';
 
 declare const __BASE_PATH__: string;
 
@@ -19,11 +19,15 @@ export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
   };
 
   return (
-    <ConfigContext.Provider value={{
-      kas: {
-        apiBasePath: __BASE_PATH__
+    <ConfigContext.Provider
+      value={
+        {
+          kas: {
+            apiBasePath: __BASE_PATH__,
+          },
+        } as Config
       }
-    } as Config}>
+    >
       <AlertProvider>
         <RootModal>
           <OpenshiftStreams

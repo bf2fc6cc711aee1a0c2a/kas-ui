@@ -12,7 +12,7 @@ export let keycloak: KeycloakInstance | undefined;
 export const getKeycloakInstance = async (): Promise<KeycloakInstance | undefined> => {
   if (!keycloak) await init();
   return keycloak;
-}
+};
 
 /**
  * Initiate keycloak instance.
@@ -26,14 +26,14 @@ export const init = async (): Promise<void> => {
     keycloak = Keycloak();
     if (keycloak) {
       await keycloak.init({
-        onLoad: 'login-required'
+        onLoad: 'login-required',
       });
     }
   } catch {
     keycloak = undefined;
     console.warn('Auth: Unable to initialize keycloak. Client side will not be configured to use authentication');
   }
-}
+};
 
 /**
  * Use keycloak update token function to retrieve
@@ -48,7 +48,7 @@ export const getKeyCloakToken = async (): Promise<string> => {
   if (keycloak?.token) return keycloak.token;
   console.error('No keycloak token available');
   return 'foo';
-}
+};
 
 /**
  * Use keycloak update token function to retrieve
@@ -63,7 +63,7 @@ export const getParsedKeyCloakToken = async (): Promise<KeycloakTokenParsed> => 
   if (keycloak?.tokenParsed) return keycloak.tokenParsed;
   console.error('No keycloak token available');
   return {} as KeycloakTokenParsed;
-}
+};
 
 /**
  * logout of keycloak, clear cache and offline store then redirect to
@@ -77,4 +77,4 @@ export const logout = async (keycloak: Keycloak.KeycloakInstance | undefined): P
   if (keycloak) {
     await keycloak.logout();
   }
-}
+};

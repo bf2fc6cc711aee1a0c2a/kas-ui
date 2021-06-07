@@ -30,7 +30,7 @@ describe('<MASEmptyState/>', () => {
     const onClick = jest.fn();
     const props: MASEmptyStateProps = {
       titleProps: { title: 'empty state', headingLevel: 'h1', size: '2xl' },
-      emptyStateProps: { className: 'empty-state-class', variant: EmptyStateVariant.large , isFullHeight: true },
+      emptyStateProps: { className: 'empty-state-class', variant: EmptyStateVariant.large, isFullHeight: true },
       emptyStateIconProps: { className: 'icon-class', icon: MinusCircleIcon, variant: 'icon' },
       emptyStateBodyProps: { className: 'empty-body-class', body: 'This is empty state body' },
       buttonProps: { title: 'create instance', variant: ButtonVariant.primary, onClick },

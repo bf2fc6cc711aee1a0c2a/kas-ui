@@ -68,7 +68,7 @@ const DeleteInstanceConnected = () => {
     addAlert({
       title: t('something_went_wrong'),
       variant: AlertVariant.danger,
-      description: reason
+      description: reason,
     });
   };
 

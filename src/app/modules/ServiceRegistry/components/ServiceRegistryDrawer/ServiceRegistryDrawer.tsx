@@ -54,7 +54,7 @@ const ServiceRegistryDrawer: React.FC<ServiceRegistryDrawerProps> = ({
       panelBodyContent={panelBodyContent}
       drawerHeaderProps={{
         text: { label: t('serviceRegistry.connection_details') },
-        title: { value: "TODO", headingLevel: 'h1' },
+        title: { value: 'TODO', headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}
       notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}

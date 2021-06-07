@@ -22,19 +22,21 @@ export type DetailsTabProps = {
   instanceDetail?: KafkaRequest;
 };
 
-export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({ mainToggle, instanceDetail }: DetailsTabProps) => {
-
+export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({
+  mainToggle,
+  instanceDetail,
+}: DetailsTabProps) => {
   dayjs.extend(localizedFormat);
   const { t } = useTranslation();
   const { id, owner, created_at, updated_at } = instanceDetail || {};
 
-  const renderTextListItem = (title: string, value?: string) => (
-    value &&
-    <>
-      <TextListItem component={TextListItemVariants.dt}>{title}</TextListItem>
-      <TextListItem component={TextListItemVariants.dd}>{value}</TextListItem>
-    </>
-  );
+  const renderTextListItem = (title: string, value?: string) =>
+    value && (
+      <>
+        <TextListItem component={TextListItemVariants.dt}>{title}</TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>{value}</TextListItem>
+      </>
+    );
 
   return (
     <div className="mas--details__drawer--tab-content">

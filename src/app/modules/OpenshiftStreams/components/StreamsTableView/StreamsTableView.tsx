@@ -17,7 +17,7 @@ import {
   getLoadingRowsCount,
   getSkeletonForRows,
   InstanceStatus,
-  isServiceApiError
+  isServiceApiError,
 } from '@app/utils';
 import {
   MASEmptyState,
@@ -105,36 +105,36 @@ export const getDeleteInstanceModalConfig = (
 };
 
 const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
-                                                                        mainToggle,
-                                                                        kafkaInstanceItems,
-                                                                        onViewInstance,
-                                                                        onViewConnection,
-                                                                        onConnectToRoute,
-                                                                        getConnectToRoutePath,
-                                                                        refresh,
-                                                                        page,
-                                                                        perPage,
-                                                                        total,
-                                                                        kafkaDataLoaded,
-                                                                        onDelete,
-                                                                        expectedTotal,
-                                                                        filteredValue,
-                                                                        setFilteredValue,
-                                                                        setFilterSelected,
-                                                                        filterSelected,
-                                                                        orderBy,
-                                                                        setOrderBy,
-                                                                        isDrawerOpen,
-                                                                        isMaxCapacityReached,
-                                                                        buttonTooltipContent,
-                                                                        isDisabledCreateButton,
-                                                                        loggedInUser,
-                                                                        labelWithTooltip,
-                                                                        setWaitingForDelete,
-                                                                        currentUserkafkas,
-                                                                        cloudProviders,
-                                                                        onCreate,
-                                                                      }) => {
+  mainToggle,
+  kafkaInstanceItems,
+  onViewInstance,
+  onViewConnection,
+  onConnectToRoute,
+  getConnectToRoutePath,
+  refresh,
+  page,
+  perPage,
+  total,
+  kafkaDataLoaded,
+  onDelete,
+  expectedTotal,
+  filteredValue,
+  setFilteredValue,
+  setFilterSelected,
+  filterSelected,
+  orderBy,
+  setOrderBy,
+  isDrawerOpen,
+  isMaxCapacityReached,
+  buttonTooltipContent,
+  isDisabledCreateButton,
+  loggedInUser,
+  labelWithTooltip,
+  setWaitingForDelete,
+  currentUserkafkas,
+  cloudProviders,
+  onCreate,
+}) => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
@@ -204,7 +204,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           removeKafkaFromDeleted(k);
           addAlert({
             title: t('kafka_successfully_deleted', { name: k }),
-            variant: AlertVariant.success
+            variant: AlertVariant.success,
           });
         }
       });
@@ -226,17 +226,19 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
             addAlert({
               title: t('kafka_successfully_created'),
               variant: AlertVariant.success,
-              description: <span
-                dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }}/>,
-              dataTestId: 'toastCreateKafka-success'
+              description: (
+                <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
+              ),
+              dataTestId: 'toastCreateKafka-success',
             });
           } else if (instances[0].status === InstanceStatus.FAILED) {
             addAlert({
               title: t('kafka_not_created'),
               variant: AlertVariant.danger,
-              description: <span
-                dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }}/>,
-              dataTestId: 'toastCreateKafka-failed'
+              description: (
+                <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
+              ),
+              dataTestId: 'toastCreateKafka-failed',
             });
           }
         }
@@ -370,7 +372,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!kafkaDataLoaded) {
-      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton/>, length: tableColumns.length });
+      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
       const { name, cloud_provider, region, created_at, status, owner } = row;
@@ -388,7 +390,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           regionDisplayName,
           owner,
           {
-            title: <StatusColumn status={status} instanceName={name}/>,
+            title: <StatusColumn status={status} instanceName={name} />,
           },
           {
             title: getFormattedDate(created_at, t('ago')),
@@ -470,7 +472,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       addAlert({
         title: t('common.something_went_wrong'),
         variant: AlertVariant.danger,
-        description: reason
+        description: reason,
       });
     }
   };

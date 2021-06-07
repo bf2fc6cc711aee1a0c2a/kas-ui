@@ -59,12 +59,14 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   emptyStateBodyProps,
   children,
 }: MASEmptyStateProps) => {
-
   const { variant: buttonVariant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
   const { title, ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
-  const { variant: masEmptyStateVariant = MASEmptyStateVariant.GettingStarted, className, ...restEmptyStateProps } =
-    emptyStateProps || {};
+  const {
+    variant: masEmptyStateVariant = MASEmptyStateVariant.GettingStarted,
+    className,
+    ...restEmptyStateProps
+  } = emptyStateProps || {};
 
   const NotFoundImg = () => <img src={NotFoundIcon} alt="Not found page" width="128px" />;
 

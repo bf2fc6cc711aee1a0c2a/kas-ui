@@ -41,7 +41,7 @@ export const useRootModalContext = (): RootModalContext => useContext(RootModalC
 type RootModalStore = {
   modalType: string;
   modalProps: any;
-} 
+};
 
 export const RootModal = ({ children }) => {
   const [store, setStore] = useState<RootModalStore>();

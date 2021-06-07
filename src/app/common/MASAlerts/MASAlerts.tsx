@@ -38,7 +38,7 @@ export const AlertProvider: React.FunctionComponent = ({ children }) => {
 
   return (
     <AlertContext.Provider value={{ addAlert }}>
-      <MASAlertToastGroup alerts={alerts} onCloseAlert={hideAlert}/>
+      <MASAlertToastGroup alerts={alerts} onCloseAlert={hideAlert} />
       {children}
     </AlertContext.Provider>
   );

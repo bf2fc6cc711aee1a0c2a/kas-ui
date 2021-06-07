@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 type XDocument = Document & {
-  msHidden: string
-  webkitHidden: string
+  msHidden: string;
+  webkitHidden: string;
 };
 
 export function getBrowserVisibilityProp(): string {
@@ -32,7 +32,10 @@ export function getIsDocumentHidden(): boolean {
   return !document[getBrowserDocumentHiddenProp()];
 }
 
-export function usePageVisibility(): { isVisible: boolean, setIsVisible: React.Dispatch<React.SetStateAction<boolean>> } {
+export function usePageVisibility(): {
+  isVisible: boolean;
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+} {
   const [isVisible, setIsVisible] = useState(getIsDocumentHidden());
   const onVisibilityChange = () => setIsVisible(getIsDocumentHidden());
   useEffect(() => {

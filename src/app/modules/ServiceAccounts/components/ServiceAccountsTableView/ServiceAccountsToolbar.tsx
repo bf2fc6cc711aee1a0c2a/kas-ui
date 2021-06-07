@@ -48,7 +48,6 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   setFilteredValue,
   handleCreateModal,
 }: ServiceAccountsToolbarProps) => {
-
   const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();

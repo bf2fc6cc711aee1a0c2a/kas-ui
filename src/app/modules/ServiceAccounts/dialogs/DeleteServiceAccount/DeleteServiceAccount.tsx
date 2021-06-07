@@ -43,7 +43,7 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
           setIsLoading(false);
           addAlert({
             title: t('serviceAccount.service_account_successfully_deleted', { name: serviceAccount?.name }),
-            variant: AlertVariant.success
+            variant: AlertVariant.success,
           });
           fetchServiceAccounts();
         });
@@ -58,7 +58,7 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
         addAlert({
           title: t('common.something_went_wrong'),
           variant: AlertVariant.danger,
-          description: reason
+          description: reason,
         });
       }
     }

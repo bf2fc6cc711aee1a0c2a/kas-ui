@@ -92,7 +92,7 @@ const CreateInstance: React.FunctionComponent = () => {
         addAlert({
           title: t('common.something_went_wrong'),
           variant: AlertVariant.danger,
-          description: reason
+          description: reason,
         });
       }
     }
@@ -179,7 +179,7 @@ const CreateInstance: React.FunctionComponent = () => {
               title: t('common.something_went_wrong'),
               variant: AlertVariant.danger,
               description: reason,
-              dataTestId: 'toastCreateKafka-failed'
+              dataTestId: 'toastCreateKafka-failed',
             });
           }
         }
@@ -333,7 +333,7 @@ const CreateInstance: React.FunctionComponent = () => {
             />
             <Tooltip
               content={t('kafkaInstance.availabilty_zones_tooltip_message')}
-              reference={(() => document.getElementById('multi') || document.createElement('span'))}
+              reference={() => document.getElementById('multi') || document.createElement('span')}
             />
           </ToggleGroup>
         </FormGroup>

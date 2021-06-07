@@ -413,23 +413,20 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               {cloudProviderFilterOptions.map((option, index) => {
                 const reference = document.getElementById('cloud-provider-select');
                 return (
-                <SelectOption
-                  isDisabled={
-                    option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
-                  }
-                  key={index}
-                  value={option.value}
-                >
-                  {isMaxFilter && (
-                    <Tooltip
-                      isVisible={isMaxFilter}
-                      content={tooltipContent()}
-                      reference={reference || undefined}
-                    />
-                  )}
-                  {option.label}
-                </SelectOption>
-              )})}
+                  <SelectOption
+                    isDisabled={
+                      option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
+                    }
+                    key={index}
+                    value={option.value}
+                  >
+                    {isMaxFilter && (
+                      <Tooltip isVisible={isMaxFilter} content={tooltipContent()} reference={reference || undefined} />
+                    )}
+                    {option.label}
+                  </SelectOption>
+                );
+              })}
             </Select>
           )}
         </ToolbarFilter>
@@ -455,21 +452,18 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               {regionFilterOptions.map((option, index) => {
                 const reference = document.getElementById('region-select');
                 return (
-                <SelectOption
-                  isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
-                  key={index}
-                  value={option.value}
-                >
-                  {isMaxFilter && (
-                    <Tooltip
-                      isVisible={isMaxFilter}
-                      content={tooltipContent()}
-                      reference={reference || undefined}
-                    />
-                  )}
-                  {option.label}
-                </SelectOption>
-              )})}
+                  <SelectOption
+                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
+                    key={index}
+                    value={option.value}
+                  >
+                    {isMaxFilter && (
+                      <Tooltip isVisible={isMaxFilter} content={tooltipContent()} reference={reference || undefined} />
+                    )}
+                    {option.label}
+                  </SelectOption>
+                );
+              })}
             </Select>
           )}
         </ToolbarFilter>
@@ -540,15 +534,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     value={option.value}
                   >
                     {isMaxFilter && (
-                      <Tooltip
-                        isVisible={isMaxFilter}
-                        content={tooltipContent()}
-                        reference={reference || undefined}
-                      />
+                      <Tooltip isVisible={isMaxFilter} content={tooltipContent()} reference={reference || undefined} />
                     )}
                     {option.label}
                   </SelectOption>
-                )
+                );
               })}
             </Select>
           )}

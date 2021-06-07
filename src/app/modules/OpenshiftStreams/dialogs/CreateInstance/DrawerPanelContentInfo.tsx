@@ -16,7 +16,6 @@ import {
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
 const DrawerPanelContentInfo: React.FunctionComponent = () => {
-
   const { t } = useTranslation();
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
 
@@ -54,7 +53,13 @@ const DrawerPanelContentInfo: React.FunctionComponent = () => {
             <TextListItem component={TextListItemVariants.dd}>up to 1 MB</TextListItem>
           </GridItem>
         </Grid>
-        <Button isSmall isInline variant={ButtonVariant.link} style={{ marginTop: '20px' }} onClick={() => (qsContext.setActiveQuickStart && qsContext.setActiveQuickStart("getting-started"))}>
+        <Button
+          isSmall
+          isInline
+          variant={ButtonVariant.link}
+          style={{ marginTop: '20px' }}
+          onClick={() => qsContext.setActiveQuickStart && qsContext.setActiveQuickStart('getting-started')}
+        >
           {t('common.quick_start_guide_message')}
         </Button>
       </TextList>

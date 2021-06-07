@@ -27,7 +27,7 @@ const ResetServiceAccount: React.FunctionComponent = () => {
     addAlert({
       title: t('something_went_wrong'),
       variant: AlertVariant.danger,
-      description: reason
+      description: reason,
     });
   };
 
