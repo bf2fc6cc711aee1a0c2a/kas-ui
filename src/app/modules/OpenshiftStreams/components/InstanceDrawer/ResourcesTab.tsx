@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   TextContent,
@@ -11,11 +12,9 @@ import {
   Skeleton,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { KafkaRequest } from '../../../../../openapi/api';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
-import { CreateServiceAccountModal } from '@app/modules/ServiceAccounts/components';
 import { useRootModalContext, MODAL_TYPES } from '@app/common';
+import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;
@@ -59,7 +58,6 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           {externalServer}
         </ClipboardCopy>
       )}
-
       <TextContent className="pf-u-pb-sm">
         <Text component={TextVariants.h3} className="pf-u-mt-xl">
           {t('serviceAccount.service_accounts_small')}

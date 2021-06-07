@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   TextContent,
   Text,
@@ -12,10 +13,10 @@ import {
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
-const DrawerPanelContentInfo = () => {
+const DrawerPanelContentInfo: React.FunctionComponent = () => {
+
   const { t } = useTranslation();
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
 

@@ -1,23 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   IAction,
   IExtraData,
   IRowData,
   ISeparator,
-  IRowCell,
-  sortable,
   ISortBy,
   SortByDirection,
   IExtraColumnData,
   cellWidth,
 } from '@patternfly/react-table';
-import { Skeleton, PaginationVariant } from '@patternfly/react-core';
-import { MASPagination, MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
-import { getLoadingRowsCount, getFormattedDate } from '@app/utils';
-import { DefaultApi, ServiceAccountRequest, ServiceAccountListItem } from '../../../../../openapi/api';
+import { Skeleton } from '@patternfly/react-core';
+import { MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
+import { getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
+import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
-import { AuthContext } from '@app/auth/AuthContext';
+import { useAuth } from '@bf2/ui-shared';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -49,12 +47,12 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
+  const auth = useAuth();
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    authContext?.getUsername().then((username) => setLoggedInUser(username));
+    auth?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
 
   const tableColumns = [
@@ -80,19 +78,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
     if (!serviceAccountsDataLoaded) {
-      // for loading state
-      const cells: (React.ReactNode | IRowCell)[] = [];
-      //get exact number of skeleton cells based on total columns
-      for (let i = 0; i < tableColumns.length; i++) {
-        cells.push({ title: <Skeleton /> });
-      }
-      // get exact of skeleton rows based on expected total count of instances
-      for (let i = 0; i < loadingCount; i++) {
-        tableRow.push({
-          cells: cells,
-        });
-      }
-      return tableRow;
+      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
@@ -105,7 +91,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     return tableRow;
   };
 
-  const getActionResolver = (rowData: IRowData, extraData: IExtraData) => {
+  const getActionResolver = (rowData: IRowData) => {
     if (!serviceAccountsDataLoaded) {
       return [];
     }
@@ -155,7 +141,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   };
 
   const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData, _extraData);
+    return getActionResolver(rowData);
   };
 
   const getParameterForSortIndex = (index: number) => {
@@ -192,7 +178,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
   };
 
-  const onSort = (_event: any, columnIndex: number, sortByDirection: SortByDirection, extraData: IExtraColumnData) => {
+  const onSort = (_event: any, columnIndex: number, sortByDirection: SortByDirection) => {
     setOrderBy && setOrderBy(`${getParameterForSortIndex(columnIndex)} ${sortByDirection}`);
   };
 

@@ -29,7 +29,7 @@ const MASPagination: FunctionComponent<PaginationProps> = ({
   );
 
   const onSetPage = useCallback(
-    (_: any, newPage: number) => {
+    (_: unknown, newPage: number) => {
       setSearchParam('page', newPage.toString());
       history.push({
         search: searchParams.toString(),
@@ -39,7 +39,7 @@ const MASPagination: FunctionComponent<PaginationProps> = ({
   );
 
   const onPerPageSelect = useCallback(
-    (_: any, newPerPage: number) => {
+    (_: unknown, newPerPage: number) => {
       setSearchParam('page', '1');
       setSearchParam('perPage', newPerPage.toString());
       history.push({

@@ -1,0 +1,24 @@
+{
+"extends": [
+    "config:base",
+    ":pinAllExceptPeerDependencies"
+  ],
+  "groupName": "all",
+   "ignoreDeps": [
+    "keycloak-js"
+  ],
+  "automerge": false,
+  "major": {
+    "automerge": false
+  },
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/__mocks__/**"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^@rhoas"],
+      "groupName": "RHOAS SDK packages"
+    }
+  ]
+}

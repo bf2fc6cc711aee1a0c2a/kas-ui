@@ -9,7 +9,7 @@ describe('<MASDeleteModal/>', () => {
   const handleModalToggle = jest.fn();
   const props: MASDeleteModalProps = {
     isModalOpen: true,
-    modalProps: { title: 'test title' },
+    title: 'test title',
     handleModalToggle,
   };
 
@@ -33,8 +33,8 @@ describe('<MASDeleteModal/>', () => {
     const onDelete = jest.fn();
     const props = {
       isModalOpen: true,
+      title: 'test title',
       modalProps: {
-        title: 'test title',
         variant: ModalVariant.medium,
         ['aria-label']: 'delete modal',
         showClose: true,

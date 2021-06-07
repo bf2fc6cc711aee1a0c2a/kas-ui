@@ -3,7 +3,7 @@ import { TextContent, Text, TextVariants, Button } from '@patternfly/react-core'
 import { CopyIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-export const SampleCodeTab = () => {
+export const SampleCodeTab: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const editors = [
     { type: t('common.java'), code: 'code goes here' },

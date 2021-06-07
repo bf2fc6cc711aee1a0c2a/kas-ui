@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import { MASDrawer, MASDrawerProps } from '@app/common';
@@ -54,7 +54,7 @@ const ServiceRegistryDrawer: React.FC<ServiceRegistryDrawerProps> = ({
       panelBodyContent={panelBodyContent}
       drawerHeaderProps={{
         text: { label: t('serviceRegistry.connection_details') },
-        title: { value: name, headingLevel: 'h1' },
+        title: { value: "TODO", headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}
       notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}

@@ -275,6 +275,8 @@ See`keycloak.example.json` for example content.
 
 3. Run the application.
 
+> NOTE: Keycloak.js package updates are disabled and should be done manually if needed.
+
 ### Using Keycloak Profile in the application
 
 ```js

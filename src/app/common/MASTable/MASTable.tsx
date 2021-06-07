@@ -38,7 +38,6 @@ const MASTable: FunctionComponent<MASTableProps> = ({
     'aria-label': ariaLabel,
     variant,
     className,
-    rowWrapper,
     hasDefaultCustomRowWrapper = false,
     ...restProps
   } = tableProps;

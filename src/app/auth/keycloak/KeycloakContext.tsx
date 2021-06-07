@@ -1,7 +1,7 @@
 import React from 'react';
 import { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
 import { getKeyCloakToken, getParsedKeyCloakToken } from '@app/auth/keycloak/keycloakAuth';
-import { AuthContext, IAuthContext } from '@app/auth/AuthContext';
+import { Auth, AuthContext } from "@bf2/ui-shared";
 
 // This is a context which can manage the keycloak
 export interface IKeycloakContext {
@@ -11,16 +11,18 @@ export interface IKeycloakContext {
 
 export const KeycloakContext = React.createContext<IKeycloakContext>({ keycloak: undefined });
 
-export const KeycloakAuthProvider = (props) => {
+export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
 
   const getUsername = () => {
     return getParsedKeyCloakToken().then(token => token['username']);
   }
 
   const authTokenContext = {
-    getToken: getKeyCloakToken,
+    kas: {
+      getToken: getKeyCloakToken
+    },
     getUsername: getUsername
-  } as IAuthContext;
+  } as Auth;
   return (
     <AuthContext.Provider value={authTokenContext}>
       {props.children}

@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
   TextInput,
@@ -17,10 +18,9 @@ import {
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES } from '@app/common';
-import { useTranslation } from 'react-i18next';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
-import { CloudProvider } from '../../../../../openapi';
+import { CloudProvider } from '@rhoas/kafka-management-sdk';
 import './StreamsToolbar.css';
 
 /**
@@ -37,7 +37,7 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   isDisabledCreateButton?: boolean;
   buttonTooltipContent?: string | undefined;
-  labelWithTooltip?: React.ReactNode;
+  labelWithTooltip?: ReactElement | undefined;
   onCreate?: () => void;
   refresh?: () => void;
   cloudProviders?: Array<CloudProvider>;
@@ -59,6 +59,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   cloudProviders,
 }) => {
   const { t } = useTranslation();
+  const nameInputRef = useRef<HTMLInputElement>();
+  const ownerInputRef = useRef<HTMLInputElement>();
   const { showModal } = useRootModalContext();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
@@ -70,9 +72,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const [isNameValid, setIsNameValid] = useState<boolean>(true);
   const [isOwnerValid, setIsOwnerValid] = useState<boolean>(true);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
-
-  const nameInputRef = useRef<HTMLInputElement>();
-  const ownerInputRef = useRef<HTMLInputElement>();
 
   // Options for server-side filtering
   const mainFilterOptions = [
@@ -411,7 +410,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               placeholderText={t('filter_by_cloud_provider')}
               className="select-custom-width"
             >
-              {cloudProviderFilterOptions.map((option, index) => (
+              {cloudProviderFilterOptions.map((option, index) => {
+                const reference = document.getElementById('cloud-provider-select');
+                return (
                 <SelectOption
                   isDisabled={
                     option.disabled || (isMaxFilter && isDisabledSelectOption('cloud_provider', option.value))
@@ -423,12 +424,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     <Tooltip
                       isVisible={isMaxFilter}
                       content={tooltipContent()}
-                      reference={() => document.getElementById('cloud-provider-select')}
+                      reference={reference || undefined}
                     />
                   )}
                   {option.label}
                 </SelectOption>
-              ))}
+              )})}
             </Select>
           )}
         </ToolbarFilter>
@@ -451,7 +452,9 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               placeholderText={t('filter_by_region')}
               className="select-custom-width"
             >
-              {regionFilterOptions.map((option, index) => (
+              {regionFilterOptions.map((option, index) => {
+                const reference = document.getElementById('region-select');
+                return (
                 <SelectOption
                   isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('region', option.value))}
                   key={index}
@@ -461,12 +464,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
                     <Tooltip
                       isVisible={isMaxFilter}
                       content={tooltipContent()}
-                      reference={() => document.getElementById('region-select')}
+                      reference={reference || undefined}
                     />
                   )}
                   {option.label}
                 </SelectOption>
-              ))}
+              )})}
             </Select>
           )}
         </ToolbarFilter>
@@ -528,22 +531,25 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
               placeholderText={t('filter_by_status')}
               className="select-custom-width"
             >
-              {statusFilterOptions.map((option, index) => (
-                <SelectOption
-                  isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
-                  key={index}
-                  value={option.value}
-                >
-                  {isMaxFilter && (
-                    <Tooltip
-                      isVisible={isMaxFilter}
-                      content={tooltipContent()}
-                      reference={() => document.getElementById('status-select')}
-                    />
-                  )}
-                  {option.label}
-                </SelectOption>
-              ))}
+              {statusFilterOptions.map((option, index) => {
+                const reference = document.getElementById('status-select');
+                return (
+                  <SelectOption
+                    isDisabled={option.disabled || (isMaxFilter && isDisabledSelectOption('status', option.value))}
+                    key={index}
+                    value={option.value}
+                  >
+                    {isMaxFilter && (
+                      <Tooltip
+                        isVisible={isMaxFilter}
+                        content={tooltipContent()}
+                        reference={reference || undefined}
+                      />
+                    )}
+                    {option.label}
+                  </SelectOption>
+                )
+              })}
             </Select>
           )}
         </ToolbarFilter>
@@ -574,7 +580,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         </Tooltip>
       );
     }
-
     return (
       <Button variant="primary" onClick={handleCreateModal} data-testid={'tableStreams-buttonCreateKafka'}>
         {t('create_kafka_instance')}
@@ -584,10 +589,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
 
   const toolbarItems: ToolbarItemProps[] = [
     {
-      item: <>{createButton()}</>,
+      item: createButton(),
     },
     {
-      item: <>{labelWithTooltip}</>,
+      item: labelWithTooltip,
     },
   ];
 
