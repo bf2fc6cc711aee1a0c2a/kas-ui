@@ -2,12 +2,12 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { OpenshiftStreams } from './OpenshiftStreams';
 import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
-import { ApiContext } from '@app/api/ApiContext';
 import { RootModal } from '@app/common/RootModal';
+import { Config, ConfigContext } from '@bf2/ui-shared';
 
 declare const __BASE_PATH__: string;
 
-export const OpenshiftStreamsConnected = () => {
+export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
   const history = useHistory();
 
   const getConnectToRoutePath = (kafka, routePath) => {
@@ -19,10 +19,14 @@ export const OpenshiftStreamsConnected = () => {
   };
 
   return (
-    <ApiContext.Provider
-      value={{
-        basePath: __BASE_PATH__,
-      }}
+    <ConfigContext.Provider
+      value={
+        {
+          kas: {
+            apiBasePath: __BASE_PATH__,
+          },
+        } as Config
+      }
     >
       <AlertProvider>
         <RootModal>
@@ -35,6 +39,6 @@ export const OpenshiftStreamsConnected = () => {
           />
         </RootModal>
       </AlertProvider>
-    </ApiContext.Provider>
+    </ConfigContext.Provider>
   );
 };

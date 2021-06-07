@@ -4,11 +4,7 @@ import { PageSection, PageSectionVariants, ButtonVariant } from '@patternfly/rea
 import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { ServiceRegistryHeader, ServiceRegistryDrawer } from './components';
 
-export type ServiceRegistryProps = {
-  getConnectToInstancePath?: (data: any) => string;
-};
-
-export const ServiceRegistry = ({ getConnectToInstancePath }: ServiceRegistryProps) => {
+export const ServiceRegistry: React.FC = () => {
   const { t } = useTranslation();
 
   const [isExpandedDrawer, setIsExpandedDrawer] = useState<boolean>(false);

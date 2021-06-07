@@ -5,9 +5,9 @@ import './CustomRowWrapper.css';
 
 export type CustomRowWrapperContextProps = {
   activeRow?: string;
-  onRowClick?: (event: any, rowIndex: number, row: any) => void;
+  onRowClick?: (event: MouseEvent, rowIndex: number, row: any) => void;
   rowDataTestId?: string;
-  loggedInUser: string | undefined;
+  loggedInUser?: string;
 };
 
 const CustomRowWrapperContext = createContext<CustomRowWrapperContextProps>({
@@ -40,7 +40,7 @@ export const CustomRowWrapper = (rowWrapperProps) => {
         !isRowDisabled && activeRow && activeRow === originalData?.name && 'pf-m-selected'
       )}
       hidden={isExpanded !== undefined && !isExpanded}
-      onClick={(event: any) => !isRowDisabled && onRowClick && onRowClick(event, rowIndex, row)}
+      onClick={(event: MouseEvent) => !isRowDisabled && onRowClick && onRowClick(event, rowIndex, row)}
       {...props}
     />
   );

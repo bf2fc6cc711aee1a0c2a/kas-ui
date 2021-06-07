@@ -62,17 +62,19 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   const { variant: buttonVariant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
   const { title, ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
-  const { variant: masEmptyStateVariant = MASEmptyStateVariant.GettingStarted, className, ...restEmptyStateProps } =
-    emptyStateProps || {};
+  const {
+    variant: masEmptyStateVariant = MASEmptyStateVariant.GettingStarted,
+    className,
+    ...restEmptyStateProps
+  } = emptyStateProps || {};
 
   const NotFoundImg = () => <img src={NotFoundIcon} alt="Not found page" width="128px" />;
 
   const getVariantConfig = () => {
-    let varaintConfig: any = {};
-
+    let variantConfig: any = {};
     switch (masEmptyStateVariant) {
       case MASEmptyStateVariant.GettingStarted:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.xl,
           icon: SpaceShuttleIcon,
           titleSize: TitleSizes['4xl'],
@@ -80,7 +82,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.NoAccess:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.large,
           icon: LockIcon,
           titleSize: TitleSizes.xl,
@@ -88,7 +90,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.NoItems:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.large,
           icon: PlusCircleIcon,
           titleSize: TitleSizes.xl,
@@ -96,7 +98,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.NoResult:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.large,
           icon: SearchIcon,
           titleSize: TitleSizes.lg,
@@ -104,7 +106,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.UnexpectedError:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.full,
           icon: ExclamationCircleIcon,
           titleSize: TitleSizes.lg,
@@ -112,7 +114,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       case MASEmptyStateVariant.PageNotFound:
-        varaintConfig = {
+        variantConfig = {
           variant: EmptyStateVariant.full,
           icon: NotFoundImg,
           titleSize: TitleSizes.lg,
@@ -120,7 +122,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
       default:
-        varaintConfig = {
+        variantConfig = {
           variant: masEmptyStateVariant || EmptyStateVariant.full,
           icon: emptyStateIconProps?.icon,
           titleSize: titleProps?.size,
@@ -128,33 +130,30 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
         };
         break;
     }
-
-    return varaintConfig;
+    return variantConfig;
   };
 
   const { variant, icon, titleSize, headingLevel } = getVariantConfig();
 
   return (
-    <>
-      <PFEmptyState
-        variant={variant}
-        className={css('pf-u-pt-2xl pf-u-pt-3xl-on-md', className)}
-        {...restEmptyStateProps}
-      >
-        <EmptyStateIcon icon={icon} {...emptyStateIconProps} />
-        {title && (
-          <Title headingLevel={headingLevel} size={titleSize} {...restTitleProps}>
-            {title}
-          </Title>
-        )}
-        {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
-        {buttonProps?.title && (
-          <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
-            {buttonProps?.title}
-          </Button>
-        )}
-        {children}
-      </PFEmptyState>
-    </>
+    <PFEmptyState
+      variant={variant}
+      className={css('pf-u-pt-2xl pf-u-pt-3xl-on-md', className)}
+      {...restEmptyStateProps}
+    >
+      <EmptyStateIcon icon={icon} {...emptyStateIconProps} />
+      {title && (
+        <Title headingLevel={headingLevel} size={titleSize} {...restTitleProps}>
+          {title}
+        </Title>
+      )}
+      {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
+      {buttonProps?.title && (
+        <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
+          {buttonProps?.title}
+        </Button>
+      )}
+      {children}
+    </PFEmptyState>
   );
 };

@@ -16,11 +16,7 @@ import { routes, IAppRoute, IAppRouteGroup } from '@app/routes';
 import logo from '@app/bgimages/Patternfly-Logo.svg';
 import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 
-interface IAppLayout {
-  children: React.ReactNode;
-}
-
-const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
+const AppLayout: React.FunctionComponent = ({ children }) => {
   const [isNavOpen, setIsNavOpen] = React.useState(true);
   const [isMobileView, setIsMobileView] = React.useState(true);
   const [isNavOpenMobile, setIsNavOpenMobile] = React.useState(false);
@@ -58,7 +54,8 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
 
   if (!keycloakContext.keycloak.authenticated) {
     // force the user to log in
-    return keycloakContext.keycloak?.login();
+    keycloakContext.keycloak?.login();
+    return <></>;
   }
 
   const email = keycloakContext.keycloak.tokenParsed && keycloakContext.keycloak.tokenParsed['email'];

@@ -1,99 +1,78 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import {
-  PageSection,
-  PageSectionVariants,
-  Text,
-  AlertVariant,
-  Level,
-  LevelItem,
-  TextContent,
-  Card,
-} from '@patternfly/react-core';
-import { DefaultApi, ServiceAccountListItem, ServiceAccountList } from '../../../openapi/api';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
+import { PageSection, PageSectionVariants, Text, AlertVariant, TextContent, Card } from '@patternfly/react-core';
 import { isServiceApiError, ErrorCodes, sortValues } from '@app/utils';
+import { MASEmptyState, MASLoading, MASEmptyStateVariant, useRootModalContext, MODAL_TYPES } from '@app/common';
+import { ServiceAccountListItem, ServiceAccountList, SecurityApi, Configuration } from '@rhoas/kafka-management-sdk';
 import { ServiceAccountsTableView, FilterType } from './components/ServiceAccountsTableView';
-import {
-  MASEmptyState,
-  MASLoading,
-  AlertProvider,
-  useAlerts,
-  MASFullPageError,
-  MASEmptyStateVariant,
-  useRootModalContext,
-  MODAL_TYPES,
-} from '@app/common';
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
-export type ServiceAccountsProps = {
-  getConnectToInstancePath?: (data: any) => string;
-};
-
-
-const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstancePath }: ServiceAccountsProps) => {
+const ServiceAccounts: React.FC = () => {
   const { t } = useTranslation();
-  const { addAlert } = useAlerts();
+  const { addAlert } = useAlert();
   const { showModal } = useRootModalContext();
-
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
-
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
 
   const [serviceAccountList, setServiceAccountList] = useState<ServiceAccountList>();
-  const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[]>();
+  const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[] | undefined>();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
-  // state to store the expected total  service accounts based on the operation
-  const [expectedTotal, setExpectedTotal] = useState<number>(0);
-  const [serviceAccountsDataLoaded, setServiceAccountsDataLoaded] = useState<boolean>(true);
   const [orderBy, setOrderBy] = useState<string>('name asc');
   const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
-  const [isDisplayServiceAccountEmptyState, setIsDisplayServiceAccountEmptyState] = useState<boolean>(false);
+  const [isServiceAccountsEmpty, setIsServiceAccountsEmpty] = useState<boolean>(false);
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: Error) => {
     let reason: string | undefined;
     let errorCode: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
       errorCode = error.response?.data?.code;
     }
-    //check unauthorize user
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
     }
   };
 
   const fetchServiceAccounts = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
-        await apisService.listServiceAccounts().then((response) => {
-          const serviceAccounts = response?.data;
+        const apisService = new SecurityApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
+        await apisService.getServiceAccounts().then((response) => {
+          const serviceAccounts: ServiceAccountList = response?.data;
           const items = serviceAccounts?.items || [];
           const itemsLength = items?.length;
           setServiceAccountList(serviceAccounts);
-          const sortedServiceAccounts = sortValues(items, 'name', 'asc');
+          const sortedServiceAccounts: ServiceAccountListItem[] | undefined = sortValues<ServiceAccountListItem>(
+            items,
+            'name',
+            'asc'
+          );
           setServiceAccountItems(sortedServiceAccounts);
           /**
            * Todo: handle below logic in separate API call when backend start support pagination
            */
           if (!itemsLength || itemsLength < 1) {
-            setIsDisplayServiceAccountEmptyState(true);
+            setIsServiceAccountsEmpty(true);
           } else {
-            setIsDisplayServiceAccountEmptyState(false);
+            setIsServiceAccountsEmpty(false);
           }
         });
       } catch (error) {
@@ -126,7 +105,7 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
         </PageSection>
       );
     } else {
-      if (isDisplayServiceAccountEmptyState) {
+      if (isServiceAccountsEmpty) {
         return (
           <PageSection padding={{ default: 'noPadding' }} isFilled>
             <MASEmptyState
@@ -158,9 +137,9 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
               <ServiceAccountsTableView
                 page={page}
                 perPage={perPage}
-                total={serviceAccountList?.total || 1}
-                expectedTotal={expectedTotal}
-                serviceAccountsDataLoaded={serviceAccountsDataLoaded}
+                total={/*serviceAccountList?.total ||*/ 1}
+                expectedTotal={0}
+                serviceAccountsDataLoaded={true}
                 serviceAccountItems={serviceAccountItems}
                 orderBy={orderBy}
                 setOrderBy={setOrderBy}
@@ -180,38 +159,34 @@ const ServiceAccounts: React.FC<ServiceAccountsProps> = ({ getConnectToInstanceP
     }
   };
 
-  /**
-   *  Unauthorized page in case user is not authorized
-   */
   if (isUserUnauthorized) {
     return (
-      <MASFullPageError
-        titleProps={{
-          title: t('serviceAccount.unauthorized_access_to_service_accounts_title'),
-          headingLevel: 'h2',
-        }}
-        emptyStateBodyProps={{
-          body: t('serviceAccount.unauthorized_access_to_service_accounts_info'),
-        }}
-      />
+      <PageSection variant={PageSectionVariants.default} padding={{ default: 'noPadding' }} isFilled>
+        <MASEmptyState
+          titleProps={{
+            title: t('serviceAccount.unauthorized_access_to_service_accounts_title'),
+            headingLevel: 'h2',
+          }}
+          emptyStateIconProps={{
+            icon: LockIcon,
+          }}
+          emptyStateBodyProps={{
+            body: t('serviceAccount.unauthorized_access_to_service_accounts_info'),
+          }}
+        />
+      </PageSection>
     );
   }
 
   return (
     <>
-      <AlertProvider>
-        <PageSection variant={PageSectionVariants.light}>
-          <Level>
-            <LevelItem>
-              <TextContent>
-                <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
-                <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
-              </TextContent>
-            </LevelItem>
-          </Level>
-        </PageSection>
-        {renderTableView()}
-      </AlertProvider>
+      <PageSection variant={PageSectionVariants.light}>
+        <TextContent>
+          <Text component="h1"> {t('serviceAccount.service_accounts')}</Text>
+          <Text component="p">{t('serviceAccount.service_accounts_title_header_info')}</Text>
+        </TextContent>
+      </PageSection>
+      {renderTableView()}
     </>
   );
 };

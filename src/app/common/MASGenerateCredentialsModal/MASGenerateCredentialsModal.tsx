@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   ModalVariant,
@@ -23,7 +23,7 @@ import { MASEmptyState, MASLoading, useRootModalContext } from '@app/common';
 import { getModalAppendTo } from '@app/utils/utils';
 import './MASGenerateCredentialsModal.css';
 
-const MASGenerateCredentialsModal: FunctionComponent<{}> = () => {
+const MASGenerateCredentialsModal: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { credential, isLoading, title } = store?.modalProps || {};

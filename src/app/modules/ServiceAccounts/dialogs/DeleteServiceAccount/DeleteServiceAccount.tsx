@@ -1,17 +1,18 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi, ServiceAccountListItem } from '../../../../../openapi/api';
-import { MASDeleteModal, useRootModalContext, useAlerts } from '@app/common';
+import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { isServiceApiError } from '@app/utils';
+import { Configuration, DefaultApi, SecurityApi, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
-const DeleteServiceAccount: React.FunctionComponent<{}> = () => {
+const DeleteServiceAccount: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
+  const { addAlert } = useAlert();
   const { store, hideModal } = useRootModalContext();
   const { fetchServiceAccounts, serviceAccountToDelete } = store?.modalProps || {};
 
@@ -26,23 +27,24 @@ const DeleteServiceAccount: React.FunctionComponent<{}> = () => {
     if (serviceAccountId === undefined) {
       throw new Error('service account id not defined');
     }
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken) {
-      const apisService = new DefaultApi({
-        accessToken,
-        basePath,
-      });
+      const apisService = new SecurityApi(
+        new Configuration({
+          accessToken,
+          basePath,
+        })
+      );
       setIsLoading(true);
 
       try {
-        await apisService.deleteServiceAccount(serviceAccountId).then((response) => {
+        await apisService.deleteServiceAccountById(serviceAccountId).then(() => {
           handleModalToggle();
           setIsLoading(false);
-
-          addAlert(
-            t('serviceAccount.service_account_successfully_deleted', { name: serviceAccount?.name }),
-            AlertVariant.success
-          );
+          addAlert({
+            title: t('serviceAccount.service_account_successfully_deleted', { name: serviceAccount?.name }),
+            variant: AlertVariant.success,
+          });
           fetchServiceAccounts();
         });
       } catch (error) {
@@ -53,7 +55,11 @@ const DeleteServiceAccount: React.FunctionComponent<{}> = () => {
 
         handleModalToggle();
         setIsLoading(false);
-        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+        addAlert({
+          title: t('common.something_went_wrong'),
+          variant: AlertVariant.danger,
+          description: reason,
+        });
       }
     }
   };

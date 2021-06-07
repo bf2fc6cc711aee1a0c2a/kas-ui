@@ -1,27 +1,28 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
-import { DefaultApi } from '../../../../../openapi/api';
+import { Configuration, DefaultApi, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
-import { MASCreateModal, useRootModalContext, MODAL_TYPES, useAlerts } from '@app/common';
+import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
-const CreateServiceAccount: React.FunctionComponent<{}> = () => {
+const CreateServiceAccount: React.FunctionComponent = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
   const { store, showModal, hideModal } = useRootModalContext();
   const { fetchServiceAccounts } = store?.modalProps || {};
+  const { t } = useTranslation();
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
+  const { addAlert } = useAlert();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [descriptionValidated, setDescriptionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
 
   const resetForm = () => {
     setNameValidated({ fieldState: 'default' });
@@ -57,12 +58,16 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
     }
   };
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: Error) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+    addAlert({
+      title: t('something_went_wrong'),
+      variant: AlertVariant.danger,
+      description: reason,
+    });
   };
 
   const handleTextInputDescription = (description: string) => {
@@ -136,19 +141,19 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
 
   const createServiceAccount = async () => {
     const isValid = validateCreateForm();
+    const accessToken = await auth?.kas.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
     }
-
-    const accessToken = await authContext?.getToken();
-
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
+        const apisService = new SecurityApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         setCreationInProgress(true);
         await apisService.createServiceAccount(serviceAccountFormData).then((res) => {
           const credential = res?.data;
@@ -157,14 +162,16 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
           //open generate credential modal
           showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
           resetForm();
-          addAlert(t('serviceAccount.service_account_creation_success_message'), AlertVariant.success);
+          addAlert({
+            title: t('serviceAccount.service_account_creation_success_message'),
+            variant: AlertVariant.success,
+          });
           fetchServiceAccounts && fetchServiceAccounts();
         });
       } catch (error) {
         handleServerError(error);
       }
     }
-
     setCreationInProgress(false);
   };
 
@@ -182,7 +189,6 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
     const { message, fieldState } = nameValidated;
     const { name, description } = serviceAccountFormData;
     const { message: descMessage, fieldState: descFieldState } = descriptionValidated;
-
     return (
       <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
@@ -229,22 +235,20 @@ const CreateServiceAccount: React.FunctionComponent<{}> = () => {
   };
 
   return (
-    <>
-      <MASCreateModal
-        id="modalCreateSAccount"
-        isModalOpen={true}
-        title={t('serviceAccount.create_a_service_account')}
-        handleModalToggle={handleCreateModal}
-        onCreate={createServiceAccount}
-        isFormValid={isFormValid}
-        primaryButtonTitle="Create"
-        isCreationInProgress={isCreationInProgress}
-        dataTestIdSubmit="modalCreateServiceAccount-buttonSubmit"
-        dataTestIdCancel="modalCreateServiceAccount-buttonCancel"
-      >
-        {createForm()}
-      </MASCreateModal>
-    </>
+    <MASCreateModal
+      id="modalCreateSAccount"
+      isModalOpen={true}
+      title={t('serviceAccount.create_a_service_account')}
+      handleModalToggle={handleCreateModal}
+      onCreate={createServiceAccount}
+      isFormValid={isFormValid}
+      primaryButtonTitle="Create"
+      isCreationInProgress={isCreationInProgress}
+      dataTestIdSubmit="modalCreateServiceAccount-buttonSubmit"
+      dataTestIdCancel="modalCreateServiceAccount-buttonCancel"
+    >
+      {createForm()}
+    </MASCreateModal>
   );
 };
 

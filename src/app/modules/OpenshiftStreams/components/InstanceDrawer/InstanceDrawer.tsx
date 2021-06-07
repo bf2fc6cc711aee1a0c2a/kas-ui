@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { Tabs, Tab, TabTitleText, Alert, AlertVariant } from '@patternfly/react-core';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
-import dayjs from 'dayjs';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { MASDrawer, MASDrawerProps } from '@app/common';
+import { InstanceStatus } from '@app/utils';
 import { ConnectionTab, ConnectionTabProps } from './ConnectionTab';
 import { DetailsTab, DetailsTabProps } from './DetailsTab';
-import { InstanceStatus } from '@app/utils';
 import './InstanceDrawer.css';
 
 export type InstanceDrawerProps = Pick<
@@ -19,6 +19,7 @@ export type InstanceDrawerProps = Pick<
   DetailsTabProps & {
     activeTab?: string;
   };
+
 const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   mainToggle,
   onClose,
@@ -34,7 +35,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   notRequiredDrawerContentBackground,
 }) => {
   dayjs.extend(localizedFormat);
-
   const { t } = useTranslation();
   const { name, status } = instanceDetail || {};
 

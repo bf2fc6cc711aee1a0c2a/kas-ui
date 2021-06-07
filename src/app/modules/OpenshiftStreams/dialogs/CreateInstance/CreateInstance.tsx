@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   AlertVariant,
@@ -14,20 +15,18 @@ import {
   Flex,
   FlexItem,
   Divider,
+  Tooltip,
 } from '@patternfly/react-core';
-import { NewKafka, FormDataValidationState } from '../../../../models';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
-import './CreateInstance.css';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
-import { AuthContext } from '@app/auth/AuthContext';
-import { DefaultApi, CloudProvider, CloudRegion } from '../../../../../openapi';
-import { useTranslation } from 'react-i18next';
-import { ApiContext } from '@app/api/ApiContext';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
-import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { ErrorCodes } from '@app/utils';
 import { MASCreateModal, useRootModalContext } from '@app/common';
+import { ErrorCodes } from '@app/utils';
+import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/kafka-management-sdk';
+import { NewKafka, FormDataValidationState } from '../../../../models';
+import './CreateInstance.css';
+import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -39,10 +38,11 @@ const CreateInstance: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
-
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
+  const { addAlert } = useAlert();
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -61,16 +61,18 @@ const CreateInstance: React.FunctionComponent = () => {
 
   // Function to fetch cloud Regions based on selected filter
   const fetchCloudRegions = async (provider: CloudProvider) => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     const id = provider.id;
 
     if (accessToken && id) {
       try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
-        await apisService.listCloudProviderRegions(id).then((res) => {
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
+        await apisService.getCloudProviderRegions(id).then((res) => {
           const providerRegions = res.data?.items || [];
           const enabledRegions = providerRegions?.filter((p: CloudProvider) => p.enabled);
           //set default selected region if there is one region
@@ -87,8 +89,11 @@ const CreateInstance: React.FunctionComponent = () => {
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-
-        addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason);
+        addAlert({
+          title: t('common.something_went_wrong'),
+          variant: AlertVariant.danger,
+          description: reason,
+        });
       }
     }
   };
@@ -136,7 +141,7 @@ const CreateInstance: React.FunctionComponent = () => {
 
   const onCreateInstance = async () => {
     const isValid = validateCreateForm();
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
@@ -144,15 +149,17 @@ const CreateInstance: React.FunctionComponent = () => {
 
     if (accessToken) {
       try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath,
-        });
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
 
         onCreate();
         setCreationInProgress(true);
 
-        await apisService.createKafka(true, kafkaFormData).then((res) => {
+        await apisService.createKafka(true, kafkaFormData).then(() => {
           resetForm();
           hideModal();
           refresh();
@@ -168,7 +175,12 @@ const CreateInstance: React.FunctionComponent = () => {
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
           } else {
-            addAlert(t('common.something_went_wrong'), AlertVariant.danger, reason, 'toastCreateKafka-failed');
+            addAlert({
+              title: t('common.something_went_wrong'),
+              variant: AlertVariant.danger,
+              description: reason,
+              dataTestId: 'toastCreateKafka-failed',
+            });
           }
         }
 
@@ -302,20 +314,26 @@ const CreateInstance: React.FunctionComponent = () => {
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
           <ToggleGroup aria-label={t('availability_zone_selection')}>
-            <ToggleGroupItem
-              text={t('single')}
-              value={'single'}
-              isDisabled
-              buttonId="single"
-              isSelected={isMultiSelected}
-              onChange={onChangeAvailabilty}
-            />
+            <Tooltip content={t('kafkaInstance.availabilty_zones_tooltip_message')}>
+              <ToggleGroupItem
+                text={t('single')}
+                value={'single'}
+                isDisabled
+                buttonId="single"
+                isSelected={isMultiSelected}
+                onChange={onChangeAvailabilty}
+              />
+            </Tooltip>
             <ToggleGroupItem
               text={t('multi')}
               value="multi"
               buttonId="multi"
               isSelected={isMultiSelected}
               onChange={onChangeAvailabilty}
+            />
+            <Tooltip
+              content={t('kafkaInstance.availabilty_zones_tooltip_message')}
+              reference={() => document.getElementById('multi') || document.createElement('span')}
             />
           </ToggleGroup>
         </FormGroup>

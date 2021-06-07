@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TextInput } from '@patternfly/react-core';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 
-export const DeleteInstance: React.FC<{}> = () => {
-  const { t } = useTranslation();
+export const DeleteInstance: React.FunctionComponent = () => {
   const { store, hideModal } = useRootModalContext();
-  const { title, confirmButtonProps, cancelButtonProps, textProps, instanceStatus, selectedItemData } =
-    store?.modalProps || {};
+  const props = { ...store?.modalProps, hideModal };
+
+  return <DeleteInstanceModal {...props} />;
+};
+
+export const DeleteInstanceModal = (props) => {
+  const {
+    title,
+    confirmButtonProps,
+    cancelButtonProps,
+    textProps,
+    instanceStatus,
+    selectedItemData,
+    onClose,
+    hideModal,
+  } = props || {};
+  const { t } = useTranslation();
   const selectedInstanceName = selectedItemData?.name;
 
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
@@ -36,6 +49,7 @@ export const DeleteInstance: React.FC<{}> = () => {
   const handleToggle = () => {
     setInstanceNameInput('');
     hideModal();
+    onClose && onClose();
   };
 
   return (
@@ -51,24 +65,14 @@ export const DeleteInstance: React.FC<{}> = () => {
       handleModalToggle={handleToggle}
       textProps={textProps}
       selectedItemData={selectedItemData}
-    >
-      {instanceStatus === InstanceStatus.READY && (
-        <>
-          <label
-            htmlFor="instance-name-input"
-            dangerouslySetInnerHTML={{ __html: t('instance_name_label', { name: selectedInstanceName }) }}
-          />
-          <TextInput
-            id="mk--instance-name__input"
-            name="instance-name-input"
-            type="text"
-            value={instanceNameInput}
-            onChange={handleInstanceName}
-            onKeyPress={onKeyPress}
-            autoFocus={true}
-          />
-        </>
-      )}
-    </MASDeleteModal>
+      textInputProps={{
+        showTextInput: instanceStatus === InstanceStatus.READY,
+        label: t('instance_name_label', { name: selectedInstanceName }),
+        value: instanceNameInput,
+        onChange: handleInstanceName,
+        onKeyPress,
+        autoFocus: true,
+      }}
+    ></MASDeleteModal>
   );
 };
