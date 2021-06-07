@@ -2,7 +2,7 @@
 
 Welcome to the repository that hosts the UIs for Control Plane, Service Accounts, Service Registry, and Metrics.
 
-The team lead is [Christie Molloy](https://github.com/christiemolloy) working with developer [Ajay Pratap](https://github.com/ajaypratap003) and the lead designer is [Jenn Giardino](https://github.com/jgiardino), please feel free to contact us!
+The lead developer is [Ajay Pratap](https://github.com/ajaypratap003) and the lead designer is [Jenn Giardino](https://github.com/jgiardino), please feel free to contact us!
 
 
 ## Contributing
