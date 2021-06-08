@@ -192,7 +192,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         );
       }
     });
-    return filters.join(' or ');
+    return filters.join(' and ');
   };
 
   const handleServerError = (error: Error) => {
