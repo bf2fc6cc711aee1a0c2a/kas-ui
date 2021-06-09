@@ -26,7 +26,7 @@ const InstanceDrawerFederated = ({
 }) => {
   return (
     <BrowserRouter>
-      <I18nextProvider i18n={initI18N}>
+      <I18nextProvider i18n={initI18N()}>
         <AlertProvider>
           <RootModal>
             <InstanceDrawerConnected
