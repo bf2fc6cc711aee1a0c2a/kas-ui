@@ -1,9 +1,14 @@
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter } from 'react-router-dom';
+import '@patternfly/patternfly/utilities/Accessibility/accessibility.css';
+import '@patternfly/patternfly/utilities/Sizing/sizing.css';
+import '@patternfly/patternfly/utilities/Spacing/spacing.css';
+import '@patternfly/patternfly/utilities/Display/display.css';
+import '@patternfly/patternfly/utilities/Flex/flex.css';
 import { InstanceDrawerConnected } from './InstanceDrawerConnected';
 import { RootModal, AlertProvider } from '@app/common';
-import kasi18n from '@i18n/i18n';
+import { initI18N } from '@i18n/i18n';
 
 const InstanceDrawerFederated = ({
   isExpanded,
@@ -21,7 +26,7 @@ const InstanceDrawerFederated = ({
 }) => {
   return (
     <BrowserRouter>
-      <I18nextProvider i18n={kasi18n}>
+      <I18nextProvider i18n={initI18N}>
         <AlertProvider>
           <RootModal>
             <InstanceDrawerConnected
