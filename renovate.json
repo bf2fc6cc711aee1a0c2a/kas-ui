@@ -11,14 +11,14 @@
   "major": {
     "automerge": false
   },
-  "ignorePaths": [
-    "**/node_modules/**",
-    "**/__mocks__/**"
-  ],
   "packageRules": [
     {
       "matchPackagePatterns": ["^@rhoas"],
       "groupName": "RHOAS SDK packages"
+    },
+    {
+      "matchPackagePatterns": ["^@bf2"],
+      "groupName": "Shared components packages"
     }
   ]
 }
