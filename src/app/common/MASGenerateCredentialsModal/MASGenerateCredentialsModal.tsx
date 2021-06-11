@@ -82,7 +82,7 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
             data-testid="modalCredentials-copyClientSecret"
             textAriaLabel={t('common.client_secret')}
           >
-            {credential?.clientSecret}
+            {credential?.client_secret}
           </ClipboardCopy>
         </InputGroup>
         <TextContent>
