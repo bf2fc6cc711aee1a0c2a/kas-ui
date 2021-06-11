@@ -31,7 +31,7 @@ const instanceDetail: KafkaRequest = {
   created_at: '2020-12-10T16:26:53.357492Z',
   updated_at: '2020-12-10T16:26:56.757669Z',
   owner: 'test_owner',
-  bootstrapServerHost: 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org',
+  bootstrap_server_host: 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org',
 };
 
 const setup = (
@@ -240,27 +240,27 @@ describe('Drawer Connection Tab', () => {
   // TODO Fix test
   /*it('should render server responded bootstrap server host', () => {
     const instance = { ...instanceDetail };
-    instance.bootstrapServerHost = 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443';
+    instance.bootstrap_server_host = 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443';
 
     const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Connection');
 
     const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
-    expect(clipboardInput.value).toEqual(instance.bootstrapServerHost);
+    expect(clipboardInput.value).toEqual(instance.bootstrap_server_host);
   });*/
   // TODO Fix test
   /*it('should render bootstrap server host with default port', () => {
     const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Connection');
 
     const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
-    expect(clipboardInput.value).toEqual(instanceDetail.bootstrapServerHost + ':443');
+    expect(clipboardInput.value).toEqual(instanceDetail.bootstrap_server_host + ':443');
   });*/
   // TODO Fix test
   /*it('should render bootstrap server host with default port', () => {
     const instance = { ...instanceDetail };
-    instance.bootstrapServerHost = 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443';
+    instance.bootstrap_server_host = 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443';
 
     const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Connection', instance);
     const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
-    expect(clipboardInput.value).toEqual(instanceDetail.bootstrapServerHost + ':443');
+    expect(clipboardInput.value).toEqual(instanceDetail.bootstrap_server_host + ':443');
   });*/
 });

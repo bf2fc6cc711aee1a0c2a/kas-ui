@@ -69,7 +69,7 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
             data-testid="modalCredentials-copyClientID"
             textAriaLabel={t('client_id')}
           >
-            {credential?.clientID}
+            {credential?.client_id}
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
