@@ -171,25 +171,27 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     setSelectedInstance({ instanceDetail: instance, activeTab: 'Connection' });
   };
 
-  const getFilterString = () => {
+  const getFilterQuery = () => {
     const filters: string[] = [];
     filteredValue.forEach((filter) => {
       const { filterKey, filterValue } = filter;
       if (filterValue && filterValue.length > 0) {
-        filters.push(
-          filterValue
-            .map((val) => {
-              const value = val.value.trim();
-              if (value === InstanceStatus.PROVISIONING) {
-                return `${filterKey} = ${InstanceStatus.PREPARING} or ${filterKey} = ${InstanceStatus.PROVISIONING}`;
-              }
-              if (value === InstanceStatus.DEPROVISION) {
-                return `${filterKey} = ${InstanceStatus.DEPROVISION} or ${filterKey} = ${InstanceStatus.DELETED}`;
-              }
-              return value !== '' ? `${filterKey} ${val.isExact === true ? `= ${value}` : `like %${value}%`}` : '';
-            })
-            .join(' or ')
-        );
+        let filterQuery = '(';
+        filterQuery += filterValue
+          .map((val) => {
+            const value = val.value.trim();
+            if (value === InstanceStatus.PROVISIONING) {
+              return `${filterKey} = ${InstanceStatus.PREPARING} or ${filterKey} = ${InstanceStatus.PROVISIONING}`;
+            }
+            if (value === InstanceStatus.DEPROVISION) {
+              return `${filterKey} = ${InstanceStatus.DEPROVISION} or ${filterKey} = ${InstanceStatus.DELETED}`;
+            }
+            return value !== '' ? `${filterKey} ${val.isExact === true ? `= ${value}` : `like %${value}%`}` : '';
+          })
+          .join(' or ');
+        filterQuery += ')';
+
+        filters.push(filterQuery);
       }
     });
     return filters.join(' and ');
@@ -212,6 +214,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
 
   // Functions
   const fetchKafkas = async () => {
+    const filterQuery = getFilterQuery();
     const accessToken = await auth?.kas.getToken();
 
     if (accessToken && isVisible) {
@@ -223,7 +226,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
           })
         );
 
-        await apisService.getKafkas(page?.toString(), perPage?.toString(), orderBy, getFilterString()).then((res) => {
+        await apisService.getKafkas(page?.toString(), perPage?.toString(), orderBy, filterQuery).then((res) => {
           const kafkaInstances = res.data;
           const kafkaItems = kafkaInstances?.items || [];
           setKafkaInstancesList(kafkaInstances);
