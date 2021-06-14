@@ -10,7 +10,7 @@ describe('<MASDrawer/>', () => {
     return render(<MASDrawer {...props}>{children}</MASDrawer>);
   };
 
-  it('should render default MASDrawer and load spinner', () => {
+  it('should render default MASDrawer', () => {
     //arrange
     const onClose = jest.fn();
     const props = {
@@ -23,9 +23,6 @@ describe('<MASDrawer/>', () => {
     //assert
     screen.getByText('Drawer content');
     expect(container.getElementsByClassName('pf-c-drawer').length).toBe(1);
-    //check spinner
-    //screen.getByRole('progressbar');
-    //expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuetext', 'Loading...');
   });
 
   it('should render MASDrawer with props and load Drawer content body', () => {

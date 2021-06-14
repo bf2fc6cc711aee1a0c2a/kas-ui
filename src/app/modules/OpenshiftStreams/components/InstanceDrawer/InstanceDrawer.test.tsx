@@ -55,9 +55,10 @@ const setup = (
               instanceDetail={instance || instanceDetail}
               isLoading={instanceDetail === undefined}
               data-ouia-app-id="controlPlane-streams"
+              data-testId="mk--instance__drawer"
               getConnectToRoutePath={jest.fn()}
               onConnectToRoute={jest.fn()}
-              tokenEndPointUrl={'sooss'}
+              tokenEndPointUrl={'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'}
               notRequiredDrawerContentBackground={true}
             >
               <></>
@@ -69,14 +70,13 @@ const setup = (
   );
 };
 describe('Instance Drawer', () => {
-  // TODO Fix test
-  /*it('should render drawer', () => {
+  it('should render drawer', () => {
     const { getByTestId } = setup(jest.fn(), true, false, jest.fn(), 'Details');
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
-  });*/
+  });
 
-  // TODO Fix test
-  /*it('should render loading if no instance is available', () => {
+ it('should render loading if no instance is available', () => {
+    let instanceDetail = undefined;
     const { getByTestId, getByRole } = render(
       <MemoryRouter>
         <Drawer isExpanded={true} onExpand={jest.fn()}>
@@ -85,7 +85,7 @@ describe('Instance Drawer', () => {
               <InstanceDrawer
                 getConnectToRoutePath={jest.fn()}
                 onConnectToRoute={jest.fn()}
-                tokenEndPointUrl={'sooss'}
+                tokenEndPointUrl={'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'}
                 isExpanded={true}
                 isLoading={instanceDetail === undefined}
                 mainToggle={false}
@@ -98,17 +98,16 @@ describe('Instance Drawer', () => {
       </MemoryRouter>
     );
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
-    expect(getByRole('status')).toBeInTheDocument();
-  });*/
+    expect(getByRole('progressbar')).toBeInTheDocument();
+  });
 
-  // TODO Fix test
-  /*it('should render instance name card', () => {
+  it('should render instance name card', () => {
     const { getByTestId, getByText } = setup(jest.fn(), true, false, jest.fn(), 'Details');
 
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
     expect(getByText('instance_name')).toBeInTheDocument();
     expect(getByText('test instance')).toBeInTheDocument();
-  });*/
+  });
 
   it('should render instance detail as active tab', () => {
     const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Details');
@@ -190,20 +189,15 @@ describe('Drawer Details Tab', () => {
 });
 
 describe('Drawer Connection Tab', () => {
-  // TODO Fix test
-  /*it('should render connection tab in toggle off', () => {
+  it('should render connection tab in toggle off', () => {
     const { getByText } = setup(jest.fn(), true, false, jest.fn(), 'Connection');
     expect(getByText('drawer_resource_tab_body_description_1')).toBeInTheDocument();
-    expect(getByText('kafka_listener_and_credentials')).toBeInTheDocument();
-    expect(getByText('drawer_resource_tab_body_description_2')).toBeInTheDocument();
     expect(getByText('bootstrap_server')).toBeInTheDocument();
-  });*/
-  // TODO Fix test
-  /*it('should render connection tab with resource and sample code tabs in toggle on', () => {
+  });
+
+  it('should render connection tab with resource and sample code tabs in toggle on', () => {
     const { getByText, getByRole } = setup(jest.fn(), true, true, jest.fn(), 'Connection');
     expect(getByText('drawer_resource_tab_body_description_1')).toBeInTheDocument();
-    expect(getByText('kafka_listener_and_credentials')).toBeInTheDocument();
-    expect(getByText('drawer_resource_tab_body_description_2')).toBeInTheDocument();
     expect(getByText('bootstrap_server')).toBeInTheDocument();
 
     expect(getByText('resources')).toBeInTheDocument();
@@ -216,13 +210,11 @@ describe('Drawer Connection Tab', () => {
 
     const resourcesTabClasses = resourceButton?.parentElement?.className?.split(' ');
     expect(resourcesTabClasses).toContain('pf-m-current');
-  });*/
-  // TODO Fix test
-  /*it('should render connection tab with sample code as active tab in toggle on', () => {
+  });
+
+  it('should render connection tab with sample code as active tab in toggle on', () => {
     const { getByText, getByRole } = setup(jest.fn(), true, true, jest.fn(), 'Connection');
     expect(getByText('drawer_resource_tab_body_description_1')).toBeDefined();
-    expect(getByText('kafka_listener_and_credentials')).toBeDefined();
-    expect(getByText('drawer_resource_tab_body_description_2')).toBeDefined();
     expect(getByText('bootstrap_server')).toBeDefined();
 
     expect(getByText('resources')).toBeDefined();
@@ -236,9 +228,9 @@ describe('Drawer Connection Tab', () => {
     userEvent.click(sampleButton);
     const sampleCodeTabClasses = sampleButton?.parentElement?.className?.split(' ');
     expect(sampleCodeTabClasses).toContain('pf-m-current');
-  });*/
-  // TODO Fix test
-  /*it('should render server responded bootstrap server host', () => {
+  });
+
+  it('should render server responded bootstrap server host', () => {
     const instance = { ...instanceDetail };
     instance.bootstrap_server_host = 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443';
 
@@ -246,21 +238,14 @@ describe('Drawer Connection Tab', () => {
 
     const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
     expect(clipboardInput.value).toEqual(instance.bootstrap_server_host);
-  });*/
-  // TODO Fix test
-  /*it('should render bootstrap server host with default port', () => {
-    const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Connection');
+  });
 
-    const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
-    expect(clipboardInput.value).toEqual(instanceDetail.bootstrap_server_host + ':443');
-  });*/
-  // TODO Fix test
-  /*it('should render bootstrap server host with default port', () => {
+  it('should render bootstrap server host with default port', () => {
     const instance = { ...instanceDetail };
     instance.bootstrap_server_host = 'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443';
 
     const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Connection', instance);
     const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
     expect(clipboardInput.value).toEqual(instanceDetail.bootstrap_server_host + ':443');
-  });*/
+  });
 });

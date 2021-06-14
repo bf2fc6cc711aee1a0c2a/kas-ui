@@ -86,13 +86,12 @@ describe('<CreateInstance/>', () => {
     refresh: jest.fn(),
   };
 
-  // TODO Fix test
-  it.skip('should open create instance modal if createStreamsInstance is true', () => {
+  it('should open create instance modal if createStreamsInstance is true', () => {
     //arange
     setupRender(props);
 
     //assert
-    expect(screen.getByText('Create Kafka instance')).toBeInTheDocument();
+    expect(screen.getByText('Create a Kafka instance')).toBeInTheDocument();
   });
 
   // TODO Fix test
@@ -102,12 +101,11 @@ describe('<CreateInstance/>', () => {
 
     //assert
     await waitFor(() => {
-      expect(screen.getByText(/US East, N. Virginia/i)).toBeInTheDocument();
+      expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
     });
   });
 
-  // TODO Fix test
-  it.skip('should enabled create instance button by default', () => {
+  it('should enabled create instance button by default', () => {
     //arrage
     setupRender(props);
 
@@ -121,8 +119,7 @@ describe('<CreateInstance/>', () => {
     expect(classList).not.toContain('pf-m-disabled');
   });
 
-  // TODO Fix test
-  it.skip('should disable the Create Instance Button if the mandatory fields are empty', async () => {
+  it('should disable the Create Instance Button if the mandatory fields are empty', async () => {
     //arrange
     setupRender(props);
 
@@ -143,8 +140,7 @@ describe('<CreateInstance/>', () => {
     });
   });
 
-  // TODO Fix test
-  it.skip('should enabled create instance button if filled all the mandatory fileds', async () => {
+  it('should enabled create instance button if filled all the mandatory fileds', async () => {
     //arrange
     setupRender(props);
     const createInstanceButton: any = screen.getByRole('button', { name: /Create instance/i });
@@ -168,8 +164,7 @@ describe('<CreateInstance/>', () => {
     expect(instanceNameInput).toHaveValue('1');
   });
 
-  // TODO Fix test
-  it.skip('should disabled create instance button and show error message if enter invalid instance name', async () => {
+  it('should disabled create instance button and show error message if enter invalid instance name', async () => {
     //arrange
     setupRender(props);
 

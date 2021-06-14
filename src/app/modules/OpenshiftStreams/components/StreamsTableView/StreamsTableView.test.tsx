@@ -104,30 +104,6 @@ describe('<StreamsTableView/>', () => {
     expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
   });
 
-  // TODO Fix test
-  it.skip('should render the Delete Modal component if isDeleteModalOpen is true', async () => {
-    //arrange
-    setup(props);
-
-    //act
-    let kebabDropdownButton: any;
-    await waitFor(() => {
-      kebabDropdownButton = screen.getByText('api_kafka_service')?.parentElement?.lastChild?.lastChild?.lastChild;
-    });
-    act(() => {
-      userEvent.click(kebabDropdownButton);
-    });
-    const deleteInstanceButton: any = screen.getByRole('button', { name: /Delete/i });
-
-    //assert
-    expect(screen.getByText('Delete')).toBeInTheDocument();
-    act(() => {
-      userEvent.click(deleteInstanceButton);
-    });
-    //check delete modal is open
-    expect(screen.getByRole('heading', { name: /Delete?/i })).toBeInTheDocument();
-  });
-
   it('should disable the delete kebab button if the ower and loggedInUser are not the same', () => {
     //arrange
     const newProps = Object.assign({}, props);

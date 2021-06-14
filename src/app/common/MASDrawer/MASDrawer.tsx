@@ -93,7 +93,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
   );
 
   return (
-    <Drawer isExpanded={isExpanded} onExpand={onExpand} data-ouia-app-id={dataOuiaAppId}>
+    <Drawer isExpanded={isExpanded} onExpand={onExpand} data-ouia-app-id={dataOuiaAppId} data-testid="mk--instance__drawer">
       <DrawerContent
         panelContent={panelContent}
         className={notRequiredDrawerContentBackground ? 'pf-m-no-background' : ''}
