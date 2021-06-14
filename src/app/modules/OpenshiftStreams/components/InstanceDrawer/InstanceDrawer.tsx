@@ -56,8 +56,8 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   };
 
   const getExternalServer = () => {
-    const { bootstrapServerHost } = instanceDetail || {};
-    return bootstrapServerHost?.endsWith(':443') ? bootstrapServerHost : `${bootstrapServerHost}:443`;
+    const { bootstrap_server_host } = instanceDetail || {};
+    return bootstrap_server_host?.endsWith(':443') ? bootstrap_server_host : `${bootstrap_server_host}:443`;
   };
 
   const isKafkaPending = status === InstanceStatus.ACCEPTED || status === InstanceStatus.PREPARING;

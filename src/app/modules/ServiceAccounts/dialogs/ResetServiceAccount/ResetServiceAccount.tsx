@@ -64,7 +64,7 @@ const ResetServiceAccount: React.FunctionComponent = () => {
   };
 
   const serviceAccountId = serviceAccountToReset?.name;
-  const clientID = serviceAccountToReset?.clientID;
+  const client_id = serviceAccountToReset?.client_id;
 
   return (
     <Modal
@@ -92,7 +92,7 @@ const ResetServiceAccount: React.FunctionComponent = () => {
     >
       <span
         dangerouslySetInnerHTML={{
-          __html: t('serviceAccount.client_secret_will_be_reset', { serviceAccountId, clientID }),
+          __html: t('serviceAccount.client_secret_will_be_reset', { serviceAccountId, client_id }),
         }}
       />
     </Modal>

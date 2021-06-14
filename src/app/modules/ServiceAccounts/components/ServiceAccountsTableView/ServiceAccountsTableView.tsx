@@ -82,9 +82,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner, description, clientID, created_at } = row;
+      const { name, owner, description, client_id, created_at } = row;
       tableRow.push({
-        cells: [name, clientID, owner, description, { title: getFormattedDate(created_at, t('ago')) }],
+        cells: [name, client_id, owner, description, { title: getFormattedDate(created_at, t('ago')) }],
         originalData: row,
       });
     });
@@ -149,7 +149,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       case 0:
         return 'name';
       case 1:
-        return 'clientID';
+        return 'client_id';
       case 2:
         return 'owner';
       case 3:
@@ -165,7 +165,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     switch (parameter.toLowerCase()) {
       case 'name':
         return 0;
-      case 'clientID':
+      case 'client_id':
         return 1;
       case 'owner':
         return 2;

@@ -18,7 +18,7 @@ const kafkaInstanceItems = [
     region: 'us-east-1',
     owner: 'api_kafka_service',
     name: 'serviceapi',
-    bootstrapServerHost: 'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
+    bootstrap_server_host: 'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
     created_at: '2020-10-05T12:51:24.053142Z',
     updated_at: '2020-10-05T12:56:36.362208Z',
   },
