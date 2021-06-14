@@ -99,7 +99,7 @@ const CreateInstance: React.FunctionComponent = () => {
   };
 
   useEffect(() => {
-    if (cloudProviders.length > 0 && cloudProviders[0].name) {
+    if (cloudProviders?.length > 0 && cloudProviders[0].name) {
       setKafkaFormData((prevState) => ({ ...prevState, cloud_provider: cloudProviders[0].name }));
       fetchCloudRegions(cloudProviders[0]);
     }
@@ -279,7 +279,7 @@ const CreateInstance: React.FunctionComponent = () => {
           />
         </FormGroup>
         <FormGroup label={t('cloud_provider')} fieldId="form-cloud-provider-name">
-          {cloudProviders.map((provider: CloudProvider) => {
+          {cloudProviders?.map((provider: CloudProvider) => {
             const { name, display_name = '' } = provider;
             return (
               <Tile
