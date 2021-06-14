@@ -75,8 +75,8 @@ describe('Instance Drawer', () => {
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
   });
 
- it('should render loading if no instance is available', () => {
-    let instanceDetail = undefined;
+  it('should render loading if no instance is available', () => {
+    const instanceDetail = undefined;
     const { getByTestId, getByRole } = render(
       <MemoryRouter>
         <Drawer isExpanded={true} onExpand={jest.fn()}>
@@ -91,7 +91,9 @@ describe('Instance Drawer', () => {
                 mainToggle={false}
                 onClose={jest.fn()}
                 activeTab={'Details'}
-              ><></></InstanceDrawer>
+              >
+                <></>
+              </InstanceDrawer>
             }
           />
         </Drawer>
