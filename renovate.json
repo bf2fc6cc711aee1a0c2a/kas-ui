@@ -7,18 +7,20 @@
    "ignoreDeps": [
     "keycloak-js"
   ],
-  "automerge": false,
+  "automerge": true,
   "major": {
     "automerge": false
   },
   "packageRules": [
     {
       "matchPackagePatterns": ["^@rhoas"],
-      "groupName": "RHOAS SDK packages"
+      "groupName": "RHOAS SDK packages",
+      "automerge": false,
     },
     {
       "matchPackagePatterns": ["^@bf2"],
-      "groupName": "Shared components packages"
+      "groupName": "Shared components packages",
+      "automerge": true,
     }
   ]
 }
