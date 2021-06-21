@@ -1,24 +1,3 @@
 {
-"extends": [
-    "config:base",
-    ":pinAllExceptPeerDependencies"
-  ],
-  "groupName": "all",
-   "ignoreDeps": [
-    "keycloak-js"
-  ],
-  "automerge": false,
-  "major": {
-    "automerge": false
-  },
-  "packageRules": [
-    {
-      "matchPackagePatterns": ["^@rhoas"],
-      "groupName": "RHOAS SDK packages"
-    },
-    {
-      "matchPackagePatterns": ["^@bf2"],
-      "groupName": "Shared components packages"
-    }
-  ]
+"extends": ["github>redhat-developer/app-services-renovate-config"]
 }
