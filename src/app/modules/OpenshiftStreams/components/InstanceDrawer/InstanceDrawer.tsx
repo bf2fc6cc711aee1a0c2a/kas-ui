@@ -11,10 +11,7 @@ import { ConnectionTab, ConnectionTabProps } from './ConnectionTab';
 import { DetailsTab, DetailsTabProps } from './DetailsTab';
 import './InstanceDrawer.css';
 
-export type InstanceDrawerProps = Pick<
-  ConnectionTabProps,
-  'getConnectToRoutePath' | 'onConnectToRoute' | 'tokenEndPointUrl'
-> &
+export type InstanceDrawerProps = Pick<ConnectionTabProps, 'tokenEndPointUrl'> &
   Omit<MASDrawerProps, 'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'> &
   DetailsTabProps & {
     activeTab?: string;
@@ -29,8 +26,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   isLoading,
   children,
   'data-ouia-app-id': dataOuiaAppId,
-  getConnectToRoutePath,
-  onConnectToRoute,
   tokenEndPointUrl,
   notRequiredDrawerContentBackground,
 }) => {
@@ -76,8 +71,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
             externalServer={getExternalServer()}
             onSelect={onSelectConnectionTab}
             isKafkaPending={isKafkaPending}
-            getConnectToRoutePath={getConnectToRoutePath}
-            onConnectToRoute={onConnectToRoute}
             tokenEndPointUrl={tokenEndPointUrl}
           />
         </Tab>

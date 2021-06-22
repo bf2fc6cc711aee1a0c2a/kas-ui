@@ -6,7 +6,6 @@ import { MASPageNotFound } from '@app/common/MASPageNotFound/MASPageNotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
 import { OpenshiftStreamsConnected } from '@app/modules/OpenshiftStreams';
-import { ServiceRegistryConnected } from '@app/modules/ServiceRegistry';
 import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
 
 let routeFocusTimer: number;
@@ -38,13 +37,6 @@ const routes: AppRouteConfig[] = [
     label: 'Kafka Instances',
     path: '/',
     title: 'Kafka Instances',
-  },
-  {
-    component: ServiceRegistryConnected,
-    exact: true,
-    label: 'Service Registry',
-    path: '/service-registry',
-    title: 'Service Registry',
   },
   {
     component: ServiceAccountsConnected,

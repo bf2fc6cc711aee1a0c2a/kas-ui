@@ -1,5 +1,5 @@
 import React, { useCallback, FunctionComponent } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   Pagination as PFPagination,
   PaginationProps as PFPaginationProps,

@@ -21,8 +21,6 @@ export type ResourcesTabProps = {
   externalServer?: string;
   instance: KafkaRequest | undefined;
   isKafkaPending?: boolean;
-  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
-  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
   tokenEndPointUrl: string;
 };
 
@@ -31,8 +29,6 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   externalServer,
   instance = {},
   isKafkaPending,
-  onConnectToRoute,
-  getConnectToRoutePath,
   tokenEndPointUrl,
 }: ResourcesTabProps) => {
   const { t } = useTranslation();
@@ -64,14 +60,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         </Text>
         <Text component={TextVariants.small}>
           {t('serviceAccount.create_service_account_to_generate_credentials')}{' '}
-          <Link
-            to={() => getConnectToRoutePath(instance, 'service-accounts')}
-            onClick={(e) => {
-              e.preventDefault();
-              onConnectToRoute(instance, 'service-accounts');
-            }}
-            data-testid="tableStreams-linkKafka"
-          >
+          <Link to={'service-accounts'} data-testid="tableStreams-linkKafka">
             {t('serviceAccount.service_accounts')}
           </Link>{' '}
           {t('common.page')}.

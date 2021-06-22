@@ -31,7 +31,7 @@ import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { AlertVariant, useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { AlertVariant, useAlert, useAuth, useConfig, useBasename } from '@bf2/ui-shared';
 
 export type FilterValue = {
   value: string;
@@ -47,8 +47,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
-  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
-  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
   mainToggle: boolean;
   refresh: (arg0?: boolean) => void;
   kafkaDataLoaded: boolean;
@@ -109,8 +107,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   kafkaInstanceItems,
   onViewInstance,
   onViewConnection,
-  onConnectToRoute,
-  getConnectToRoutePath,
   refresh,
   page,
   perPage,
@@ -139,6 +135,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
+  const { getBasename } = useBasename();
+  const basename = getBasename();
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
@@ -355,14 +353,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
 
   const renderNameLink = ({ name, row }) => {
     return (
-      <Link
-        to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
-        onClick={(e) => {
-          e.preventDefault();
-          onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
-        }}
-        data-testid="tableStreams-linkKafka"
-      >
+      <Link to={`${basename}/${row?.id}`} data-testid="tableStreams-linkKafka">
         {name}
       </Link>
     );

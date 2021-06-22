@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import dayjs from 'dayjs';
@@ -38,11 +38,10 @@ import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
-export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
-  Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
-    preCreateInstance: (open: boolean) => Promise<boolean>;
-    createDialogOpen: () => boolean;
-  };
+export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> & {
+  preCreateInstance: (open: boolean) => Promise<boolean>;
+  createDialogOpen: () => boolean;
+};
 
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
@@ -50,8 +49,6 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
-  onConnectToRoute,
-  getConnectToRoutePath,
   preCreateInstance,
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
@@ -617,8 +614,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               mainToggle={mainToggle}
               onViewConnection={onViewConnection}
               onViewInstance={onViewInstance}
-              onConnectToRoute={onConnectToRoute}
-              getConnectToRoutePath={getConnectToRoutePath}
               refresh={refreshKafkas}
               kafkaDataLoaded={kafkaDataLoaded}
               setWaitingForDelete={setWaitingForDelete}
@@ -660,8 +655,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         instanceDetail={instanceDetail}
         onClose={onCloseDrawer}
         data-ouia-app-id="controlPlane-streams"
-        getConnectToRoutePath={getConnectToRoutePath}
-        onConnectToRoute={onConnectToRoute}
         tokenEndPointUrl={tokenEndPointUrl}
         notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
       >
