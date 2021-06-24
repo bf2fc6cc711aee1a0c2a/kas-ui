@@ -85,7 +85,7 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@bf2/ui-shared": "0.2.2",
+    "@bf2/ui-shared": "0.3.0",
     "@cloudmosaic/quickstarts": "0.0.24",
     "@rhoas/kafka-management-sdk": "0.3.2",
     "date-fns": "2.22.1",
@@ -105,7 +105,7 @@
     "i18next-parser": "4.2.0",
     "i18next-pseudo": "2.2.1",
     "keycloak-js": "9.0.3",
-    "msw": "0.29.0",
+    "msw": "0.30.0",
     "path": "0.12.7",
     "postcss": "8.3.5",
     "react": "17.0.1",
