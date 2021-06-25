@@ -3,14 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import { isServiceApiError } from '@app/utils';
-import { 
-  AlertVariant,
-  Bullseye,
-  Card,
-  CardTitle,
-  CardBody,
-  Spinner
-} from '@patternfly/react-core';
+import { AlertVariant, Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
 import {
   Chart,
   ChartArea,
@@ -19,7 +12,7 @@ import {
   ChartLegend,
   ChartThemeColor,
   ChartThreshold,
-  ChartVoronoiContainer
+  ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
@@ -27,40 +20,39 @@ import { format } from 'date-fns';
 import byteSize from 'byte-size';
 import { ChartEmptyState } from './ChartEmptyState';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { convertToSpecifiedByte, getMaxValueOfArray} from './utils';
+import { convertToSpecifiedByte, getMaxValueOfArray } from './utils';
 
 type Broker = {
-  name: string
+  name: string;
   data: {
-    timestamp: number
-    usedSpaceAvg: number[]
-  }[]
-}
+    timestamp: number;
+    usedSpaceAvg: number[];
+  }[];
+};
 
 type ChartData = {
-  areaColor: string
-  softLimitColor: string
-  area: BrokerChartData[]
-  softLimit: BrokerChartData[]
-}
+  areaColor: string;
+  softLimitColor: string;
+  area: BrokerChartData[];
+  softLimit: BrokerChartData[];
+};
 
 type BrokerChartData = {
-  name: string
-  x: string
-  y: number 
-}
+  name: string;
+  x: string;
+  y: number;
+};
 
 type LegendData = {
-  name: string
-  symbol: {}
-}
+  name: string;
+  symbol: any;
+};
 
 type KafkaInstanceProps = {
-  kafkaID: string
-}
+  kafkaID: string;
+};
 
-export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: KafkaInstanceProps) => {
-
+export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: KafkaInstanceProps) => {
   const containerRef = useRef();
   const { t } = useTranslation();
   const auth = useAuth();
@@ -69,7 +61,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: Kafk
   } = useConfig();
   const { addAlert } = useAlert();
   const [width, setWidth] = useState();
-  const [legend, setLegend] = useState()
+  const [legend, setLegend] = useState();
   const [chartData, setChartData] = useState<ChartData[]>();
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
   const [chartDataLoading, setChartDataLoading] = useState(true);
@@ -93,14 +85,16 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: Kafk
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kubelet_volume_stats_used_bytes']);
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, [
+          'kubelet_volume_stats_used_bytes',
+        ]);
 
         const avgBroker = {
           name: `Used disk space`,
-          data: []
+          data: [],
         } as Broker;
-        
-        if(data.data.items) {
+
+        if (data.data.items) {
           setMetricsDataUnavailable(false);
           data.data.items?.forEach((item, index) => {
             const labels = item.metric;
@@ -114,38 +108,35 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: Kafk
               const pvcName = labels['persistentvolumeclaim'];
 
               if (!pvcName.includes('zookeeper')) {
-
                 item.values?.forEach((value, indexJ) => {
                   if (value.Timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
 
-                  if(index > 0) {
-                    let newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(value.Value);
+                  if (index > 0) {
+                    const newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(value.Value);
                     avgBroker.data[indexJ].usedSpaceAvg = newArray;
-                  }
-                  else {
+                  } else {
                     avgBroker.data.push({
                       timestamp: value.Timestamp,
                       usedSpaceAvg: [value.Value],
                     });
                   }
-                })
+                });
               }
             }
             getChartData(avgBroker);
-          })
-        }
-        else {
+          });
+        } else {
           setMetricsDataUnavailable(true);
           setChartDataLoading(false);
         }
       } catch (error) {
-      let reason: string | undefined;
-      if (isServiceApiError(error)) {
-        reason = error.response?.data.reason;
-      }
-      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        let reason: string | undefined;
+        if (isServiceApiError(error)) {
+          reason = error.response?.data.reason;
+        }
+        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
       }
     }
   };
@@ -163,46 +154,47 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: Kafk
   }, [width]);
 
   const getChartData = (avgBroker) => {
-
-    let legendData: Array<LegendData> = [
-      {name: 'Limit', symbol: { fill: chart_color_black_500.value, type: 'threshold'}},
-      {name: avgBroker.name, symbol: { fill: chart_color_blue_300.value }}
+    const legendData: Array<LegendData> = [
+      { name: 'Limit', symbol: { fill: chart_color_black_500.value, type: 'threshold' } },
+      { name: avgBroker.name, symbol: { fill: chart_color_blue_300.value } },
     ];
 
     const areaColor = chart_color_blue_300.value;
     const softLimitColor = chart_color_black_500.value;
-    let chartData: Array<ChartData> = [];
-    let area: Array<BrokerChartData> = [];
-    let softLimit: Array<BrokerChartData> = [];
-    let largestByteSize = 'GB'; // Hard code GB as the largest byte size because there will always be a 20 GB limit.
+    const chartData: Array<ChartData> = [];
+    const area: Array<BrokerChartData> = [];
+    const softLimit: Array<BrokerChartData> = [];
+    const largestByteSize = 'GB'; // Hard code GB as the largest byte size because there will always be a 20 GB limit.
 
     const getCurrentLengthOfData = () => {
-      let timestampDiff = avgBroker.data[avgBroker.data.length - 1].timestamp - avgBroker.data[0].timestamp;
+      const timestampDiff = avgBroker.data[avgBroker.data.length - 1].timestamp - avgBroker.data[0].timestamp;
       const minutes = timestampDiff / 1000 / 60;
       return minutes;
-    }
+    };
 
-    let lengthOfData = (6 * 60) - getCurrentLengthOfData();
-    let lengthOfDataPer5Mins = ((6 * 60) - getCurrentLengthOfData()) / 5;
+    const lengthOfData = 6 * 60 - getCurrentLengthOfData();
+    const lengthOfDataPer5Mins = (6 * 60 - getCurrentLengthOfData()) / 5;
 
     if (lengthOfData <= 360) {
-      for (var i = 0; i < lengthOfDataPer5Mins; i = i+1) {
-        const newTimestamp = (avgBroker.data[0].timestamp - ((lengthOfDataPer5Mins - i) * (5 * 60000)));
+      for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
+        const newTimestamp = avgBroker.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
         const date = new Date(newTimestamp);
         const time = format(date, 'hh:mm');
-        area.push({ name: avgBroker.name, x: time, y: 0})
+        area.push({ name: avgBroker.name, x: time, y: 0 });
         softLimit.push({ name: 'Limit', x: time, y: usageLimit });
       }
     }
 
     const average = (nums) => {
-      return nums.reduce((a, b) => (a + b)) / nums.length;
-    }
+      return nums.reduce((a, b) => a + b) / nums.length;
+    };
 
-    avgBroker.data.map(value => {
+    avgBroker.data.map((value) => {
       const date = new Date(value.timestamp);
       const time = format(date, 'hh:mm');
-      const aggregateBytes = value.usedSpaceAvg.reduce(function(a, b) { return a + b }, 0);
+      const aggregateBytes = value.usedSpaceAvg.reduce(function (a, b) {
+        return a + b;
+      }, 0);
 
       const bytes = convertToSpecifiedByte(aggregateBytes, largestByteSize);
       area.push({ name: avgBroker.name, x: time, y: bytes });
@@ -214,41 +206,32 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: Kafk
     setChartData(chartData);
     setLargestByteSize(largestByteSize);
     setChartDataLoading(false);
-  }
+  };
 
-    return (
-      <Card>
-        <CardTitle component="h2">
-          {t('metrics.used_disk_space')}
-        </CardTitle>
-        <CardBody>
-          <div ref={containerRef}>
-            { !chartDataLoading ? (
-              !metricsDataUnavailable ? (
-                chartData && legend && largestByteSize &&
+  return (
+    <Card>
+      <CardTitle component="h2">{t('metrics.used_disk_space')}</CardTitle>
+      <CardBody>
+        <div ref={containerRef}>
+          {!chartDataLoading ? (
+            !metricsDataUnavailable ? (
+              chartData &&
+              legend &&
+              largestByteSize && (
                 <Chart
                   ariaDesc={t('metrics.used_disk_space')}
                   ariaTitle="Disk Space"
                   containerComponent={
-                    <ChartVoronoiContainer
-                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                      constrainToVisibleArea
-                    />
+                    <ChartVoronoiContainer labels={({ datum }) => `${datum.name}: ${datum.y}`} constrainToVisibleArea />
                   }
                   legendPosition="bottom-left"
-                  legendComponent={
-                    <ChartLegend
-                      orientation={'horizontal'}
-                      data={legend}
-                      itemsPerRow={itemsPerRow}
-                    />
-                  }
+                  legendComponent={<ChartLegend orientation={'horizontal'} data={legend} itemsPerRow={itemsPerRow} />}
                   height={350}
                   padding={{
                     bottom: 110, // Adjusted to accomodate legend
                     left: 90,
                     right: 60,
-                    top: 25
+                    top: 25,
                   }}
                   themeColor={ChartThemeColor.multiUnordered}
                   width={width}
@@ -256,49 +239,46 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({kafkaID}: Kafk
                   legendAllowWrap={true}
                 >
                   <ChartAxis label={'Time'} tickCount={6} />
-                  <ChartAxis
-                    dependentAxis
-                    tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
-                    tickCount={4}
+                  <ChartAxis dependentAxis tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`} tickCount={4} />
+                  <ChartGroup>
+                    {chartData.map((value, index) => (
+                      <ChartArea
+                        key={`chart-area-${index}`}
+                        data={value.area}
+                        interpolation="monotoneX"
+                        style={{
+                          data: {
+                            stroke: value.color,
+                          },
+                        }}
+                      />
+                    ))}
+                  </ChartGroup>
+                  <ChartThreshold
+                    key={`chart-softlimit`}
+                    data={chartData[0].softLimit}
+                    style={{
+                      data: {
+                        stroke: chartData[0].softLimitColor,
+                      },
+                    }}
                   />
-                    <ChartGroup>
-                      {chartData.map((value, index) => (
-                        <ChartArea
-                          key={`chart-area-${index}`}
-                          data={value.area}
-                          interpolation="monotoneX"
-                          style={{
-                            data: {
-                              stroke: value.color
-                            }
-                          }}
-                        />
-                      ))}
-                    </ChartGroup>
-                    <ChartThreshold
-                      key={`chart-softlimit`}
-                      data={chartData[0].softLimit}
-                      style={{
-                        data: {
-                          stroke: chartData[0].softLimitColor
-                        }
-                      }}
-                    />
                 </Chart>
-              ) : (
-                <ChartEmptyState
-                  title="No data"
-                  body="We’re creating your Kafka instance, so some details aren’t yet available."
-                  noData
-                />
               )
             ) : (
-              <Bullseye>
-                <Spinner isSVG/>
-              </Bullseye>
-            )}
-          </div>
-        </CardBody>
-      </Card>
+              <ChartEmptyState
+                title="No data"
+                body="We’re creating your Kafka instance, so some details aren’t yet available."
+                noData
+              />
+            )
+          ) : (
+            <Bullseye>
+              <Spinner isSVG />
+            </Bullseye>
+          )}
+        </div>
+      </CardBody>
+    </Card>
   );
-}
+};
