@@ -1,10 +1,8 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DefaultApi } from 'src/openapi';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk'
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import { isServiceApiError } from '@app/utils';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
 import { 
   AlertVariant
 } from '@patternfly/react-core';
@@ -62,9 +60,11 @@ type KafkaInstanceProps = {
 export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kafkaID}: KafkaInstanceProps) => {
 
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
+  const { addAlert } = useAlert();
   const containerRef = useRef();
   const [width, setWidth] = useState();
 
@@ -88,13 +88,16 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
   const [chartDataLoading, setChartDataLoading] = useState(true);
 
   const fetchBytesData = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken !== undefined && accessToken !== '') {
       try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath
-        });
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
+
         if (!kafkaID) {
           return;
         }
@@ -185,7 +188,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({kaf
       if (isServiceApiError(error)) {
         reason = error.response?.data.reason;
       }
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });;
       }
     }
   };

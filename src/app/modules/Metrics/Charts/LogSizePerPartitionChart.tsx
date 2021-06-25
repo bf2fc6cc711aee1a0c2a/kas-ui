@@ -1,10 +1,8 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DefaultApi } from 'src/openapi';
-import { useAlerts } from '@app/common/MASAlerts/MASAlerts';
+import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import { isServiceApiError } from '@app/utils';
-import { AuthContext } from '@app/auth/AuthContext';
-import { ApiContext } from '@app/api/ApiContext';
 import { 
   AlertVariant,
   Bullseye,
@@ -62,9 +60,11 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
 
   const containerRef = useRef();
   const { t } = useTranslation();
-  const authContext = useContext(AuthContext);
-  const { basePath } = useContext(ApiContext);
-  const { addAlert } = useAlerts();
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
+  const { addAlert } = useAlert();
   const [width, setWidth] = useState();
   const [legend, setLegend] = useState()
   const [chartData, setChartData] = useState<ChartData[]>();
@@ -80,13 +80,15 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
 
   // Functions
   const fetchLogSizePerPartition = async () => {
-    const accessToken = await authContext?.getToken();
+    const accessToken = await auth?.kas.getToken();
     if (accessToken !== undefined && accessToken !== '') {
       try {
-        const apisService = new DefaultApi({
-          accessToken,
-          basePath
-        });
+        const apisService = new DefaultApi(
+          new Configuration({
+            accessToken,
+            basePath,
+          })
+        );
         if (!kafkaID) {
           return;
         }
@@ -152,7 +154,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({kafkaID}
       if (isServiceApiError(error)) {
         reason = error.response?.data.reason;
       }
-        addAlert(t('something_went_wrong'), AlertVariant.danger, reason);
+      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
       }
     }
   };
