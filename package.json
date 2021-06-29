@@ -33,7 +33,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@rhoas/api-mock": "0.3.2",
+    "@rhoas/api-mock": "0.8.1",
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "11.2.7",
     "@testing-library/user-event": "13.1.9",
@@ -88,7 +88,7 @@
     "@bf2/ui-shared": "0.3.0",
     "@patternfly/react-charts": "6.15.3",
     "@cloudmosaic/quickstarts": "0.0.24",
-    "@rhoas/kafka-management-sdk": "0.3.2",
+    "@rhoas/kafka-management-sdk": "0.8.1",
     "date-fns": "2.22.1",
     "@patternfly/patternfly": "4.108.2",
     "@patternfly/react-core": "4.128.2",
