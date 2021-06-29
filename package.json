@@ -16,7 +16,7 @@
     "start": "node server.js",
     "mock": "asapi",
     "start:dev": "webpack serve --https --hot --color --progress --config webpack.dev.js",
-    "start:federate": "HOST=localhost PORT=9000 PROTOCOL=http webpack serve --hot --color --progress --config webpack.dev.js",
+    "start:federate": "HOST=localhost PORT=9000 PROTOCOL=http webpack serve --hot --color --progress --open=false --config webpack.dev.js",
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "eslint": "eslint --ext .tsx,.js ./src/",
@@ -86,6 +86,7 @@
   },
   "dependencies": {
     "@bf2/ui-shared": "0.3.0",
+    "@patternfly/react-charts": "^6.13.8",
     "@cloudmosaic/quickstarts": "0.0.24",
     "@rhoas/kafka-management-sdk": "0.3.2",
     "date-fns": "2.22.1",
@@ -113,7 +114,8 @@
     "react-i18next": "11.11.0",
     "react-redux": "7.2.4",
     "react-router-last-location": "2.0.1",
-    "redux": "4.1.0"
+    "redux": "4.1.0",
+    "byte-size": "^7.0.1"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
