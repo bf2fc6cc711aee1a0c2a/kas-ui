@@ -1,7 +1,7 @@
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { ServiceAccounts } from './ServiceAccounts';
-import { RootModal, AlertProvider } from '@app/common';
+import { RootModal } from '@app/common';
 import { initI18N } from '@i18n/i18n';
 
 // Federation version of ServiceAccounts
@@ -9,11 +9,9 @@ import { initI18N } from '@i18n/i18n';
 const ServiceAccountsFederated: React.FC = () => {
   return (
     <I18nextProvider i18n={initI18N()}>
-      <AlertProvider>
-        <RootModal>
-          <ServiceAccounts />
-        </RootModal>
-      </AlertProvider>
+      <RootModal>
+        <ServiceAccounts />
+      </RootModal>
     </I18nextProvider>
   );
 };
