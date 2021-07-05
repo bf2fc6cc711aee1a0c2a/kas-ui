@@ -22,10 +22,10 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
       </Button> */}
       <Grid hasGutter>
         <GridItem>
-          <UsedDiskSpaceChart kafkaID={kafkaID} />
+          <UsedDiskSpaceChart kafkaID={kafkaId} />
         </GridItem>
         <GridItem>
-          <IncomingOutgoingBytesPerTopic kafkaID={kafkaID} />
+          <IncomingOutgoingBytesPerTopic kafkaID={kafkaId} />
         </GridItem>
         {/* <GridItem>
           <LogSizePerPartitionChart kafkaID={kafkaID}/>
