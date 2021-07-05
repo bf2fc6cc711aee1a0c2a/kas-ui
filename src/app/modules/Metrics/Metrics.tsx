@@ -11,9 +11,6 @@ export interface MetricsProps {
 }
 
 export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
-  // const kafkaID: string = '1tObNFa1hWUBINi27PBW76rDKAt';
-  console.log('kafkaId', kafkaId);
-  const [kafkaID, setKafkaID] = useState<string>('1tPLvSslH4L76YfTK4IYtZu75dF');
   return (
     <PageSection>
       {/* <InputGroup>
@@ -24,10 +21,10 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
       </Button> */}
       <Grid hasGutter>
         <GridItem>
-          <UsedDiskSpaceChart kafkaID={kafkaID} />
+          <UsedDiskSpaceChart kafkaID={kafkaId} />
         </GridItem>
         <GridItem>
-          <IncomingOutgoingBytesPerTopic kafkaID={kafkaID} />
+          <IncomingOutgoingBytesPerTopic kafkaID={kafkaId} />
         </GridItem>
         {/* <GridItem>
           <LogSizePerPartitionChart kafkaID={kafkaID}/>
