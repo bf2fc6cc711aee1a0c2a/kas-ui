@@ -98,7 +98,7 @@
     "@redhat-cloud-services/frontend-components": "3.3.4",
     "@redhat-cloud-services/frontend-components-config": "4.2.6",
     "axios": "0.21.1",
-    "dayjs": "1.10.5",
+    "dayjs": "1.10.6",
     "express": "4.17.1",
     "i18next": "20.3.2",
     "i18next-browser-languagedetector": "6.1.2",
