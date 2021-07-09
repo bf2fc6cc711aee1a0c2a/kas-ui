@@ -57,7 +57,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   }, []);
 
   useEffect(() => {
-    auth?.getIsOrgAdmin().then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
+    auth?.isOrgAdmin().then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
   }, [auth]);
 
   const tableColumns = [

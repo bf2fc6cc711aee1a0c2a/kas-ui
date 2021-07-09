@@ -16,7 +16,7 @@ export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
     return getParsedKeyCloakToken().then((token) => token['username']);
   };
 
-  const getIsOrgAdmin = () => {
+  const isOrgAdmin = () => {
     return getParsedKeyCloakToken().then((token) => token['is_org_admin']);
   };
 
@@ -25,7 +25,7 @@ export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
       getToken: getKeyCloakToken,
     },
     getUsername,
-    getIsOrgAdmin,
+    isOrgAdmin,
   } as Auth;
   return <AuthContext.Provider value={authTokenContext}>{props.children}</AuthContext.Provider>;
 };

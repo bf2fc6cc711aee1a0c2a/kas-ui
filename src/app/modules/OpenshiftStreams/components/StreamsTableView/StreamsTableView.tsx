@@ -161,7 +161,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   ];
 
   useEffect(() => {
-    auth?.getIsOrgAdmin().then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
+    auth?.isOrgAdmin().then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
   }, [auth]);
 
   const removeKafkaFromDeleted = (name: string) => {
