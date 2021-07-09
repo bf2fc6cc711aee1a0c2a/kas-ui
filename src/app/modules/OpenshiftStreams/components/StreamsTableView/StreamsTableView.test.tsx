@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
 import { StreamsTableView } from './StreamsTableView';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../../../test-utils/i18n';
 import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@bf2/ui-shared';
@@ -43,6 +43,7 @@ describe('<StreamsTableView/>', () => {
         getToken: () => Promise.resolve('test-token'),
       },
       getUsername: () => Promise.resolve('api_kafka_service'),
+      isOrgAdmin: () => Promise.resolve(true),
     } as Auth
   ) => {
     render(
