@@ -98,6 +98,7 @@
     "@redhat-cloud-services/frontend-components": "3.3.5",
     "@redhat-cloud-services/frontend-components-config": "4.2.7",
     "axios": "0.21.1",
+    "byte-size": "8.0.0",
     "dayjs": "1.10.6",
     "express": "4.17.1",
     "i18next": "20.3.2",
@@ -114,8 +115,7 @@
     "react-i18next": "11.11.1",
     "react-redux": "7.2.4",
     "react-router-last-location": "2.0.1",
-    "redux": "4.1.0",
-    "byte-size": "8.0.0"
+    "redux": "4.1.0"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
