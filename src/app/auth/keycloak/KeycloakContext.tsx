@@ -16,11 +16,16 @@ export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
     return getParsedKeyCloakToken().then((token) => token['username']);
   };
 
+  const getIsOrgAdmin = () => {
+    return getParsedKeyCloakToken().then((token) => token['is_org_admin']);
+  };
+
   const authTokenContext = {
     kas: {
       getToken: getKeyCloakToken,
     },
-    getUsername: getUsername,
+    getUsername,
+    getIsOrgAdmin,
   } as Auth;
   return <AuthContext.Provider value={authTokenContext}>{props.children}</AuthContext.Provider>;
 };
