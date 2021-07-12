@@ -5,7 +5,7 @@ import { MASPagination, PaginationProps } from './MASPagination';
 
 afterEach(cleanup);
 
-jest.mock('react-router', () => ({
+jest.mock('react-router-dom', () => ({
   useHistory: () => ({
     push: jest.fn(),
   }),
@@ -130,7 +130,7 @@ describe('<MASPagination/>', () => {
     const props = {
       page: 1,
       itemCount: 30,
-      isCompact: true,  
+      isCompact: true,
       variant: PaginationVariant.top,
     };
 
