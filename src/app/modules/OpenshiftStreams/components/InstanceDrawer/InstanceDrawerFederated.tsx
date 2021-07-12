@@ -25,30 +25,26 @@ const InstanceDrawerFederated = ({
   isOpenDeleteInstanceModal,
 }) => {
   return (
-    <BrowserRouter>
-      <I18nextProvider i18n={initI18N()}>
-        <AlertProvider>
-          <RootModal>
-            <InstanceDrawerConnected
-              isExpanded={isExpanded}
-              activeTab={activeTab}
-              onClose={onClose}
-              data-ouia-app-id={dataOuiaAppId}
-              getConnectToRoutePath={getConnectToRoutePath}
-              onConnectToRoute={onConnectToRoute}
-              tokenEndPointUrl={tokenEndPointUrl}
-              mainToggle={mainToggle}
-              isLoading={instanceDetail === undefined}
-              instanceDetail={instanceDetail}
-              setIsOpenDeleteInstanceModal={setIsOpenDeleteInstanceModal}
-              isOpenDeleteInstanceModal={isOpenDeleteInstanceModal}
-            >
-              {children}
-            </InstanceDrawerConnected>
-          </RootModal>
-        </AlertProvider>
-      </I18nextProvider>
-    </BrowserRouter>
+    <I18nextProvider i18n={initI18N()}>
+      <RootModal>
+        <InstanceDrawerConnected
+          isExpanded={isExpanded}
+          activeTab={activeTab}
+          onClose={onClose}
+          data-ouia-app-id={dataOuiaAppId}
+          getConnectToRoutePath={getConnectToRoutePath}
+          onConnectToRoute={onConnectToRoute}
+          tokenEndPointUrl={tokenEndPointUrl}
+          mainToggle={mainToggle}
+          isLoading={instanceDetail === undefined}
+          instanceDetail={instanceDetail}
+          setIsOpenDeleteInstanceModal={setIsOpenDeleteInstanceModal}
+          isOpenDeleteInstanceModal={isOpenDeleteInstanceModal}
+        >
+          {children}
+        </InstanceDrawerConnected>
+      </RootModal>
+    </I18nextProvider>
   );
 };
 
