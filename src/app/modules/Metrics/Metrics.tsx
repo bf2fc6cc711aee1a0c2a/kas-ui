@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   UsedDiskSpaceChart,
   LogSizePerPartitionChart,
   IncomingOutgoingBytesPerTopic,
 } from '@app/modules/Metrics/Charts';
-import { InputGroup, TextInput, Button, Grid, GridItem, PageSection } from '@patternfly/react-core';
+import { Grid, GridItem, PageSection } from '@patternfly/react-core';
 
 export interface MetricsProps {
   kafkaId: string;
 }
 
 export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
+  const kafkaID = kafkaId || '1vFpbfjQqSXGVYqSxCX5I1xdfj2';
   return (
     <PageSection>
       {/* <InputGroup>
@@ -21,10 +22,10 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
       </Button> */}
       <Grid hasGutter>
         <GridItem>
-          <UsedDiskSpaceChart kafkaID={kafkaId} />
+          <UsedDiskSpaceChart kafkaID={kafkaID} />
         </GridItem>
         <GridItem>
-          <IncomingOutgoingBytesPerTopic kafkaID={kafkaId} />
+          <IncomingOutgoingBytesPerTopic kafkaID={kafkaID} />
         </GridItem>
         {/* <GridItem>
           <LogSizePerPartitionChart kafkaID={kafkaID}/>
