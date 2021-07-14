@@ -101,7 +101,7 @@
     "byte-size": "8.0.0",
     "dayjs": "1.10.6",
     "express": "4.17.1",
-    "i18next": "20.3.2",
+    "i18next": "20.3.3",
     "i18next-browser-languagedetector": "6.1.2",
     "i18next-http-backend": "1.2.6",
     "i18next-parser": "4.2.0",
@@ -112,7 +112,7 @@
     "postcss": "8.3.5",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-i18next": "11.11.1",
+    "react-i18next": "11.11.2",
     "react-redux": "7.2.4",
     "react-router-last-location": "2.0.1",
     "redux": "4.1.0"
