@@ -20,6 +20,7 @@ import {
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
 import { ChartEmptyState } from './ChartEmptyState';
+import { ChartToolbar } from './ChartToolbar';
 
 type Topic = {
   name: string;
@@ -47,9 +48,15 @@ type LegendData = {
 
 type KafkaInstanceProps = {
   kafkaID: string;
+  metricsDataUnavailable: boolean;
+  setMetricsDataUnavailable: (value: boolean) => void;
 };
 
-export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ kafkaID }: KafkaInstanceProps) => {
+export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
+  kafkaID,
+  metricsDataUnavailable,
+  setMetricsDataUnavailable,
+}: KafkaInstanceProps) => {
   const { t } = useTranslation();
   const auth = useAuth();
   const {
@@ -58,6 +65,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
   const { addAlert } = useAlert();
   const containerRef = useRef();
   const [width, setWidth] = useState();
+  const [timeInterval, setTimeInterval] = useState(1);
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
@@ -74,8 +82,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
   const [chartData, setChartData] = useState<ChartData[]>();
   const [legend, setLegend] = useState<LegendData[]>();
   const [largestByteSize, setLargestByteSize] = useState();
-  const [noTopics, setNoTopics] = useState();
-  const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
+  const [noTopics, setNoTopics] = useState<boolean>();
   const [chartDataLoading, setChartDataLoading] = useState(true);
 
   const fetchBytesData = async () => {
@@ -92,11 +99,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, [
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeInterval * 60, 5 * 60, [
           'kafka_server_brokertopicmetrics_bytes_in_total',
           'kafka_server_brokertopicmetrics_bytes_out_total',
         ]);
-
+        console.log('data', data);
         const incomingTopics = {
           name: 'Total incoming byte rate',
           data: [],
@@ -127,7 +134,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
             if (labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets') {
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
                 item.values?.forEach((value, indexJ) => {
-                  if (value.Timestamp == undefined) {
+                  if (value.timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
                   if (incomingCount > 0) {
@@ -135,7 +142,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
                     incomingTopics.data[indexJ].bytes = newArray;
                   } else {
                     incomingTopics.data.push({
-                      timestamp: value.Timestamp,
+                      timestamp: value.timestamp,
                       bytes: [value.value],
                     });
                   }
@@ -144,7 +151,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
               }
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
                 item.values?.forEach((value, indexJ) => {
-                  if (value.Timestamp == undefined) {
+                  if (value.timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
                   if (outgoingCount > 0) {
@@ -152,7 +159,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
                     outgoingTopics.data[indexJ].bytes = newArray;
                   } else {
                     outgoingTopics.data.push({
-                      timestamp: value.Timestamp,
+                      timestamp: value.timestamp,
                       bytes: [value.value],
                     });
                   }
@@ -184,7 +191,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
 
   useEffect(() => {
     fetchBytesData();
-  }, []);
+  }, [timeInterval]);
 
   useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
 
@@ -284,6 +291,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
 
   return (
     <Card>
+      <ChartToolbar
+        showTopicFilter={true}
+        title={t('metrics.topic_metrics')}
+        setTimeInterval={setTimeInterval}
+        showTopicToolbar={noTopics && metricsDataUnavailable}
+      />
       <CardTitle component="h2">{t('metrics.byte_rate')}</CardTitle>
       <CardBody>
         <div ref={containerRef}>
@@ -340,15 +353,15 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({ ka
                   )
                 ) : (
                   <ChartEmptyState
-                    title="No topics yet"
-                    body="Data will show when topics exist and are in use."
+                    title={t('metrics.empty_state_no_topics_title')}
+                    body={t('metrics.empty_state_no_topics_body')}
                     noTopics
                   />
                 )
               ) : (
                 <ChartEmptyState
-                  title="No data"
-                  body="We’re creating your Kafka instance, so some details aren’t yet available."
+                  title={t('metrics.empty_state_no_data_title')}
+                  body={t('metrics.empty_state_no_data_body')}
                   noData
                 />
               )
