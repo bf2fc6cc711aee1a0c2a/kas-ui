@@ -475,23 +475,23 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   };
 
   const createInstanceButton = () => {
-    const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
-    const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
-    if (isDisabledCreateButton) {
-      const content = getButtonTooltipContent();
-      return (
-        <Tooltip content={content}>
-          <Button
-            data-testid="emptyStateStreams-buttonCreateKafka"
-            variant={ButtonVariant.primary}
-            onClick={() => handleCreateInstanceModal(true)}
-            isAriaDisabled={isDisabledCreateButton}
-          >
-            {t('create_kafka_instance')}
-          </Button>
-        </Tooltip>
-      );
-    }
+    // const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
+    // const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
+    // if (isDisabledCreateButton) {
+    //   const content = getButtonTooltipContent();
+    //   return (
+    //     <Tooltip content={content}>
+    //       <Button
+    //         data-testid="emptyStateStreams-buttonCreateKafka"
+    //         variant={ButtonVariant.primary}
+    //         onClick={() => handleCreateInstanceModal(true)}
+    //         isAriaDisabled={isDisabledCreateButton}
+    //       >
+    //         {t('create_kafka_instance')}
+    //       </Button>
+    //     </Tooltip>
+    //   );
+    // }
     return (
       <Button
         data-testid="emptyStateStreams-buttonCreateKafka"

@@ -23,10 +23,11 @@ import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { MASCreateModal, useRootModalContext } from '@app/common';
 import { ErrorCodes } from '@app/utils';
 import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/kafka-management-sdk';
-import { NewKafka, FormDataValidationState } from '../../../../models';
+import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useFederated } from '@app/contexts';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -41,8 +42,10 @@ const CreateInstance: React.FunctionComponent = () => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
+    ams: { quotaId },
   } = useConfig();
   const { addAlert } = useAlert();
+  const { getAMSQuotaCost } = useFederated();
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -139,6 +142,28 @@ const CreateInstance: React.FunctionComponent = () => {
     return isValid;
   };
 
+  const manageQuotaLimit = async () => {
+    let quotaLimit;
+    if (getAMSQuotaCost) {
+      await getAMSQuotaCost()
+        .then((res) => {
+          const quotaCost = res?.data.items?.filter((q) => q.quota_id.trim() == quotaId?.trim())[0];
+          quotaLimit = quotaCost?.allowed - quotaCost?.consumed;
+        })
+        .catch((error) => {
+          if (isServiceApiError(error)) {
+            const { reason } = error?.response?.data || {};
+            addAlert({
+              title: t('common.something_went_wrong'),
+              variant: AlertVariant.danger,
+              description: reason,
+            });
+          }
+        });
+    }
+    return quotaLimit;
+  };
+
   const onCreateInstance = async () => {
     const isValid = validateCreateForm();
     const accessToken = await auth?.kas.getToken();
@@ -146,8 +171,9 @@ const CreateInstance: React.FunctionComponent = () => {
       setIsFormValid(false);
       return;
     }
+    const quotaLimit = await manageQuotaLimit();
 
-    if (accessToken) {
+    if (accessToken && quotaLimit > 0) {
       try {
         const apisService = new DefaultApi(
           new Configuration({
