@@ -1,25 +1,17 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   UsedDiskSpaceChart,
   LogSizePerPartitionChart,
-  IncomingOutgoingBytesPerTopic
+  IncomingOutgoingBytesPerTopic,
 } from '@app/modules/Metrics/Charts';
-import { 
-  InputGroup,
-  TextInput,
-  Button,
-  Grid,
-  GridItem,
-  PageSection
-} from '@patternfly/react-core';
+import { Grid, GridItem, PageSection } from '@patternfly/react-core';
 
-export const Metrics = () => {
+export interface MetricsProps {
+  kafkaId: string;
+}
 
-
-  // const kafkaID: string = '1tObNFa1hWUBINi27PBW76rDKAt';
-  
-  const [kafkaID, setKafkaID] = useState<string>('1tPLvSslH4L76YfTK4IYtZu75dF');
-
+export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
+  const kafkaID = kafkaId || '1vFpbfjQqSXGVYqSxCX5I1xdfj2';
   return (
     <PageSection>
       {/* <InputGroup>
@@ -30,10 +22,10 @@ export const Metrics = () => {
       </Button> */}
       <Grid hasGutter>
         <GridItem>
-          <UsedDiskSpaceChart kafkaID={kafkaID}/>
+          <UsedDiskSpaceChart kafkaID={kafkaID} />
         </GridItem>
         <GridItem>
-          <IncomingOutgoingBytesPerTopic kafkaID={kafkaID}/>
+          <IncomingOutgoingBytesPerTopic kafkaID={kafkaID} />
         </GridItem>
         {/* <GridItem>
           <LogSizePerPartitionChart kafkaID={kafkaID}/>
