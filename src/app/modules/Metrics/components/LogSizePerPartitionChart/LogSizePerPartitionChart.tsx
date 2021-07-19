@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
@@ -17,9 +17,9 @@ import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_b
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
 import { format } from 'date-fns';
 import byteSize from 'byte-size';
-import { ChartEmptyState } from './ChartEmptyState';
+import { ChartEmptyState } from '@app/modules/Metrics/components';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { getLargestByteSize, convertToSpecifiedByte } from './utils';
+import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 
 export type Partition = {
   name: string;

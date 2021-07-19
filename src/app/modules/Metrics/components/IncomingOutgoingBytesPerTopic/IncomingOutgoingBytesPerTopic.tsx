@@ -8,7 +8,7 @@ import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_b
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 import { format } from 'date-fns';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { getLargestByteSize, convertToSpecifiedByte } from './utils';
+import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 import { Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
 import {
   Chart,
@@ -19,7 +19,7 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { ChartEmptyState } from './ChartEmptyState';
+import { ChartEmptyState } from '@app/modules/Metrics/components';
 
 type Topic = {
   name: string;
