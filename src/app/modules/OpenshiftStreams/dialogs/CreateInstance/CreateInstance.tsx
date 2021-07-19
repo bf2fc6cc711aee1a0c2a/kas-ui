@@ -143,7 +143,7 @@ const CreateInstance: React.FunctionComponent = () => {
   };
 
   const manageQuotaLimit = async () => {
-    let quotaLimit;
+    let quotaLimit: number | undefined = 0;
     if (getAMSQuotaCost) {
       await getAMSQuotaCost()
         .then((res) => {

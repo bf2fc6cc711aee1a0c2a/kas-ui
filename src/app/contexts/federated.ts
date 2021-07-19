@@ -1,12 +1,11 @@
 import React, { useContext } from 'react';
-import { QuotaCostList } from '@app/models';
 
 export type FederatedProps = {
-  getAMSQuotaCost?: () => Promise<QuotaCostList>;
+  getAMSQuotaCost?: () => Promise<unknown>;
 };
 
 const initialState: FederatedProps = {
-  getAMSQuotaCost: () => Promise.resolve({} as QuotaCostList),
+  getAMSQuotaCost: () => Promise.resolve({}),
 };
 
 export const FederatedContext = React.createContext<FederatedProps>(initialState);
