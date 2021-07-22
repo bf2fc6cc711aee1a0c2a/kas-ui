@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
@@ -17,10 +17,10 @@ import {
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { format } from 'date-fns';
-import byteSize from 'byte-size';
 import { ChartEmptyState } from './ChartEmptyState';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { convertToSpecifiedByte, getMaxValueOfArray } from './utils';
+import { convertToSpecifiedByte } from './utils';
+import { ChartToolbar } from './ChartToolbar';
 
 type Broker = {
   name: string;
@@ -50,9 +50,15 @@ type LegendData = {
 
 type KafkaInstanceProps = {
   kafkaID: string;
+  metricsDataUnavailable: boolean;
+  setMetricsDataUnavailable: (value: boolean) => void;
 };
 
-export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: KafkaInstanceProps) => {
+export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
+  kafkaID,
+  metricsDataUnavailable,
+  setMetricsDataUnavailable,
+}: KafkaInstanceProps) => {
   const containerRef = useRef();
   const { t } = useTranslation();
   const auth = useAuth();
@@ -63,10 +69,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: Ka
   const [width, setWidth] = useState();
   const [legend, setLegend] = useState();
   const [chartData, setChartData] = useState<ChartData[]>();
-  const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [largestByteSize, setLargestByteSize] = useState();
-
+  const [timeInterval, setTimeInterval] = useState(1);
   const usageLimit = 60; // Replace with limit from API
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
@@ -85,7 +90,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: Ka
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, [
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeInterval * 60, 5 * 60, [
           'kubelet_volume_stats_used_bytes',
         ]);
 
@@ -98,6 +103,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: Ka
           setMetricsDataUnavailable(false);
           data.data.items?.forEach((item, index) => {
             const labels = item.metric;
+
             if (labels === undefined) {
               throw new Error('item.metric cannot be undefined');
             }
@@ -109,22 +115,23 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: Ka
 
               if (!pvcName.includes('zookeeper')) {
                 item.values?.forEach((value, indexJ) => {
-                  if (value.Timestamp == undefined) {
+                  if (value.timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
 
                   if (index > 0) {
-                    const newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(value.Value);
+                    const newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(value.value);
                     avgBroker.data[indexJ].usedSpaceAvg = newArray;
                   } else {
                     avgBroker.data.push({
-                      timestamp: value.Timestamp,
-                      usedSpaceAvg: [value.Value],
+                      timestamp: value.timestamp,
+                      usedSpaceAvg: [value.value],
                     });
                   }
                 });
               }
             }
+
             getChartData(avgBroker);
           });
         } else {
@@ -144,7 +151,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: Ka
   useEffect(() => {
     fetchUsedDiskSpaceMetrics();
     handleResize();
-  }, []);
+  }, [timeInterval]);
 
   useTimeout(() => fetchUsedDiskSpaceMetrics(), 1000 * 60 * 5);
 
@@ -210,6 +217,12 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: Ka
 
   return (
     <Card>
+      <ChartToolbar
+        showTopicFilter={false}
+        title={t('metrics.kafka_instance_metrics')}
+        setTimeInterval={setTimeInterval}
+        showKafkaToolbar={!metricsDataUnavailable}
+      />
       <CardTitle component="h2">{t('metrics.used_disk_space')}</CardTitle>
       <CardBody>
         <div ref={containerRef}>
@@ -267,8 +280,8 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: Ka
               )
             ) : (
               <ChartEmptyState
-                title="No data"
-                body="We’re creating your Kafka instance, so some details aren’t yet available."
+                title={t('metrics.empty_state_no_data_title')}
+                body={t('metrics.empty_state_no_data_body')}
                 noData
               />
             )
