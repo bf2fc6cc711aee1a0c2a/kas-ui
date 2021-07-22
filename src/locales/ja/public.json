@@ -333,6 +333,8 @@
     "empty_state_no_data_body": "We’re creating your Kafka instance, so some details aren’t yet available.",
     "empty_state_no_data_title": "No data yet",
     "empty_state_no_topics_body": "Data will appear once you create and use topics.",
-    "empty_state_no_topics_title": "No topics yet"
+    "empty_state_no_topics_title": "No topics yet",
+    "empty_state_no_filter_body": "In the filter dropdown select a topic to see log size per topic partition.",
+    "empty_state_no_filter_title": "Filter by Topic"
   }
 }

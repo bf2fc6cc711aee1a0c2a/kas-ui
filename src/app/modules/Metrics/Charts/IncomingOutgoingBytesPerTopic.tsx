@@ -67,13 +67,10 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const containerRef = useRef();
   const [width, setWidth] = useState();
   const [timeInterval, setTimeInterval] = useState(1);
+  const [selectedTopic, setSelectedTopic] = useState<boolean>(false);
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
-
-  useEffect(() => {
-    handleResize();
-  }, []);
 
   useEffect(() => {
     handleResize();
@@ -297,6 +294,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         title={t('metrics.topic_metrics')}
         setTimeInterval={setTimeInterval}
         showTopicToolbar={!noTopics && !metricsDataUnavailable}
+        selectedTopic={selectedTopic}
+        setSelectedTopic={setSelectedTopic}
       />
       <CardTitle component="h2">{t('metrics.byte_rate')}</CardTitle>
       <CardBody>
@@ -354,7 +353,15 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                       </Chart>
 
                       <Divider />
-                      <LogSizePerPartitionChart kafkaID={kafkaID} />
+                      {selectedTopic ? (
+                        <LogSizePerPartitionChart kafkaID={kafkaID} />
+                      ) : (
+                        <ChartEmptyState
+                          title={t('metrics.empty_state_no_filter_title')}
+                          body={t('metrics.empty_state_no_filter_body')}
+                          noFilter
+                        />
+                      )}
                     </>
                   )
                 ) : (
