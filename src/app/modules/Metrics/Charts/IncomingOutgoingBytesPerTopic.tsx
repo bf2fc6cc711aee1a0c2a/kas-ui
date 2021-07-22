@@ -25,11 +25,11 @@ import { LogSizePerPartitionChart } from '.';
 
 type Topic = {
   name: string;
-  data: {
-    timestamp: number;
-    bytes: number[];
-  }[];
+  rawData: Map<number, number[]>
+  sortedData: TopicDataArray;
 };
+
+type TopicDataArray = {timestamp: number, bytes: number[]}[];
 
 type ChartData = {
   color: string;
@@ -104,19 +104,16 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
         const incomingTopics = {
           name: 'Total incoming bytes',
-          data: [],
+          rawData: new Map<number, number[]>(),
         } as Topic;
 
         const outgoingTopics = {
           name: 'Total outgoing bytes',
-          data: [],
+          rawData: new Map<number, number[]>(),
         } as Topic;
 
         if (data.data.items) {
           setMetricsDataUnavailable(false);
-
-          let incomingCount = 0;
-          let outgoingCount = 0;
 
           data.data.items?.forEach((item, index) => {
             const labels = item.metric;
@@ -135,42 +132,39 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                   if (value.timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
-                  if (incomingCount > 0) {
-                    const newArray = incomingTopics.data[indexJ].bytes.concat(value.value);
-                    incomingTopics.data[indexJ].bytes = newArray;
+                  if (incomingTopics.rawData.has(value.timestamp)) {
+                    incomingTopics.rawData.get(value.timestamp)?.push(value.value);
                   } else {
-                    incomingTopics.data.push({
-                      timestamp: value.timestamp,
-                      bytes: [value.value],
-                    });
+                    incomingTopics.rawData.set(value.timestamp, [value.value] as number[]);
                   }
+
                 });
-                incomingCount++;
               }
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
                 item.values?.forEach((value, indexJ) => {
                   if (value.timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
-                  if (outgoingCount > 0) {
-                    const newArray = outgoingTopics.data[indexJ].bytes.concat(value.value);
-                    outgoingTopics.data[indexJ].bytes = newArray;
+                  if (outgoingTopics.rawData.has(value.timestamp)) {
+                    outgoingTopics.rawData.get(value.timestamp)?.push(value.value);
                   } else {
-                    outgoingTopics.data.push({
-                      timestamp: value.timestamp,
-                      bytes: [value.value],
-                    });
+                    outgoingTopics.rawData.set(value.timestamp, [value.value] as number[]);
                   }
                 });
-                outgoingCount++;
               }
             }
           });
 
-          if (incomingTopics.data.length < 1 && outgoingTopics.data.length < 1) {
+          if (incomingTopics.rawData.size < 1 && outgoingTopics.rawData.size < 1) {
             setNoTopics(true);
             setChartDataLoading(false);
           } else {
+            const incomingDataArr = [] as TopicDataArray;
+            incomingTopics.rawData.forEach((value, key) => incomingDataArr.push({ timestamp: key, bytes: value}));
+            incomingTopics.sortedData = incomingDataArr.sort((a, b) => a.timestamp - b.timestamp)
+            const outgoingDataArr = [] as TopicDataArray;
+            outgoingTopics.rawData.forEach((value, key) => outgoingDataArr.push({ timestamp: key, bytes: value}));
+            outgoingTopics.sortedData = outgoingDataArr.sort((a, b) => a.timestamp - b.timestamp)
             getChartData(incomingTopics, outgoingTopics);
           }
         } else {
@@ -193,7 +187,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
   useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
 
-  const getChartData = (incomingTopicArray, outgoingTopicArray) => {
+  const getChartData = (incomingTopicArray: Topic, outgoingTopicArray: Topic) => {
     const legendData: Array<LegendData> = [];
     const chartData: Array<ChartData> = [];
     const largestByteSize = getLargestByteSize(incomingTopicArray, outgoingTopicArray);
@@ -205,7 +199,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       const getCurrentLengthOfData = () => {
         const timestampDiff =
-          incomingTopicArray.data[incomingTopicArray.data.length - 1].timestamp - incomingTopicArray.data[0].timestamp;
+          incomingTopicArray.sortedData[incomingTopicArray.sortedData.length - 1].timestamp - incomingTopicArray.sortedData[0].timestamp;
         const minutes = timestampDiff / 1000 / 60;
         return minutes;
       };
@@ -214,14 +208,14 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       if (lengthOfData <= 360) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-          const newTimestamp = incomingTopicArray.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
+          const newTimestamp = incomingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
           const time = format(date, 'hh:mm');
           line.push({ name: incomingTopicArray.name, x: time, y: 0 });
         }
       }
 
-      incomingTopicArray.data.map((value) => {
+      incomingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
         const aggregateBytes = value.bytes.reduce(function (a, b) {
@@ -248,7 +242,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       const getCurrentLengthOfData = () => {
         const timestampDiff =
-          outgoingTopicArray.data[outgoingTopicArray.data.length - 1].timestamp - outgoingTopicArray.data[0].timestamp;
+          outgoingTopicArray.sortedData[outgoingTopicArray.sortedData.length - 1].timestamp - outgoingTopicArray.sortedData[0].timestamp;
         const minutes = timestampDiff / 1000 / 60;
         return minutes;
       };
@@ -257,14 +251,14 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       if (lengthOfData <= 360) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-          const newTimestamp = outgoingTopicArray.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
+          const newTimestamp = outgoingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
           const time = format(date, 'hh:mm');
           line.push({ name: outgoingTopicArray.name, x: time, y: 0 });
         }
       }
 
-      outgoingTopicArray.data.map((value) => {
+      outgoingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
         const time = format(date, 'hh:mm');
         const aggregateBytes = value.bytes.reduce(function (a, b) {
