@@ -21,6 +21,8 @@ type ChartToolbarProps = {
   setTimeInterval: (value: number) => void;
   showTopicToolbar?: boolean;
   showKafkaToolbar?: boolean;
+  setSelectedTopic?: (value: boolean) => void;
+  selectedTopic?: boolean;
 };
 export const ChartToolbar = ({
   title,
@@ -28,10 +30,11 @@ export const ChartToolbar = ({
   setTimeInterval,
   showKafkaToolbar = true,
   showTopicToolbar = true,
+  setSelectedTopic,
+  selectedTopic,
 }: ChartToolbarProps) => {
   const [selectedTime, setSelectedTime] = useState<boolean>(false);
   const [isTimeSelectOpen, setIsTimeSelectOpen] = useState<boolean>(false);
-  const [selectedTopic, setSelectedTopic] = useState<boolean>(false);
   const [isTopicSelectOpen, setIsTopicSelectOpen] = useState<boolean>(false);
 
   const onTimeToggle = (isTimeSelectOpen) => {
@@ -92,7 +95,7 @@ export const ChartToolbar = ({
   };
 
   const onTopicSelect = (_, selection) => {
-    setSelectedTopic(selection);
+    setSelectedTopic && setSelectedTopic(selection);
     setIsTopicSelectOpen(false);
   };
 
@@ -106,12 +109,13 @@ export const ChartToolbar = ({
           onSelect={onTimeSelect}
           selections={selectedTime}
           isOpen={isTimeSelectOpen}
-          isDisabled={disableToolbar}
+          // isDisabled={disableToolbar}
+          isDisabled
         >
-          <SelectOption key={0} value="Last 1 hour" isPlaceholder />
+          <SelectOption key={0} value="Last 1 hour" />
           <SelectOption key={1} value="Last 2 hour" />
           <SelectOption key={2} value="Last 4 hour" />
-          <SelectOption key={3} value="Last 6 hour" />
+          <SelectOption key={3} value="Last 6 hour" isPlaceholder />
           <SelectOption key={4} value="Last 12 hour" />
           <SelectOption key={5} value="Last 24 hour" />
           <SelectOption key={6} value="Last 2 days" />
@@ -150,7 +154,8 @@ export const ChartToolbar = ({
           onFilter={onTopicFilter}
           isGrouped
           hasInlineFilter
-          isDisabled={disableToolbar}
+          // isDisabled={disableToolbar}
+          isDisabled
         >
           {topicOptions}
         </Select>
