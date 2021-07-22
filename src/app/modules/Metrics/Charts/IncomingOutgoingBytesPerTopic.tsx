@@ -104,7 +104,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
           'kafka_server_brokertopicmetrics_bytes_in_total',
           'kafka_server_brokertopicmetrics_bytes_out_total',
         ]);
-        console.log('data', data);
+
         const incomingTopics = {
           name: 'Total incoming byte rate',
           data: [],
