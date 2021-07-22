@@ -106,12 +106,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         ]);
 
         const incomingTopics = {
-          name: 'Total incoming byte rate',
+          name: 'Total incoming bytes',
           data: [],
         } as Topic;
 
         const outgoingTopics = {
-          name: 'Total outgoing byte rate',
+          name: 'Total outgoing bytes',
           data: [],
         } as Topic;
 
@@ -298,7 +298,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         setTimeInterval={setTimeInterval}
         showTopicToolbar={!noTopics && !metricsDataUnavailable}
       />
-      <CardTitle component="h2">{t('metrics.byte_rate')}</CardTitle>
+      <CardTitle component="h2">{t('metrics.total_bytes')}</CardTitle>
       <CardBody>
         <div ref={containerRef}>
           <div>
@@ -310,8 +310,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                   largestByteSize && (
                     <>
                       <Chart
-                        ariaDesc={t('metrics.byte_rate')}
-                        ariaTitle="Byte rate"
+                        ariaDesc={t('metrics.total_bytes')}
+                        ariaTitle="Total Bytes"
                         containerComponent={
                           <ChartVoronoiContainer
                             labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -334,7 +334,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                         <ChartAxis label={'Time'} tickCount={6} />
                         <ChartAxis
                           dependentAxis
-                          tickFormat={(t) => `${Math.round(t)} ${largestByteSize}/s`}
+                          tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
                           tickCount={4}
                           minDomain={{ y: 0 }}
                         />
