@@ -15,6 +15,7 @@ const isServiceApiError = (error: Error): error is AxiosError<IApiErrorData> => 
 enum ErrorCodes {
   UNAUTHORIZED_USER = 'KAFKAS-MGMT-4',
   DUPLICATE_INSTANCE_NAME = 'KAFKAS-MGMT-36',
+  PREVIEW_KAFKA_INSTANCE_EXIST = 'KAFKAS-MGMT-24',
 }
 
 export { ErrorCodes, isServiceApiError };

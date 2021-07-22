@@ -54,6 +54,8 @@ const CreateInstance: React.FunctionComponent = () => {
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
+  const [quotaCost, setQuotaCost] = useState();
+  const [isDisabledButton, setIsDisabledButton] = useState<boolean>();
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -143,12 +145,11 @@ const CreateInstance: React.FunctionComponent = () => {
   };
 
   const manageQuotaLimit = async () => {
-    let quotaLimit: number | undefined = 0;
     if (getAMSQuotaCost) {
       await getAMSQuotaCost()
         .then((res) => {
           const quotaCost = res?.data.items?.filter((q) => q.quota_id.trim() == quotaId?.trim())[0];
-          quotaLimit = quotaCost?.allowed - quotaCost?.consumed;
+          setQuotaCost(quotaCost);
         })
         .catch((error) => {
           if (isServiceApiError(error)) {
@@ -161,8 +162,11 @@ const CreateInstance: React.FunctionComponent = () => {
           }
         });
     }
-    return quotaLimit;
   };
+
+  useEffect(() => {
+    manageQuotaLimit();
+  }, []);
 
   const onCreateInstance = async () => {
     const isValid = validateCreateForm();
@@ -171,9 +175,11 @@ const CreateInstance: React.FunctionComponent = () => {
       setIsFormValid(false);
       return;
     }
-    const quotaLimit = await manageQuotaLimit();
+    await manageQuotaLimit();
+    const { allowed, consumed } = quotaCost || {};
+    const quotaLimit = allowed - consumed;
 
-    if (accessToken && quotaLimit > 0) {
+    if (accessToken && (quotaLimit > 0 || allowed === 0)) {
       try {
         const apisService = new DefaultApi(
           new Configuration({
@@ -200,6 +206,8 @@ const CreateInstance: React.FunctionComponent = () => {
               fieldState: 'error',
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
+          } else if (code === ErrorCodes.PREVIEW_KAFKA_INSTANCE_EXIST) {
+            setIsDisabledButton(true);
           } else {
             addAlert({
               title: t('common.something_went_wrong'),
@@ -367,6 +375,44 @@ const CreateInstance: React.FunctionComponent = () => {
     );
   };
 
+  const renderAlert = () => {
+    const { allowed, consumed } = quotaCost || {};
+    const quotaLimit = allowed - consumed;
+    if (quotaLimit === 0) {
+      return (
+        <Alert
+          className="pf-u-mb-md"
+          variant="danger"
+          title={t('standard_kafka_alert_title')}
+          aria-live="polite"
+          isInline
+        >
+          {t('standard_kafka_alert_message')}
+        </Alert>
+      );
+    } else if (allowed === 0) {
+      return (
+        <Alert
+          className="pf-u-mb-md"
+          variant="warning"
+          title={t('preview_kafka_alert_title')}
+          aria-live="polite"
+          isInline
+        />
+      );
+    }
+    return <></>;
+  };
+
+  const shouldDisabledButton = () => {
+    const { allowed, consumed } = quotaCost || {};
+    const quotaLimit = allowed - consumed;
+    if (quotaLimit === 0 || isDisabledButton) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <MASCreateModal
       isModalOpen={true}
@@ -378,14 +424,9 @@ const CreateInstance: React.FunctionComponent = () => {
       isCreationInProgress={isCreationInProgress}
       dataTestIdSubmit="modalCreateKafka-buttonSubmit"
       dataTestIdCancel="modalCreateKafka-buttonCancel"
+      isDisabledButton={shouldDisabledButton()}
     >
-      <Alert
-        className="pf-u-mb-md"
-        variant="info"
-        title="Your preview instance will expire after 48 hours."
-        aria-live="polite"
-        isInline
-      />
+      {renderAlert()}
       <Flex direction={{ default: 'column', lg: 'row' }}>
         <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
         <Divider isVertical />
