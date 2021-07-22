@@ -71,7 +71,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   const [chartData, setChartData] = useState<ChartData[]>();
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [largestByteSize, setLargestByteSize] = useState();
-  const [timeInterval, setTimeInterval] = useState(1);
+  const [timeInterval, setTimeInterval] = useState(6);
   const usageLimit = 60; // Replace with limit from API
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
