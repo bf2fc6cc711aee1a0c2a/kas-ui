@@ -221,7 +221,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         showTopicFilter={false}
         title={t('metrics.kafka_instance_metrics')}
         setTimeInterval={setTimeInterval}
-        showKafkaToolbar={metricsDataUnavailable}
+        showKafkaToolbar={!metricsDataUnavailable}
       />
       <CardTitle component="h2">{t('metrics.used_disk_space')}</CardTitle>
       <CardBody>

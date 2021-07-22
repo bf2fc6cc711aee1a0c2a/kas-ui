@@ -14,7 +14,7 @@ export interface MetricsProps {
 
 export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
-  const kafkaID = kafkaId || '1vIZ6TuwjoaMo5YiD7qsUWvLfJZ';
+  const kafkaID = kafkaId || '1vca460i43rGHzPBsFhERrw7L9P';
   const { t } = useTranslation();
 
   return (

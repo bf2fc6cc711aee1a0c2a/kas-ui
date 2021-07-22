@@ -96,32 +96,34 @@ export const ChartToolbar = ({
     setIsTopicSelectOpen(false);
   };
 
-  const filterByTime = (isDisabled: boolean) => (
-    <ToolbarItem>
-      <Select
-        variant={SelectVariant.single}
-        aria-label="Select Input"
-        onToggle={onTimeToggle}
-        onSelect={onTimeSelect}
-        selections={selectedTime}
-        isOpen={isTimeSelectOpen}
-        isDisabled={isDisabled}
-      >
-        <SelectOption key={0} value="Last 1 hour" isPlaceholder />
-        <SelectOption key={1} value="Last 2 hour" />
-        <SelectOption key={2} value="Last 4 hour" />
-        <SelectOption key={3} value="Last 6 hour" />
-        <SelectOption key={4} value="Last 12 hour" />
-        <SelectOption key={5} value="Last 24 hour" />
-        <SelectOption key={6} value="Last 2 days" />
-        <SelectOption key={7} value="Last 3 days" />
-        <SelectOption key={8} value="Last 4 days" />
-        <SelectOption key={9} value="Last 5 days" />
-        <SelectOption key={10} value="Last 6 days" />
-        <SelectOption key={11} value="Last 7 days" />
-      </Select>
-    </ToolbarItem>
-  );
+  const filterByTime = (disableToolbar: boolean) => {
+    return (
+      <ToolbarItem>
+        <Select
+          variant={SelectVariant.single}
+          aria-label="Select Input"
+          onToggle={onTimeToggle}
+          onSelect={onTimeSelect}
+          selections={selectedTime}
+          isOpen={isTimeSelectOpen}
+          isDisabled={disableToolbar}
+        >
+          <SelectOption key={0} value="Last 1 hour" isPlaceholder />
+          <SelectOption key={1} value="Last 2 hour" />
+          <SelectOption key={2} value="Last 4 hour" />
+          <SelectOption key={3} value="Last 6 hour" />
+          <SelectOption key={4} value="Last 12 hour" />
+          <SelectOption key={5} value="Last 24 hour" />
+          <SelectOption key={6} value="Last 2 days" />
+          <SelectOption key={7} value="Last 3 days" />
+          <SelectOption key={8} value="Last 4 days" />
+          <SelectOption key={9} value="Last 5 days" />
+          <SelectOption key={10} value="Last 6 days" />
+          <SelectOption key={11} value="Last 7 days" />
+        </Select>
+      </ToolbarItem>
+    );
+  };
 
   const onTopicFilter = (_, textInput) => {
     return topicOptions;
@@ -134,25 +136,27 @@ export const ChartToolbar = ({
     </SelectGroup>,
   ];
 
-  const filterByTopic = (isDisabled: boolean) => (
-    <ToolbarItem>
-      <Select
-        variant={SelectVariant.single}
-        onToggle={onTopicToggle}
-        onSelect={onTopicSelect}
-        selections={selectedTopic}
-        isOpen={isTopicSelectOpen}
-        placeholderText="All Topics"
-        aria-labelledby={'titleId'}
-        onFilter={onTopicFilter}
-        isGrouped
-        hasInlineFilter
-        isDisabled={isDisabled}
-      >
-        {topicOptions}
-      </Select>
-    </ToolbarItem>
-  );
+  const filterByTopic = (disableToolbar: boolean) => {
+    return (
+      <ToolbarItem>
+        <Select
+          variant={SelectVariant.single}
+          onToggle={onTopicToggle}
+          onSelect={onTopicSelect}
+          selections={selectedTopic}
+          isOpen={isTopicSelectOpen}
+          placeholderText="All Topics"
+          aria-labelledby={'titleId'}
+          onFilter={onTopicFilter}
+          isGrouped
+          hasInlineFilter
+          isDisabled={disableToolbar}
+        >
+          {topicOptions}
+        </Select>
+      </ToolbarItem>
+    );
+  };
 
   return (
     <>
@@ -164,8 +168,8 @@ export const ChartToolbar = ({
           {showTopicFilter ? (
             <Toolbar>
               <ToolbarContent>
-                {filterByTopic(showTopicToolbar)}
-                {filterByTime(showTopicToolbar)}
+                {filterByTopic(!showTopicToolbar)}
+                {filterByTime(!showTopicToolbar)}
                 <Button variant="plain" aria-label="sync">
                   <SyncIcon />
                 </Button>
@@ -174,7 +178,7 @@ export const ChartToolbar = ({
           ) : (
             <Toolbar>
               <ToolbarContent>
-                {filterByTime(showKafkaToolbar)}
+                {filterByTime(!showKafkaToolbar)}
                 <Button variant="plain" aria-label="sync">
                   <SyncIcon />
                 </Button>

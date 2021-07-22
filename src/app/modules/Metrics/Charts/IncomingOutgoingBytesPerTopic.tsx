@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import { isServiceApiError } from '@app/utils';
-import { AlertVariant } from '@patternfly/react-core';
+import { AlertVariant, Divider } from '@patternfly/react-core';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 import { format } from 'date-fns';
@@ -21,6 +21,7 @@ import {
 } from '@patternfly/react-charts';
 import { ChartEmptyState } from './ChartEmptyState';
 import { ChartToolbar } from './ChartToolbar';
+import { LogSizePerPartitionChart } from '.';
 
 type Topic = {
   name: string;
@@ -295,7 +296,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         showTopicFilter={true}
         title={t('metrics.topic_metrics')}
         setTimeInterval={setTimeInterval}
-        showTopicToolbar={noTopics && metricsDataUnavailable}
+        showTopicToolbar={!noTopics && !metricsDataUnavailable}
       />
       <CardTitle component="h2">{t('metrics.byte_rate')}</CardTitle>
       <CardBody>
@@ -307,49 +308,54 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                   chartData &&
                   legend &&
                   largestByteSize && (
-                    <Chart
-                      ariaDesc={t('metrics.byte_rate')}
-                      ariaTitle="Byte rate"
-                      containerComponent={
-                        <ChartVoronoiContainer
-                          labels={({ datum }) => `${datum.name}: ${datum.y}`}
-                          constrainToVisibleArea
-                        />
-                      }
-                      legendAllowWrap={true}
-                      legendPosition="bottom-left"
-                      legendComponent={<ChartLegend data={legend} itemsPerRow={itemsPerRow} />}
-                      height={300}
-                      padding={{
-                        bottom: 110,
-                        left: 90,
-                        right: 30,
-                        top: 25,
-                      }}
-                      themeColor={ChartThemeColor.multiUnordered}
-                      width={width}
-                    >
-                      <ChartAxis label={'Time'} tickCount={6} />
-                      <ChartAxis
-                        dependentAxis
-                        tickFormat={(t) => `${Math.round(t)} ${largestByteSize}/s`}
-                        tickCount={4}
-                        minDomain={{ y: 0 }}
-                      />
-                      <ChartGroup>
-                        {chartData.map((value, index) => (
-                          <ChartLine
-                            key={`chart-line-${index}`}
-                            data={value.line}
-                            style={{
-                              data: {
-                                stroke: value.color,
-                              },
-                            }}
+                    <>
+                      <Chart
+                        ariaDesc={t('metrics.byte_rate')}
+                        ariaTitle="Byte rate"
+                        containerComponent={
+                          <ChartVoronoiContainer
+                            labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                            constrainToVisibleArea
                           />
-                        ))}
-                      </ChartGroup>
-                    </Chart>
+                        }
+                        legendAllowWrap={true}
+                        legendPosition="bottom-left"
+                        legendComponent={<ChartLegend data={legend} itemsPerRow={itemsPerRow} />}
+                        height={300}
+                        padding={{
+                          bottom: 110,
+                          left: 90,
+                          right: 30,
+                          top: 25,
+                        }}
+                        themeColor={ChartThemeColor.multiUnordered}
+                        width={width}
+                      >
+                        <ChartAxis label={'Time'} tickCount={6} />
+                        <ChartAxis
+                          dependentAxis
+                          tickFormat={(t) => `${Math.round(t)} ${largestByteSize}/s`}
+                          tickCount={4}
+                          minDomain={{ y: 0 }}
+                        />
+                        <ChartGroup>
+                          {chartData.map((value, index) => (
+                            <ChartLine
+                              key={`chart-line-${index}`}
+                              data={value.line}
+                              style={{
+                                data: {
+                                  stroke: value.color,
+                                },
+                              }}
+                            />
+                          ))}
+                        </ChartGroup>
+                      </Chart>
+
+                      <Divider />
+                      <LogSizePerPartitionChart kafkaID={kafkaID} />
+                    </>
                   )
                 ) : (
                   <ChartEmptyState
