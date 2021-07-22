@@ -66,7 +66,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const { addAlert } = useAlert();
   const containerRef = useRef();
   const [width, setWidth] = useState();
-  const [timeInterval, setTimeInterval] = useState(1);
+  const [timeInterval, setTimeInterval] = useState(6);
   const [selectedTopic, setSelectedTopic] = useState<boolean>(false);
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
