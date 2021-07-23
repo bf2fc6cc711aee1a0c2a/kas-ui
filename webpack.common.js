@@ -96,6 +96,14 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash:8].css',
         chunkFilename: '[contenthash:8].css',
+        insert: (linkTag) => {
+          const preloadLinkTag = document.createElement('link')
+          preloadLinkTag.rel = 'preload'
+          preloadLinkTag.as = 'style'
+          preloadLinkTag.href = linkTag.href
+          document.head.appendChild(preloadLinkTag)
+          document.head.appendChild(linkTag)
+        }
       }),
       new ChunkMapper({
         modules: [federatedModuleName],
@@ -104,7 +112,7 @@ module.exports = (env, argv) => {
         name: federatedModuleName,
         filename: `${federatedModuleName}${isProduction ? '[chunkhash:8]' : ''}.js`,
         exposes: {
-          "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",          
+          "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",
           "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated",
           "./InstanceDrawer":"./src/app/modules/OpenshiftStreams/components/InstanceDrawer/InstanceDrawerFederated",
           './Metrics': './src/app/modules/Metrics/MetricsFederated'
