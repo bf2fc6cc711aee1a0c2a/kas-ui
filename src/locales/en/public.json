@@ -330,6 +330,14 @@
     "log_size_per_partition": "Log size per partition",
     "incoming_bytes_per_topic": "Incoming bytes per topic",
     "outgoing_bytes_per_topic": "Outgoing bytes per topic",
-    "byte_rate": "Byte rate"
+    "total_bytes": "Total Bytes",
+    "kafka_instance_metrics": "Kafka instance metrics",
+    "topic_metrics": "Topic metrics",
+    "empty_state_no_data_body": "We’re creating your Kafka instance, so some details aren’t yet available.",
+    "empty_state_no_data_title": "No data yet",
+    "empty_state_no_topics_body": "Data will appear once you create and use topics.",
+    "empty_state_no_topics_title": "No topics yet",
+    "empty_state_no_filter_body": "In the filter dropdown select a topic to see log size per topic partition.",
+    "empty_state_no_filter_title": "Filter by Topic"
   }
 }
