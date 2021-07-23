@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
@@ -12,11 +13,12 @@ const DeleteInstanceConnected = () => {
   const { addAlert } = useAlert();
   const { t } = useTranslation();
   const auth = useAuth();
+  const history = useHistory();
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
   const { store, hideModal } = useRootModalContext();
-  const { selectedItemData: instanceDetail, onConnectToRoute, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
+  const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
   const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -51,7 +53,7 @@ const DeleteInstanceConnected = () => {
           setIsLoading(false);
           onCloseModal();
           //redirect on kafka list page
-          onConnectToRoute && onConnectToRoute({}, 'kafkas');
+          history.push('/kafkas');
         });
       } catch (error) {
         setIsLoading(false);

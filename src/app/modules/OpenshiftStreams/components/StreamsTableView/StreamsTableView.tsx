@@ -47,8 +47,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
-  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
-  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
   mainToggle: boolean;
   refresh: (arg0?: boolean) => void;
   kafkaDataLoaded: boolean;
@@ -109,8 +107,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   kafkaInstanceItems,
   onViewInstance,
   onViewConnection,
-  onConnectToRoute,
-  getConnectToRoutePath,
   refresh,
   page,
   perPage,
@@ -358,21 +354,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     return resolver;
   };
 
-  const renderNameLink = ({ name, row }) => {
-    return (
-      <Link
-        to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
-        onClick={(e) => {
-          e.preventDefault();
-          onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
-        }}
-        data-testid="tableStreams-linkKafka"
-      >
-        {name}
-      </Link>
-    );
-  };
-
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
@@ -387,9 +368,11 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         cells: [
           {
             title:
-              status === InstanceStatus.DEPROVISION || status !== InstanceStatus.READY
-                ? name
-                : renderNameLink({ name, row }),
+              status === InstanceStatus.DEPROVISION || status !== InstanceStatus.READY ? (
+                name
+              ) : (
+                <Link to={`kafkas/${row?.id}`}>{name}</Link>
+              ),
           },
           cloudProviderDisplayName,
           regionDisplayName,

@@ -38,11 +38,10 @@ import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
-export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
-  Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
-    preCreateInstance: (open: boolean) => Promise<boolean>;
-    createDialogOpen: () => boolean;
-  };
+export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> & {
+  preCreateInstance: (open: boolean) => Promise<boolean>;
+  createDialogOpen: () => boolean;
+};
 
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
@@ -50,8 +49,6 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
-  onConnectToRoute,
-  getConnectToRoutePath,
   preCreateInstance,
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
@@ -474,35 +471,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     return content;
   };
 
-  const createInstanceButton = () => {
-    // const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
-    // const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
-    // if (isDisabledCreateButton) {
-    //   const content = getButtonTooltipContent();
-    //   return (
-    //     <Tooltip content={content}>
-    //       <Button
-    //         data-testid="emptyStateStreams-buttonCreateKafka"
-    //         variant={ButtonVariant.primary}
-    //         onClick={() => handleCreateInstanceModal(true)}
-    //         isAriaDisabled={isDisabledCreateButton}
-    //       >
-    //         {t('create_kafka_instance')}
-    //       </Button>
-    //     </Tooltip>
-    //   );
-    // }
-    return (
-      <Button
-        data-testid="emptyStateStreams-buttonCreateKafka"
-        variant={ButtonVariant.primary}
-        onClick={() => handleCreateInstanceModal(true)}
-      >
-        {t('create_kafka_instance')}
-      </Button>
-    );
-  };
-
   /**
    * Todo: remove after summit
    */
@@ -599,7 +567,13 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               }}
               titleProps={{ title: 'Kafka instances available', size: TitleSizes.xl, headingLevel: 'h2' }}
             >
-              {createInstanceButton()}
+              <Button
+                data-testid="emptyStateStreams-buttonCreateKafka"
+                variant={ButtonVariant.primary}
+                onClick={() => handleCreateInstanceModal(true)}
+              >
+                {t('create_kafka_instance')}
+              </Button>
             </MASEmptyState>
           )}
         </PageSection>
@@ -617,8 +591,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               mainToggle={mainToggle}
               onViewConnection={onViewConnection}
               onViewInstance={onViewInstance}
-              onConnectToRoute={onConnectToRoute}
-              getConnectToRoutePath={getConnectToRoutePath}
               refresh={refreshKafkas}
               kafkaDataLoaded={kafkaDataLoaded}
               setWaitingForDelete={setWaitingForDelete}
@@ -660,8 +632,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         instanceDetail={instanceDetail}
         onClose={onCloseDrawer}
         data-ouia-app-id="controlPlane-streams"
-        getConnectToRoutePath={getConnectToRoutePath}
-        onConnectToRoute={onConnectToRoute}
         tokenEndPointUrl={tokenEndPointUrl}
         notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
       >

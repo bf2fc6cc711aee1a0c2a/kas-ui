@@ -556,20 +556,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   };
 
   const createButton = () => {
-    // if (isDisabledCreateButton) {
-    //   return (
-    //     <Tooltip content={buttonTooltipContent}>
-    //       <Button
-    //         variant="primary"
-    //         onClick={handleCreateModal}
-    //         data-testid={'tableStreams-buttonCreateKafka'}
-    //         isAriaDisabled={isDisabledCreateButton}
-    //       >
-    //         {t('create_kafka_instance')}
-    //       </Button>
-    //     </Tooltip>
-    //   );
-    // }
     return (
       <Button variant="primary" onClick={handleCreateModal} data-testid={'tableStreams-buttonCreateKafka'}>
         {t('create_kafka_instance')}

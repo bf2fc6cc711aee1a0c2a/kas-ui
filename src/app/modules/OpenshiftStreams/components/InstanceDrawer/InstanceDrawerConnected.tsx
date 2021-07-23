@@ -12,8 +12,6 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
   activeTab,
   onClose,
   'data-ouia-app-id': dataOuiaAppId,
-  getConnectToRoutePath,
-  onConnectToRoute,
   tokenEndPointUrl,
   children,
   mainToggle,
@@ -28,7 +26,6 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
     showModal(MODAL_TYPES.DELETE_KAFKA_EXTERNALLY, {
       selectedItemData: instanceDetail,
       setIsOpenDeleteInstanceModal,
-      onConnectToRoute,
     });
   };
 
@@ -44,8 +41,6 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
       activeTab={activeTab}
       onClose={onClose}
       data-ouia-app-id={dataOuiaAppId}
-      getConnectToRoutePath={getConnectToRoutePath}
-      onConnectToRoute={onConnectToRoute}
       tokenEndPointUrl={tokenEndPointUrl}
       mainToggle={mainToggle}
       isLoading={isLoading}

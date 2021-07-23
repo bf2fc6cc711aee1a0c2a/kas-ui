@@ -27,7 +27,7 @@ import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
-import { useFederated } from '@app/contexts';
+import { useFederated, QuotaCost } from '@app/contexts';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -42,7 +42,6 @@ const CreateInstance: React.FunctionComponent = () => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
-    ams: { quotaId },
   } = useConfig();
   const { addAlert } = useAlert();
   const { getAMSQuotaCost } = useFederated();
@@ -54,8 +53,8 @@ const CreateInstance: React.FunctionComponent = () => {
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [quotaCost, setQuotaCost] = useState();
-  const [isDisabledButton, setIsDisabledButton] = useState<boolean>();
+  const [quotaCost, setQuotaCost] = useState<QuotaCost>();
+  const [isPreviewKafkaMaxLimitReached, setIsPreviewKafkaMaxLimitReached] = useState<boolean>();
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -144,28 +143,15 @@ const CreateInstance: React.FunctionComponent = () => {
     return isValid;
   };
 
-  const manageQuotaLimit = async () => {
+  const amsQuoataCost = async () => {
     if (getAMSQuotaCost) {
-      await getAMSQuotaCost()
-        .then((res) => {
-          const quotaCost = res?.data.items?.filter((q) => q.quota_id.trim() == quotaId?.trim())[0];
-          setQuotaCost(quotaCost);
-        })
-        .catch((error) => {
-          if (isServiceApiError(error)) {
-            const { reason } = error?.response?.data || {};
-            addAlert({
-              title: t('common.something_went_wrong'),
-              variant: AlertVariant.danger,
-              description: reason,
-            });
-          }
-        });
+      const quotaResult: QuotaCost = await getAMSQuotaCost();
+      setQuotaCost(quotaResult);
     }
   };
 
   useEffect(() => {
-    manageQuotaLimit();
+    amsQuoataCost();
   }, []);
 
   const onCreateInstance = async () => {
@@ -175,7 +161,7 @@ const CreateInstance: React.FunctionComponent = () => {
       setIsFormValid(false);
       return;
     }
-    await manageQuotaLimit();
+    await amsQuoataCost();
     const { allowed, consumed } = quotaCost || {};
     const quotaLimit = allowed - consumed;
 
@@ -207,7 +193,7 @@ const CreateInstance: React.FunctionComponent = () => {
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
           } else if (code === ErrorCodes.PREVIEW_KAFKA_INSTANCE_EXIST) {
-            setIsDisabledButton(true);
+            setIsPreviewKafkaMaxLimitReached(true);
           } else {
             addAlert({
               title: t('common.something_went_wrong'),
@@ -390,7 +376,7 @@ const CreateInstance: React.FunctionComponent = () => {
           {t('standard_kafka_alert_message')}
         </Alert>
       );
-    } else if (allowed === 0) {
+    } else if (allowed === 0 || isPreviewKafkaMaxLimitReached) {
       return (
         <Alert
           className="pf-u-mb-md"
@@ -407,7 +393,7 @@ const CreateInstance: React.FunctionComponent = () => {
   const shouldDisabledButton = () => {
     const { allowed, consumed } = quotaCost || {};
     const quotaLimit = allowed - consumed;
-    if (quotaLimit === 0 || isDisabledButton) {
+    if (quotaLimit === 0 || isPreviewKafkaMaxLimitReached) {
       return true;
     }
     return false;

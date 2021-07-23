@@ -15,8 +15,6 @@ const InstanceDrawerFederated = ({
   activeTab,
   onClose,
   'data-ouia-app-id': dataOuiaAppId,
-  getConnectToRoutePath,
-  onConnectToRoute,
   tokenEndPointUrl,
   children,
   mainToggle,
@@ -32,8 +30,6 @@ const InstanceDrawerFederated = ({
           activeTab={activeTab}
           onClose={onClose}
           data-ouia-app-id={dataOuiaAppId}
-          getConnectToRoutePath={getConnectToRoutePath}
-          onConnectToRoute={onConnectToRoute}
           tokenEndPointUrl={tokenEndPointUrl}
           mainToggle={mainToggle}
           isLoading={instanceDetail === undefined}
