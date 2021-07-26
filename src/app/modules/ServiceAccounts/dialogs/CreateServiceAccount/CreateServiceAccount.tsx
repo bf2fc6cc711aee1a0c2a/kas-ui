@@ -253,3 +253,4 @@ const CreateServiceAccount: React.FunctionComponent = () => {
 };
 
 export { CreateServiceAccount };
+export default CreateServiceAccount;

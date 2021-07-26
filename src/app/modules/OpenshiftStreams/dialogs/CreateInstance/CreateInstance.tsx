@@ -372,3 +372,4 @@ const CreateInstance: React.FunctionComponent = () => {
 };
 
 export { CreateInstance };
+export default CreateInstance;

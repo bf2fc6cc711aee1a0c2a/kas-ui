@@ -100,3 +100,4 @@ const ResetServiceAccount: React.FunctionComponent = () => {
 };
 
 export { ResetServiceAccount };
+export default ResetServiceAccount;
