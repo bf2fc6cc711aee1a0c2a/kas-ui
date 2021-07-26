@@ -103,3 +103,5 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
     </Drawer>
   );
 };
+
+export default MASDrawer;

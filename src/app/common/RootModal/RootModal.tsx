@@ -1,7 +1,12 @@
 import React, { useState, createContext, useContext } from 'react';
-import { CreateInstance, DeleteInstance, DeleteInstanceConnected } from '@app/modules/OpenshiftStreams/dialogs';
-import { CreateServiceAccount, DeleteServiceAccount, ResetServiceAccount } from '@app/modules/ServiceAccounts/dialogs';
-import { MASGenerateCredentialsModal } from '@app/common';
+import { MASGenerateCredentialsModal, MASLoading } from '@app/common';
+
+const CreateInstance = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstance'));
+const DeleteInstance = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstance'));
+const DeleteInstanceConnected = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstanceConnected'));
+const CreateServiceAccount = React.lazy(() => import('@app/modules/ServiceAccounts/dialogs/CreateServiceAccount/CreateServiceAccount'));
+const DeleteServiceAccount = React.lazy(() => import('@app/modules/ServiceAccounts/dialogs/DeleteServiceAccount/DeleteServiceAccount'));
+const ResetServiceAccount = React.lazy(() => import('@app/modules/ServiceAccounts/dialogs/ResetServiceAccount/ResetServiceAccount'));
 
 export const MODAL_TYPES = {
   CREATE_KAFKA_INSTANCE: 'CREATE_KAFKA_INSTANCE',
@@ -68,7 +73,11 @@ export const RootModal = ({ children }) => {
     if (!modalType.length || !ModalComponent) {
       return null;
     }
-    return <ModalComponent id="global-modal" {...modalProps} />;
+    return (
+      <React.Suspense fallback={<MASLoading />}>
+        <ModalComponent id="global-modal" {...modalProps} />
+      </React.Suspense>
+    );
   };
 
   return (

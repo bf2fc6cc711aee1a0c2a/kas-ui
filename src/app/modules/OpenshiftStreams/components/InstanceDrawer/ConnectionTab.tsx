@@ -50,3 +50,5 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
     />
   );
 };
+
+export default ConnectionTab;
