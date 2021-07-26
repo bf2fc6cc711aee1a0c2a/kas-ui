@@ -11,6 +11,8 @@ const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const isPatternflyStyles = (stylesheet) => stylesheet.includes('@patternfly/react-styles/css/') || stylesheet.includes('@patternfly/react-core/');
+
 module.exports = (env, argv) => {
   const isProduction = argv && argv.mode === 'production';
   return {
@@ -34,6 +36,13 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/,
           use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          include: (stylesheet => !isPatternflyStyles(stylesheet)),
+          sideEffects: true,
+        },
+        {
+          test: /\.css$/,
+          include: isPatternflyStyles,
+          use: ['null-loader'],
           sideEffects: true,
         },
         {
