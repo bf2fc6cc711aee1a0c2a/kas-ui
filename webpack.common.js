@@ -10,6 +10,8 @@ delete dependencies.serve; // Needed for nodeshift bug
 const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const PurgeCSSPlugin = require('purgecss-webpack-plugin');
+const glob = require('glob');
 
 module.exports = (env, argv) => {
   const isProduction = argv && argv.mode === 'production';
@@ -103,7 +105,11 @@ module.exports = (env, argv) => {
           preloadLinkTag.href = linkTag.href
           document.head.appendChild(preloadLinkTag)
           document.head.appendChild(linkTag)
-        }
+        },
+        ignoreOrder: true,
+      }),
+      new PurgeCSSPlugin({
+        paths: glob.sync('./src/**/*.{html,tsx,ts}',  { nodir: true })
       }),
       new ChunkMapper({
         modules: [federatedModuleName],
