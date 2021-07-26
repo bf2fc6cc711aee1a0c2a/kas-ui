@@ -254,6 +254,7 @@
   "standard_kafka_alert_title": "Kafka Instances are unavailable for creation",
   "standard_kafka_alert_message": "Your organization reached the limit of Kafka instances available for creation.",
   "preview_kafka_alert_title": "There are no production instances available, but they can create a preview instance with a 48 hours duration.",
+  "ams_service_down_message": "We are unable to create a new Kafka instance at this time. Try again later.",
   "kafkaInstance": {
     "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
   },

@@ -56,7 +56,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   setOrderBy: (order: string) => void;
   isDrawerOpen?: boolean;
   loggedInUser: string | undefined;
-  isMaxCapacityReached?: boolean | undefined;
   setWaitingForDelete: (arg0: boolean) => void;
   currentUserkafkas: KafkaRequest[] | undefined;
 };
@@ -70,26 +69,18 @@ type ConfigDetail = {
 export const getDeleteInstanceModalConfig = (
   t: TFunction,
   status: string | undefined,
-  instanceName: string | undefined,
-  isMaxCapacityReached?: boolean | undefined
+  instanceName: string | undefined
 ): ConfigDetail => {
   const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
     description: '',
   };
-  /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
-   */
-  const additionalMessage = isMaxCapacityReached
-    ? ' You might not be able to create a new instance because all of them are currently provisioned by other users.'
-    : '';
 
   if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_complete', { instanceName }) + additionalMessage;
+    config.description = t('delete_instance_status_complete', { instanceName });
   } else if (
     status === InstanceStatus.ACCEPTED ||
     status === InstanceStatus.PROVISIONING ||
@@ -97,7 +88,7 @@ export const getDeleteInstanceModalConfig = (
   ) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName }) + additionalMessage;
+    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
   return config;
 };
@@ -121,7 +112,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   orderBy,
   setOrderBy,
   isDrawerOpen,
-  isMaxCapacityReached,
   buttonTooltipContent,
   isDisabledCreateButton,
   loggedInUser,
@@ -400,12 +390,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
-      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
-        t,
-        status,
-        name,
-        isMaxCapacityReached
-      );
+      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(t, status, name);
 
       showModal(MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
         instanceStatus: status,

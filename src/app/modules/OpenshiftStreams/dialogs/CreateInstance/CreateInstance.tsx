@@ -20,14 +20,14 @@ import {
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
-import { MASCreateModal, useRootModalContext } from '@app/common';
+import { MASCreateModal, useRootModalContext, MASLoading } from '@app/common';
 import { ErrorCodes } from '@app/utils';
 import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/kafka-management-sdk';
 import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
-import { useFederated, QuotaCost } from '@app/contexts';
+import { useFederated, QuotaCost, initialQuotaCost } from '@app/contexts';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -42,6 +42,7 @@ const CreateInstance: React.FunctionComponent = () => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
+    ams: { trialQuotaId },
   } = useConfig();
   const { addAlert } = useAlert();
   const { getAMSQuotaCost } = useFederated();
@@ -53,8 +54,14 @@ const CreateInstance: React.FunctionComponent = () => {
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [quotaCost, setQuotaCost] = useState<QuotaCost>();
-  const [isPreviewKafkaMaxLimitReached, setIsPreviewKafkaMaxLimitReached] = useState<boolean>();
+  const [quotaCost, setQuotaCost] = useState<QuotaCost>(initialQuotaCost);
+  const [isTrialQuota, setIsTrailQuota] = useState<boolean>();
+  const [loadingAMSService, setLoadingASMService] = useState(true);
+
+  useEffect(() => {
+    const isTrail = quotaCost?.quota_id === trialQuotaId;
+    setIsTrailQuota(isTrail);
+  }, [quotaCost]);
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -145,8 +152,10 @@ const CreateInstance: React.FunctionComponent = () => {
 
   const amsQuoataCost = async () => {
     if (getAMSQuotaCost) {
-      const quotaResult: QuotaCost = await getAMSQuotaCost();
-      setQuotaCost(quotaResult);
+      await getAMSQuotaCost().then((result) => {
+        setQuotaCost(result);
+      });
+      setLoadingASMService(false);
     }
   };
 
@@ -161,10 +170,10 @@ const CreateInstance: React.FunctionComponent = () => {
       setIsFormValid(false);
       return;
     }
+    //call ams quotacost api to check quota
     await amsQuoataCost();
-    const { allowed, consumed } = quotaCost || {};
-    const quotaLimit = allowed - consumed;
-
+    const { allowed } = quotaCost;
+    const quotaLimit = calculateQuotaLimit();
     if (accessToken && (quotaLimit > 0 || allowed === 0)) {
       try {
         const apisService = new DefaultApi(
@@ -192,8 +201,6 @@ const CreateInstance: React.FunctionComponent = () => {
               fieldState: 'error',
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
-          } else if (code === ErrorCodes.PREVIEW_KAFKA_INSTANCE_EXIST) {
-            setIsPreviewKafkaMaxLimitReached(true);
           } else {
             addAlert({
               title: t('common.something_went_wrong'),
@@ -361,39 +368,48 @@ const CreateInstance: React.FunctionComponent = () => {
     );
   };
 
-  const renderAlert = () => {
+  const calculateQuotaLimit = () => {
     const { allowed, consumed } = quotaCost || {};
-    const quotaLimit = allowed - consumed;
-    if (quotaLimit === 0) {
-      return (
-        <Alert
-          className="pf-u-mb-md"
-          variant="danger"
-          title={t('standard_kafka_alert_title')}
-          aria-live="polite"
-          isInline
-        >
-          {t('standard_kafka_alert_message')}
-        </Alert>
-      );
-    } else if (allowed === 0 || isPreviewKafkaMaxLimitReached) {
-      return (
-        <Alert
-          className="pf-u-mb-md"
-          variant="warning"
-          title={t('preview_kafka_alert_title')}
-          aria-live="polite"
-          isInline
-        />
-      );
+    let quotaLimit;
+    if (allowed != undefined && consumed != undefined) {
+      quotaLimit = allowed - consumed;
     }
-    return <></>;
+    return quotaLimit;
+  };
+
+  const renderAlert = () => {
+    const { allowed, isAMSServiceDown } = quotaCost || {};
+    const quotaLimit = calculateQuotaLimit();
+    let titleKey = '';
+    let messageKey = '';
+    let variant: AlertVariant = AlertVariant.warning;
+
+    if (quotaLimit === 0) {
+      variant = AlertVariant.danger;
+      titleKey = 'standard_kafka_alert_title';
+      messageKey = 'standard_kafka_alert_message';
+    } else if (allowed === 0 || isTrialQuota) {
+      variant = AlertVariant.warning;
+      titleKey = 'preview_kafka_alert_title';
+    } else if (isAMSServiceDown) {
+      titleKey = 'something_went_wrong';
+      variant = AlertVariant.danger;
+      messageKey = 'ams_service_down_message';
+    }
+
+    return (
+      titleKey && (
+        <Alert className="pf-u-mb-md" variant={variant} title={t(titleKey)} aria-live="polite" isInline>
+          {t(messageKey)}
+        </Alert>
+      )
+    );
   };
 
   const shouldDisabledButton = () => {
-    const { allowed, consumed } = quotaCost || {};
-    const quotaLimit = allowed - consumed;
-    if (quotaLimit === 0 || isPreviewKafkaMaxLimitReached) {
+    const { isAMSServiceDown } = quotaCost || {};
+    const quotaLimit = calculateQuotaLimit();
+    if (quotaLimit === 0 || isAMSServiceDown || loadingAMSService) {
       return true;
     }
     return false;
@@ -412,14 +428,20 @@ const CreateInstance: React.FunctionComponent = () => {
       dataTestIdCancel="modalCreateKafka-buttonCancel"
       isDisabledButton={shouldDisabledButton()}
     >
-      {renderAlert()}
-      <Flex direction={{ default: 'column', lg: 'row' }}>
-        <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
-        <Divider isVertical />
-        <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
-          <DrawerPanelContentInfo />
-        </FlexItem>
-      </Flex>
+      {loadingAMSService ? (
+        <MASLoading />
+      ) : (
+        <>
+          {renderAlert()}
+          <Flex direction={{ default: 'column', lg: 'row' }}>
+            <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
+            <Divider isVertical />
+            <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
+              <DrawerPanelContentInfo />
+            </FlexItem>
+          </Flex>
+        </>
+      )}
     </MASCreateModal>
   );
 };

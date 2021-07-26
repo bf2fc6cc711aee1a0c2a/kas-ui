@@ -3,6 +3,21 @@ import React, { useContext } from 'react';
 export type QuotaCost = {
   allowed: number | undefined;
   consumed: number | undefined;
+  href: string | undefined;
+  kind: string | undefined;
+  organization_id: string | undefined;
+  quota_id: string | undefined;
+  isAMSServiceDown: boolean;
+};
+
+export const initialQuotaCost: QuotaCost = {
+  allowed: undefined,
+  consumed: undefined,
+  href: '',
+  kind: '',
+  organization_id: '',
+  quota_id: '',
+  isAMSServiceDown: false,
 };
 
 export type FederatedProps = {
@@ -11,7 +26,7 @@ export type FederatedProps = {
 };
 
 const initialState: FederatedProps = {
-  getAMSQuotaCost: () => Promise.resolve({ allowed: undefined, consumed: undefined }),
+  getAMSQuotaCost: () => Promise.resolve(initialQuotaCost),
   tokenEndPointUrl: '',
 };
 

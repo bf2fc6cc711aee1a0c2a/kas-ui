@@ -11,21 +11,14 @@ import {
   TextContent,
   Text,
   AlertVariant,
-  Alert,
   Button,
   ButtonVariant,
-  Tooltip,
-  EmptyStateVariant,
   TitleSizes,
-  Label,
   Modal,
   ModalVariant,
   Card,
 } from '@patternfly/react-core';
-import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import BanIcon from '@patternfly/react-icons/dist/js/icons/ban-icon';
-import CheckIcon from '@patternfly/react-icons/dist/js/icons/check-icon';
-import { useRootModalContext, MODAL_TYPES } from '@app/common';
+import { useRootModalContext, MODAL_TYPES, MASEmptyStateVariant } from '@app/common';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
 import { MASLoading, MASEmptyState } from '@app/common';
@@ -72,7 +65,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
 
   // States
   const [kafkaInstanceItems, setKafkaInstanceItems] = useState<KafkaRequest[] | undefined>();
-  const [kafkas, setKafkas] = useState<KafkaRequest[] | undefined>();
   const [kafkaInstancesList, setKafkaInstancesList] = useState<KafkaRequestList>({} as KafkaRequestList);
   const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
@@ -86,7 +78,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
   const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
-  const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
   const [currentUserKafkas, setCurrentUserKafkas] = useState<KafkaRequest[] | undefined>();
 
@@ -99,28 +90,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       )[0];
       const newState: any = { ...selectedInstance, instanceDetail: selectedKafkaItem };
       selectedKafkaItem && setSelectedInstance(newState);
-    }
-  };
-
-  const fetchKafkaServiceStatus = async () => {
-    const accessToken = await auth?.kas.getToken();
-
-    if (accessToken) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
-
-        await apisService.getServiceStatus().then((res) => {
-          const maxCapacityReached = res?.data?.kafkas?.max_capacity_reached || mainToggle;
-          setIsMaxCapacityReached(maxCapacityReached);
-        });
-      } catch (error) {
-        handleServerError(error);
-      }
     }
   };
 
@@ -304,30 +273,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
 
   useTimeout(() => fetchCurrentUserKafkas(), MAX_POLL_INTERVAL);
 
-  /**
-   * Todo:remove after summit
-   */
-  const fetchKafkasOnborading = async () => {
-    const accessToken = await auth?.kas.getToken();
-    const filter = loggedInUser ? `owner = ${loggedInUser}` : '';
-    if (accessToken && isVisible) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
-        await apisService.getKafkas('1', '1', '', filter).then((res) => {
-          const kafkaInstances = res.data;
-          setKafkas(kafkaInstances.items);
-        });
-      } catch (error) {
-        handleServerError(error);
-      }
-    }
-  };
-
   const fetchCloudProviders = async () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
@@ -363,13 +308,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     fetchKafkas();
   }, []);
 
-  /**
-   * Todo:remove after summit
-   */
-  useEffect(() => {
-    fetchKafkasOnborading();
-  }, []);
-
   useEffect(() => {
     updateSelectedKafkaInstance();
   }, [kafkaInstanceItems]);
@@ -377,12 +315,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   useEffect(() => {
     auth?.getUsername().then((username) => setLoggedInUser(username));
   }, [auth]);
-
-  useEffect(() => {
-    fetchKafkaServiceStatus();
-  }, []);
-
-  useTimeout(() => fetchKafkasOnborading(), MAX_POLL_INTERVAL);
 
   useTimeout(() => fetchKafkas(), MAX_POLL_INTERVAL);
 
@@ -421,94 +353,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     );
   }
 
-  /**
-   * Todo: remove after summit
-   */
-  const getLoggedInUserKafkaInstance = () => {
-    let kafkaItem: KafkaRequest | undefined = kafkaInstanceItems?.filter((kafka) => kafka.owner === loggedInUser)[0];
-    if (!kafkaItem) {
-      kafkaItem = kafkas?.filter((kafka) => kafka.owner === loggedInUser)[0];
-    }
-    return kafkaItem;
-  };
-
-  /**
-   * Todo: remove after summit
-   */
-  const renderAlertMessage = () => {
-    const kafka = getLoggedInUserKafkaInstance();
-    if (kafka) {
-      return (
-        <Alert
-          variant="info"
-          isInline
-          title={`${kafka?.name} was created on ${dayjs(kafka?.created_at).format('LLLL')}`}
-          className="pf-u-mt-lg"
-        >
-          This preview instance will expire 48 hours after creation.
-        </Alert>
-      );
-    }
-    return <></>;
-  };
-
-  /**
-   * Todo: remove after summit
-   */
-  const getButtonTooltipContent = () => {
-    const isKafkaInstanceExist = getLoggedInUserKafkaInstance() !== undefined;
-    const isDisabledCreateButton = isKafkaInstanceExist || isMaxCapacityReached;
-    let content = '';
-    if (isDisabledCreateButton) {
-      if (isMaxCapacityReached && isKafkaInstanceExist) {
-        content = 'You can deploy 1 preview instance at a time.';
-      } else if (isMaxCapacityReached) {
-        content = 'Development preview instances are currently unavailable for creation.';
-      } else {
-        content = 'You can deploy 1 preview instance at a time.';
-      }
-    }
-    return content;
-  };
-
-  /**
-   * Todo: remove after summit
-   */
-  const getLabelTooltipContent = () => {
-    let content = '';
-    if (isMaxCapacityReached) {
-      content = 'Development preview instances are currently unavailable for creation.';
-    } else {
-      content =
-        'Development preview instances are available for creation. You can deploy 1 preview instance at a time.';
-    }
-    return content;
-  };
-
-  /**
-   * Todo: remove after summit
-   */
-  const createInstanceLabel = () => {
-    const content = getLabelTooltipContent();
-    if (isMaxCapacityReached) {
-      return (
-        <Tooltip content={content}>
-          <Label icon={<BanIcon />} className="pf-u-ml-md" tabIndex={0}>
-            No instances available
-          </Label>
-        </Tooltip>
-      );
-    } else {
-      return (
-        <Tooltip content={content}>
-          <Label color="green" icon={<CheckIcon />} className="pf-u-ml-md" tabIndex={0}>
-            Instances available
-          </Label>
-        </Tooltip>
-      );
-    }
-  };
-
   const renderStreamsTable = () => {
     if (kafkaInstanceItems === undefined) {
       return (
@@ -519,63 +363,36 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     } else if (isDisplayKafkaEmptyState) {
       return (
         <PageSection padding={{ default: 'noPadding' }} isFilled>
-          {isMaxCapacityReached ? (
-            <MASEmptyState
-              emptyStateProps={{
-                variant: EmptyStateVariant.large,
-              }}
-              emptyStateIconProps={{
-                icon: BanIcon,
-              }}
-              emptyStateBodyProps={{
-                body: (
-                  <>
-                    Development preview instances are currently unavailable for creation, so check back later. In the
-                    meantime,{' '}
-                    <Button variant={ButtonVariant.link} isSmall isInline data-testid="emptyState-actionTour">
-                      take a tour
-                    </Button>{' '}
-                    to learn more about the service.
-                  </>
-                ),
-              }}
-              titleProps={{ title: 'Kafka instances unavailable', size: TitleSizes.xl, headingLevel: 'h2' }}
-            ></MASEmptyState>
-          ) : (
-            <MASEmptyState
-              emptyStateProps={{
-                variant: EmptyStateVariant.large,
-              }}
-              emptyStateIconProps={{
-                icon: CheckCircleIcon,
-                color: 'green',
-              }}
-              emptyStateBodyProps={{
-                body: (
-                  <>
-                    Development preview instances are available for creation. For help getting started, access the{' '}
-                    <Button
-                      variant={ButtonVariant.link}
-                      isSmall
-                      isInline
-                      onClick={() => qsContext.setActiveQuickStart && qsContext.setActiveQuickStart('getting-started')}
-                    >
-                      quick start guide.
-                    </Button>
-                  </>
-                ),
-              }}
-              titleProps={{ title: 'Kafka instances available', size: TitleSizes.xl, headingLevel: 'h2' }}
+          <MASEmptyState
+            emptyStateProps={{
+              variant: MASEmptyStateVariant.NoItems,
+            }}
+            emptyStateBodyProps={{
+              body: (
+                <>
+                  {t('create_a_kafka_instance_to_get_started')}{' '}
+                  <Button
+                    variant={ButtonVariant.link}
+                    isSmall
+                    isInline
+                    onClick={() => qsContext.setActiveQuickStart && qsContext.setActiveQuickStart('getting-started')}
+                  >
+                    quick start guide.
+                  </Button>
+                </>
+              ),
+            }}
+            titleProps={{ title: t('no_kafka_instances_yet') }}
+          >
+            <Button
+              data-testid="emptyStateStreams-buttonCreateKafka"
+              variant={ButtonVariant.primary}
+              onClick={() => handleCreateInstanceModal(true)}
             >
-              <Button
-                data-testid="emptyStateStreams-buttonCreateKafka"
-                variant={ButtonVariant.primary}
-                onClick={() => handleCreateInstanceModal(true)}
-              >
-                {t('create_kafka_instance')}
-              </Button>
-            </MASEmptyState>
-          )}
+              {t('create_kafka_instance')}
+            </Button>
+          </MASEmptyState>
+          )
         </PageSection>
       );
     } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
@@ -607,10 +424,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               setOrderBy={setOrderBy}
               isDrawerOpen={selectedInstance !== null}
               loggedInUser={loggedInUser}
-              isMaxCapacityReached={isMaxCapacityReached}
-              buttonTooltipContent={getButtonTooltipContent()}
-              isDisabledCreateButton={getLoggedInUserKafkaInstance() !== undefined || isMaxCapacityReached}
-              labelWithTooltip={createInstanceLabel()}
               currentUserkafkas={currentUserKafkas}
               onCreate={onCreate}
               cloudProviders={cloudProviders}
@@ -644,7 +457,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
                 </TextContent>
               </LevelItem>
             </Level>
-            {renderAlertMessage()}
           </PageSection>
           {renderStreamsTable()}
         </main>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
@@ -21,19 +21,9 @@ const DeleteInstanceConnected = () => {
   const { store, hideModal } = useRootModalContext();
   const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
-  const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
-    t,
-    status,
-    name,
-    isMaxCapacityReached
-  );
-
-  useEffect(() => {
-    fetchKafkaServiceStatus();
-  }, []);
+  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(t, status, name);
 
   const onCloseModal = () => {
     setIsOpenDeleteInstanceModal && setIsOpenDeleteInstanceModal(false);
@@ -73,28 +63,6 @@ const DeleteInstanceConnected = () => {
       variant: AlertVariant.danger,
       description: reason,
     });
-  };
-
-  const fetchKafkaServiceStatus = async () => {
-    const accessToken = await auth?.kas.getToken();
-
-    if (accessToken) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
-
-        await apisService.getServiceStatus().then((res) => {
-          const maxCapacityReached = res?.data?.kafkas?.max_capacity_reached;
-          setIsMaxCapacityReached(maxCapacityReached);
-        });
-      } catch (error) {
-        handleServerError(error);
-      }
-    }
   };
 
   const props = {
