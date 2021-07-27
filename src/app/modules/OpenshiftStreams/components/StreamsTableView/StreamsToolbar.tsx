@@ -21,6 +21,7 @@ import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '@rhoas/kafka-management-sdk';
+import { useFederated } from '@app/models';
 import './StreamsToolbar.css';
 
 /**
@@ -62,6 +63,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
   const { showModal } = useRootModalContext();
+  const { preCreateInstance } = useFederated();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -547,12 +549,17 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
-  const handleCreateModal = () => {
-    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
-      onCreate,
-      cloudProviders,
-      refresh,
-    });
+  const handleCreateModal = async () => {
+    let open;
+    if (preCreateInstance) {
+      open = await preCreateInstance(true);
+    }
+    open &&
+      showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+        onCreate,
+        cloudProviders,
+        refresh,
+      });
   };
 
   const createButton = () => {
