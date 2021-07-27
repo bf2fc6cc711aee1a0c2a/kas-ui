@@ -95,7 +95,7 @@
     "@patternfly/react-icons": "4.11.0",
     "@patternfly/react-styles": "4.11.0",
     "@patternfly/react-table": "4.29.0",
-    "@redhat-cloud-services/frontend-components": "3.3.5",
+    "@redhat-cloud-services/frontend-components": "3.3.6",
     "@redhat-cloud-services/frontend-components-config": "4.3.2",
     "axios": "0.21.1",
     "byte-size": "8.0.0",
