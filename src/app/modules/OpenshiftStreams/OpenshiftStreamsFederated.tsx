@@ -13,17 +13,15 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederat
   getConnectToRoutePath,
   preCreateInstance,
   shouldOpenCreateModal,
-  tokenEndPointUrl,
 }) => {
   return (
     <I18nextProvider i18n={initI18N()}>
-      <FederatedContext.Provider value={{ preCreateInstance, tokenEndPointUrl, shouldOpenCreateModal }}>
+      <FederatedContext.Provider value={{ preCreateInstance, shouldOpenCreateModal }}>
         <RootModal>
           <OpenshiftStreams
             onConnectToRoute={onConnectToRoute}
             getConnectToRoutePath={getConnectToRoutePath}
             preCreateInstance={preCreateInstance}
-            tokenEndPointUrl={tokenEndPointUrl}
           />
         </RootModal>
       </FederatedContext.Provider>

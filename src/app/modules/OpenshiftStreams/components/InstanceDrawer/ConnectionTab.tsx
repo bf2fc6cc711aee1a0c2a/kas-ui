@@ -15,7 +15,6 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   isKafkaPending,
   onConnectToRoute,
   getConnectToRoutePath,
-  tokenEndPointUrl,
 }: ConnectionTabProps) => {
   const { t } = useTranslation();
 
@@ -30,7 +29,6 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
             isKafkaPending={isKafkaPending}
             getConnectToRoutePath={getConnectToRoutePath}
             onConnectToRoute={onConnectToRoute}
-            tokenEndPointUrl={tokenEndPointUrl}
           />
         </Tab>
         <Tab eventKey={1} title={<TabTitleText>{t('sample_code')}</TabTitleText>}>
@@ -46,7 +44,6 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
       isKafkaPending={isKafkaPending}
       getConnectToRoutePath={getConnectToRoutePath}
       onConnectToRoute={onConnectToRoute}
-      tokenEndPointUrl={tokenEndPointUrl}
     />
   );
 };

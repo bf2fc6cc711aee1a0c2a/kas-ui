@@ -17,7 +17,7 @@ export const MASDrawer = React.lazy(() => import('@app/common/MASDrawer/MASDrawe
 
 export type InstanceDrawerProps = Pick<
   ConnectionTabProps,
-  'getConnectToRoutePath' | 'onConnectToRoute' | 'tokenEndPointUrl'
+  'getConnectToRoutePath' | 'onConnectToRoute'
 > &
   Omit<MASDrawerProps, 'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'> &
   DetailsTabProps & {
@@ -35,7 +35,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   'data-ouia-app-id': dataOuiaAppId,
   getConnectToRoutePath,
   onConnectToRoute,
-  tokenEndPointUrl,
   notRequiredDrawerContentBackground,
 }) => {
   dayjs.extend(localizedFormat);
@@ -87,7 +86,6 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
               isKafkaPending={isKafkaPending}
               getConnectToRoutePath={getConnectToRoutePath}
               onConnectToRoute={onConnectToRoute}
-              tokenEndPointUrl={tokenEndPointUrl}
             />
           </Tab>
         </Tabs>

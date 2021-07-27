@@ -32,15 +32,14 @@ import { MASLoading, MASEmptyState } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
-import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
+import { StreamsTableView, FilterType, InstanceDrawer, StreamsTableProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider, Configuration } from '@rhoas/kafka-management-sdk';
 import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import { useFederated } from '@app/models';
 
-export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
-  Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
+export type OpenShiftStreamsProps = Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
     preCreateInstance: (open: boolean) => Promise<boolean>;
   };
 
@@ -53,7 +52,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   onConnectToRoute,
   getConnectToRoutePath,
   preCreateInstance,
-  tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
   const { shouldOpenCreateModal } = useFederated();
@@ -676,7 +674,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         data-ouia-app-id="controlPlane-streams"
         getConnectToRoutePath={getConnectToRoutePath}
         onConnectToRoute={onConnectToRoute}
-        tokenEndPointUrl={tokenEndPointUrl}
         notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
       >
         <main className="pf-c-page__main">

@@ -18,7 +18,6 @@ export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
       onConnectToRoute={onConnectToRoute}
       getConnectToRoutePath={getConnectToRoutePath}
       preCreateInstance={(open) => Promise.resolve(open)}
-      tokenEndPointUrl="fake-token-url"
     />
   );
 };

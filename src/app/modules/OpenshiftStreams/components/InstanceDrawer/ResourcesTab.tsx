@@ -15,6 +15,7 @@ import {
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
+import { useConfig } from "@bf2/ui-shared";
 
 export type ResourcesTabProps = {
   mainToggle?: boolean;
@@ -23,7 +24,6 @@ export type ResourcesTabProps = {
   isKafkaPending?: boolean;
   onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
   getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
-  tokenEndPointUrl: string;
 };
 
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({
@@ -33,7 +33,6 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   isKafkaPending,
   onConnectToRoute,
   getConnectToRoutePath,
-  tokenEndPointUrl,
 }: ResourcesTabProps) => {
   const { t } = useTranslation();
   const { showModal } = useRootModalContext();
@@ -41,6 +40,17 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   const handleCreateServiceAccountModal = () => {
     showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT);
   };
+
+  const config = useConfig();
+
+  const TokenEndpoint = () => {
+    if (config !== undefined && !isKafkaPending) {
+      const tokenEndPointUrl = `${config.masSso.authServerUrl}/realms/${config.masSso.realm}/protocol/openid-connect/token`;
+      return <ClipboardCopy>{tokenEndPointUrl}</ClipboardCopy>;
+    }
+    return <Skeleton fontSize="2xl" />;
+  }
+
 
   return (
     <div className="mas--details__drawer--tab-content">
@@ -104,7 +114,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
         <Text component={TextVariants.h6} className="pf-u-mt-md">
           {t('common.token_endpoint_url')}
         </Text>
-        {isKafkaPending ? <Skeleton fontSize="2xl" /> : <ClipboardCopy>{tokenEndPointUrl}</ClipboardCopy>}
+        <TokenEndpoint />
       </TextContent>
       <TextContent className="pf-u-pb-sm">
         <Text component={TextVariants.h4} className="pf-u-mt-md">
