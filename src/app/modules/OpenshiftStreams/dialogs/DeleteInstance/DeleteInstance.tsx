@@ -76,3 +76,5 @@ export const DeleteInstanceModal = (props) => {
     ></MASDeleteModal>
   );
 };
+
+export default DeleteInstance;

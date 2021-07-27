@@ -83,3 +83,4 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
 };
 
 export { DeleteServiceAccount };
+export default DeleteServiceAccount;
