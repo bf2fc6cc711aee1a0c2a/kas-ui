@@ -11,6 +11,8 @@ const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const isPatternflyStyles = (stylesheet) => stylesheet.includes('@patternfly/react-styles/css/') || stylesheet.includes('@patternfly/react-core/');
+
 module.exports = (env, argv) => {
   const isProduction = argv && argv.mode === 'production';
   return {
@@ -34,6 +36,13 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/,
           use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          include: (stylesheet => !isPatternflyStyles(stylesheet)),
+          sideEffects: true,
+        },
+        {
+          test: /\.css$/,
+          include: isPatternflyStyles,
+          use: ['null-loader'],
           sideEffects: true,
         },
         {
@@ -96,6 +105,14 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash:8].css',
         chunkFilename: '[contenthash:8].css',
+        insert: (linkTag) => {
+          const preloadLinkTag = document.createElement('link')
+          preloadLinkTag.rel = 'preload'
+          preloadLinkTag.as = 'style'
+          preloadLinkTag.href = linkTag.href
+          document.head.appendChild(preloadLinkTag)
+          document.head.appendChild(linkTag)
+        }
       }),
       new ChunkMapper({
         modules: [federatedModuleName],
@@ -104,7 +121,7 @@ module.exports = (env, argv) => {
         name: federatedModuleName,
         filename: `${federatedModuleName}${isProduction ? '[chunkhash:8]' : ''}.js`,
         exposes: {
-          "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",          
+          "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",
           "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated",
           "./InstanceDrawer":"./src/app/modules/OpenshiftStreams/components/InstanceDrawer/InstanceDrawerFederated",
           './Metrics': './src/app/modules/Metrics/MetricsFederated'

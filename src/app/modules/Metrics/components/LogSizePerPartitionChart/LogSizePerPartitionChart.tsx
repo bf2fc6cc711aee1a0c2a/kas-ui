@@ -103,7 +103,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
             const isTopicInArray = partitionArray.some((topic) => topic.name === topicName);
 
             item.values?.forEach((value) => {
-              if (value.Timestamp == undefined) {
+              if (value.timestamp == undefined) {
                 throw new Error('timestamp cannot be undefined');
               }
 
@@ -111,15 +111,15 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
                 partitionArray.map((topic: Partition) => {
                   if (topic.name === topicName) {
                     topic.data.forEach((datum) => {
-                      datum.bytes = datum.bytes + value.Value;
+                      datum.bytes = datum.bytes + value.value;
                     });
                   }
                 });
               } else {
                 topic.data.push({
                   name: topicName,
-                  timestamp: value.Timestamp,
-                  bytes: value.Value,
+                  timestamp: value.timestamp,
+                  bytes: value.value,
                 });
               }
             });
@@ -186,8 +186,8 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
 
       if (lengthOfData <= 360) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-          const newTimestamp = partition.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
-          const date = new Date(newTimestamp);
+          const newtimestamp = partition.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
+          const date = new Date(newtimestamp);
           const time = format(date, 'hh:mm');
           area.push({ name: partition.name, x: time, y: 0 });
         }

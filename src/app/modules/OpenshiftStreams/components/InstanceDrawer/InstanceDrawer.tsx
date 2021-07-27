@@ -5,11 +5,15 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { Tabs, Tab, TabTitleText, Alert, AlertVariant } from '@patternfly/react-core';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
-import { MASDrawer, MASDrawerProps } from '@app/common';
+import { MASDrawerProps, MASLoading } from '@app/common';
 import { InstanceStatus } from '@app/utils';
-import { ConnectionTab, ConnectionTabProps } from './ConnectionTab';
-import { DetailsTab, DetailsTabProps } from './DetailsTab';
+import { ConnectionTabProps } from './ConnectionTab';
+import { DetailsTabProps } from './DetailsTab';
 import './InstanceDrawer.css';
+
+export const ConnectionTab = React.lazy(() => import('./ConnectionTab'));
+export const DetailsTab = React.lazy(() => import('./DetailsTab'));
+export const MASDrawer = React.lazy(() => import('@app/common/MASDrawer/MASDrawer'));
 
 export type InstanceDrawerProps = Pick<
   ConnectionTabProps,
@@ -64,24 +68,30 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const panelBodyContent = () => {
     return (
-      <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
-        <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
-          <DetailsTab mainToggle={mainToggle} instanceDetail={instanceDetail} />
-        </Tab>
-        <Tab eventKey={1} title={<TabTitleText>{t('connection')}</TabTitleText>} data-testid="drawerStreams-tabConnect">
-          <ConnectionTab
-            mainToggle={mainToggle}
-            activeKey={activeTab2Key}
-            instance={instanceDetail}
-            externalServer={getExternalServer()}
-            onSelect={onSelectConnectionTab}
-            isKafkaPending={isKafkaPending}
-            getConnectToRoutePath={getConnectToRoutePath}
-            onConnectToRoute={onConnectToRoute}
-            tokenEndPointUrl={tokenEndPointUrl}
-          />
-        </Tab>
-      </Tabs>
+      <React.Suspense fallback={<MASLoading />}>
+        <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
+          <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
+            <DetailsTab mainToggle={mainToggle} instanceDetail={instanceDetail} />
+          </Tab>
+          <Tab
+            eventKey={1}
+            title={<TabTitleText>{t('connection')}</TabTitleText>}
+            data-testid="drawerStreams-tabConnect"
+          >
+            <ConnectionTab
+              mainToggle={mainToggle}
+              activeKey={activeTab2Key}
+              instance={instanceDetail}
+              externalServer={getExternalServer()}
+              onSelect={onSelectConnectionTab}
+              isKafkaPending={isKafkaPending}
+              getConnectToRoutePath={getConnectToRoutePath}
+              onConnectToRoute={onConnectToRoute}
+              tokenEndPointUrl={tokenEndPointUrl}
+            />
+          </Tab>
+        </Tabs>
+      </React.Suspense>
     );
   };
 
@@ -100,21 +110,23 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   };
 
   return (
-    <MASDrawer
-      isExpanded={isExpanded}
-      isLoading={isLoading}
-      onClose={onClose}
-      panelBodyContent={panelBodyContent()}
-      drawerHeaderProps={{
-        text: { label: t('instance_name') },
-        title: { value: name, headingLevel: 'h1' },
-      }}
-      data-ouia-app-id={dataOuiaAppId}
-      inlineAlertMessage={alertMessage()}
-      notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
-    >
-      {children}
-    </MASDrawer>
+    <React.Suspense fallback={<MASLoading />}>
+      <MASDrawer
+        isExpanded={isExpanded}
+        isLoading={isLoading}
+        onClose={onClose}
+        panelBodyContent={panelBodyContent()}
+        drawerHeaderProps={{
+          text: { label: t('instance_name') },
+          title: { value: name, headingLevel: 'h1' },
+        }}
+        data-ouia-app-id={dataOuiaAppId}
+        inlineAlertMessage={alertMessage()}
+        notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
+      >
+        {children}
+      </MASDrawer>
+    </React.Suspense>
   );
 };
 
