@@ -17,10 +17,9 @@ import {
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { format } from 'date-fns';
-import { ChartEmptyState } from './ChartEmptyState';
+import { ChartEmptyState, ChartToolbar } from '@app/modules/Metrics/components';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { convertToSpecifiedByte } from './utils';
-import { ChartToolbar } from './ChartToolbar';
+import { convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 
 type Broker = {
   name: string;

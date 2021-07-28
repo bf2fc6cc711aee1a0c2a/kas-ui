@@ -1,24 +1,10 @@
 import React from 'react';
 import { Metrics } from './Metrics';
-import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
-import { Config, ConfigContext } from '@bf2/ui-shared';
-
-declare const __BASE_PATH__: string;
 
 export const MetricsConnected = () => {
-  return (
-    <ConfigContext.Provider
-      value={
-        {
-          kas: {
-            apiBasePath: __BASE_PATH__,
-          },
-        } as Config
-      }
-    >
-      <AlertProvider>
-        <Metrics />
-      </AlertProvider>
-    </ConfigContext.Provider>
-  );
+  /**
+   * Note : replace kafkaId with your active kakfa instance id
+   */
+  const kafkaId = '1vX09n2EKVPBDr9Cu9rE47gj67y';
+  return <Metrics kafkaId={kafkaId} />;
 };

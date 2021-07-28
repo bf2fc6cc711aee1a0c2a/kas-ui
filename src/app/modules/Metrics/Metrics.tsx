@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Grid, GridItem, PageSection } from '@patternfly/react-core';
 import {
   UsedDiskSpaceChart,
   LogSizePerPartitionChart,
   IncomingOutgoingBytesPerTopic,
-} from '@app/modules/Metrics/Charts';
-import { Grid, GridItem, PageSection } from '@patternfly/react-core';
-import { ChartEmptyState } from './Charts/ChartEmptyState';
-import { useTranslation } from 'react-i18next';
+} from '@app/modules/Metrics/components';
+import { ChartEmptyState } from './components/ChartEmptyState';
 
 export interface MetricsProps {
   kafkaId: string;

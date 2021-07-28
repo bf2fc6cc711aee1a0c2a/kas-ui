@@ -8,7 +8,7 @@ import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_b
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 import { format } from 'date-fns';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { getLargestByteSize, convertToSpecifiedByte } from './utils';
+import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 import { Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
 import {
   Chart,
@@ -19,17 +19,15 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { ChartEmptyState } from './ChartEmptyState';
-import { ChartToolbar } from './ChartToolbar';
-import { LogSizePerPartitionChart } from '.';
+import { ChartEmptyState, ChartToolbar, LogSizePerPartitionChart } from '@app/modules/Metrics/components';
 
 type Topic = {
   name: string;
-  rawData: Map<number, number[]>
+  rawData: Map<number, number[]>;
   sortedData: TopicDataArray;
 };
 
-type TopicDataArray = {timestamp: number, bytes: number[]}[];
+type TopicDataArray = { timestamp: number; bytes: number[] }[];
 
 type ChartData = {
   color: string;
@@ -137,7 +135,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                   } else {
                     incomingTopics.rawData.set(value.timestamp, [value.value] as number[]);
                   }
-
                 });
               }
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
@@ -160,11 +157,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
             setChartDataLoading(false);
           } else {
             const incomingDataArr = [] as TopicDataArray;
-            incomingTopics.rawData.forEach((value, key) => incomingDataArr.push({ timestamp: key, bytes: value}));
-            incomingTopics.sortedData = incomingDataArr.sort((a, b) => a.timestamp - b.timestamp)
+            incomingTopics.rawData.forEach((value, key) => incomingDataArr.push({ timestamp: key, bytes: value }));
+            incomingTopics.sortedData = incomingDataArr.sort((a, b) => a.timestamp - b.timestamp);
             const outgoingDataArr = [] as TopicDataArray;
-            outgoingTopics.rawData.forEach((value, key) => outgoingDataArr.push({ timestamp: key, bytes: value}));
-            outgoingTopics.sortedData = outgoingDataArr.sort((a, b) => a.timestamp - b.timestamp)
+            outgoingTopics.rawData.forEach((value, key) => outgoingDataArr.push({ timestamp: key, bytes: value }));
+            outgoingTopics.sortedData = outgoingDataArr.sort((a, b) => a.timestamp - b.timestamp);
             getChartData(incomingTopics, outgoingTopics);
           }
         } else {
@@ -199,7 +196,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       const getCurrentLengthOfData = () => {
         const timestampDiff =
-          incomingTopicArray.sortedData[incomingTopicArray.sortedData.length - 1].timestamp - incomingTopicArray.sortedData[0].timestamp;
+          incomingTopicArray.sortedData[incomingTopicArray.sortedData.length - 1].timestamp -
+          incomingTopicArray.sortedData[0].timestamp;
         const minutes = timestampDiff / 1000 / 60;
         return minutes;
       };
@@ -242,7 +240,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       const getCurrentLengthOfData = () => {
         const timestampDiff =
-          outgoingTopicArray.sortedData[outgoingTopicArray.sortedData.length - 1].timestamp - outgoingTopicArray.sortedData[0].timestamp;
+          outgoingTopicArray.sortedData[outgoingTopicArray.sortedData.length - 1].timestamp -
+          outgoingTopicArray.sortedData[0].timestamp;
         const minutes = timestampDiff / 1000 / 60;
         return minutes;
       };

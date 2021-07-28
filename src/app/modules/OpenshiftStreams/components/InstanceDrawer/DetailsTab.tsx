@@ -87,4 +87,3 @@ export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({
 };
 
 export default DetailsTab;
-
