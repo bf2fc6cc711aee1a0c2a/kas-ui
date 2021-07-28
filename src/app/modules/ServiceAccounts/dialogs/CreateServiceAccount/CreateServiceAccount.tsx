@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
-import { Configuration, DefaultApi, SecurityApi } from '@rhoas/kafka-management-sdk';
+import { Configuration, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
 import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
