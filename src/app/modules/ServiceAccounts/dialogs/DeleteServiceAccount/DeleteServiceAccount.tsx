@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { isServiceApiError } from '@app/utils';
-import { Configuration, DefaultApi, SecurityApi, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
+import { Configuration, SecurityApi, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 const DeleteServiceAccount: React.FunctionComponent = () => {

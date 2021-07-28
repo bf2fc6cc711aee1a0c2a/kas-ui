@@ -7,7 +7,6 @@ import {
   ISeparator,
   ISortBy,
   SortByDirection,
-  IExtraColumnData,
   cellWidth,
 } from '@patternfly/react-table';
 import { Skeleton } from '@patternfly/react-core';

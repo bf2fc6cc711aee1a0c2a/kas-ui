@@ -21,6 +21,7 @@ export const ChartEmptyState = ({ title, body, noData, noTopics, noFilter }: Cha
     } else if (noFilter) {
       return FilterIcon;
     }
+    return;
   };
 
   return (

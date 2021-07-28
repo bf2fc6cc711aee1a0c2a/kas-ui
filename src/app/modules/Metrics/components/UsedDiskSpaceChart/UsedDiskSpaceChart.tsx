@@ -191,10 +191,6 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
       }
     }
 
-    const average = (nums) => {
-      return nums.reduce((a, b) => a + b) / nums.length;
-    };
-
     avgBroker.data.map((value) => {
       const date = new Date(value.timestamp);
       const time = format(date, 'hh:mm');
