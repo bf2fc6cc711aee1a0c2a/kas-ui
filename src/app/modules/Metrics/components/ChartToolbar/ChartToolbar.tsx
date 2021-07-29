@@ -109,8 +109,7 @@ export const ChartToolbar = ({
           onSelect={onTimeSelect}
           selections={selectedTime}
           isOpen={isTimeSelectOpen}
-          // isDisabled={disableToolbar}
-          isDisabled
+          isDisabled={disableToolbar}
         >
           <SelectOption key={0} value="Last 1 hour" />
           <SelectOption key={1} value="Last 2 hour" />
@@ -154,8 +153,7 @@ export const ChartToolbar = ({
           onFilter={onTopicFilter}
           isGrouped
           hasInlineFilter
-          // isDisabled={disableToolbar}
-          isDisabled
+          isDisabled={disableToolbar}
         >
           {topicOptions}
         </Select>
