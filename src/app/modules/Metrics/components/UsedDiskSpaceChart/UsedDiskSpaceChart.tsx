@@ -185,7 +185,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
       for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
         const newTimestamp = avgBroker.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
         const date = new Date(newTimestamp);
-        const time = format(date, 'hh:mm');
+        const time = format(date, 'H:MM');
         area.push({ name: avgBroker.name, x: time, y: 0 });
         softLimit.push({ name: 'Limit', x: time, y: usageLimit });
       }
@@ -193,7 +193,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
     avgBroker.data.map((value) => {
       const date = new Date(value.timestamp);
-      const time = format(date, 'hh:mm');
+      const time = format(date, 'H:MM');
       const aggregateBytes = value.usedSpaceAvg.reduce(function (a, b) {
         return a + b;
       }, 0);

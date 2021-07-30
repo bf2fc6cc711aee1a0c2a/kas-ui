@@ -208,14 +208,15 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newTimestamp = incomingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = format(date, 'hh:mm');
+          const time = format(date, 'H:MM');
           line.push({ name: incomingTopicArray.name, x: time, y: 0 });
         }
       }
 
       incomingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
+        const time = format(date, 'H:MM');
+        console.log('incoming', 'date', date, 'time', time);
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);
@@ -252,14 +253,15 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newTimestamp = outgoingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = format(date, 'hh:mm');
+          const time = format(date, 'H:MM');
           line.push({ name: outgoingTopicArray.name, x: time, y: 0 });
         }
       }
 
       outgoingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
+        const time = format(date, 'H:MM');
+        console.log('date', date, 'time', time);
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);
