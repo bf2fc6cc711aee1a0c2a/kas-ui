@@ -52,40 +52,34 @@ export const ChartToolbar = ({
   };
 
   const formatTime = (selection: string) => {
-    let timeInterval = 1;
+    let timeInterval = 6;
     switch (selection) {
+      case 'Last 5 minutes':
+        timeInterval = 5 / 60;
+        break;
+      case 'Last 15 minutes':
+        timeInterval = 15 / 60;
+        break;
+      case 'Last 30 minutes':
+        timeInterval = 30 / 60;
+        break;
       case 'Last 1 hour':
         timeInterval = 1;
         break;
-      case 'Last 2 hour':
+      case 'Last 3 hours':
         timeInterval = 2;
         break;
-      case 'Last 4 hour':
-        timeInterval = 4;
-        break;
-      case 'Last 6 hour':
+      case 'Last 6 hours':
         timeInterval = 6;
         break;
-      case 'Last 12 hour':
+      case 'Last 12 hours':
         timeInterval = 12;
         break;
-      case 'Last 24 hour':
+      case 'Last 24 hours':
         timeInterval = 24;
         break;
       case 'Last 2 days':
         timeInterval = 2 * 24;
-        break;
-      case 'Last 3 days':
-        timeInterval = 3 * 24;
-        break;
-      case 'Last 4 days':
-        timeInterval = 4 * 24;
-        break;
-      case 'Last 5 days':
-        timeInterval = 5 * 24;
-        break;
-      case 'Last 6 days':
-        timeInterval = 6 * 24;
         break;
       case 'Last 7 days':
         timeInterval = 7 * 24;
@@ -103,6 +97,21 @@ export const ChartToolbar = ({
     setIsTopicSelectOpen(false);
   };
 
+  const timeOptions = [
+    <SelectGroup label="Relative time ranges" key="group1">
+      <SelectOption key={0} value="Last 5 minutes" />
+      <SelectOption key={1} value="Last 15 minutes" />
+      <SelectOption key={2} value="Last 30 minutes" />
+      <SelectOption key={3} value="Last 1 hour" />
+      <SelectOption key={4} value="Last 3 hours" />
+      <SelectOption key={5} value="Last 6 hours" />
+      <SelectOption key={6} value="Last 12 hours" />
+      <SelectOption key={7} value="Last 24 hours" />
+      <SelectOption key={8} value="Last 2 days" />
+      <SelectOption key={9} value="Last 7 days" />
+    </SelectGroup>,
+  ];
+
   const filterByTime = (disableToolbar: boolean) => {
     return (
       <ToolbarItem>
@@ -114,19 +123,9 @@ export const ChartToolbar = ({
           selections={selectedTime}
           isOpen={isTimeSelectOpen}
           isDisabled={disableToolbar}
+          placeholderText="Last 6 hours"
         >
-          <SelectOption key={0} value="Last 1 hour" />
-          <SelectOption key={1} value="Last 2 hour" />
-          <SelectOption key={2} value="Last 4 hour" />
-          <SelectOption key={3} value="Last 6 hour" isPlaceholder />
-          <SelectOption key={4} value="Last 12 hour" />
-          <SelectOption key={5} value="Last 24 hour" />
-          <SelectOption key={6} value="Last 2 days" />
-          <SelectOption key={7} value="Last 3 days" />
-          <SelectOption key={8} value="Last 4 days" />
-          <SelectOption key={9} value="Last 5 days" />
-          <SelectOption key={10} value="Last 6 days" />
-          <SelectOption key={11} value="Last 7 days" />
+          {timeOptions}
         </Select>
       </ToolbarItem>
     );
