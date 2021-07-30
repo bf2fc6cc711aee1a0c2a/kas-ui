@@ -280,6 +280,10 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
     setChartDataLoading(false);
   };
 
+  const onRefreshTopicToolbar = () => {
+    fetchBytesData();
+  };
+
   return (
     <Card>
       <ChartToolbar
@@ -289,6 +293,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         showTopicToolbar={!noTopics && !metricsDataUnavailable}
         selectedTopic={selectedTopic}
         setSelectedTopic={setSelectedTopic}
+        onRefreshTopicToolbar={onRefreshTopicToolbar}
       />
       <CardTitle component="h2">{t('metrics.total_bytes')}</CardTitle>
       <CardBody>

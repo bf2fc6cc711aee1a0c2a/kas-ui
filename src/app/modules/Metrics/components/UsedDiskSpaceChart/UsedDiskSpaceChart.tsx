@@ -210,6 +210,10 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
     setChartDataLoading(false);
   };
 
+  const onRefreshKafkaToolbar = () => {
+    fetchUsedDiskSpaceMetrics();
+  };
+
   return (
     <Card>
       <ChartToolbar
@@ -217,6 +221,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         title={t('metrics.kafka_instance_metrics')}
         setTimeInterval={setTimeInterval}
         showKafkaToolbar={!metricsDataUnavailable}
+        onRefreshKafkaToolbar={onRefreshKafkaToolbar}
       />
       <CardTitle component="h2">{t('metrics.used_disk_space')}</CardTitle>
       <CardBody>

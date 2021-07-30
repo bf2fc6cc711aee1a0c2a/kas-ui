@@ -23,6 +23,8 @@ type ChartToolbarProps = {
   showKafkaToolbar?: boolean;
   setSelectedTopic?: (value: boolean) => void;
   selectedTopic?: boolean;
+  onRefreshKafkaToolbar?: () => void;
+  onRefreshTopicToolbar?: () => void;
 };
 export const ChartToolbar = ({
   title,
@@ -32,6 +34,8 @@ export const ChartToolbar = ({
   showTopicToolbar = true,
   setSelectedTopic,
   selectedTopic,
+  onRefreshKafkaToolbar,
+  onRefreshTopicToolbar,
 }: ChartToolbarProps) => {
   const [selectedTime, setSelectedTime] = useState<boolean>(false);
   const [isTimeSelectOpen, setIsTimeSelectOpen] = useState<boolean>(false);
@@ -189,7 +193,7 @@ export const ChartToolbar = ({
               <ToolbarContent>
                 {filterByTopic(!showTopicToolbar)}
                 {filterByTime(!showTopicToolbar)}
-                <Button variant="plain" aria-label="sync">
+                <Button variant="plain" aria-label="sync" onClick={onRefreshTopicToolbar}>
                   <SyncIcon />
                 </Button>
               </ToolbarContent>
@@ -198,7 +202,7 @@ export const ChartToolbar = ({
             <Toolbar>
               <ToolbarContent>
                 {filterByTime(!showKafkaToolbar)}
-                <Button variant="plain" aria-label="sync">
+                <Button variant="plain" aria-label="sync" onClick={onRefreshKafkaToolbar}>
                   <SyncIcon />
                 </Button>
               </ToolbarContent>
