@@ -13,7 +13,7 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { SyncIcon } from '@patternfly/react-icons';
+import { FilterIcon, SyncIcon } from '@patternfly/react-icons';
 
 type ChartToolbarProps = {
   title: string;
@@ -133,27 +133,43 @@ export const ChartToolbar = ({
   };
 
   const topicOptions = [
-    <SelectGroup label="Filter by topic" key="group1">
-      <SelectOption key={0} value="topic-1" />
-      <SelectOption key={1} value="topic-2" />
-    </SelectGroup>,
+    <>
+      <SelectOption key={0} value="All topics" />
+      <SelectGroup label="Filter by topic" key="group1">
+        <SelectOption key={1} value="topic-1" />
+        <SelectOption key={2} value="topic-2" />
+      </SelectGroup>
+    </>,
   ];
 
   const filterByTopic = (disableToolbar: boolean) => {
+    const widths = {
+      default: '100px',
+      sm: '80px',
+      md: '150px',
+      lg: '200px',
+      xl: '250px',
+      '2xl': '300px',
+    };
     return (
-      <ToolbarItem>
+      <ToolbarItem widths={widths}>
         <Select
           variant={SelectVariant.single}
           onToggle={onTopicToggle}
           onSelect={onTopicSelect}
           selections={selectedTopic}
           isOpen={isTopicSelectOpen}
-          placeholderText="All Topics"
+          placeholderText={
+            <>
+              <FilterIcon /> All topics
+            </>
+          }
           aria-labelledby={'titleId'}
           onFilter={onTopicFilter}
           isGrouped
           hasInlineFilter
           isDisabled={disableToolbar}
+          style={{ width: '100%' }}
         >
           {topicOptions}
         </Select>

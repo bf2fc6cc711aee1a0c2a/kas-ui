@@ -332,6 +332,7 @@
     "outgoing_bytes_per_topic": "Outgoing bytes per topic",
     "total_bytes": "Total Bytes",
     "kafka_instance_metrics": "Kafka instance metrics",
+    "topic_partition_size":"Topic partition size",
     "topic_metrics": "Topic metrics",
     "empty_state_no_data_body": "We’re creating your Kafka instance, so some details aren’t yet available.",
     "empty_state_no_data_title": "No data yet",

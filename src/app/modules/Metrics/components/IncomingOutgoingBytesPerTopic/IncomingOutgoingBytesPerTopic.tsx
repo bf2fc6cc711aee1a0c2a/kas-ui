@@ -349,11 +349,16 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                       {selectedTopic ? (
                         <LogSizePerPartitionChart kafkaID={kafkaID} />
                       ) : (
-                        <ChartEmptyState
-                          title={t('metrics.empty_state_no_filter_title')}
-                          body={t('metrics.empty_state_no_filter_body')}
-                          noFilter
-                        />
+                        <Card>
+                          <CardTitle component="h2">{t('metrics.topic_partition_size')}</CardTitle>
+                          <CardBody>
+                            <ChartEmptyState
+                              title={t('metrics.empty_state_no_filter_title')}
+                              body={t('metrics.empty_state_no_filter_body')}
+                              noFilter
+                            />{' '}
+                          </CardBody>
+                        </Card>
                       )}
                     </>
                   )
