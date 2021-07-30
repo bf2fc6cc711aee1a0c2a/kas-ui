@@ -122,8 +122,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
               throw new Error('item.values cannot be undefined');
             }
 
-            console.log('what is label here' + labels['topic']);
-
             if (labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets') {
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
                 item.values?.forEach((value, indexJ) => {
@@ -216,7 +214,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
       incomingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
         const time = format(date, 'H:MM');
-        console.log('incoming', 'date', date, 'time', time);
+
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);
@@ -261,7 +259,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
       outgoingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
         const time = format(date, 'H:MM');
-        console.log('date', date, 'time', time);
+
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);

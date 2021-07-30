@@ -46,8 +46,6 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
       chartData.push(messages);
     });
 
-    console.log(this.props.topics);
-
     return (
       <div style={{ height: '300x', width: '450px' }}>
         <Chart

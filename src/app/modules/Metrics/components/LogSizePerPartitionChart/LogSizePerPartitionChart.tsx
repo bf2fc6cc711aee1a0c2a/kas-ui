@@ -86,8 +86,6 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
         }
         const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
 
-        console.log('what is data log size per partition' + JSON.stringify(data));
-
         const partitionArray: Partition[] = [];
 
         if (data.data.items) {
@@ -132,7 +130,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
           const filteredTopics = partitionArray.filter(
             (topic) => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets'
           );
-          console.log('what is filteredTopics for logsize' + filteredTopics);
+
           if (filteredTopics.length < 1) {
             setNoTopics(true);
           }
@@ -164,8 +162,6 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
   }, [width]);
 
   const getChartData = (partitionArray) => {
-    console.log('what is partitionArray' + partitionArray);
-
     const legendData: Array<LegendData> = [];
     const chartData: Array<ChartData> = [];
     const largestByteSize = getLargestByteSize(partitionArray);
