@@ -37,11 +37,11 @@ import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider, Configuratio
 import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
+import { useFederated } from '@app/models';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
   Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
     preCreateInstance: (open: boolean) => Promise<boolean>;
-    createDialogOpen: () => boolean;
   };
 
 type SelectedInstance = {
@@ -56,6 +56,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
+  const { shouldOpenCreateModal } = useFederated();
 
   const auth = useAuth();
   const {
@@ -144,6 +145,24 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     setIsMobileModalOpen(!isMobileModalOpen);
   };
 
+  useEffect(() => {
+    if (shouldOpenCreateModal && cloudProviders?.length < 1) {
+      fetchCloudProviders();
+    }
+    if (shouldOpenCreateModal && cloudProviders?.length > 0) {
+      handleCreateModal();
+    }
+  }, [shouldOpenCreateModal, cloudProviders]);
+
+  const handleCreateModal = () => {
+    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+      onCreate,
+      cloudProviders,
+      mainToggle,
+      refresh: refreshKafkas,
+    });
+  };
+
   const handleCreateInstanceModal = async () => {
     let open;
     if (preCreateInstance) {
@@ -151,13 +170,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       // The callback can override the new state of opening
       open = await preCreateInstance(true);
     }
-    open &&
-      showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
-        onCreate,
-        cloudProviders,
-        mainToggle,
-        refresh: refreshKafkas,
-      });
+    open && handleCreateModal();
   };
 
   const onCloseDrawer = () => {
