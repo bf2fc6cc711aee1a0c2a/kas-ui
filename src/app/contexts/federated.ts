@@ -23,6 +23,7 @@ export const initialQuotaCost: QuotaCost = {
 export type FederatedProps = {
   getAMSQuotaCost?: () => Promise<QuotaCost>;
   tokenEndPointUrl: string;
+  preCreateInstance?: (isOpen: boolean) => Promise<boolean>;
 };
 
 const initialState: FederatedProps = {

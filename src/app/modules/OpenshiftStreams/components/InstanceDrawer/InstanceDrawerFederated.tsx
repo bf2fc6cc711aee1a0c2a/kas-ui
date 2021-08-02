@@ -1,13 +1,12 @@
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { BrowserRouter } from 'react-router-dom';
 import '@patternfly/patternfly/utilities/Accessibility/accessibility.css';
 import '@patternfly/patternfly/utilities/Sizing/sizing.css';
 import '@patternfly/patternfly/utilities/Spacing/spacing.css';
 import '@patternfly/patternfly/utilities/Display/display.css';
 import '@patternfly/patternfly/utilities/Flex/flex.css';
 import { InstanceDrawerConnected } from './InstanceDrawerConnected';
-import { RootModal, AlertProvider } from '@app/common';
+import { RootModal } from '@app/common';
 import { initI18N } from '@i18n/i18n';
 
 const InstanceDrawerFederated = ({

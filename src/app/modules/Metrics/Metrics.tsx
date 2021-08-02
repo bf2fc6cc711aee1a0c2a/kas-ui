@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import {
-  UsedDiskSpaceChart,
-  LogSizePerPartitionChart,
-  IncomingOutgoingBytesPerTopic,
-} from '@app/modules/Metrics/Charts';
-import { Grid, GridItem, PageSection } from '@patternfly/react-core';
-import { ChartEmptyState } from './Charts/ChartEmptyState';
 import { useTranslation } from 'react-i18next';
+import { Grid, GridItem, PageSection } from '@patternfly/react-core';
+import { UsedDiskSpaceChart, IncomingOutgoingBytesPerTopic } from '@app/modules/Metrics/components';
+import { ChartEmptyState } from './components/ChartEmptyState';
 
 export interface MetricsProps {
   kafkaId: string;
@@ -14,7 +10,7 @@ export interface MetricsProps {
 
 export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
-  const kafkaID = kafkaId || '1vca460i43rGHzPBsFhERrw7L9P';
+
   const { t } = useTranslation();
 
   return (
@@ -23,7 +19,7 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
         <Grid hasGutter>
           <GridItem>
             <UsedDiskSpaceChart
-              kafkaID={kafkaID}
+              kafkaID={kafkaId}
               metricsDataUnavailable={metricsDataUnavailable}
               setMetricsDataUnavailable={setMetricsDataUnavailable}
             />
@@ -32,12 +28,9 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
             <IncomingOutgoingBytesPerTopic
               metricsDataUnavailable={metricsDataUnavailable}
               setMetricsDataUnavailable={setMetricsDataUnavailable}
-              kafkaID={kafkaID}
+              kafkaID={kafkaId}
             />
           </GridItem>
-          {/* <GridItem>
-          <LogSizePerPartitionChart kafkaID={kafkaID}/>
-        </GridItem> */}
         </Grid>
       ) : (
         <ChartEmptyState

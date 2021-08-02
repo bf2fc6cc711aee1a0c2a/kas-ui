@@ -110,11 +110,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     setIsMobileModalOpen(!isMobileModalOpen);
   };
 
-  const handleCreateInstanceModal = async (open: boolean) => {
-    if (open) {
+  const handleCreateInstanceModal = async () => {
+    let open;
+    if (preCreateInstance) {
       // Callback before opening create dialog
       // The callback can override the new state of opening
-      open = await preCreateInstance(open);
+      open = await preCreateInstance(true);
     }
     open &&
       showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
@@ -387,7 +388,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
             <Button
               data-testid="emptyStateStreams-buttonCreateKafka"
               variant={ButtonVariant.primary}
-              onClick={() => handleCreateInstanceModal(true)}
+              onClick={() => handleCreateInstanceModal()}
             >
               {t('create_kafka_instance')}
             </Button>

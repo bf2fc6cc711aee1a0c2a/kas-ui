@@ -6,7 +6,6 @@ import { initI18N } from '@i18n/i18n';
 import { FederatedContext, FederatedProps } from '@app/contexts';
 
 // Version of OpenshiftStreams for federation
-
 type OpenshiftStreamsFederatedProps = OpenShiftStreamsProps & FederatedProps;
 
 const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederatedProps> = ({
@@ -17,7 +16,7 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederat
 }) => {
   return (
     <I18nextProvider i18n={initI18N()}>
-      <FederatedContext.Provider value={{ getAMSQuotaCost, tokenEndPointUrl }}>
+      <FederatedContext.Provider value={{ getAMSQuotaCost, tokenEndPointUrl, preCreateInstance }}>
         <RootModal>
           <OpenshiftStreams
             preCreateInstance={preCreateInstance}

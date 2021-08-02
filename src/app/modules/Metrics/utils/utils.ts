@@ -1,9 +1,8 @@
 import byteSize from 'byte-size';
-import { Topic } from '@app/modules/Metrics/Charts/MessagesChart';
 
-export const getLargestByteSize = (data1: Topic, data2) => {
+export const getLargestByteSize = (data1, data2) => {
   let currentByteSize = 'B';
-  data1.sortedData.map((datum) => {
+  data1.data.map((datum) => {
     datum.bytes.forEach((value) => {
       const byteString = byteSize(value).unit;
       if (byteString === 'kB') {
@@ -23,7 +22,7 @@ export const getLargestByteSize = (data1: Topic, data2) => {
       }
     });
   });
-  data2.sortedData.map((datum) => {
+  data2.data.map((datum) => {
     datum.bytes.forEach((value) => {
       const byteString = byteSize(value).unit;
       if (byteString === 'kB') {

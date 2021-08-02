@@ -21,11 +21,9 @@ import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '@rhoas/kafka-management-sdk';
+import { useFederated } from '@app/contexts';
 import './StreamsToolbar.css';
 
-/**
- * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
- */
 export type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
@@ -35,9 +33,6 @@ export type StreamsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  isDisabledCreateButton?: boolean;
-  buttonTooltipContent?: string | undefined;
-  labelWithTooltip?: ReactElement | undefined;
   onCreate?: () => void;
   refresh?: () => void;
   cloudProviders?: Array<CloudProvider>;
@@ -51,9 +46,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
-  isDisabledCreateButton,
-  buttonTooltipContent,
-  labelWithTooltip,
   onCreate,
   refresh,
   cloudProviders,
@@ -62,6 +54,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
   const { showModal } = useRootModalContext();
+  const { preCreateInstance } = useFederated();
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
@@ -547,12 +540,17 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
-  const handleCreateModal = () => {
-    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
-      onCreate,
-      cloudProviders,
-      refresh,
-    });
+  const handleCreateModal = async () => {
+    let open;
+    if (preCreateInstance) {
+      open = await preCreateInstance(true);
+    }
+    open &&
+      showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+        onCreate,
+        cloudProviders,
+        refresh,
+      });
   };
 
   const createButton = () => {
@@ -566,9 +564,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: createButton(),
-    },
-    {
-      item: labelWithTooltip,
     },
   ];
 
