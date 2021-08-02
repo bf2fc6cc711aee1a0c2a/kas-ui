@@ -16,11 +16,12 @@ import {
   FlexItem,
   Divider,
   Tooltip,
+  Spinner,
 } from '@patternfly/react-core';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import { isServiceApiError } from '@app/utils/error';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
-import { MASCreateModal, useRootModalContext, MASLoading } from '@app/common';
+import { MASCreateModal, useRootModalContext } from '@app/common';
 import { ErrorCodes } from '@app/utils';
 import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/kafka-management-sdk';
 import { NewKafka, FormDataValidationState } from '@app/models';
@@ -390,7 +391,8 @@ const CreateInstance: React.FunctionComponent = () => {
       messageKey = 'standard_kafka_alert_message';
     } else if (allowed === 0 || isTrialQuota) {
       variant = AlertVariant.warning;
-      titleKey = 'preview_kafka_alert_title';
+      titleKey = 'trial_kafka_alert_title';
+      messageKey = 'trial_kafka_alert_message';
     } else if (isAMSServiceDown) {
       titleKey = 'something_went_wrong';
       variant = AlertVariant.danger;
@@ -428,20 +430,26 @@ const CreateInstance: React.FunctionComponent = () => {
       dataTestIdCancel="modalCreateKafka-buttonCancel"
       isDisabledButton={shouldDisabledButton()}
     >
-      {loadingAMSService ? (
-        <MASLoading />
-      ) : (
-        <>
-          {renderAlert()}
-          <Flex direction={{ default: 'column', lg: 'row' }}>
-            <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
-            <Divider isVertical />
-            <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
-              <DrawerPanelContentInfo />
-            </FlexItem>
-          </Flex>
-        </>
-      )}
+      <>
+        {loadingAMSService && (
+          <Alert
+            className="pf-u-mb-md"
+            variant={AlertVariant.info}
+            title={'Checking if new Kafka instances are available'}
+            aria-live="polite"
+            isInline
+            customIcon={<Spinner size="md" aria-valuetext="Checking kafka availability" />}
+          />
+        )}
+        {renderAlert()}
+        <Flex direction={{ default: 'column', lg: 'row' }}>
+          <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
+          <Divider isVertical />
+          <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
+            <DrawerPanelContentInfo />
+          </FlexItem>
+        </Flex>
+      </>
     </MASCreateModal>
   );
 };
