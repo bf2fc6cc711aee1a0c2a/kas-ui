@@ -112,10 +112,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   orderBy,
   setOrderBy,
   isDrawerOpen,
-  buttonTooltipContent,
-  isDisabledCreateButton,
   loggedInUser,
-  labelWithTooltip,
   setWaitingForDelete,
   currentUserkafkas,
   cloudProviders,
@@ -532,9 +529,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
-        isDisabledCreateButton={isDisabledCreateButton}
-        buttonTooltipContent={buttonTooltipContent}
-        labelWithTooltip={labelWithTooltip}
         cloudProviders={cloudProviders}
         onCreate={onCreate}
         refresh={refresh}

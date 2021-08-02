@@ -85,10 +85,8 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@bf2/ui-shared": "0.5.0",
+    "@bf2/ui-shared": "0.7.1",
     "@cloudmosaic/quickstarts": "0.0.24",
-    "@rhoas/kafka-management-sdk": "0.12.0",
-    "date-fns": "2.23.0",
     "@patternfly/patternfly": "4.115.2",
     "@patternfly/react-charts": "6.15.3",
     "@patternfly/react-core": "4.135.0",
@@ -97,8 +95,10 @@
     "@patternfly/react-table": "4.29.0",
     "@redhat-cloud-services/frontend-components": "3.3.7",
     "@redhat-cloud-services/frontend-components-config": "4.3.2",
+    "@rhoas/kafka-management-sdk": "0.12.0",
     "axios": "0.21.1",
     "byte-size": "8.0.0",
+    "date-fns": "2.23.0",
     "dayjs": "1.10.6",
     "express": "4.17.1",
     "i18next": "20.3.4",
