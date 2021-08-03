@@ -19,7 +19,7 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { ChartEmptyState, ChartToolbar, LogSizePerPartitionChart } from '@app/modules/Metrics/components';
+import { ChartEmptyState, ChartPopover, ChartToolbar, LogSizePerPartitionChart } from '@app/modules/Metrics/components';
 
 type Topic = {
   name: string;
@@ -295,7 +295,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         setSelectedTopic={setSelectedTopic}
         onRefreshTopicToolbar={onRefreshTopicToolbar}
       />
-      <CardTitle component="h2">{t('metrics.total_bytes')}</CardTitle>
+      <CardTitle component="h2">
+        {t('metrics.total_bytes')} <ChartPopover title={t('metrics.total_bytes')} description="chart description" />
+      </CardTitle>
       <CardBody>
         <div ref={containerRef}>
           <div>

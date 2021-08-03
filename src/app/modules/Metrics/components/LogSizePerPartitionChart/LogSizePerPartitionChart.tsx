@@ -17,7 +17,7 @@ import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_b
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
 import { format } from 'date-fns';
 import byteSize from 'byte-size';
-import { ChartEmptyState } from '@app/modules/Metrics/components';
+import { ChartEmptyState, ChartPopover } from '@app/modules/Metrics/components';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 
@@ -205,7 +205,10 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
 
   return (
     <Card>
-      <CardTitle component="h2">{t('metrics.log_size_per_partition')}</CardTitle>
+      <CardTitle component="h2">
+        {t('metrics.log_size_per_partition')}{' '}
+        <ChartPopover title={t('metrics.log_size_per_partition')} description="chart description" />
+      </CardTitle>
       <CardBody>
         <div ref={containerRef}>
           {!chartDataLoading ? (

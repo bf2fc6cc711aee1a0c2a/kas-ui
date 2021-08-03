@@ -20,6 +20,7 @@ import { format } from 'date-fns';
 import { ChartEmptyState, ChartToolbar } from '@app/modules/Metrics/components';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { convertToSpecifiedByte } from '@app/modules/Metrics/utils';
+import { ChartPopover } from '../ChartPopover';
 
 type Broker = {
   name: string;
@@ -223,7 +224,10 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         showKafkaToolbar={!metricsDataUnavailable}
         onRefreshKafkaToolbar={onRefreshKafkaToolbar}
       />
-      <CardTitle component="h2">{t('metrics.used_disk_space')}</CardTitle>
+      <CardTitle component="h2">
+        {t('metrics.used_disk_space')}{' '}
+        <ChartPopover title={t('metrics.used_disk_space')} description="chart description" />
+      </CardTitle>
       <CardBody>
         <div ref={containerRef}>
           {!chartDataLoading ? (
