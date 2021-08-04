@@ -25,6 +25,7 @@ type ChartToolbarProps = {
   selectedTopic?: boolean;
   onRefreshKafkaToolbar?: () => void;
   onRefreshTopicToolbar?: () => void;
+  topicList?: string[];
 };
 export const ChartToolbar = ({
   title,
@@ -36,6 +37,7 @@ export const ChartToolbar = ({
   selectedTopic,
   onRefreshKafkaToolbar,
   onRefreshTopicToolbar,
+  topicList,
 }: ChartToolbarProps) => {
   const [selectedTime, setSelectedTime] = useState<boolean>(false);
   const [isTimeSelectOpen, setIsTimeSelectOpen] = useState<boolean>(false);
@@ -139,8 +141,9 @@ export const ChartToolbar = ({
     <>
       <SelectOption key={0} value="All topics" />
       <SelectGroup label="Filter by topic" key="group1">
-        <SelectOption key={1} value="topic-1" />
-        <SelectOption key={2} value="topic-2" />
+        {topicList?.map((topic, index) => (
+          <SelectOption key={index + 1} value={topic} />
+        ))}
       </SelectGroup>
     </>,
   ];

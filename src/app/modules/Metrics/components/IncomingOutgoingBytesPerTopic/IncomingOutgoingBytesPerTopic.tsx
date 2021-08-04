@@ -80,6 +80,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const [largestByteSize, setLargestByteSize] = useState();
   const [noTopics, setNoTopics] = useState<boolean>();
   const [chartDataLoading, setChartDataLoading] = useState(true);
+  const [topicList, setTopicList] = useState<string[]>([]);
 
   const fetchBytesData = async () => {
     const accessToken = await auth?.kas.getToken();
@@ -123,6 +124,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
             }
 
             if (labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets') {
+              topicList && setTopicList([...topicList, labels['topic']]);
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
                 item.values?.forEach((value, indexJ) => {
                   if (value.timestamp == undefined) {
@@ -294,6 +296,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         selectedTopic={selectedTopic}
         setSelectedTopic={setSelectedTopic}
         onRefreshTopicToolbar={onRefreshTopicToolbar}
+        topicList={topicList}
       />
       <CardTitle component="h2">
         {t('metrics.total_bytes')} <ChartPopover title={t('metrics.total_bytes')} description="chart description" />
