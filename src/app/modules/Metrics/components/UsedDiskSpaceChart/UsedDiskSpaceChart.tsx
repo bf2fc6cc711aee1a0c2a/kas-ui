@@ -170,7 +170,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
     const chartData: Array<ChartData> = [];
     const area: Array<BrokerChartData> = [];
     const softLimit: Array<BrokerChartData> = [];
-    const largestByteSize = 'GB'; // Hard code GB as the largest byte size because there will always be a 20 GB limit.
+    const largestByteSize = 'GiB'; // Hard code GiB as the largest byte size because there will always be a 20 GiB limit.
 
     const getCurrentLengthOfData = () => {
       const timestampDiff = avgBroker.data[avgBroker.data.length - 1].timestamp - avgBroker.data[0].timestamp;
