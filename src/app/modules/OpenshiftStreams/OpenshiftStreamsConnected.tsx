@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { OpenshiftStreams } from './OpenshiftStreams';
+import { FederatedContext, FederatedProps } from '@app/models';
 
 export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
   const history = useHistory();
@@ -14,12 +15,16 @@ export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
   };
 
   return (
-    <OpenshiftStreams
-      onConnectToRoute={onConnectToRoute}
-      getConnectToRoutePath={getConnectToRoutePath}
-      preCreateInstance={(open) => Promise.resolve(open)}
-      createDialogOpen={() => false}
-      tokenEndPointUrl="fake-token-url"
-    />
+    <FederatedContext.Provider
+      value={{ preCreateInstance: (open) => Promise.resolve(open), tokenEndPointUrl: 'fake-token-url' }}
+    >
+      <OpenshiftStreams
+        onConnectToRoute={onConnectToRoute}
+        getConnectToRoutePath={getConnectToRoutePath}
+        preCreateInstance={(open) => Promise.resolve(open)}
+        createDialogOpen={() => false}
+        tokenEndPointUrl="fake-token-url"
+      />
+    </FederatedContext.Provider>
   );
 };

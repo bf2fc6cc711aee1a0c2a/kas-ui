@@ -1,7 +1,10 @@
 import React, { useState, createContext, useContext } from 'react';
 import { MASGenerateCredentialsModal, MASLoading } from '@app/common';
 
-const CreateInstance = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstance'));
+//const CreateInstance = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstance'));
+const CreateInstance = React.lazy(
+  () => import('@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceReactHookForm')
+);
 const DeleteInstance = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstance'));
 const DeleteInstanceConnected = React.lazy(
   () => import('@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstanceConnected')
