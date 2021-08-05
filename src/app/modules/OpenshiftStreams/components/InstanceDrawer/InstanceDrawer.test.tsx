@@ -100,7 +100,7 @@ describe('Instance Drawer', () => {
       </MemoryRouter>
     );
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
-    expect(getByRole('status')).toBeInTheDocument();
+    expect(getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('should render instance name card', () => {

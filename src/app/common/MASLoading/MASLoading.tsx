@@ -1,13 +1,9 @@
 import React from 'react';
-import { Bullseye, BullseyeProps } from '@patternfly/react-core';
-import { Spinner } from '@redhat-cloud-services/frontend-components/Spinner';
+import { Bullseye, BullseyeProps, Spinner, SpinnerProps } from '@patternfly/react-core';
 
 export type MASLoadingProps = {
   bullseyeProps?: Omit<BullseyeProps, 'children'>;
-  spinnerProps?: {
-    centered?: boolean;
-    className?: string;
-  };
+  spinnerProps?: SpinnerProps;
 };
 
 export const MASLoading: React.FunctionComponent<MASLoadingProps> = ({
