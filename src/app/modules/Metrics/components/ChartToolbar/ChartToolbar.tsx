@@ -21,11 +21,12 @@ type ChartToolbarProps = {
   setTimeInterval: (value: number) => void;
   showTopicToolbar?: boolean;
   showKafkaToolbar?: boolean;
-  setSelectedTopic?: (value: boolean) => void;
-  selectedTopic?: boolean;
+  setSelectedTopic?: (value: string) => void;
+  selectedTopic?: string;
   onRefreshKafkaToolbar?: () => void;
   onRefreshTopicToolbar?: () => void;
   topicList?: string[];
+  setIsFilterApplied?: (value: boolean) => void;
 };
 export const ChartToolbar = ({
   title,
@@ -38,6 +39,7 @@ export const ChartToolbar = ({
   onRefreshKafkaToolbar,
   onRefreshTopicToolbar,
   topicList,
+  setIsFilterApplied,
 }: ChartToolbarProps) => {
   const [selectedTime, setSelectedTime] = useState<boolean>(false);
   const [isTimeSelectOpen, setIsTimeSelectOpen] = useState<boolean>(false);
@@ -96,25 +98,26 @@ export const ChartToolbar = ({
 
   const onTopicSelect = (_, selection) => {
     setSelectedTopic && setSelectedTopic(selection);
+    setIsFilterApplied && (selection !== 'All topics' ? setIsFilterApplied(true) : setIsFilterApplied(false));
     setIsTopicSelectOpen(false);
   };
 
-  const timeOptions = [
-    <SelectGroup label="Relative time ranges" key="group1">
-      <SelectOption key={0} value="Last 5 minutes" />
-      <SelectOption key={1} value="Last 15 minutes" />
-      <SelectOption key={2} value="Last 30 minutes" />
-      <SelectOption key={3} value="Last 1 hour" />
-      <SelectOption key={4} value="Last 3 hours" />
-      <SelectOption key={5} value="Last 6 hours" />
-      <SelectOption key={6} value="Last 12 hours" />
-      <SelectOption key={7} value="Last 24 hours" />
-      <SelectOption key={8} value="Last 2 days" />
-      <SelectOption key={9} value="Last 7 days" />
+  const timeOptions = (keyText: string) => [
+    <SelectGroup label="Relative time ranges" key={keyText + 'group1'}>
+      <SelectOption key={keyText + 'time-filter' + 0} value="Last 5 minutes" />
+      <SelectOption key={keyText + 'time-filter' + 1} value="Last 15 minutes" />
+      <SelectOption key={keyText + 'time-filter' + 2} value="Last 30 minutes" />
+      <SelectOption key={keyText + 'time-filter' + 3} value="Last 1 hour" />
+      <SelectOption key={keyText + 'time-filter' + 4} value="Last 3 hours" />
+      <SelectOption key={keyText + 'time-filter' + 5} value="Last 6 hours" />
+      <SelectOption key={keyText + 'time-filter' + 6} value="Last 12 hours" />
+      <SelectOption key={keyText + 'time-filter' + 7} value="Last 24 hours" />
+      <SelectOption key={keyText + 'time-filter' + 8} value="Last 2 days" />
+      <SelectOption key={keyText + 'time-filter' + 9} value="Last 7 days" />
     </SelectGroup>,
   ];
 
-  const filterByTime = (disableToolbar: boolean) => {
+  const filterByTime = (disableToolbar: boolean, keyText: string) => {
     return (
       <ToolbarItem>
         <Select
@@ -127,22 +130,23 @@ export const ChartToolbar = ({
           isDisabled={disableToolbar}
           placeholderText="Last 6 hours"
         >
-          {timeOptions}
+          {timeOptions(keyText)}
         </Select>
       </ToolbarItem>
     );
   };
 
   const onTopicFilter = (_, textInput) => {
-    return topicOptions;
+    const filteredTopics = topicList?.filter((topic) => topic === textInput) || [];
+    return topicOptions(filteredTopics);
   };
 
-  const topicOptions = [
+  const topicOptions = (topicList) => [
     <>
-      <SelectOption key={0} value="All topics" />
-      <SelectGroup label="Filter by topic" key="group1">
+      <SelectOption key={'topic-filter-' + 0} value="All topics" />
+      <SelectGroup label="Filter by topic" key="group2">
         {topicList?.map((topic, index) => (
-          <SelectOption key={index + 1} value={topic} />
+          <SelectOption key={`topic-filter-${index + 1}`} value={topic} />
         ))}
       </SelectGroup>
     </>,
@@ -177,7 +181,7 @@ export const ChartToolbar = ({
           isDisabled={disableToolbar}
           style={{ width: '100%' }}
         >
-          {topicOptions}
+          {topicOptions(topicList)}
         </Select>
       </ToolbarItem>
     );
@@ -194,7 +198,7 @@ export const ChartToolbar = ({
             <Toolbar>
               <ToolbarContent>
                 {filterByTopic(!showTopicToolbar)}
-                {filterByTime(!showTopicToolbar)}
+                {filterByTime(!showTopicToolbar, 'topic-metrics')}
                 <Button variant="plain" aria-label="sync" onClick={onRefreshTopicToolbar}>
                   <SyncIcon />
                 </Button>
@@ -203,7 +207,7 @@ export const ChartToolbar = ({
           ) : (
             <Toolbar>
               <ToolbarContent>
-                {filterByTime(!showKafkaToolbar)}
+                {filterByTime(!showKafkaToolbar, 'kafka-metrics')}
                 <Button variant="plain" aria-label="sync" onClick={onRefreshKafkaToolbar}>
                   <SyncIcon />
                 </Button>

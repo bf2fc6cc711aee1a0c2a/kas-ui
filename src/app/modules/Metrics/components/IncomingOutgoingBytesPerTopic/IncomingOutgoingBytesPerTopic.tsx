@@ -65,7 +65,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const containerRef = useRef();
   const [width, setWidth] = useState();
   const [timeInterval, setTimeInterval] = useState(6);
-  const [selectedTopic, setSelectedTopic] = useState<boolean>(false);
+  const [selectedTopic, setSelectedTopic] = useState<string>();
+  const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
@@ -125,6 +126,15 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
             if (labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets') {
               topicList && setTopicList([...topicList, labels['topic']]);
+            }
+
+            const isSelectedItem = isFilterApplied
+              ? labels['topic'] !== '__strimzi_canary' &&
+                labels['topic'] !== '__consumer_offsets' &&
+                selectedTopic === labels['topic']
+              : labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets';
+
+            if (isSelectedItem) {
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
                 item.values?.forEach((value, indexJ) => {
                   if (value.timestamp == undefined) {
@@ -297,6 +307,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         setSelectedTopic={setSelectedTopic}
         onRefreshTopicToolbar={onRefreshTopicToolbar}
         topicList={topicList}
+        setIsFilterApplied={setIsFilterApplied}
       />
       <CardTitle component="h2">
         {t('metrics.total_bytes')} <ChartPopover title={t('metrics.total_bytes')} description="chart description" />
