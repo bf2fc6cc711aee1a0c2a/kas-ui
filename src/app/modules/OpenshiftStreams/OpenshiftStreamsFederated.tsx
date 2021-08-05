@@ -10,19 +10,17 @@ type OpenshiftStreamsFederatedProps = OpenShiftStreamsProps & FederatedProps;
 
 const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederatedProps> = ({
   preCreateInstance,
-  createDialogOpen,
+  shouldOpenCreateModal,
   tokenEndPointUrl,
   getAMSQuotaCost,
 }) => {
   return (
     <I18nextProvider i18n={initI18N()}>
-      <FederatedContext.Provider value={{ getAMSQuotaCost, tokenEndPointUrl, preCreateInstance }}>
+      <FederatedContext.Provider
+        value={{ getAMSQuotaCost, tokenEndPointUrl, preCreateInstance, shouldOpenCreateModal }}
+      >
         <RootModal>
-          <OpenshiftStreams
-            preCreateInstance={preCreateInstance}
-            createDialogOpen={createDialogOpen}
-            tokenEndPointUrl={tokenEndPointUrl}
-          />
+          <OpenshiftStreams preCreateInstance={preCreateInstance} tokenEndPointUrl={tokenEndPointUrl} />
         </RootModal>
       </FederatedContext.Provider>
     </I18nextProvider>

@@ -24,6 +24,7 @@ export type FederatedProps = {
   getAMSQuotaCost?: () => Promise<QuotaCost>;
   tokenEndPointUrl: string;
   preCreateInstance?: (isOpen: boolean) => Promise<boolean>;
+  shouldOpenCreateModal?: boolean;
 };
 
 const initialState: FederatedProps = {

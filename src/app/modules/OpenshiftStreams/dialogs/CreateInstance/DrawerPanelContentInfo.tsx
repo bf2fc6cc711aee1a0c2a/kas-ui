@@ -56,7 +56,7 @@ const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({ isTrial
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.message_size')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 1 MB</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.message_size_value')}</TextListItem>
           </GridItem>
         </Grid>
         <Button
