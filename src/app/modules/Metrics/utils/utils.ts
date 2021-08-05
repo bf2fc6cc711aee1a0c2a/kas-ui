@@ -5,19 +5,19 @@ export const getLargestByteSize = (data1, data2) => {
   data1.data.map((datum) => {
     datum.bytes.forEach((value) => {
       const byteString = byteSize(value).unit;
-      if (byteString === 'kB') {
+      if (byteString === 'kiB') {
         if (currentByteSize === 'B') {
-          currentByteSize = 'kB';
+          currentByteSize = 'kiB';
         }
       }
-      if (byteString === 'MB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kB') {
-          currentByteSize = 'MB';
+      if (byteString === 'MiB') {
+        if (currentByteSize === 'B' || currentByteSize === 'kiB') {
+          currentByteSize = 'MiB';
         }
       }
-      if (byteString === 'GB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kB' || currentByteSize === 'MB') {
-          currentByteSize = 'GB';
+      if (byteString === 'GiB') {
+        if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
+          currentByteSize = 'GiB';
         }
       }
     });
@@ -25,19 +25,19 @@ export const getLargestByteSize = (data1, data2) => {
   data2.data.map((datum) => {
     datum.bytes.forEach((value) => {
       const byteString = byteSize(value).unit;
-      if (byteString === 'kB') {
+      if (byteString === 'kiB') {
         if (currentByteSize === 'B') {
-          currentByteSize = 'kB';
+          currentByteSize = 'kiB';
         }
       }
-      if (byteString === 'MB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kB') {
-          currentByteSize = 'MB';
+      if (byteString === 'MiB') {
+        if (currentByteSize === 'B' || currentByteSize === 'kiB') {
+          currentByteSize = 'MiB';
         }
       }
-      if (byteString === 'GB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kB' || currentByteSize === 'MB') {
-          currentByteSize = 'GB';
+      if (byteString === 'GiB') {
+        if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
+          currentByteSize = 'GiB';
         }
       }
     });
@@ -49,13 +49,13 @@ export const convertToSpecifiedByte = (bytes, largestByteSize) => {
   if (largestByteSize === 'B') {
     return Math.round(bytes * 10) / 10;
   }
-  if (largestByteSize === 'kB') {
+  if (largestByteSize === 'kiB') {
     return Math.round((bytes / 1024) * 10) / 10;
   }
-  if (largestByteSize === 'MB') {
+  if (largestByteSize === 'MiB') {
     return Math.round((bytes / 1024 / 1024) * 10) / 10;
   }
-  if (largestByteSize === 'GB') {
+  if (largestByteSize === 'GiB') {
     return Math.round((bytes / 1024 / 1024 / 1024) * 10) / 10;
   }
 };
