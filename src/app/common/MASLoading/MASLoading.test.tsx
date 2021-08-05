@@ -8,7 +8,7 @@ describe('<MASLoading/>', () => {
     render(<MASLoading />);
 
     //assert
-    screen.getByRole('progressbar');
+    screen.getByRole('status');
   });
 
   it('should render MASLoading with bullseyeProps props', () => {
@@ -16,7 +16,7 @@ describe('<MASLoading/>', () => {
     const { container } = render(<MASLoading bullseyeProps={{ className: 'test-class', component: 'span' }} />);
 
     //assert
-    screen.getByRole('progressbar');
+    screen.getByRole('status');
     expect(container.getElementsByClassName('test-class').length).toBe(1);
   });
 
@@ -25,15 +25,13 @@ describe('<MASLoading/>', () => {
     const { container } = render(
       <MASLoading
         bullseyeProps={{ className: 'test-class', component: 'span' }}
-        spinnerProps={{ className: 'spinner-class', size: 'sm' }}
+        spinnerProps={{ className: 'spinner-class' }}
       />
     );
-  
+
     //assert
-    screen.getByRole('progressbar');
+    screen.getByRole('status');
     expect(container.getElementsByClassName('test-class').length).toBe(1);
     expect(container.getElementsByClassName('spinner-class').length).toBe(1);
-    //check spinner size i.e. 'sm'
-    expect(container.getElementsByClassName('pf-m-sm').length).toBe(1);
   });
 });
