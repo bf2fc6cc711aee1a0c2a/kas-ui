@@ -28,7 +28,7 @@ import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
-import { useFederated, QuotaCost, initialQuotaCost } from '@app/contexts';
+import { useFederated, Quota } from '@app/contexts';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -43,10 +43,9 @@ const CreateInstance: React.FunctionComponent = () => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
-    ams: { trialQuotaId },
   } = useConfig();
   const { addAlert } = useAlert();
-  const { getAMSQuotaCost } = useFederated();
+  const { getQuota } = useFederated();
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -55,14 +54,8 @@ const CreateInstance: React.FunctionComponent = () => {
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [quotaCost, setQuotaCost] = useState<QuotaCost>(initialQuotaCost);
-  const [isTrialQuota, setIsTrailQuota] = useState<boolean>();
+  const [quota, setQuota] = useState<Quota>(undefined);
   const [loadingAMSService, setLoadingASMService] = useState(true);
-
-  useEffect(() => {
-    const isTrail = quotaCost?.quota_id === trialQuotaId;
-    setIsTrailQuota(isTrail);
-  }, [quotaCost]);
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -151,17 +144,15 @@ const CreateInstance: React.FunctionComponent = () => {
     return isValid;
   };
 
-  const amsQuoataCost = async () => {
-    if (getAMSQuotaCost) {
-      await getAMSQuotaCost().then((result) => {
-        setQuotaCost(result);
-      });
-      setLoadingASMService(false);
-    }
+  const manageQuota = async () => {
+    await getQuota().then((result) => {
+      setQuota(result);
+    });
+    setLoadingASMService(false);
   };
 
   useEffect(() => {
-    amsQuoataCost();
+    manageQuota();
   }, []);
 
   const onCreateInstance = async () => {
@@ -171,11 +162,11 @@ const CreateInstance: React.FunctionComponent = () => {
       setIsFormValid(false);
       return;
     }
-    //call ams quotacost api to check quota
-    await amsQuoataCost();
-    const { allowed } = quotaCost;
-    const quotaLimit = calculateQuotaLimit();
-    if (accessToken && (quotaLimit > 0 || allowed === 0)) {
+
+    const quota = await getQuota();
+    const { allowed, remaining } = quota || {};
+
+    if (accessToken && ((remaining && remaining > 0) || allowed === 0)) {
       try {
         const apisService = new DefaultApi(
           new Configuration({
@@ -368,31 +359,21 @@ const CreateInstance: React.FunctionComponent = () => {
     );
   };
 
-  const calculateQuotaLimit = () => {
-    const { allowed, consumed } = quotaCost || {};
-    let quotaLimit;
-    if (allowed != undefined && consumed != undefined) {
-      quotaLimit = allowed - consumed;
-    }
-    return quotaLimit;
-  };
-
   const renderAlert = () => {
-    const { allowed, isAMSServiceDown } = quotaCost || {};
-    const quotaLimit = calculateQuotaLimit();
+    const { allowed, remaining, isTrial, isServiceDown } = quota || {};
     let titleKey = '';
     let messageKey = '';
     let variant: AlertVariant = AlertVariant.warning;
 
-    if (quotaLimit === 0) {
+    if (remaining === 0) {
       variant = AlertVariant.danger;
       titleKey = 'standard_kafka_alert_title';
       messageKey = 'standard_kafka_alert_message';
-    } else if (allowed === 0 || isTrialQuota) {
+    } else if (allowed === 0 || isTrial) {
       variant = AlertVariant.warning;
       titleKey = 'trial_kafka_alert_title';
       messageKey = 'trial_kafka_alert_message';
-    } else if (isAMSServiceDown) {
+    } else if (isServiceDown) {
       titleKey = 'something_went_wrong';
       variant = AlertVariant.danger;
       messageKey = 'ams_service_down_message';
@@ -408,9 +389,8 @@ const CreateInstance: React.FunctionComponent = () => {
   };
 
   const shouldDisabledButton = () => {
-    const { isAMSServiceDown } = quotaCost || {};
-    const quotaLimit = calculateQuotaLimit();
-    if (quotaLimit === 0 || isAMSServiceDown || loadingAMSService) {
+    const { isServiceDown, remaining } = quota || {};
+    if (remaining === 0 || isServiceDown || loadingAMSService) {
       return true;
     }
     return false;

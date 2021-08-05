@@ -1,35 +1,28 @@
 import React, { useContext } from 'react';
 
-export type QuotaCost = {
-  allowed: number | undefined;
-  consumed: number | undefined;
-  href: string | undefined;
-  kind: string | undefined;
-  organization_id: string | undefined;
-  quota_id: string | undefined;
-  isAMSServiceDown: boolean;
+export type Quota =
+  | {
+      allowed: number;
+      consumed: number;
+      remaining: number;
+      isTrial: boolean;
+      isServiceDown: boolean;
+    }
+  | undefined;
+
+export type QuotaContextProps = {
+  getQuota: () => Promise<Quota | undefined>;
 };
 
-export const initialQuotaCost: QuotaCost = {
-  allowed: undefined,
-  consumed: undefined,
-  href: '',
-  kind: '',
-  organization_id: '',
-  quota_id: '',
-  isAMSServiceDown: false,
-};
-
-export type FederatedProps = {
-  getAMSQuotaCost?: () => Promise<QuotaCost>;
+export type FederatedProps = QuotaContextProps & {
   tokenEndPointUrl: string;
   preCreateInstance?: (isOpen: boolean) => Promise<boolean>;
   shouldOpenCreateModal?: boolean;
 };
 
 const initialState: FederatedProps = {
-  getAMSQuotaCost: () => Promise.resolve(initialQuotaCost),
   tokenEndPointUrl: '',
+  getQuota: () => Promise.resolve(undefined),
 };
 
 export const FederatedContext = React.createContext<FederatedProps>(initialState);
