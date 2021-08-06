@@ -9,3 +9,7 @@
 .mk--create-instance-modal__sidebar--content dt {
   font-size: var(--pf-global--FontSize--sm);
 }
+
+.pf-c-toggle-group__button.pf-m-selected {
+	--pf-c-toggle-group__button--Color: 
+}

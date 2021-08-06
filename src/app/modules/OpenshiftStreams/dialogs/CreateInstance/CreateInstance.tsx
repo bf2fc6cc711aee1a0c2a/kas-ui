@@ -313,7 +313,10 @@ const CreateInstance: React.FunctionComponent = () => {
           </FormSelect>
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId="availability-zones">
-          <ToggleGroup aria-label={t('availability_zone_selection')}>
+          <ToggleGroup
+            className=".pf-c-toggle-group__button.pf-m-selected"
+            aria-label={t('availability_zone_selection')}
+          >
             <Tooltip content={t('kafkaInstance.availabilty_zones_tooltip_message')}>
               <ToggleGroupItem
                 text={t('single')}
