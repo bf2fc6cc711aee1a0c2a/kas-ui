@@ -18,6 +18,7 @@ import { FilterIcon, SyncIcon } from '@patternfly/react-icons';
 type ChartToolbarProps = {
   title: string;
   showTopicFilter: boolean;
+  setTimeDuration: (value: number) => void;
   setTimeInterval: (value: number) => void;
   showTopicToolbar?: boolean;
   showKafkaToolbar?: boolean;
@@ -31,6 +32,7 @@ type ChartToolbarProps = {
 export const ChartToolbar = ({
   title,
   showTopicFilter,
+  setTimeDuration,
   setTimeInterval,
   showKafkaToolbar = true,
   showTopicToolbar = true,
@@ -50,46 +52,59 @@ export const ChartToolbar = ({
   };
 
   const onTimeSelect = (_, selection) => {
-    setTimeInterval(formatTime(selection));
+    setTimeDuration(formatTime(selection).timeDuration);
+    setTimeInterval(formatTime(selection).timeInterval);
     setSelectedTime(selection);
     setIsTimeSelectOpen(false);
   };
 
+  //Add a scalable logic to set duration and interval
   const formatTime = (selection: string) => {
-    let timeInterval = 6;
+    let timeDuration = 6;
+    let timeInterval = 1 * 60; //in minutes
     switch (selection) {
       case 'Last 5 minutes':
-        timeInterval = 5 / 60;
-        break;
-      case 'Last 15 minutes':
-        timeInterval = 15 / 60;
-        break;
-      case 'Last 30 minutes':
-        timeInterval = 30 / 60;
-        break;
-      case 'Last 1 hour':
+        timeDuration = 5 / 60;
         timeInterval = 1;
         break;
+      case 'Last 15 minutes':
+        timeDuration = 15 / 60;
+        timeInterval = 3;
+        break;
+      case 'Last 30 minutes':
+        timeDuration = 30 / 60;
+        timeInterval = 5;
+        break;
+      case 'Last 1 hour':
+        timeDuration = 1;
+        timeInterval = 10;
+        break;
       case 'Last 3 hours':
-        timeInterval = 2;
+        timeDuration = 3;
+        timeInterval = 30;
         break;
       case 'Last 6 hours':
-        timeInterval = 6;
+        timeDuration = 6;
+        timeInterval = 1 * 60;
         break;
       case 'Last 12 hours':
-        timeInterval = 12;
+        timeDuration = 12;
+        timeInterval = 2 * 60;
         break;
       case 'Last 24 hours':
-        timeInterval = 24;
+        timeDuration = 24;
+        timeInterval = 4 * 60;
         break;
       case 'Last 2 days':
-        timeInterval = 2 * 24;
+        timeDuration = 2 * 24;
+        timeInterval = 8 * 60;
         break;
       case 'Last 7 days':
-        timeInterval = 7 * 24;
+        timeDuration = 7 * 24;
+        timeInterval = 24 * 60;
         break;
     }
-    return timeInterval;
+    return { timeDuration, timeInterval };
   };
 
   const onTopicToggle = (isTopicSelectOpen) => {

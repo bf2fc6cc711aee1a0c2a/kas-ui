@@ -15,7 +15,6 @@ import {
 } from '@patternfly/react-charts';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
-import { format } from 'date-fns';
 import byteSize from 'byte-size';
 import { ChartEmptyState, ChartPopover } from '@app/modules/Metrics/components';
 import { useTimeout } from '@app/hooks/useTimeout';
@@ -184,14 +183,14 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newtimestamp = partition.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newtimestamp);
-          const time = format(date, 'hh:mm');
+          const time = date.getHours() + ':' + date.getMinutes();
           area.push({ name: partition.name, x: time, y: 0 });
         }
       }
 
       partition.data.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
+        const time = date.getHours() + ':' + date.getMinutes();
         const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
         area.push({ name: value.name, x: time, y: bytes });
       });

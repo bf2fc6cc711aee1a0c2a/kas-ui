@@ -6,7 +6,6 @@ import { isServiceApiError } from '@app/utils';
 import { AlertVariant, Divider } from '@patternfly/react-core';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import { format } from 'date-fns';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 import { Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
@@ -64,7 +63,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const { addAlert } = useAlert();
   const containerRef = useRef();
   const [width, setWidth] = useState();
-  const [timeInterval, setTimeInterval] = useState(6);
+  const [timeDuration, setTimeDuration] = useState(6);
+  const [timeInterval, setTimeInterval] = useState(60);
   const [selectedTopic, setSelectedTopic] = useState<string>();
   const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
 
@@ -97,7 +97,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeInterval * 60, 5 * 60, [
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
           'kafka_server_brokertopicmetrics_bytes_in_total',
           'kafka_server_brokertopicmetrics_bytes_out_total',
         ]);
@@ -190,7 +190,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
   useEffect(() => {
     fetchBytesData();
-  }, [timeInterval]);
+  }, [timeDuration, timeInterval]);
 
   useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
 
@@ -214,18 +214,18 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
       const lengthOfData = 6 * 60 - getCurrentLengthOfData();
       const lengthOfDataPer5Mins = (6 * 60 - getCurrentLengthOfData()) / 5;
 
-      if (lengthOfData <= 360) {
+      if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newTimestamp = incomingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = format(date, 'H:MM');
+          const time = date.getHours() + ':' + date.getMinutes();
           line.push({ name: incomingTopicArray.name, x: time, y: 0 });
         }
       }
 
       incomingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'H:MM');
+        const time = date.getHours() + ':' + date.getMinutes();
 
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
@@ -259,18 +259,18 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
       const lengthOfData = 6 * 60 - getCurrentLengthOfData();
       const lengthOfDataPer5Mins = (6 * 60 - getCurrentLengthOfData()) / 5;
 
-      if (lengthOfData <= 360) {
+      if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newTimestamp = outgoingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = format(date, 'H:MM');
+          const time = date.getHours() + ':' + date.getMinutes();
           line.push({ name: outgoingTopicArray.name, x: time, y: 0 });
         }
       }
 
       outgoingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'H:MM');
+        const time = date.getHours() + ':' + date.getMinutes();
 
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
@@ -301,6 +301,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
       <ChartToolbar
         showTopicFilter={true}
         title={t('metrics.topic_metrics')}
+        setTimeDuration={setTimeDuration}
         setTimeInterval={setTimeInterval}
         showTopicToolbar={!noTopics && !metricsDataUnavailable}
         selectedTopic={selectedTopic}
