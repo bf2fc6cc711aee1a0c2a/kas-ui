@@ -45,7 +45,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
-  const { shouldOpenCreateModal } = useFederated();
+  const { shouldOpenCreateModal } = useFederated() || {};
 
   const auth = useAuth();
   const {
@@ -111,12 +111,16 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   };
 
   useEffect(() => {
-    if (shouldOpenCreateModal && cloudProviders?.length < 1) {
-      fetchCloudProviders();
-    }
-    if (shouldOpenCreateModal && cloudProviders?.length > 0) {
-      handleCreateModal();
-    }
+    const openModal = async () => {
+      const shouldOpen = await shouldOpenCreateModal();
+      if (shouldOpen && cloudProviders?.length < 1) {
+        fetchCloudProviders();
+      }
+      if (shouldOpen && cloudProviders?.length > 0) {
+        handleCreateModal();
+      }
+    };
+    openModal();
   }, [shouldOpenCreateModal, cloudProviders]);
 
   const handleCreateModal = () => {

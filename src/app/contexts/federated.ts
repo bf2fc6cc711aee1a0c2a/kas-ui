@@ -1,29 +1,32 @@
 import React, { useContext } from 'react';
 
-export type Quota =
-  | {
-      allowed: number;
-      consumed: number;
-      remaining: number;
-      isTrial: boolean;
-      isServiceDown: boolean;
-    }
-  | undefined;
-
-export type QuotaContextProps = {
-  getQuota: () => Promise<Quota | undefined>;
+export type QuotaValue = {
+  allowed: number;
+  consumed: number;
+  remaining: number;
 };
 
-export type FederatedProps = QuotaContextProps & {
+export enum QuotaType {
+  kas = 'kas',
+  kasTrial = 'kas-trail',
+}
+
+export enum ProductType {
+  kas = 'kas',
+}
+
+export type Quota = {
+  data: Map<QuotaType, QuotaValue> | undefined;
+  loading: boolean;
+  isServiceDown: boolean;
+};
+
+export type FederatedProps = {
   tokenEndPointUrl: string;
   preCreateInstance?: (isOpen: boolean) => Promise<boolean>;
-  shouldOpenCreateModal?: boolean;
+  shouldOpenCreateModal: () => Promise<boolean>;
+  getQuota: () => Promise<Quota>;
 };
 
-const initialState: FederatedProps = {
-  tokenEndPointUrl: '',
-  getQuota: () => Promise.resolve(undefined),
-};
-
-export const FederatedContext = React.createContext<FederatedProps>(initialState);
-export const useFederated = (): FederatedProps => useContext(FederatedContext);
+export const FederatedContext = React.createContext<FederatedProps | undefined>(undefined);
+export const useFederated = (): FederatedProps | undefined => useContext(FederatedContext);

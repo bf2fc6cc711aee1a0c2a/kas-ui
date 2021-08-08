@@ -54,7 +54,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
   const { showModal } = useRootModalContext();
-  const { preCreateInstance } = useFederated();
+  const { preCreateInstance } = useFederated() || {};
 
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] = useState(false);
