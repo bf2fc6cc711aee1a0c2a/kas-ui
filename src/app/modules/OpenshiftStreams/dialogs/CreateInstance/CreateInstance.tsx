@@ -28,7 +28,7 @@ import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
-import { useFederated, Quota } from '@app/contexts';
+import { useFederated, Quota, QuotaType } from '@app/contexts';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -45,7 +45,7 @@ const CreateInstance: React.FunctionComponent = () => {
     kas: { apiBasePath: basePath },
   } = useConfig();
   const { addAlert } = useAlert();
-  const { getQuota } = useFederated();
+  const { getQuota } = useFederated() || {};
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -54,8 +54,7 @@ const CreateInstance: React.FunctionComponent = () => {
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
-  const [quota, setQuota] = useState<Quota>(undefined);
-  const [loadingAMSService, setLoadingASMService] = useState(true);
+  const [quota, setQuota] = useState<Quota>();
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -145,28 +144,52 @@ const CreateInstance: React.FunctionComponent = () => {
   };
 
   const manageQuota = async () => {
-    await getQuota().then((result) => {
-      setQuota(result);
-    });
-    setLoadingASMService(false);
+    if (getQuota) {
+      await getQuota().then((res) => {
+        setQuota(res);
+      });
+    }
   };
 
   useEffect(() => {
     manageQuota();
   }, []);
 
+  const [shouldCreateKafka, setShouldCreateKafka] = useState();
+
+  const checkKafkaCreationAvailability = () => {
+    const { data } = quota || {};
+
+    if (data?.has(QuotaType?.kas || QuotaType?.kasTrial)) {
+      const { allowed, remaining } = data?.get(QuotaType?.kas) || data?.get(QuotaType?.kasTrial) || {};
+      if ((remaining && remaining > 0) || allowed === 0) {
+        setShouldCreateKafka(true);
+      } else {
+        setShouldCreateKafka(false);
+      }
+    } else {
+      setShouldCreateKafka(false);
+    }
+  };
+
+  useEffect(() => {
+    checkKafkaCreationAvailability();
+  }, [quota]);
+
   const onCreateInstance = async () => {
     const isValid = validateCreateForm();
-    const accessToken = await auth?.kas.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
     }
 
-    const quota = await getQuota();
-    const { allowed, remaining } = quota || {};
+    setQuota(undefined);
+    const accessToken = await auth?.kas.getToken();
 
-    if (accessToken && ((remaining && remaining > 0) || allowed === 0)) {
+    //check kas and kasTrial quota
+    await manageQuota();
+
+    if (accessToken && shouldCreateKafka) {
       try {
         const apisService = new DefaultApi(
           new Configuration({
@@ -175,9 +198,8 @@ const CreateInstance: React.FunctionComponent = () => {
           })
         );
 
-        onCreate();
         setCreationInProgress(true);
-
+        onCreate();
         await apisService.createKafka(true, kafkaFormData).then(() => {
           resetForm();
           hideModal();
@@ -202,7 +224,6 @@ const CreateInstance: React.FunctionComponent = () => {
             });
           }
         }
-
         setCreationInProgress(false);
       }
     }
@@ -360,16 +381,19 @@ const CreateInstance: React.FunctionComponent = () => {
   };
 
   const renderAlert = () => {
-    const { allowed, remaining, isTrial, isServiceDown } = quota || {};
+    const { data, isServiceDown } = quota || {};
+    const kasQuota = data?.get(QuotaType?.kas);
+    const kasTrial = data?.get(QuotaType?.kasTrial);
+
     let titleKey = '';
     let messageKey = '';
     let variant: AlertVariant = AlertVariant.warning;
 
-    if (remaining === 0) {
+    if (kasQuota?.remaining === 0) {
       variant = AlertVariant.danger;
       titleKey = 'standard_kafka_alert_title';
       messageKey = 'standard_kafka_alert_message';
-    } else if (allowed === 0 || isTrial) {
+    } else if (kasTrial?.allowed === 0) {
       variant = AlertVariant.warning;
       titleKey = 'trial_kafka_alert_title';
       messageKey = 'trial_kafka_alert_message';
@@ -388,13 +412,27 @@ const CreateInstance: React.FunctionComponent = () => {
     );
   };
 
+  const loadingQuota = () => {
+    const { loading } = quota || {};
+
+    if (loading === undefined) {
+      return true;
+    }
+
+    return loading;
+  };
+
   const shouldDisabledButton = () => {
-    const { isServiceDown, remaining } = quota || {};
-    if (remaining === 0 || isServiceDown || loadingAMSService) {
+    const { data, isServiceDown } = quota || {};
+    const { remaining } = data?.get(QuotaType?.kas) || data?.get(QuotaType?.kasTrial) || {};
+
+    if (remaining === 0 || isServiceDown || loadingQuota()) {
       return true;
     }
     return false;
   };
+
+  const isKasTrial = quota?.data?.has(QuotaType?.kasTrial);
 
   return (
     <MASCreateModal
@@ -410,7 +448,7 @@ const CreateInstance: React.FunctionComponent = () => {
       isDisabledButton={shouldDisabledButton()}
     >
       <>
-        {loadingAMSService && (
+        {loadingQuota() && (
           <Alert
             className="pf-u-mb-md"
             variant={AlertVariant.info}
@@ -425,7 +463,7 @@ const CreateInstance: React.FunctionComponent = () => {
           <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
           <Divider isVertical />
           <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
-            <DrawerPanelContentInfo />
+            <DrawerPanelContentInfo isKasTrial={isKasTrial} />
           </FlexItem>
         </Flex>
       </>

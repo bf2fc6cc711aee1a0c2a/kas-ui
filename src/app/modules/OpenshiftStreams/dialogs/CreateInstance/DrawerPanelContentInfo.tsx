@@ -16,10 +16,10 @@ import {
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
 export type DrawerPanelContentInfoProps = {
-  isTrialQuota?: boolean;
+  isKasTrial?: boolean;
 };
 
-const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({ isTrialQuota }) => {
+const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({ isKasTrial }) => {
   const { t } = useTranslation();
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
 
@@ -28,7 +28,7 @@ const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({ isTrial
       <Text component={TextVariants.h3}>{t('common.instance_information')}</Text>
       <TextList component={TextListVariants.dl}>
         <Grid sm={6} lg={12} hasGutter>
-          {isTrialQuota && (
+          {isKasTrial && (
             <GridItem>
               <TextListItem component={TextListItemVariants.dt}>{t('common.duration')}</TextListItem>
               <TextListItem component={TextListItemVariants.dd}>48 hours</TextListItem>

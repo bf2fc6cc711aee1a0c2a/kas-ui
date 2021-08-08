@@ -8,7 +8,7 @@ export type QuotaValue = {
 
 export enum QuotaType {
   kas = 'kas',
-  kasTrial = 'kas-trail',
+  kasTrial = 'kas-trial',
 }
 
 export enum ProductType {
