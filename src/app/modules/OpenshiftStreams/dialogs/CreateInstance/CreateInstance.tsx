@@ -55,6 +55,7 @@ const CreateInstance: React.FunctionComponent = () => {
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
   const [quota, setQuota] = useState<Quota>();
+  const [shouldCreateKafka, setShouldCreateKafka] = useState<boolean>();
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -154,8 +155,6 @@ const CreateInstance: React.FunctionComponent = () => {
   useEffect(() => {
     manageQuota();
   }, []);
-
-  const [shouldCreateKafka, setShouldCreateKafka] = useState();
 
   const checkKafkaCreationAvailability = () => {
     const { data } = quota || {};
