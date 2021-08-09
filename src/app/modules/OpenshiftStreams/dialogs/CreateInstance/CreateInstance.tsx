@@ -56,12 +56,10 @@ const CreateInstance: React.FunctionComponent = () => {
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
   const [quota, setQuota] = useState<Quota>();
-  const [shouldCreateKafka, setShouldCreateKafka] = useState<boolean>();
 
   const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
   const isKasTrial = quota?.data?.has(QuotaType?.kasTrial);
   const shouldDisabledButton =
-    quota?.isServiceDown ||
     loadingQuota ||
     (quota?.data?.get(QuotaType?.kas)?.remaining == 0 && quota?.data?.get(QuotaType?.kasTrial)?.remaining === 0);
 
@@ -164,25 +162,6 @@ const CreateInstance: React.FunctionComponent = () => {
     manageQuota();
   }, []);
 
-  const checkKafkaCreationAvailability = () => {
-    const { data } = quota || {};
-
-    if (data?.has(QuotaType?.kas || QuotaType?.kasTrial)) {
-      const { allowed, remaining } = data?.get(QuotaType?.kas) || data?.get(QuotaType?.kasTrial) || {};
-      if ((remaining && remaining > 0) || allowed === 0) {
-        setShouldCreateKafka(true);
-      } else {
-        setShouldCreateKafka(false);
-      }
-    } else {
-      setShouldCreateKafka(false);
-    }
-  };
-
-  useEffect(() => {
-    checkKafkaCreationAvailability();
-  }, [quota]);
-
   const onCreateInstance = async () => {
     const isValid = validateCreateForm();
     if (!isValid) {
@@ -190,13 +169,9 @@ const CreateInstance: React.FunctionComponent = () => {
       return;
     }
 
-    setQuota(undefined);
     const accessToken = await auth?.kas.getToken();
 
-    //check kas and kasTrial quota
-    await manageQuota();
-
-    if (accessToken && shouldCreateKafka) {
+    if (accessToken) {
       try {
         const apisService = new DefaultApi(
           new Configuration({
@@ -207,6 +182,7 @@ const CreateInstance: React.FunctionComponent = () => {
 
         setCreationInProgress(true);
         onCreate();
+
         await apisService.createKafka(true, kafkaFormData).then(() => {
           resetForm();
           hideModal();
