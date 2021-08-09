@@ -296,9 +296,9 @@
     "partitions": "Partitions",
     "partitions_value": "up to 500",
     "client_connections": "Client connections",
-    "client_connections_value":"up to 500",
+    "client_connections_value": "up to 500",
     "connection_rate": "Connection rate",
-    "connection_rate_value":"up to 100 connections/second",
+    "connection_rate_value": "up to 100 connections/second",
     "quick_start_guide_message": "Need help getting started? Follow our quick start guide.",
     "input_text_area_invalid_helper_text": "Valid characters include letters from Aa to Zz, numbers from 0 to 9, spaces, and line breaks.",
     "page": "page",
@@ -306,7 +306,8 @@
     "sasl_oauthbearer": "SASL/OAUTHBEARER",
     "recommended": "Recommended",
     "token_endpoint_url": "Token endpoint URL",
-    "sasl_plain": "SASL/PLAIN"
+    "sasl_plain": "SASL/PLAIN",
+    "48_hours_duration": "48 hours duration"
   },
   "serviceAccount": {
     "service_accounts": "Service Accounts",

@@ -348,7 +348,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
-      const { name, cloud_provider, region, created_at, status, owner } = row;
+      const { name, cloud_provider, region, created_at, status, owner, instance_type } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
       tableRow.push({
@@ -365,7 +365,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           regionDisplayName,
           owner,
           {
-            title: <StatusColumn status={status} instanceName={name} />,
+            title: <StatusColumn status={status} instanceName={name} instanceType={instance_type} />,
           },
           {
             title: getFormattedDate(created_at, t('ago')),

@@ -4,15 +4,22 @@ import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
 import PendingIcon from '@patternfly/react-icons/dist/js/icons/pending-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import OutlinedClockIcon from '@patternfly/react-icons/dist/js/icons/outlined-clock-icon';
 import { statusOptions } from '@app/utils/utils';
 import './StatusColumn.css';
 
 type StatusColumnProps = {
   status: string;
   instanceName: string;
+  instanceType: string;
 };
 
-const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({ status, instanceName }) => {
+export enum InstanceType {
+  eval = 'eval',
+  standard = 'standard',
+}
+
+const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({ status, instanceName, instanceType }) => {
   const { t } = useTranslation();
 
   const getStatus = () => {
@@ -46,10 +53,20 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({ status, inst
   const statusIcon = getStatusIcon();
 
   return (
-    <Flex>
-      {statusIcon && <FlexItem spacer={{ default: 'spacerSm' }}>{statusIcon}</FlexItem>}
-      <FlexItem>{getStatus()}</FlexItem>
-    </Flex>
+    <>
+      <Flex>
+        {statusIcon && <FlexItem spacer={{ default: 'spacerSm' }}>{statusIcon}</FlexItem>}
+        <FlexItem>{getStatus()}</FlexItem>
+      </Flex>
+      {instanceType === InstanceType?.eval && (
+        <Flex>
+          <FlexItem spacer={{ default: 'spacerSm' }}>
+            <OutlinedClockIcon />
+          </FlexItem>
+          <FlexItem>{t('common.48_hours_duration')}</FlexItem>
+        </Flex>
+      )}
+    </>
   );
 };
 
