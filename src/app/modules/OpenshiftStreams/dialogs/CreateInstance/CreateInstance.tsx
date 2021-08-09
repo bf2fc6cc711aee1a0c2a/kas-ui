@@ -59,6 +59,11 @@ const CreateInstance: React.FunctionComponent = () => {
   const [shouldCreateKafka, setShouldCreateKafka] = useState<boolean>();
 
   const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
+  const isKasTrial = quota?.data?.has(QuotaType?.kasTrial);
+  const shouldDisabledButton =
+    quota?.isServiceDown ||
+    loadingQuota ||
+    (quota?.data?.get(QuotaType?.kas)?.remaining == 0 && quota?.data?.get(QuotaType?.kasTrial)?.remaining === 0);
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -382,18 +387,6 @@ const CreateInstance: React.FunctionComponent = () => {
     );
   };
 
-  const shouldDisabledButton = () => {
-    const { data, isServiceDown } = quota || {};
-    const { remaining } = data?.get(QuotaType?.kas) || data?.get(QuotaType?.kasTrial) || {};
-
-    if (remaining === 0 || isServiceDown || loadingQuota) {
-      return true;
-    }
-    return false;
-  };
-
-  const isKasTrial = quota?.data?.has(QuotaType?.kasTrial);
-
   return (
     <MASCreateModal
       isModalOpen={true}
@@ -405,7 +398,7 @@ const CreateInstance: React.FunctionComponent = () => {
       isCreationInProgress={isCreationInProgress}
       dataTestIdSubmit="modalCreateKafka-buttonSubmit"
       dataTestIdCancel="modalCreateKafka-buttonCancel"
-      isDisabledButton={shouldDisabledButton()}
+      isDisabledButton={shouldDisabledButton}
     >
       <>
         {loadingQuota && (
@@ -419,7 +412,7 @@ const CreateInstance: React.FunctionComponent = () => {
           />
         )}
         <QuotaAlert quota={quota} />
-        {!isKasTrial && (
+        {isKasTrial && (
           <Alert
             className="pf-u-mb-md"
             variant={AlertVariant.info}
