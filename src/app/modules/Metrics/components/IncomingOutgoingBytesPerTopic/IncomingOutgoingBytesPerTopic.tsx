@@ -48,12 +48,14 @@ type KafkaInstanceProps = {
   kafkaID: string;
   metricsDataUnavailable: boolean;
   setMetricsDataUnavailable: (value: boolean) => void;
+  onCreateTopic: () => void;
 };
 
 export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   kafkaID,
   metricsDataUnavailable,
   setMetricsDataUnavailable,
+  onCreateTopic,
 }: KafkaInstanceProps) => {
   const { t } = useTranslation();
   const auth = useAuth();
@@ -389,6 +391,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                     title={t('metrics.empty_state_no_topics_title')}
                     body={t('metrics.empty_state_no_topics_body')}
                     noTopics
+                    onCreateTopic={onCreateTopic}
                   />
                 )
               ) : (
