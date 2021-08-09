@@ -119,13 +119,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   onCreate,
 }) => {
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
 
   const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
@@ -190,10 +189,11 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         const kafkaIndex = currentUserkafkas?.findIndex((item) => item.name === k);
         if (kafkaIndex < 0) {
           removeKafkaFromDeleted(k);
-          addAlert({
-            title: t('kafka_successfully_deleted', { name: k }),
-            variant: AlertVariant.success,
-          });
+          addAlert &&
+            addAlert({
+              title: t('kafka_successfully_deleted', { name: k }),
+              variant: AlertVariant.success,
+            });
         }
       });
     }
@@ -211,23 +211,27 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         );
         if (instances && instances.length > 0) {
           if (instances[0].status === InstanceStatus.READY) {
-            addAlert({
-              title: t('kafka_successfully_created'),
-              variant: AlertVariant.success,
-              description: (
-                <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
-              ),
-              dataTestId: 'toastCreateKafka-success',
-            });
+            addAlert &&
+              addAlert({
+                title: t('kafka_successfully_created'),
+                variant: AlertVariant.success,
+                description: (
+                  <span
+                    dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }}
+                  />
+                ),
+                dataTestId: 'toastCreateKafka-success',
+              });
           } else if (instances[0].status === InstanceStatus.FAILED) {
-            addAlert({
-              title: t('kafka_not_created'),
-              variant: AlertVariant.danger,
-              description: (
-                <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
-              ),
-              dataTestId: 'toastCreateKafka-failed',
-            });
+            addAlert &&
+              addAlert({
+                title: t('kafka_not_created'),
+                variant: AlertVariant.danger,
+                description: (
+                  <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
+                ),
+                dataTestId: 'toastCreateKafka-failed',
+              });
           }
         }
       });
@@ -439,11 +443,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
        * and translation for specific language
        *
        */
-      addAlert({
-        title: t('common.something_went_wrong'),
-        variant: AlertVariant.danger,
-        description: reason,
-      });
+      addAlert &&
+        addAlert({
+          title: t('common.something_went_wrong'),
+          variant: AlertVariant.danger,
+          description: reason,
+        });
     }
   };
 

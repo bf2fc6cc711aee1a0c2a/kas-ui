@@ -27,8 +27,7 @@ import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/ka
 import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
-import { useFederated, Quota, QuotaType } from '@app/contexts';
+import { useAlert, useAuth, useConfig, Quota, QuotaType, useQuota } from '@bf2/ui-shared';
 import { QuotaAlert } from './QuotaAlert';
 
 const emptyProvider: CloudProvider = {
@@ -42,11 +41,10 @@ const CreateInstance: React.FunctionComponent = () => {
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
-  const { getQuota } = useFederated() || {};
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { addAlert } = useAlert() || {};
+  const { getQuota } = useQuota() || {};
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -100,11 +98,12 @@ const CreateInstance: React.FunctionComponent = () => {
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({
-          title: t('common.something_went_wrong'),
-          variant: AlertVariant.danger,
-          description: reason,
-        });
+        addAlert &&
+          addAlert({
+            title: t('common.something_went_wrong'),
+            variant: AlertVariant.danger,
+            description: reason,
+          });
       }
     }
   };
@@ -199,12 +198,13 @@ const CreateInstance: React.FunctionComponent = () => {
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
           } else {
-            addAlert({
-              title: t('common.something_went_wrong'),
-              variant: AlertVariant.danger,
-              description: reason,
-              dataTestId: 'toastCreateKafka-failed',
-            });
+            addAlert &&
+              addAlert({
+                title: t('common.something_went_wrong'),
+                variant: AlertVariant.danger,
+                description: reason,
+                dataTestId: 'toastCreateKafka-failed',
+              });
           }
         }
         setCreationInProgress(false);
