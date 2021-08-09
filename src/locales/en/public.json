@@ -256,6 +256,8 @@
   "trial_kafka_alert_title": "Kafka Instances are unavailable for creation",
   "trial_kafka_alert_message": "Kafka instances might become available later, so check back in a few hours.",
   "ams_service_down_message": "We are unable to create a new Kafka instance at this time. Try again later.",
+  "instance_checking_message": "Checking if new Kafka instances are available",
+  "trial_kafka_message": "Your instance will expire after 48 hours",
   "kafkaInstance": {
     "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
   },
@@ -284,10 +286,11 @@
     "input_filed_invalid_helper_text": "Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
     "instance_information": "Instance information",
     "duration": "Duration",
+    "duration_value":"48 hours",
     "ingress_egress": "Ingress/Egress",
-    "ingress_egress_value":"up to 2 MiB/second each",
-    "storage_value":"up to 60 GiB",
-    "message_size_value":"up to 1 MiB",
+    "ingress_egress_value": "up to 2 MiB/second each",
+    "storage_value": "up to 60 GiB",
+    "message_size_value": "up to 1 MiB",
     "storage": "Storage",
     "partitions": "Partitions",
     "client_connections": "Client connections",

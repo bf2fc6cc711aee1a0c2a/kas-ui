@@ -31,7 +31,7 @@ const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({ isKasTr
           {isKasTrial && (
             <GridItem>
               <TextListItem component={TextListItemVariants.dt}>{t('common.duration')}</TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>48 hours</TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>{t('common.duration_value')}</TextListItem>
             </GridItem>
           )}
           <GridItem>

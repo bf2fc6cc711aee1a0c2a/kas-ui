@@ -379,7 +379,7 @@ const CreateInstance: React.FunctionComponent = () => {
     );
   };
 
-  const renderAlert = () => {
+  const renderQuotaAlert = () => {
     const { data, isServiceDown } = quota || {};
     const kasQuota = data?.get(QuotaType?.kas);
     const kasTrial = data?.get(QuotaType?.kasTrial);
@@ -451,13 +451,22 @@ const CreateInstance: React.FunctionComponent = () => {
           <Alert
             className="pf-u-mb-md"
             variant={AlertVariant.info}
-            title={'Checking if new Kafka instances are available'}
+            title={t('instance_checking_message')}
             aria-live="polite"
             isInline
             customIcon={<Spinner size="md" aria-valuetext="Checking kafka availability" />}
           />
         )}
-        {renderAlert()}
+        {renderQuotaAlert()}
+        {!isKasTrial && (
+          <Alert
+            className="pf-u-mb-md"
+            variant={AlertVariant.info}
+            title={t('trial_kafka_message')}
+            aria-live="polite"
+            isInline
+          />
+        )}
         <Flex direction={{ default: 'column', lg: 'row' }}>
           <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
           <Divider isVertical />
