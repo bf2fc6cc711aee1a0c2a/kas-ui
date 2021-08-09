@@ -153,7 +153,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
     handleResize();
   }, []);
 
-  useTimeout(() => fetchLogSizePerPartition(), 1000 * 60 * 5);
+  // useTimeout(() => fetchLogSizePerPartition(), 1000 * 60 * 5);
 
   useEffect(() => {
     handleResize();

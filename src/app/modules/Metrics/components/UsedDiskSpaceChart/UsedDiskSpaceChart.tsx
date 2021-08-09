@@ -153,7 +153,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
     handleResize();
   }, [timeDuration, timeInterval]);
 
-  useTimeout(() => fetchUsedDiskSpaceMetrics(), 1000 * 60 * 5);
+  // useTimeout(() => fetchUsedDiskSpaceMetrics(), 1000 * 60 * 5);
 
   useEffect(() => {
     handleResize();

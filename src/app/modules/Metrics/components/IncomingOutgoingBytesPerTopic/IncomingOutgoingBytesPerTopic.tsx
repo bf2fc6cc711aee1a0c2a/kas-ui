@@ -194,7 +194,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
     fetchBytesData();
   }, [timeDuration, timeInterval]);
 
-  useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
+  // useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
 
   const getChartData = (incomingTopicArray: Topic, outgoingTopicArray: Topic) => {
     const legendData: Array<LegendData> = [];
