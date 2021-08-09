@@ -29,6 +29,7 @@ import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import { useFederated, Quota, QuotaType } from '@app/contexts';
+import { QuotaAlert } from './QuotaAlert';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -56,6 +57,8 @@ const CreateInstance: React.FunctionComponent = () => {
   const [isCreationInProgress, setCreationInProgress] = useState(false);
   const [quota, setQuota] = useState<Quota>();
   const [shouldCreateKafka, setShouldCreateKafka] = useState<boolean>();
+
+  const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -379,53 +382,11 @@ const CreateInstance: React.FunctionComponent = () => {
     );
   };
 
-  const renderQuotaAlert = () => {
-    const { data, isServiceDown } = quota || {};
-    const kasQuota = data?.get(QuotaType?.kas);
-    const kasTrial = data?.get(QuotaType?.kasTrial);
-
-    let titleKey = '';
-    let messageKey = '';
-    let variant: AlertVariant = AlertVariant.warning;
-
-    if (kasQuota?.remaining === 0) {
-      variant = AlertVariant.danger;
-      titleKey = 'standard_kafka_alert_title';
-      messageKey = 'standard_kafka_alert_message';
-    } else if (kasTrial?.allowed === 0) {
-      variant = AlertVariant.warning;
-      titleKey = 'trial_kafka_alert_title';
-      messageKey = 'trial_kafka_alert_message';
-    } else if (isServiceDown) {
-      titleKey = 'something_went_wrong';
-      variant = AlertVariant.danger;
-      messageKey = 'ams_service_down_message';
-    }
-
-    return (
-      titleKey && (
-        <Alert className="pf-u-mb-md" variant={variant} title={t(titleKey)} aria-live="polite" isInline>
-          {t(messageKey)}
-        </Alert>
-      )
-    );
-  };
-
-  const loadingQuota = () => {
-    const { loading } = quota || {};
-
-    if (loading === undefined) {
-      return true;
-    }
-
-    return loading;
-  };
-
   const shouldDisabledButton = () => {
     const { data, isServiceDown } = quota || {};
     const { remaining } = data?.get(QuotaType?.kas) || data?.get(QuotaType?.kasTrial) || {};
 
-    if (remaining === 0 || isServiceDown || loadingQuota()) {
+    if (remaining === 0 || isServiceDown || loadingQuota) {
       return true;
     }
     return false;
@@ -447,7 +408,7 @@ const CreateInstance: React.FunctionComponent = () => {
       isDisabledButton={shouldDisabledButton()}
     >
       <>
-        {loadingQuota() && (
+        {loadingQuota && (
           <Alert
             className="pf-u-mb-md"
             variant={AlertVariant.info}
@@ -457,7 +418,7 @@ const CreateInstance: React.FunctionComponent = () => {
             customIcon={<Spinner size="md" aria-valuetext="Checking kafka availability" />}
           />
         )}
-        {renderQuotaAlert()}
+        <QuotaAlert quota={quota} />
         {!isKasTrial && (
           <Alert
             className="pf-u-mb-md"

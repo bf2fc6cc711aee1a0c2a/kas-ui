@@ -36,23 +36,23 @@ const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({ isKasTr
           )}
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.ingress_egress')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 30 MB/second each</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.ingress_egress_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.storage')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 1000 GB</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.storage_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.partitions')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 500</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.partitions_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.client_connections')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 500</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.client_connections_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.connection_rate')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 100 connections/second</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.connection_rate_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.message_size')}</TextListItem>
