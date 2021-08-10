@@ -56,7 +56,7 @@ const CreateInstance: React.FunctionComponent = () => {
   const [quota, setQuota] = useState<Quota>();
 
   const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
-  const isKasTrial = quota?.data?.has(QuotaType?.kasTrial);
+  const isKasTrial = quota?.data?.has(QuotaType?.kasTrial) && !quota?.data?.has(QuotaType?.kas);
   const shouldDisabledButton =
     loadingQuota ||
     (quota?.data?.get(QuotaType?.kas)?.remaining == 0 && quota?.data?.get(QuotaType?.kasTrial)?.remaining === 0);
