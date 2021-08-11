@@ -18,6 +18,7 @@ import {
   getSkeletonForRows,
   InstanceStatus,
   isServiceApiError,
+  InstanceType,
 } from '@app/utils';
 import {
   MASEmptyState,
@@ -125,6 +126,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
   const { addAlert } = useAlert() || {};
+  const hasUserTrialKafka = currentUserkafkas?.filter((k) => k?.instance_type === InstanceType.eval)[0];
 
   const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
@@ -352,7 +354,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
-      const { name, cloud_provider, region, created_at, status, owner, instance_type } = row;
+      const { name, cloud_provider, region, created_at, status, owner } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
       tableRow.push({
@@ -369,7 +371,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           regionDisplayName,
           owner,
           {
-            title: <StatusColumn status={status} instanceName={name} instanceType={instance_type} />,
+            title: <StatusColumn status={status} instanceName={name} />,
           },
           {
             title: getFormattedDate(created_at, t('ago')),
@@ -537,6 +539,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         cloudProviders={cloudProviders}
         onCreate={onCreate}
         refresh={refresh}
+        hasUserTrialKafka={!!hasUserTrialKafka}
       />
       <MASTable
         tableProps={{

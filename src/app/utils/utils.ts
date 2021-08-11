@@ -25,6 +25,11 @@ enum InstanceStatus {
   DELETED = 'deleting',
 }
 
+enum InstanceType {
+  eval = 'eval',
+  standard = 'standard',
+}
+
 const cloudProviderOptions: KeyValueOptions[] = [
   { value: 'aws', label: 'Amazon Web Services' },
   // Only aws is supported for now
@@ -195,4 +200,5 @@ export {
   getModalAppendTo,
   isMobileTablet,
   getSkeletonForRows,
+  InstanceType,
 };

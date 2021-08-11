@@ -253,11 +253,14 @@
   "more_info_about_sasl_oauthbearer": "More information about SASL/OAUTHBEARER",
   "standard_kafka_alert_title": "Kafka Instances are unavailable for creation",
   "standard_kafka_alert_message": "Your organization reached the limit of Kafka instances available for creation.",
-  "trial_kafka_alert_title": "Kafka Instances are unavailable for creation",
-  "trial_kafka_alert_message": "Kafka instances might become available later, so check back in a few hours.",
+  "no_quota_kafka_alert_title": "Kafka Instances are unavailable for creation",
+  "no_quota_kafka_alert_message": "Kafka instances might become available later, so check back in a few hours.",
   "ams_service_down_message": "We are unable to create a new Kafka instance at this time. Try again later.",
   "instance_checking_message": "Checking if new Kafka instances are available",
   "trial_kafka_message": "Your instance will expire after 48 hours",
+  "kafka_creation_failed_alert_title": "Kafka instance creation failed",
+  "kafka_creation_failed_alert_message": "Your organization reached the limit of kafka instances available for creation",
+  "deploy_one_instance_alert_title": "You can deploy 1 instance at a time",
   "kafkaInstance": {
     "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
   },

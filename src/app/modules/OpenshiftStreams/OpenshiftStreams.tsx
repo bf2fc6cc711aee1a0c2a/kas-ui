@@ -19,7 +19,7 @@ import {
 } from '@patternfly/react-core';
 import { useRootModalContext, MODAL_TYPES, MASEmptyStateVariant } from '@app/common';
 import { useTimeout } from '@app/hooks/useTimeout';
-import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus } from '@app/utils';
+import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus, InstanceType } from '@app/utils';
 import { MASLoading, MASEmptyState } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
@@ -82,6 +82,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const [currentUserKafkas, setCurrentUserKafkas] = useState<KafkaRequest[] | undefined>();
 
   const { activeTab, instanceDetail } = selectedInstance || {};
+  const hasUserTrialKafka = currentUserKafkas?.filter((k) => k?.instance_type === InstanceType?.eval)[0];
 
   const updateSelectedKafkaInstance = () => {
     if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {
@@ -112,7 +113,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
 
   useEffect(() => {
     const openModal = async () => {
-      const shouldOpen = await shouldOpenCreateModal();
+      const shouldOpen = shouldOpenCreateModal && (await shouldOpenCreateModal());
       if (shouldOpen && cloudProviders?.length < 1) {
         fetchCloudProviders();
       }
@@ -129,6 +130,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       cloudProviders,
       mainToggle,
       refresh: refreshKafkas,
+      hasUserTrialKafka: !!hasUserTrialKafka,
     });
   };
 

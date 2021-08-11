@@ -36,6 +36,7 @@ export type StreamsToolbarProps = {
   onCreate?: () => void;
   refresh?: () => void;
   cloudProviders?: Array<CloudProvider>;
+  hasUserTrialKafka?: boolean | undefined;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -49,6 +50,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   onCreate,
   refresh,
   cloudProviders,
+  hasUserTrialKafka,
 }) => {
   const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
@@ -550,6 +552,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         onCreate,
         cloudProviders,
         refresh,
+        hasUserTrialKafka,
       });
   };
 

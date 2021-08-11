@@ -16,7 +16,6 @@ import {
   FlexItem,
   Divider,
   Tooltip,
-  Spinner,
 } from '@patternfly/react-core';
 import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import { isServiceApiError } from '@app/utils/error';
@@ -39,7 +38,7 @@ const emptyProvider: CloudProvider = {
 const CreateInstance: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
-  const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
+  const { onCreate, refresh, cloudProviders, hasUserTrialKafka } = store?.modalProps || {};
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
@@ -54,6 +53,7 @@ const CreateInstance: React.FunctionComponent = () => {
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
   const [quota, setQuota] = useState<Quota>();
+  const [hasKafkaCreationFailed, setHasKafkaCreationFailed] = useState<boolean>(false);
 
   const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
   const isKasTrial = quota?.data?.has(QuotaType?.kasTrial) && !quota?.data?.has(QuotaType?.kas);
@@ -190,13 +190,21 @@ const CreateInstance: React.FunctionComponent = () => {
       } catch (error) {
         if (isServiceApiError(error)) {
           const { code, reason } = error?.response?.data || {};
-
+          //if instance name duplicate
           if (code === ErrorCodes.DUPLICATE_INSTANCE_NAME) {
             setIsFormValid(false);
             setNameValidated({
               fieldState: 'error',
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
+          }
+          //if kafka creation failed due to quota
+          else if (
+            code === ErrorCodes.PREVIEW_KAFKA_INSTANCE_EXIST ||
+            code === ErrorCodes.INSUFFICIENT_QUOTA ||
+            code === ErrorCodes.FAILED_TO_CHECK_QUOTA
+          ) {
+            setHasKafkaCreationFailed(true);
           } else {
             addAlert &&
               addAlert({
@@ -377,26 +385,12 @@ const CreateInstance: React.FunctionComponent = () => {
       isDisabledButton={shouldDisabledButton}
     >
       <>
-        {loadingQuota && (
-          <Alert
-            className="pf-u-mb-md"
-            variant={AlertVariant.info}
-            title={t('instance_checking_message')}
-            aria-live="polite"
-            isInline
-            customIcon={<Spinner size="md" aria-valuetext="Checking kafka availability" />}
-          />
-        )}
-        <QuotaAlert quota={quota} />
-        {isKasTrial && (
-          <Alert
-            className="pf-u-mb-md"
-            variant={AlertVariant.info}
-            title={t('trial_kafka_message')}
-            aria-live="polite"
-            isInline
-          />
-        )}
+        <QuotaAlert
+          quota={quota}
+          hasKafkaCreationFailed={hasKafkaCreationFailed}
+          loadingQuota={loadingQuota}
+          hasUserTrialKafka={hasUserTrialKafka}
+        />
         <Flex direction={{ default: 'column', lg: 'row' }}>
           <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
           <Divider isVertical />
