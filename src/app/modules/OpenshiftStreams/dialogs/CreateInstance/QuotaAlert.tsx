@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, AlertVariant, Spinner } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Quota, QuotaType } from '@bf2/ui-shared';
+import { Quota, QuotaType, QuotaValue } from '@bf2/ui-shared';
 
 export type QuotaAlertProps = {
   quota: Quota | undefined;
@@ -18,8 +18,8 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
 }) => {
   const { t } = useTranslation();
   const { data, isServiceDown } = quota || {};
-  const kasQuota = data?.get(QuotaType?.kas);
-  const kasTrial = data?.get(QuotaType?.kasTrial);
+  const kasQuota: QuotaValue | undefined = data?.get(QuotaType?.kas);
+  const kasTrial: QuotaValue | undefined = data?.get(QuotaType?.kasTrial);
 
   let titleKey = '';
   let messageKey = '';
@@ -32,7 +32,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
     messageKey = 'no_quota_kafka_alert_message';
   }
   //if user has no standard quota and has trial quota
-  else if (!kasQuota && kasQuota?.remaining === 0 && kasTrial && kasTrial?.remaining > 0) {
+  else if ((!kasQuota || kasQuota?.remaining === 0) && kasTrial && kasTrial?.remaining > 0) {
     variant = AlertVariant.warning;
     titleKey = 'trial_kafka_title';
     messageKey = 'trial_kafka_message';
