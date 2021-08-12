@@ -32,9 +32,10 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
     messageKey = 'no_quota_kafka_alert_message';
   }
   //if user has no standard quota and has trial quota
-  else if (kasQuota?.remaining === 0 && kasTrial && kasTrial?.remaining > 0) {
-    variant = AlertVariant.info;
-    titleKey = 'trial_kafka_message';
+  else if (!kasQuota && kasQuota?.remaining === 0 && kasTrial && kasTrial?.remaining > 0) {
+    variant = AlertVariant.warning;
+    titleKey = 'trial_kafka_title';
+    messageKey = 'trial_kafka_message';
   }
   //if user has no standard quota
   else if (kasQuota && kasQuota?.remaining === 0) {

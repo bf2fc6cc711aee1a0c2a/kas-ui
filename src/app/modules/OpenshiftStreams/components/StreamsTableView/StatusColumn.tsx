@@ -10,7 +10,6 @@ import './StatusColumn.css';
 type StatusColumnProps = {
   status: string;
   instanceName: string;
-  instanceType: string;
 };
 
 const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({ status, instanceName }) => {
