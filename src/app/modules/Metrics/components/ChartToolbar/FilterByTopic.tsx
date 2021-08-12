@@ -42,7 +42,7 @@ export const FilterByTopic = ({
   const topicOptions = (topicList) => [
     <>
       <SelectOption key={'topic-filter-' + 0} value="All topics" />
-      <SelectGroup label="Filter by topic" key="group2">
+      <SelectGroup label="Filter by topic" key="topic-filter-group">
         {topicList?.map((topic, index) => (
           <SelectOption key={`topic-filter-${index + 1}`} value={topic} />
         ))}

@@ -53,7 +53,7 @@ export const ChartToolbar = ({
                   setTimeDuration={setTimeDuration}
                   setTimeInterval={setTimeInterval}
                   disableToolbar={!showTopicToolbar}
-                  keyText={'topic-metrics'}
+                  keyText={'topic-metrics-time-filter-'}
                 />
                 <Button variant="plain" aria-label="sync" onClick={onRefreshTopicToolbar}>
                   <SyncIcon />
@@ -66,7 +66,7 @@ export const ChartToolbar = ({
                 <FilterByTime
                   setTimeDuration={setTimeDuration}
                   setTimeInterval={setTimeInterval}
-                  keyText={'kafka-metrics'}
+                  keyText={'kafka-metrics-time-filter-'}
                   disableToolbar={!showKafkaToolbar}
                 />
                 <Button variant="plain" aria-label="sync" onClick={onRefreshKafkaToolbar}>
