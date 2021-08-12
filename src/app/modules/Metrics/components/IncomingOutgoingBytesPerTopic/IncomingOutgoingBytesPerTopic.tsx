@@ -373,7 +373,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
                       <Divider />
                       {selectedTopic ? (
-                        <LogSizePerPartitionChart kafkaID={kafkaID} />
+                        <LogSizePerPartitionChart
+                          kafkaID={kafkaID}
+                          timeDuration={timeDuration}
+                          timeInterval={timeInterval}
+                        />
                       ) : (
                         <Card>
                           <CardTitle component="h2">{t('metrics.topic_partition_size')}</CardTitle>

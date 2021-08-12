@@ -2,46 +2,54 @@ import byteSize from 'byte-size';
 
 export const getLargestByteSize = (data1, data2) => {
   let currentByteSize = 'B';
-  data1.sortedData.map((datum) => {
-    datum.bytes.forEach((value) => {
-      const byteString = byteSize(value).unit;
-      if (byteString === 'kiB') {
-        if (currentByteSize === 'B') {
-          currentByteSize = 'kiB';
+
+  data1 = data1 && (data1.sortedData ? data1.sortedData : data1.data);
+  data2 = data2 && (data2.sortedData ? data2.sortedData : data2.data);
+
+  data1 &&
+    data1.map((datum) => {
+      datum.bytes.forEach((value) => {
+        const byteString = byteSize(value).unit;
+        if (byteString === 'kiB') {
+          if (currentByteSize === 'B') {
+            currentByteSize = 'kiB';
+          }
         }
-      }
-      if (byteString === 'MiB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kiB') {
-          currentByteSize = 'MiB';
+        if (byteString === 'MiB') {
+          if (currentByteSize === 'B' || currentByteSize === 'kiB') {
+            currentByteSize = 'MiB';
+          }
         }
-      }
-      if (byteString === 'GiB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
-          currentByteSize = 'GiB';
+        if (byteString === 'GiB') {
+          if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
+            currentByteSize = 'GiB';
+          }
         }
-      }
+      });
     });
-  });
-  data2.sortedData.map((datum) => {
-    datum.bytes.forEach((value) => {
-      const byteString = byteSize(value).unit;
-      if (byteString === 'kiB') {
-        if (currentByteSize === 'B') {
-          currentByteSize = 'kiB';
+
+  data2 &&
+    data2.map((datum) => {
+      datum.bytes.forEach((value) => {
+        const byteString = byteSize(value).unit;
+        if (byteString === 'kiB') {
+          if (currentByteSize === 'B') {
+            currentByteSize = 'kiB';
+          }
         }
-      }
-      if (byteString === 'MiB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kiB') {
-          currentByteSize = 'MiB';
+        if (byteString === 'MiB') {
+          if (currentByteSize === 'B' || currentByteSize === 'kiB') {
+            currentByteSize = 'MiB';
+          }
         }
-      }
-      if (byteString === 'GiB') {
-        if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
-          currentByteSize = 'GiB';
+        if (byteString === 'GiB') {
+          if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
+            currentByteSize = 'GiB';
+          }
         }
-      }
+      });
     });
-  });
+
   return currentByteSize;
 };
 
@@ -58,6 +66,7 @@ export const convertToSpecifiedByte = (bytes, largestByteSize) => {
   if (largestByteSize === 'GiB') {
     return Math.round((bytes / 1024 / 1024 / 1024) * 10) / 10;
   }
+  return;
 };
 
 export const getMaxValueOfArray = (data) => {
