@@ -63,7 +63,10 @@ const CreateInstance: React.FunctionComponent = () => {
   hasUserTrialKafka = hasUserTrialKafka && (!kasQuota || kasQuota?.remaining === 0);
 
   const shouldDisabledButton =
-    loadingQuota || hasUserTrialKafka || (kasQuota?.remaining == 0 && kasTrial?.remaining === 0);
+    loadingQuota ||
+    hasUserTrialKafka ||
+    hasKafkaCreationFailed ||
+    (kasQuota?.remaining == 0 && kasTrial?.remaining === 0);
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
