@@ -26,7 +26,7 @@ import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/ka
 import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { useAlert, useAuth, useConfig, Quota, QuotaType, useQuota } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig, Quota, QuotaType, useQuota, QuotaValue } from '@bf2/ui-shared';
 import { QuotaAlert } from './QuotaAlert';
 
 const emptyProvider: CloudProvider = {
@@ -38,7 +38,8 @@ const emptyProvider: CloudProvider = {
 const CreateInstance: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
-  const { onCreate, refresh, cloudProviders, hasUserTrialKafka } = store?.modalProps || {};
+  const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
+  let { hasUserTrialKafka } = store?.modalProps || {};
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
@@ -55,11 +56,14 @@ const CreateInstance: React.FunctionComponent = () => {
   const [quota, setQuota] = useState<Quota>();
   const [hasKafkaCreationFailed, setHasKafkaCreationFailed] = useState<boolean>(false);
 
+  const kasQuota: QuotaValue | undefined = quota?.data?.get(QuotaType?.kas);
+  const kasTrial: QuotaValue | undefined = quota?.data?.get(QuotaType?.kasTrial);
   const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
-  const isKasTrial = quota?.data?.has(QuotaType?.kasTrial) && !quota?.data?.has(QuotaType?.kas);
+  const isKasTrial = kasTrial && (!kasQuota || kasQuota?.remaining === 0);
+  hasUserTrialKafka = hasUserTrialKafka && (!kasQuota || kasQuota?.remaining === 0);
+
   const shouldDisabledButton =
-    loadingQuota ||
-    (quota?.data?.get(QuotaType?.kas)?.remaining == 0 && quota?.data?.get(QuotaType?.kasTrial)?.remaining === 0);
+    loadingQuota || hasUserTrialKafka || (kasQuota?.remaining == 0 && kasTrial?.remaining === 0);
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
