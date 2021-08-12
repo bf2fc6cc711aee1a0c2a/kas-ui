@@ -6,7 +6,6 @@ import { isServiceApiError } from '@app/utils';
 import { AlertVariant, Divider } from '@patternfly/react-core';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import { useTimeout } from '@app/hooks/useTimeout';
 import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 import { Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
 import {
@@ -67,7 +66,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const [width, setWidth] = useState();
   const [timeDuration, setTimeDuration] = useState(6);
   const [timeInterval, setTimeInterval] = useState(60);
-  const [selectedTopic, setSelectedTopic] = useState<string>();
+  const [selectedTopic, setSelectedTopic] = useState<boolean | string>(false);
   const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
@@ -127,7 +126,10 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
             }
 
             if (labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets') {
-              topicList && setTopicList([...topicList, labels['topic']]);
+              topicList &&
+                labels['topic'] &&
+                topicList.indexOf(labels['topic']) === -1 &&
+                setTopicList([...topicList, labels['topic']]);
             }
 
             const isSelectedItem = isFilterApplied

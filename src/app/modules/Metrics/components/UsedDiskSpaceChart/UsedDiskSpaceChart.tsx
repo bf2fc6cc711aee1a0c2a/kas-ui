@@ -17,7 +17,6 @@ import {
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { ChartEmptyState, ChartToolbar } from '@app/modules/Metrics/components';
-import { useTimeout } from '@app/hooks/useTimeout';
 import { convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 import { ChartPopover } from '../ChartPopover';
 
@@ -90,6 +89,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         if (!kafkaID) {
           return;
         }
+
         const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
           'kubelet_volume_stats_used_bytes',
         ]);
