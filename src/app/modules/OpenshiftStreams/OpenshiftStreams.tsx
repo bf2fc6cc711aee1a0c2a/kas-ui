@@ -82,7 +82,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const [currentUserKafkas, setCurrentUserKafkas] = useState<KafkaRequest[] | undefined>();
 
   const { activeTab, instanceDetail } = selectedInstance || {};
-  const hasUserTrialKafka = currentUserKafkas?.filter((k) => k?.instance_type === InstanceType?.eval)[0];
+  const hasUserTrialKafka = currentUserKafkas?.some((k) => k?.instance_type === InstanceType?.eval);
 
   const updateSelectedKafkaInstance = () => {
     if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {
@@ -130,7 +130,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       cloudProviders,
       mainToggle,
       refresh: refreshKafkas,
-      hasUserTrialKafka: !!hasUserTrialKafka,
+      hasUserTrialKafka,
     });
   };
 

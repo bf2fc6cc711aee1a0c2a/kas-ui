@@ -126,7 +126,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
   const { addAlert } = useAlert() || {};
-  const hasUserTrialKafka = currentUserkafkas?.filter((k) => k?.instance_type === InstanceType.eval)[0];
+  const hasUserTrialKafka = currentUserkafkas?.some((k) => k?.instance_type === InstanceType.eval);
 
   const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
@@ -545,7 +545,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         cloudProviders={cloudProviders}
         onCreate={onCreate}
         refresh={refresh}
-        hasUserTrialKafka={!!hasUserTrialKafka}
+        hasUserTrialKafka={hasUserTrialKafka}
       />
       <MASTable
         tableProps={{
