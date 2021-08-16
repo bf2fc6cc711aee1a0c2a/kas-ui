@@ -4,7 +4,7 @@ import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-cor
 import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
-import { Configuration, DefaultApi, SecurityApi } from '@rhoas/kafka-management-sdk';
+import { Configuration, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 const ResetServiceAccount: React.FunctionComponent = () => {
@@ -100,3 +100,4 @@ const ResetServiceAccount: React.FunctionComponent = () => {
 };
 
 export { ResetServiceAccount };
+export default ResetServiceAccount;

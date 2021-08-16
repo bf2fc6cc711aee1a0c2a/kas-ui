@@ -320,7 +320,6 @@ const CreateInstance: React.FunctionComponent = () => {
                 value={'single'}
                 isDisabled
                 buttonId="single"
-                isSelected={isMultiSelected}
                 onChange={onChangeAvailabilty}
               />
             </Tooltip>
@@ -372,3 +371,4 @@ const CreateInstance: React.FunctionComponent = () => {
 };
 
 export { CreateInstance };
+export default CreateInstance;

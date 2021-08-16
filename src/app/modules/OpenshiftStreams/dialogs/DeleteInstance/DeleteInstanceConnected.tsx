@@ -118,3 +118,4 @@ const DeleteInstanceConnected = () => {
 };
 
 export { DeleteInstanceConnected };
+export default DeleteInstanceConnected;

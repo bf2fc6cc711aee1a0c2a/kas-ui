@@ -1,6 +1,5 @@
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { BrowserRouter } from 'react-router-dom';
 import '@patternfly/patternfly/utilities/Accessibility/accessibility.css';
 import '@patternfly/patternfly/utilities/Sizing/sizing.css';
 import '@patternfly/patternfly/utilities/Spacing/spacing.css';
@@ -23,26 +22,24 @@ const InstanceDrawerFederated = ({
   isOpenDeleteInstanceModal,
 }) => {
   return (
-    <BrowserRouter>
-      <I18nextProvider i18n={initI18N()}>
-        <RootModal>
-          <InstanceDrawerConnected
-            isExpanded={isExpanded}
-            activeTab={activeTab}
-            onClose={onClose}
-            data-ouia-app-id={dataOuiaAppId}
-            tokenEndPointUrl={tokenEndPointUrl}
-            mainToggle={mainToggle}
-            isLoading={instanceDetail === undefined}
-            instanceDetail={instanceDetail}
-            setIsOpenDeleteInstanceModal={setIsOpenDeleteInstanceModal}
-            isOpenDeleteInstanceModal={isOpenDeleteInstanceModal}
-          >
-            {children}
-          </InstanceDrawerConnected>
-        </RootModal>
-      </I18nextProvider>
-    </BrowserRouter>
+    <I18nextProvider i18n={initI18N()}>
+      <RootModal>
+        <InstanceDrawerConnected
+          isExpanded={isExpanded}
+          activeTab={activeTab}
+          onClose={onClose}
+          data-ouia-app-id={dataOuiaAppId}
+          tokenEndPointUrl={tokenEndPointUrl}
+          mainToggle={mainToggle}
+          isLoading={instanceDetail === undefined}
+          instanceDetail={instanceDetail}
+          setIsOpenDeleteInstanceModal={setIsOpenDeleteInstanceModal}
+          isOpenDeleteInstanceModal={isOpenDeleteInstanceModal}
+        >
+          {children}
+        </InstanceDrawerConnected>
+      </RootModal>
+    </I18nextProvider>
   );
 };
 

@@ -83,6 +83,13 @@
   "sample_connection_code": "Sample connection code",
   "drawer_code_section_tab_body_description_1": "Use this snippet of code to set the properties in your Kafka client to connect securely. Replace the values in",
   "brackets": "brackets",
+  "topic_partitions": "Topic Partitions",
+  "topic_partitions_offline": "Offline",
+  "topic_partitions_online": "Online",
+  "take_me_home": "Take me home",
+  "404_page_not_found": "404 Page not found",
+  "we_did_not_find_a_page_that_matches_the_address_you_navigated_to": "We didn't find a page that matches the address you navigated to.",
+  "openshift_streams": "OpenShift Streams",
   "creation_pending": "Creation pending",
   "delete": "Delete",
   "delete_instance_status_complete": "<b>{{instanceName}}</b> will be deleted.",
@@ -286,7 +293,7 @@
     "recommended": "Recommended",
     "token_endpoint_url": "Token endpoint URL",
     "sasl_plain": "SASL/PLAIN"
-  }, 
+  },
   "serviceAccount": {
     "service_accounts": "Service Accounts",
     "service_accounts_small": "Service accounts",
@@ -314,5 +321,20 @@
     "sasl_oauthbearer_description": "Use your service account credentials and a token endpoint URL to authenticate your client with the Kafka instance.",
     "sasl_plain_popover_content": "Explanation that this is available for tools that do not support the Oauth method.",
     "sasl_plain_description": " Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance."
+  },
+  "metrics": {
+    "used_disk_space": "Used disk space",
+    "log_size_per_partition": "Log size per partition",
+    "incoming_bytes_per_topic": "Incoming bytes per topic",
+    "outgoing_bytes_per_topic": "Outgoing bytes per topic",
+    "total_bytes": "Byte rate",
+    "kafka_instance_metrics": "Kafka instance metrics",
+    "topic_metrics": "Topic metrics",
+    "empty_state_no_data_body": "We’re creating your Kafka instance, so some details aren’t yet available.",
+    "empty_state_no_data_title": "No data yet",
+    "empty_state_no_topics_body": "Data will appear once you create and use topics.",
+    "empty_state_no_topics_title": "No topics yet",
+    "empty_state_no_filter_body": "In the filter dropdown select a topic to see log size per topic partition.",
+    "empty_state_no_filter_title": "Filter by Topic"
   }
 }

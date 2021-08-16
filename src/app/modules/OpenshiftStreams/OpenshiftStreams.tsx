@@ -32,15 +32,15 @@ import { MASLoading, MASEmptyState } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
-import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
+import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider, Configuration } from '@rhoas/kafka-management-sdk';
 import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
+import { useFederated } from '@app/models';
 
 export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> & {
   preCreateInstance: (open: boolean) => Promise<boolean>;
-  createDialogOpen: () => boolean;
 };
 
 type SelectedInstance = {
@@ -53,11 +53,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
   dayjs.extend(localizedFormat);
+  const { shouldOpenCreateModal } = useFederated() || {};
 
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
-  } = useConfig();
+  } = useConfig() || {};
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -65,7 +66,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
   const { t } = useTranslation();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
   const { showModal } = useRootModalContext();
   const localStorage = window.localStorage;
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
@@ -141,19 +142,36 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     setIsMobileModalOpen(!isMobileModalOpen);
   };
 
-  const handleCreateInstanceModal = async (open: boolean) => {
-    if (open) {
+  useEffect(() => {
+    const openModal = async () => {
+      const shouldOpen = await shouldOpenCreateModal();
+      if (shouldOpen && cloudProviders?.length < 1) {
+        fetchCloudProviders();
+      }
+      if (shouldOpen && cloudProviders?.length > 0) {
+        handleCreateModal();
+      }
+    };
+    openModal();
+  }, [shouldOpenCreateModal, cloudProviders]);
+
+  const handleCreateModal = () => {
+    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+      onCreate,
+      cloudProviders,
+      mainToggle,
+      refresh: refreshKafkas,
+    });
+  };
+
+  const handleCreateInstanceModal = async () => {
+    let open;
+    if (preCreateInstance) {
       // Callback before opening create dialog
       // The callback can override the new state of opening
-      open = await preCreateInstance(open);
+      open = await preCreateInstance(true);
     }
-    open &&
-      showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
-        onCreate,
-        cloudProviders,
-        mainToggle,
-        refresh: refreshKafkas,
-      });
+    open && handleCreateModal();
   };
 
   const onCloseDrawer = () => {
@@ -481,7 +499,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
           <Button
             data-testid="emptyStateStreams-buttonCreateKafka"
             variant={ButtonVariant.primary}
-            onClick={() => handleCreateInstanceModal(true)}
+            onClick={handleCreateInstanceModal}
             isAriaDisabled={isDisabledCreateButton}
           >
             {t('create_kafka_instance')}
@@ -493,7 +511,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       <Button
         data-testid="emptyStateStreams-buttonCreateKafka"
         variant={ButtonVariant.primary}
-        onClick={() => handleCreateInstanceModal(true)}
+        onClick={handleCreateInstanceModal}
       >
         {t('create_kafka_instance')}
       </Button>

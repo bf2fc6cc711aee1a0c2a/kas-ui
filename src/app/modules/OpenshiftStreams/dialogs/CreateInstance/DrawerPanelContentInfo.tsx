@@ -30,11 +30,11 @@ const DrawerPanelContentInfo: React.FunctionComponent = () => {
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.ingress_egress')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 2 MB/second each</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.ingress_egress_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.storage')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 60 GB</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.storage_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.partitions')}</TextListItem>
@@ -50,7 +50,7 @@ const DrawerPanelContentInfo: React.FunctionComponent = () => {
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.message_size')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 1 MB</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.message_size_value')}</TextListItem>
           </GridItem>
         </Grid>
         <Button

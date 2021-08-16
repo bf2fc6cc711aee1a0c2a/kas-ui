@@ -7,7 +7,6 @@ import {
   ISeparator,
   ISortBy,
   SortByDirection,
-  IExtraColumnData,
   cellWidth,
 } from '@patternfly/react-table';
 import { Skeleton } from '@patternfly/react-core';
@@ -50,10 +49,15 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   const auth = useAuth();
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
+  const [isOrgAdmin, setIsOrgAdmin] = useState<boolean>();
 
   useEffect(() => {
     auth?.getUsername().then((username) => setLoggedInUser(username));
   }, []);
+
+  useEffect(() => {
+    auth?.isOrgAdmin().then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
+  }, [auth]);
 
   const tableColumns = [
     { title: t('common.name') },
@@ -97,7 +101,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     const originalData: ServiceAccountListItem = rowData.originalData;
-    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInUser || isOrgAdmin;
     let additionalProps: any;
 
     if (!isUserSameAsLoggedIn) {

@@ -43,6 +43,7 @@ describe('<StreamsTableView/>', () => {
         getToken: () => Promise.resolve('test-token'),
       },
       getUsername: () => Promise.resolve('api_kafka_service'),
+      isOrgAdmin: () => Promise.resolve(true),
     } as Auth
   ) => {
     render(

@@ -147,6 +147,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const [activeRow, setActiveRow] = useState<string>();
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
+  const [isOrgAdmin, setIsOrgAdmin] = useState<boolean>();
 
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
@@ -156,6 +157,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     { title: t('status'), transforms: [sortable] },
     { title: t('time_created'), transforms: [sortable] },
   ];
+
+  useEffect(() => {
+    auth?.isOrgAdmin().then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
+  }, [auth]);
 
   const removeKafkaFromDeleted = (name: string) => {
     const index = deletedKafkas.findIndex((k) => k === name);
@@ -298,7 +303,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     if (originalData.status === InstanceStatus.DEPROVISION || originalData.status === InstanceStatus.DELETED) {
       return [];
     }
-    const isUserSameAsLoggedIn = originalData.owner === loggedInUser;
+    const isUserSameAsLoggedIn = originalData.owner === loggedInUser || isOrgAdmin;
     let additionalProps: any;
     if (!isUserSameAsLoggedIn) {
       additionalProps = {

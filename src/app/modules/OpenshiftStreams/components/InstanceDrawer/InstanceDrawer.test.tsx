@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 
 import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
@@ -68,9 +68,9 @@ const setup = (
   );
 };
 describe('Instance Drawer', () => {
-  it('should render drawer', () => {
+  it('should render drawer', async () => {
     const { getByTestId } = setup(jest.fn(), true, false, jest.fn(), 'Details');
-    expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId('mk--instance__drawer')).toBeInTheDocument());
   });
 
   it('should render loading if no instance is available', () => {

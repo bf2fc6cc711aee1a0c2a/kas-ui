@@ -15,7 +15,9 @@ import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { MASLoading } from '@app/common';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import { initI18N } from '@i18n/i18n';
-import { MASErrorBoundary, AlertProvider } from '@app/common';
+import { MASErrorBoundary } from '@app/common';
+import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
+import { RootModal } from '@app/common/RootModal';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 declare const __BASE_PATH__: string;
@@ -34,8 +36,6 @@ const App: React.FunctionComponent = () => {
 
   if (!initialized) return <MASLoading />;
 
-  // TODO - index doing router is not desired.
-  // Split to App.tsx etc.
   return (
     <ConfigContext.Provider
       value={
@@ -47,21 +47,23 @@ const App: React.FunctionComponent = () => {
       }
     >
       <I18nextProvider i18n={initI18N()}>
-        <AlertProvider>
-          <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
-            <KeycloakAuthProvider>
+        <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
+          <KeycloakAuthProvider>
+            <AlertProvider>
               <Router>
                 <React.Suspense fallback={<MASLoading />}>
                   <MASErrorBoundary>
-                    <AppLayout>
-                      <AppRoutes />
-                    </AppLayout>
+                    <RootModal>
+                      <AppLayout>
+                        <AppRoutes />
+                      </AppLayout>
+                    </RootModal>
                   </MASErrorBoundary>
                 </React.Suspense>
               </Router>
-            </KeycloakAuthProvider>
-          </KeycloakContext.Provider>
-        </AlertProvider>
+            </AlertProvider>
+          </KeycloakAuthProvider>
+        </KeycloakContext.Provider>
       </I18nextProvider>
     </ConfigContext.Provider>
   );
