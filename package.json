@@ -98,7 +98,7 @@
     "@redhat-cloud-services/frontend-components": "3.3.12",
     "@redhat-cloud-services/frontend-components-config": "4.3.3",
     "axios": "0.21.1",
-    "byte-size": "8.0.0",
+    "byte-size": "8.1.0",
     "dayjs": "1.10.6",
     "express": "4.17.1",
     "i18next": "20.4.0",
