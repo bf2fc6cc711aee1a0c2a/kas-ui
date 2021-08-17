@@ -16,10 +16,9 @@ import {
 } from '@patternfly/react-charts';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
-import { format } from 'date-fns';
 import { ChartEmptyState, ChartToolbar } from '@app/modules/Metrics/components';
-import { useTimeout } from '@app/hooks/useTimeout';
 import { convertToSpecifiedByte } from '@app/modules/Metrics/utils';
+import { ChartPopover } from '../ChartPopover';
 
 type Broker = {
   name: string;
@@ -70,7 +69,8 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   const [chartData, setChartData] = useState<ChartData[]>();
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [largestByteSize, setLargestByteSize] = useState();
-  const [timeInterval, setTimeInterval] = useState(6);
+  const [timeDuration, setTimeDuration] = useState(6);
+  const [timeInterval, setTimeInterval] = useState(60);
   const usageLimit = 60; // Replace with limit from API
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
@@ -89,7 +89,8 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeInterval * 60, 5 * 60, [
+
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
           'kubelet_volume_stats_used_bytes',
         ]);
 
@@ -150,9 +151,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   useEffect(() => {
     fetchUsedDiskSpaceMetrics();
     handleResize();
-  }, [timeInterval]);
+  }, [timeDuration, timeInterval]);
 
-  useTimeout(() => fetchUsedDiskSpaceMetrics(), 1000 * 60 * 5);
+  // useTimeout(() => fetchUsedDiskSpaceMetrics(), 1000 * 60 * 5);
 
   useEffect(() => {
     handleResize();
@@ -181,11 +182,11 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
     const lengthOfData = 6 * 60 - getCurrentLengthOfData();
     const lengthOfDataPer5Mins = (6 * 60 - getCurrentLengthOfData()) / 5;
 
-    if (lengthOfData <= 360) {
+    if (lengthOfData <= 360 && timeDuration >= 6) {
       for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
         const newTimestamp = avgBroker.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
         const date = new Date(newTimestamp);
-        const time = format(date, 'hh:mm');
+        const time = date.getHours() + ':' + date.getMinutes();
         area.push({ name: avgBroker.name, x: time, y: 0 });
         softLimit.push({ name: 'Limit', x: time, y: usageLimit });
       }
@@ -193,7 +194,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
     avgBroker.data.map((value) => {
       const date = new Date(value.timestamp);
-      const time = format(date, 'hh:mm');
+      const time = date.getHours() + ':' + date.getMinutes();
       const aggregateBytes = value.usedSpaceAvg.reduce(function (a, b) {
         return a + b;
       }, 0);
@@ -210,15 +211,24 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
     setChartDataLoading(false);
   };
 
+  const onRefreshKafkaToolbar = () => {
+    fetchUsedDiskSpaceMetrics();
+  };
+
   return (
     <Card>
       <ChartToolbar
         showTopicFilter={false}
         title={t('metrics.kafka_instance_metrics')}
+        setTimeDuration={setTimeDuration}
         setTimeInterval={setTimeInterval}
         showKafkaToolbar={!metricsDataUnavailable}
+        onRefreshKafkaToolbar={onRefreshKafkaToolbar}
       />
-      <CardTitle component="h2">{t('metrics.used_disk_space')}</CardTitle>
+      <CardTitle component="h2">
+        {t('metrics.used_disk_space')}{' '}
+        <ChartPopover title={t('metrics.used_disk_space')} description="chart description" />
+      </CardTitle>
       <CardBody>
         <div ref={containerRef}>
           {!chartDataLoading ? (

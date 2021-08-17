@@ -36,7 +36,7 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
 
       const messages = topic.data.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
+        const time = date.getHours() + ':' + date.getMinutes();
         return {
           x: time,
           y: value.count,
@@ -45,8 +45,6 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
       });
       chartData.push(messages);
     });
-
-    console.log(this.props.topics);
 
     return (
       <div style={{ height: '300x', width: '450px' }}>
