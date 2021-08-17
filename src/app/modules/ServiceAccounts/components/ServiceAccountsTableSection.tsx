@@ -1,21 +1,20 @@
-import { ServiceAccountListItem } from "@rhoas/kafka-management-sdk";
-import { MODAL_TYPES, useRootModalContext } from "@app/common";
-import React, { useState } from "react";
-import { Card, PageSection, PageSectionVariants } from "@patternfly/react-core";
-import { useLocation } from "react-router-dom";
-import { FilterType } from "@app/modules/OpenshiftStreams/components";
-import { ServiceAccountsTableView } from "@app/modules/ServiceAccounts/components/ServiceAccountsTableView";
+import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
+import { MODAL_TYPES, useRootModalContext } from '@app/common';
+import React, { useState } from 'react';
+import { Card, PageSection, PageSectionVariants } from '@patternfly/react-core';
+import { useLocation } from 'react-router-dom';
+import { FilterType } from '@app/modules/OpenshiftStreams/components';
+import { ServiceAccountsTableView } from '@app/modules/ServiceAccounts/components/ServiceAccountsTableView';
 
 export type ServiceAccountTableSectionProps = {
-  fetchServiceAccounts: () => Promise<void>
-  serviceAccountItems: ServiceAccountListItem[]
-}
+  fetchServiceAccounts: () => Promise<void>;
+  serviceAccountItems: ServiceAccountListItem[];
+};
 
 export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccountTableSectionProps> = ({
-                                                                                                        fetchServiceAccounts,
-                                                                                                        serviceAccountItems
-                                                                                                      }) => {
-
+  fetchServiceAccounts,
+  serviceAccountItems,
+}) => {
   const { showModal } = useRootModalContext();
   const location = useLocation();
 
@@ -27,7 +26,6 @@ export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccount
   const page = parseInt(searchParams.get('page') || '', 10) || 1;
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
-
 
   const handleResetModal = (serviceAccount: ServiceAccountListItem) => {
     showModal(MODAL_TYPES.RESET_CREDENTIALS, { serviceAccountToReset: serviceAccount });

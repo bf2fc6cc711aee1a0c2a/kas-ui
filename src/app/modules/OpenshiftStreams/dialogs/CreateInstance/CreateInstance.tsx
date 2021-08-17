@@ -39,10 +39,9 @@ const CreateInstance: React.FunctionComponent = () => {
   const { store, hideModal } = useRootModalContext();
   const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { addAlert } = useAlert() || {};
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -89,11 +88,12 @@ const CreateInstance: React.FunctionComponent = () => {
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({
-          title: t('common.something_went_wrong'),
-          variant: AlertVariant.danger,
-          description: reason,
-        });
+        addAlert &&
+          addAlert({
+            title: t('common.something_went_wrong'),
+            variant: AlertVariant.danger,
+            description: reason,
+          });
       }
     }
   };
@@ -175,12 +175,13 @@ const CreateInstance: React.FunctionComponent = () => {
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
           } else {
-            addAlert({
-              title: t('common.something_went_wrong'),
-              variant: AlertVariant.danger,
-              description: reason,
-              dataTestId: 'toastCreateKafka-failed',
-            });
+            addAlert &&
+              addAlert({
+                title: t('common.something_went_wrong'),
+                variant: AlertVariant.danger,
+                description: reason,
+                dataTestId: 'toastCreateKafka-failed',
+              });
           }
         }
 

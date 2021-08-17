@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act } from '@testing-library/react';
@@ -79,9 +79,6 @@ describe('<StreamsTableView/>', () => {
     kafkaInstanceItems,
     onViewInstance: jest.fn(),
     onViewConnection: jest.fn(),
-    getOnConnectToInstancePath: jest.fn(),
-    getConnectToRoutePath: jest.fn(),
-    onConnectToRoute: jest.fn(),
     mainToggle: false,
     refresh: jest.fn(),
     page: 1,

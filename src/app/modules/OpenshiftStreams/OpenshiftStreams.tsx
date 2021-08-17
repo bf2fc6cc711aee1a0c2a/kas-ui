@@ -32,17 +32,16 @@ import { MASLoading, MASEmptyState } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import { MAX_POLL_INTERVAL } from '@app/utils';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
-import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps, StreamsTableProps } from './components';
+import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider, Configuration } from '@rhoas/kafka-management-sdk';
 import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import { useFederated } from '@app/models';
 
-export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> &
-  Pick<StreamsTableProps, 'onConnectToRoute' | 'getConnectToRoutePath'> & {
-    preCreateInstance: (open: boolean) => Promise<boolean>;
-  };
+export type OpenShiftStreamsProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'> & {
+  preCreateInstance: (open: boolean) => Promise<boolean>;
+};
 
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
@@ -50,8 +49,6 @@ type SelectedInstance = {
 };
 
 const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
-  onConnectToRoute,
-  getConnectToRoutePath,
   preCreateInstance,
   tokenEndPointUrl,
 }: OpenShiftStreamsProps) => {
@@ -61,7 +58,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
-  } = useConfig();
+  } = useConfig() || {};
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -69,7 +66,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
   const { t } = useTranslation();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
   const { showModal } = useRootModalContext();
   const localStorage = window.localStorage;
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
@@ -635,8 +632,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               mainToggle={mainToggle}
               onViewConnection={onViewConnection}
               onViewInstance={onViewInstance}
-              onConnectToRoute={onConnectToRoute}
-              getConnectToRoutePath={getConnectToRoutePath}
               refresh={refreshKafkas}
               kafkaDataLoaded={kafkaDataLoaded}
               setWaitingForDelete={setWaitingForDelete}
@@ -678,8 +673,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         instanceDetail={instanceDetail}
         onClose={onCloseDrawer}
         data-ouia-app-id="controlPlane-streams"
-        getConnectToRoutePath={getConnectToRoutePath}
-        onConnectToRoute={onConnectToRoute}
         tokenEndPointUrl={tokenEndPointUrl}
         notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
       >

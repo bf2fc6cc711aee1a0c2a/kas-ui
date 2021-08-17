@@ -1,13 +1,13 @@
-import { useTranslation } from "react-i18next";
-import { useAlert, useAuth, useConfig } from "@bf2/ui-shared";
-import React, { useEffect, useState } from "react";
-import { Configuration, SecurityApi, ServiceAccountList, ServiceAccountListItem } from "@rhoas/kafka-management-sdk";
-import { ErrorCodes, isServiceApiError, sortValues } from "@app/utils";
-import { AlertVariant, PageSection, PageSectionVariants } from "@patternfly/react-core";
-import { UserUnauthorized } from "@app/modules/ServiceAccounts/components/UserUnauthorized";
-import { MASLoading } from "@app/common";
-import { ServiceAccountsEmpty } from "@app/modules/ServiceAccounts/components/ServiceAccountsEmpty";
-import { ServiceAccountsTableSection } from "@app/modules/ServiceAccounts/components/ServiceAccountsTableSection";
+import { useTranslation } from 'react-i18next';
+import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import React, { useEffect, useState } from 'react';
+import { Configuration, SecurityApi, ServiceAccountList, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
+import { ErrorCodes, isServiceApiError, sortValues } from '@app/utils';
+import { AlertVariant, PageSection, PageSectionVariants } from '@patternfly/react-core';
+import { UserUnauthorized } from '@app/modules/ServiceAccounts/components/UserUnauthorized';
+import { MASLoading } from '@app/common';
+import { ServiceAccountsEmpty } from '@app/modules/ServiceAccounts/components/ServiceAccountsEmpty';
+import { ServiceAccountsTableSection } from '@app/modules/ServiceAccounts/components/ServiceAccountsTableSection';
 
 export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
   const { t } = useTranslation();
@@ -63,18 +63,23 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
   }, [auth, config]);
 
   if (isUserUnauthorized) {
-    return <UserUnauthorized/>
+    return <UserUnauthorized />;
   }
 
   if (serviceAccountItems === undefined) {
     return (
       <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
-        <MASLoading/>
+        <MASLoading />
       </PageSection>
     );
   }
   if (serviceAccountItems.length < 1) {
-    return <ServiceAccountsEmpty fetchServiceAccounts={fetchServiceAccounts}/>
+    return <ServiceAccountsEmpty fetchServiceAccounts={fetchServiceAccounts} />;
   }
-  return <ServiceAccountsTableSection fetchServiceAccounts={fetchServiceAccounts} serviceAccountItems={serviceAccountItems}/>
-}
+  return (
+    <ServiceAccountsTableSection
+      fetchServiceAccounts={fetchServiceAccounts}
+      serviceAccountItems={serviceAccountItems}
+    />
+  );
+};

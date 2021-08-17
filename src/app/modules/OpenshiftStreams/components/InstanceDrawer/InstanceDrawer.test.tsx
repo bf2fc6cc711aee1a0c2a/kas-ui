@@ -6,7 +6,7 @@ import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
@@ -56,8 +56,6 @@ const setup = (
               isLoading={instanceDetail === undefined}
               data-ouia-app-id="controlPlane-streams"
               data-testId="mk--instance__drawer"
-              getConnectToRoutePath={jest.fn()}
-              onConnectToRoute={jest.fn()}
               tokenEndPointUrl={'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'}
               notRequiredDrawerContentBackground={true}
             >
@@ -83,8 +81,6 @@ describe('Instance Drawer', () => {
           <DrawerContent
             panelContent={
               <InstanceDrawer
-                getConnectToRoutePath={jest.fn()}
-                onConnectToRoute={jest.fn()}
                 tokenEndPointUrl={'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'}
                 isExpanded={true}
                 isLoading={instanceDetail === undefined}

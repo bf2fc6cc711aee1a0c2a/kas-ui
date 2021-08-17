@@ -31,7 +31,7 @@ import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { AlertVariant, useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { AlertVariant, useAlert, useAuth, useConfig, useBasename } from '@bf2/ui-shared';
 
 export type FilterValue = {
   value: string;
@@ -47,8 +47,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   kafkaInstanceItems: KafkaRequest[];
   onViewInstance: (instance: KafkaRequest) => void;
   onViewConnection: (instance: KafkaRequest) => void;
-  onConnectToRoute: (data: KafkaRequest, routePath: string) => void;
-  getConnectToRoutePath: (data: KafkaRequest, routePath: string) => string;
   mainToggle: boolean;
   refresh: (arg0?: boolean) => void;
   kafkaDataLoaded: boolean;
@@ -109,8 +107,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   kafkaInstanceItems,
   onViewInstance,
   onViewConnection,
-  onConnectToRoute,
-  getConnectToRoutePath,
   refresh,
   page,
   perPage,
@@ -136,13 +132,14 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   onCreate,
 }) => {
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { getBasename } = useBasename() || {};
+  const basename = getBasename && getBasename();
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
 
   const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
@@ -207,10 +204,11 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         const kafkaIndex = currentUserkafkas?.findIndex((item) => item.name === k);
         if (kafkaIndex < 0) {
           removeKafkaFromDeleted(k);
-          addAlert({
-            title: t('kafka_successfully_deleted', { name: k }),
-            variant: AlertVariant.success,
-          });
+          addAlert &&
+            addAlert({
+              title: t('kafka_successfully_deleted', { name: k }),
+              variant: AlertVariant.success,
+            });
         }
       });
     }
@@ -228,23 +226,27 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         );
         if (instances && instances.length > 0) {
           if (instances[0].status === InstanceStatus.READY) {
-            addAlert({
-              title: t('kafka_successfully_created'),
-              variant: AlertVariant.success,
-              description: (
-                <span dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }} />
-              ),
-              dataTestId: 'toastCreateKafka-success',
-            });
+            addAlert &&
+              addAlert({
+                title: t('kafka_successfully_created'),
+                variant: AlertVariant.success,
+                description: (
+                  <span
+                    dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }}
+                  />
+                ),
+                dataTestId: 'toastCreateKafka-success',
+              });
           } else if (instances[0].status === InstanceStatus.FAILED) {
-            addAlert({
-              title: t('kafka_not_created'),
-              variant: AlertVariant.danger,
-              description: (
-                <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
-              ),
-              dataTestId: 'toastCreateKafka-failed',
-            });
+            addAlert &&
+              addAlert({
+                title: t('kafka_not_created'),
+                variant: AlertVariant.danger,
+                description: (
+                  <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
+                ),
+                dataTestId: 'toastCreateKafka-failed',
+              });
           }
         }
       });
@@ -360,14 +362,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
 
   const renderNameLink = ({ name, row }) => {
     return (
-      <Link
-        to={() => getConnectToRoutePath(row as KafkaRequest, `kafkas/${row?.id}`)}
-        onClick={(e) => {
-          e.preventDefault();
-          onConnectToRoute(row as KafkaRequest, `kafkas/${row?.id}`);
-        }}
-        data-testid="tableStreams-linkKafka"
-      >
+      <Link to={`${basename}/${row?.id}`} data-testid="tableStreams-linkKafka">
         {name}
       </Link>
     );
@@ -474,11 +469,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
        * and translation for specific language
        *
        */
-      addAlert({
-        title: t('common.something_went_wrong'),
-        variant: AlertVariant.danger,
-        description: reason,
-      });
+      addAlert &&
+        addAlert({
+          title: t('common.something_went_wrong'),
+          variant: AlertVariant.danger,
+          description: reason,
+        });
     }
   };
 

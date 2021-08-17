@@ -1,13 +1,12 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { PageSection } from "@patternfly/react-core";
-import { MASEmptyState, MASEmptyStateVariant, MODAL_TYPES, useRootModalContext } from "@app/common";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { PageSection } from '@patternfly/react-core';
+import { MASEmptyState, MASEmptyStateVariant, MODAL_TYPES, useRootModalContext } from '@app/common';
 
 export type ServiceAccountsEmptyProps = {
-  fetchServiceAccounts: () => Promise<void>
-}
+  fetchServiceAccounts: () => Promise<void>;
+};
 export const ServiceAccountsEmpty: React.FunctionComponent<ServiceAccountsEmptyProps> = ({ fetchServiceAccounts }) => {
-
   const { showModal } = useRootModalContext();
 
   const handleCreateModal = () => {
@@ -35,4 +34,4 @@ export const ServiceAccountsEmpty: React.FunctionComponent<ServiceAccountsEmptyP
       />
     </PageSection>
   );
-}
+};

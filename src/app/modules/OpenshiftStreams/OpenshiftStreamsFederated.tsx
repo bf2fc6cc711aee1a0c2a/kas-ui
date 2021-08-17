@@ -9,8 +9,6 @@ import { FederatedContext, FederatedProps } from '@app/models';
 type OpenshiftStreamsFederatedProps = OpenShiftStreamsProps & FederatedProps;
 
 const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederatedProps> = ({
-  onConnectToRoute,
-  getConnectToRoutePath,
   preCreateInstance,
   shouldOpenCreateModal,
   tokenEndPointUrl,
@@ -19,12 +17,7 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederat
     <I18nextProvider i18n={initI18N()}>
       <FederatedContext.Provider value={{ preCreateInstance, tokenEndPointUrl, shouldOpenCreateModal }}>
         <RootModal>
-          <OpenshiftStreams
-            onConnectToRoute={onConnectToRoute}
-            getConnectToRoutePath={getConnectToRoutePath}
-            preCreateInstance={preCreateInstance}
-            tokenEndPointUrl={tokenEndPointUrl}
-          />
+          <OpenshiftStreams preCreateInstance={preCreateInstance} tokenEndPointUrl={tokenEndPointUrl} />
         </RootModal>
       </FederatedContext.Provider>
     </I18nextProvider>

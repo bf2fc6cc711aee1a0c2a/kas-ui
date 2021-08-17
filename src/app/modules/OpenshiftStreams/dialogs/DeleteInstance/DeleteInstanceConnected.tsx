@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
+import { useAuth, useConfig, useAlert, useBasename } from '@bf2/ui-shared';
 import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
 import { useRootModalContext } from '@app/common';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
@@ -15,8 +16,11 @@ const DeleteInstanceConnected = () => {
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
+  const { getBasename } = useBasename();
+  const basename = getBasename();
+  const history = useHistory();
   const { store, hideModal } = useRootModalContext();
-  const { selectedItemData: instanceDetail, onConnectToRoute, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
+  const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
   const [isMaxCapacityReached, setIsMaxCapacityReached] = useState<boolean | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -51,7 +55,7 @@ const DeleteInstanceConnected = () => {
           setIsLoading(false);
           onCloseModal();
           //redirect on kafka list page
-          onConnectToRoute && onConnectToRoute({}, 'kafkas');
+          history.push(basename);
         });
       } catch (error) {
         setIsLoading(false);

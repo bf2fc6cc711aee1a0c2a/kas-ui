@@ -13,8 +13,6 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   mainToggle,
   activeKey,
   isKafkaPending,
-  onConnectToRoute,
-  getConnectToRoutePath,
   tokenEndPointUrl,
 }: ConnectionTabProps) => {
   const { t } = useTranslation();
@@ -28,8 +26,6 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
             instance={instance}
             mainToggle={mainToggle}
             isKafkaPending={isKafkaPending}
-            getConnectToRoutePath={getConnectToRoutePath}
-            onConnectToRoute={onConnectToRoute}
             tokenEndPointUrl={tokenEndPointUrl}
           />
         </Tab>
@@ -44,8 +40,6 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
       instance={instance}
       mainToggle={mainToggle}
       isKafkaPending={isKafkaPending}
-      getConnectToRoutePath={getConnectToRoutePath}
-      onConnectToRoute={onConnectToRoute}
       tokenEndPointUrl={tokenEndPointUrl}
     />
   );
