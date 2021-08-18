@@ -82,7 +82,7 @@ export const RootModal = ({ children }) => {
       return null;
     }
     return (
-      <React.Suspense fallback={<MASLoading />}>
+      <React.Suspense fallback={null}>
         <ModalComponent id="global-modal" {...modalProps} />
       </React.Suspense>
     );
