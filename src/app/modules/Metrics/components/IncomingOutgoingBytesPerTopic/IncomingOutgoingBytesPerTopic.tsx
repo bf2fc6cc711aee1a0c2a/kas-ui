@@ -6,8 +6,6 @@ import { isServiceApiError } from '@app/utils';
 import { AlertVariant, Divider } from '@patternfly/react-core';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import { format } from 'date-fns';
-import { useTimeout } from '@app/hooks/useTimeout';
 import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 import { Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
 import {
@@ -19,7 +17,7 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { ChartEmptyState, ChartToolbar, LogSizePerPartitionChart } from '@app/modules/Metrics/components';
+import { ChartEmptyState, ChartPopover, ChartToolbar, LogSizePerPartitionChart } from '@app/modules/Metrics/components';
 
 type Topic = {
   name: string;
@@ -49,12 +47,14 @@ type KafkaInstanceProps = {
   kafkaID: string;
   metricsDataUnavailable: boolean;
   setMetricsDataUnavailable: (value: boolean) => void;
+  onCreateTopic: () => void;
 };
 
 export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   kafkaID,
   metricsDataUnavailable,
   setMetricsDataUnavailable,
+  onCreateTopic,
 }: KafkaInstanceProps) => {
   const { t } = useTranslation();
   const auth = useAuth();
@@ -64,8 +64,10 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const { addAlert } = useAlert();
   const containerRef = useRef();
   const [width, setWidth] = useState();
-  const [timeInterval, setTimeInterval] = useState(6);
-  const [selectedTopic, setSelectedTopic] = useState<boolean>(false);
+  const [timeDuration, setTimeDuration] = useState(6);
+  const [timeInterval, setTimeInterval] = useState(60);
+  const [selectedTopic, setSelectedTopic] = useState<boolean | string>(false);
+  const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
 
   const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
@@ -80,6 +82,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const [largestByteSize, setLargestByteSize] = useState();
   const [noTopics, setNoTopics] = useState<boolean>();
   const [chartDataLoading, setChartDataLoading] = useState(true);
+  const [topicList, setTopicList] = useState<string[]>([]);
 
   const fetchBytesData = async () => {
     const accessToken = await auth?.kas.getToken();
@@ -95,7 +98,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeInterval * 60, 5 * 60, [
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
           'kafka_server_brokertopicmetrics_bytes_in_total',
           'kafka_server_brokertopicmetrics_bytes_out_total',
         ]);
@@ -122,9 +125,20 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
               throw new Error('item.values cannot be undefined');
             }
 
-            console.log('what is label here' + labels['topic']);
-
             if (labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets') {
+              topicList &&
+                labels['topic'] &&
+                topicList.indexOf(labels['topic']) === -1 &&
+                setTopicList([...topicList, labels['topic']]);
+            }
+
+            const isSelectedItem = isFilterApplied
+              ? labels['topic'] !== '__strimzi_canary' &&
+                labels['topic'] !== '__consumer_offsets' &&
+                selectedTopic === labels['topic']
+              : labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets';
+
+            if (isSelectedItem) {
               if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
                 item.values?.forEach((value, indexJ) => {
                   if (value.timestamp == undefined) {
@@ -180,9 +194,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
   useEffect(() => {
     fetchBytesData();
-  }, [timeInterval]);
+  }, [timeDuration, timeInterval]);
 
-  useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
+  // useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
 
   const getChartData = (incomingTopicArray: Topic, outgoingTopicArray: Topic) => {
     const legendData: Array<LegendData> = [];
@@ -204,18 +218,19 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
       const lengthOfData = 6 * 60 - getCurrentLengthOfData();
       const lengthOfDataPer5Mins = (6 * 60 - getCurrentLengthOfData()) / 5;
 
-      if (lengthOfData <= 360) {
+      if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newTimestamp = incomingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = format(date, 'hh:mm');
+          const time = date.getHours() + ':' + date.getMinutes();
           line.push({ name: incomingTopicArray.name, x: time, y: 0 });
         }
       }
 
       incomingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
+        const time = date.getHours() + ':' + date.getMinutes();
+
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);
@@ -248,18 +263,19 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
       const lengthOfData = 6 * 60 - getCurrentLengthOfData();
       const lengthOfDataPer5Mins = (6 * 60 - getCurrentLengthOfData()) / 5;
 
-      if (lengthOfData <= 360) {
+      if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newTimestamp = outgoingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = format(date, 'hh:mm');
+          const time = date.getHours() + ':' + date.getMinutes();
           line.push({ name: outgoingTopicArray.name, x: time, y: 0 });
         }
       }
 
       outgoingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
+        const time = date.getHours() + ':' + date.getMinutes();
+
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);
@@ -280,17 +296,27 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
     setChartDataLoading(false);
   };
 
+  const onRefreshTopicToolbar = () => {
+    fetchBytesData();
+  };
+
   return (
     <Card>
       <ChartToolbar
         showTopicFilter={true}
         title={t('metrics.topic_metrics')}
+        setTimeDuration={setTimeDuration}
         setTimeInterval={setTimeInterval}
         showTopicToolbar={!noTopics && !metricsDataUnavailable}
         selectedTopic={selectedTopic}
         setSelectedTopic={setSelectedTopic}
+        onRefreshTopicToolbar={onRefreshTopicToolbar}
+        topicList={topicList}
+        setIsFilterApplied={setIsFilterApplied}
       />
-      <CardTitle component="h2">{t('metrics.total_bytes')}</CardTitle>
+      <CardTitle component="h2">
+        {t('metrics.total_bytes')} <ChartPopover title={t('metrics.total_bytes')} description="chart description" />
+      </CardTitle>
       <CardBody>
         <div ref={containerRef}>
           <div>
@@ -347,13 +373,22 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
                       <Divider />
                       {selectedTopic ? (
-                        <LogSizePerPartitionChart kafkaID={kafkaID} />
-                      ) : (
-                        <ChartEmptyState
-                          title={t('metrics.empty_state_no_filter_title')}
-                          body={t('metrics.empty_state_no_filter_body')}
-                          noFilter
+                        <LogSizePerPartitionChart
+                          kafkaID={kafkaID}
+                          timeDuration={timeDuration}
+                          timeInterval={timeInterval}
                         />
+                      ) : (
+                        <Card>
+                          <CardTitle component="h2">{t('metrics.topic_partition_size')}</CardTitle>
+                          <CardBody>
+                            <ChartEmptyState
+                              title={t('metrics.empty_state_no_filter_title')}
+                              body={t('metrics.empty_state_no_filter_body')}
+                              noFilter
+                            />{' '}
+                          </CardBody>
+                        </Card>
                       )}
                     </>
                   )
@@ -362,6 +397,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                     title={t('metrics.empty_state_no_topics_title')}
                     body={t('metrics.empty_state_no_topics_body')}
                     noTopics
+                    onCreateTopic={onCreateTopic}
                   />
                 )
               ) : (

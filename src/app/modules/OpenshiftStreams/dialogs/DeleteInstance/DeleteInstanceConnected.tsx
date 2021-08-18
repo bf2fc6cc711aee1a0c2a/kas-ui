@@ -10,14 +10,15 @@ import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 
 const DeleteInstanceConnected = () => {
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
   const { t } = useTranslation();
   const auth = useAuth();
   const history = useHistory();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { getBasename } = useBasename();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { getBasename } = useBasename() || {};
+  const basename = (getBasename && getBasename()) || '';
+
   const { store, hideModal } = useRootModalContext();
   const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
@@ -44,7 +45,7 @@ const DeleteInstanceConnected = () => {
           setIsLoading(false);
           onCloseModal();
           //redirect on kafka list page
-          history.push(getBasename());
+          history.push(basename);
         });
       } catch (error) {
         setIsLoading(false);
@@ -58,11 +59,12 @@ const DeleteInstanceConnected = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert({
-      title: t('something_went_wrong'),
-      variant: AlertVariant.danger,
-      description: reason,
-    });
+    addAlert &&
+      addAlert({
+        title: t('something_went_wrong'),
+        variant: AlertVariant.danger,
+        description: reason,
+      });
   };
 
   const props = {

@@ -6,7 +6,7 @@ import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:

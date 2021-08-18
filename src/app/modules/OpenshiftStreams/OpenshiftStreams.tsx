@@ -50,7 +50,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
-  } = useConfig();
+  } = useConfig() || {};
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -58,7 +58,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
   const mainToggle = searchParams.has('user-testing');
   const { t } = useTranslation();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
   const { showModal } = useRootModalContext();
   const localStorage = window.localStorage;
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);

@@ -146,8 +146,8 @@ module.exports = (env, argv) => {
           "@bf2/ui-shared": {
             eager: true,
             singleton: true,
-            requiredVersion: dependencies['@bf2/ui-shared'],
-          },
+            requiredVersion: dependencies["@bf2/ui-shared"]
+          }         
         },
       }),
     ],

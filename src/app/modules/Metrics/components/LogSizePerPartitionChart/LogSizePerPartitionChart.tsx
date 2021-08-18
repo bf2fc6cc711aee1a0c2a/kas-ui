@@ -15,10 +15,8 @@ import {
 } from '@patternfly/react-charts';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
-import { format } from 'date-fns';
 import byteSize from 'byte-size';
-import { ChartEmptyState } from '@app/modules/Metrics/components';
-import { useTimeout } from '@app/hooks/useTimeout';
+import { ChartEmptyState, ChartPopover } from '@app/modules/Metrics/components';
 import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
 
 export type Partition = {
@@ -47,9 +45,15 @@ export type LegendData = {
 
 export type KafkaInstanceProps = {
   kafkaID: string;
+  timeInterval: number;
+  timeDuration: number;
 };
 
-export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID }: KafkaInstanceProps) => {
+export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
+  kafkaID,
+  timeDuration,
+  timeInterval,
+}: KafkaInstanceProps) => {
   const containerRef = useRef();
   const { t } = useTranslation();
   const auth = useAuth();
@@ -57,13 +61,13 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
     kas: { apiBasePath: basePath },
   } = useConfig();
   const { addAlert } = useAlert();
-  const [width, setWidth] = useState();
+  const [width, setWidth] = useState<number>();
   const [legend, setLegend] = useState();
   const [chartData, setChartData] = useState<ChartData[]>();
   const [largestByteSize, setLargestByteSize] = useState();
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
   const [chartDataLoading, setChartDataLoading] = useState(true);
-  const [noTopics, setNoTopics] = useState();
+  const [noTopics, setNoTopics] = useState<boolean>();
 
   const colors = [chart_color_green_300.value, chart_color_blue_300.value];
 
@@ -84,9 +88,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, 6 * 60, 5 * 60, ['kafka_log_log_size']);
-
-        console.log('what is data log size per partition' + JSON.stringify(data));
+        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
+          'kafka_log_log_size',
+        ]);
 
         const partitionArray: Partition[] = [];
 
@@ -117,7 +121,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
                 });
               } else {
                 topic.data.push({
-                  name: topicName,
+                  name: topicName || '',
                   timestamp: value.timestamp,
                   bytes: value.value,
                 });
@@ -132,7 +136,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
           const filteredTopics = partitionArray.filter(
             (topic) => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets'
           );
-          console.log('what is filteredTopics for logsize' + filteredTopics);
+
           if (filteredTopics.length < 1) {
             setNoTopics(true);
           }
@@ -154,9 +158,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
   useEffect(() => {
     fetchLogSizePerPartition();
     handleResize();
-  }, []);
+  }, [timeInterval, timeDuration]);
 
-  useTimeout(() => fetchLogSizePerPartition(), 1000 * 60 * 5);
+  // useTimeout(() => fetchLogSizePerPartition(), 1000 * 60 * 5);
 
   useEffect(() => {
     handleResize();
@@ -164,11 +168,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
   }, [width]);
 
   const getChartData = (partitionArray) => {
-    console.log('what is partitionArray' + partitionArray);
-
     const legendData: Array<LegendData> = [];
     const chartData: Array<ChartData> = [];
-    const largestByteSize = getLargestByteSize(partitionArray);
+    const largestByteSize = getLargestByteSize(partitionArray, undefined);
     partitionArray.map((partition, index) => {
       const color = colors[index];
       legendData.push({
@@ -184,18 +186,18 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
       const lengthOfData = 6 * 60 - getCurrentLengthOfData();
       const lengthOfDataPer5Mins = (6 * 60 - getCurrentLengthOfData()) / 5;
 
-      if (lengthOfData <= 360) {
+      if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
           const newtimestamp = partition.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newtimestamp);
-          const time = format(date, 'hh:mm');
+          const time = date.getHours() + ':' + date.getMinutes();
           area.push({ name: partition.name, x: time, y: 0 });
         }
       }
 
       partition.data.map((value) => {
         const date = new Date(value.timestamp);
-        const time = format(date, 'hh:mm');
+        const time = date.getHours() + ':' + date.getMinutes();
         const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
         area.push({ name: value.name, x: time, y: bytes });
       });
@@ -209,7 +211,10 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({ kafkaID
 
   return (
     <Card>
-      <CardTitle component="h2">{t('metrics.log_size_per_partition')}</CardTitle>
+      <CardTitle component="h2">
+        {t('metrics.log_size_per_partition')}{' '}
+        <ChartPopover title={t('metrics.log_size_per_partition')} description="chart description" />
+      </CardTitle>
       <CardBody>
         <div ref={containerRef}>
           {!chartDataLoading ? (

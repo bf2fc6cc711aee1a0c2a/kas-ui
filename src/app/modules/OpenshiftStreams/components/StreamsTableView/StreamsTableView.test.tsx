@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act } from '@testing-library/react';

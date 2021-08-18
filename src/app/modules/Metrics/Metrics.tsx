@@ -6,9 +6,10 @@ import { ChartEmptyState } from './components/ChartEmptyState';
 
 export interface MetricsProps {
   kafkaId: string;
+  onCreateTopic: () => void;
 }
 
-export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
+export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
 
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId }) => {
               metricsDataUnavailable={metricsDataUnavailable}
               setMetricsDataUnavailable={setMetricsDataUnavailable}
               kafkaID={kafkaId}
+              onCreateTopic={onCreateTopic}
             />
           </GridItem>
         </Grid>

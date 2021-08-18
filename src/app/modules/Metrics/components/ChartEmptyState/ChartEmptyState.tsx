@@ -10,9 +10,10 @@ type ChartEmptyState = {
   noData?: boolean;
   noTopics?: boolean;
   noFilter?: boolean;
+  onCreateTopic?: () => void;
 };
 
-export const ChartEmptyState = ({ title, body, noData, noTopics, noFilter }: ChartEmptyState) => {
+export const ChartEmptyState = ({ title, body, noData, noTopics, noFilter, onCreateTopic }: ChartEmptyState) => {
   const getIcon = () => {
     if (noData) {
       return TachometerAltIcon;
@@ -34,7 +35,11 @@ export const ChartEmptyState = ({ title, body, noData, noTopics, noFilter }: Cha
         {body}
         <br />
         <br />
-        {noTopics && <Button variant="primary">Create Topic</Button>}
+        {noTopics && (
+          <Button variant="primary" onClick={onCreateTopic}>
+            Create Topic
+          </Button>
+        )}
       </EmptyStateBody>
     </EmptyState>
   );
