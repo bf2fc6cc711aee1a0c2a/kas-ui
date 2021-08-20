@@ -8,9 +8,9 @@ import {
   LastLocationProvider,
   useLastLocation,
 } from 'react-router-last-location';
-import { OpenshiftStreamsConnected } from '@app/modules/OpenshiftStreams';
 import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
 import { MetricsConnected } from '@app/modules/Metrics';
+import { KasTableConnected } from '@app/modules/KasTableView/KasTableConnected';
 
 let routeFocusTimer: number;
 
@@ -37,7 +37,7 @@ export type AppRouteConfig = IAppRoute | IAppRouteGroup;
 
 const routes: AppRouteConfig[] = [
   {
-    component: OpenshiftStreamsConnected,
+    component: KasTableConnected,
     exact: true,
     // t('kafka_instances')
     label: 'Kafka Instances',

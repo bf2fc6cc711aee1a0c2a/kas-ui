@@ -8,8 +8,8 @@ import { statusOptions } from '@app/utils/utils';
 import './StatusColumn.css';
 
 type StatusColumnProps = {
-  status: string;
-  instanceName: string;
+  status?: string;
+  instanceName?: string;
 };
 
 const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
@@ -70,4 +70,4 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
   );
 };
 
-export { StatusColumn };
+export { StatusColumn, StatusColumnProps };

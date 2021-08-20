@@ -1,22 +1,13 @@
 import React, { useState, createContext, useContext } from 'react';
 
 const CreateInstance = React.lazy(
-  () =>
-    import(
-      '@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstance'
-    )
+  () => import('@app/modules/CreateInstance/CreateInstance')
 );
 const DeleteInstance = React.lazy(
-  () =>
-    import(
-      '@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstance'
-    )
+  () => import('@app/modules/DeleteInstance/DeleteInstance')
 );
 const DeleteInstanceConnected = React.lazy(
-  () =>
-    import(
-      '@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstanceConnected'
-    )
+  () => import('@app/modules/DeleteInstance/DeleteInstanceConnected')
 );
 const CreateServiceAccount = React.lazy(
   () =>

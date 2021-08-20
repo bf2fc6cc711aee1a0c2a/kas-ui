@@ -3,7 +3,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
-import i18nForTest from '../../../../../../test-utils/i18n';
+import i18nForTest from '../../../../test-utils/i18n';
 import {
   AlertContext,
   Auth,

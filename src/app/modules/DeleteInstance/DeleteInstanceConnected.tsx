@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { useAuth, useConfig, useAlert } from '@rhoas/app-services-ui-shared';
-import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import { useRootModalContext } from '@app/common';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
+import { getDeleteInstanceModalConfig } from '@app/common/ServiceTable/Table/deleteModal';
 
 const DeleteInstanceConnected: React.FunctionComponent = () => {
   const { addAlert } = useAlert() || {};

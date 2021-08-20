@@ -5,6 +5,12 @@ import { isServiceApiError } from '@app/utils/error';
 import { MASCreateModal, useRootModalContext } from '@app/common';
 import { ErrorCodes } from '@app/utils';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
+import {
+  asKafkaRequestPayload,
+  createEmptyNewKafkaRequestPayload,
+  isKafkaRequestInvalid,
+  NewKafkaRequestPayload,
+} from '@app/models';
 import './CreateInstance.css';
 import { InstanceInfo } from './InstanceInfo';
 import {
@@ -17,13 +23,7 @@ import {
   useQuota,
 } from '@rhoas/app-services-ui-shared';
 import { QuotaAlert } from './QuotaAlert';
-import { CreateInstanceForm } from '@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceForm';
-import {
-  asKafkaRequestPayload,
-  createEmptyNewKafkaRequestPayload,
-  isKafkaRequestInvalid,
-  NewKafkaRequestPayload,
-} from '@app/models';
+import { CreateInstanceForm } from '@app/modules/CreateInstance/CreateInstanceForm';
 
 const FORM_ID = 'create_instance_-form';
 

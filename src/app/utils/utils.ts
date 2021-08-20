@@ -10,7 +10,7 @@ function accessibleRouteChangeHandler(): number {
   }, 50);
 }
 
-type KeyValueOptions = {
+export type KeyValueOptions = {
   value: string;
   label: string;
 };
@@ -120,7 +120,7 @@ const getLoadingRowsCount = (
     }
   }
   // return the exact number of skeleton expected at the time of loading
-  return loadingRowCount !== 0 ? loadingRowCount : perPage;
+  return loadingRowCount !== 0 ? loadingRowCount : perPage / 2;
 };
 
 const sortValues = <T>(
@@ -152,9 +152,12 @@ const sortValues = <T>(
 };
 
 const getFormattedDate = (
-  date: string | Date,
+  date: string | Date | undefined,
   translatePostfix: string
 ): string => {
+  if (date === undefined) {
+    return '';
+  }
   date = typeof date === 'string' ? new Date(date) : date;
   return formatDistance(date, new Date()) + ' ' + translatePostfix;
 };

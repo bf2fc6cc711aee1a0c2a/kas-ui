@@ -126,7 +126,8 @@ module.exports = (env, argv) => {
         }.js`,
         exposes: {
           './OpenshiftStreams':
-            './src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated',
+            './src/app/modules/KasTableView/KasTableFederated',
+          './KasTable': './src/app/modules/KasTableView/KasTableFederated',
           './ServiceAccounts':
             './src/app/modules/ServiceAccounts/ServiceAccountsFederated',
           './InstanceDrawer':
