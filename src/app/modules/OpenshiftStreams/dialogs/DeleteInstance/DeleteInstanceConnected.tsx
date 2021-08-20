@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { useAuth, useConfig, useAlert, useBasename } from '@bf2/ui-shared';
+import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
 import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
 import { useRootModalContext } from '@app/common';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
@@ -10,14 +10,11 @@ import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 
 const DeleteInstanceConnected = () => {
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
   const { t } = useTranslation();
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { getBasename } = useBasename();
-  const basename = getBasename();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
   const history = useHistory();
   const { store, hideModal } = useRootModalContext();
   const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
@@ -51,11 +48,11 @@ const DeleteInstanceConnected = () => {
             basePath,
           })
         );
-        await apisService.deleteKafkaById(id, true).then((res) => {
+        await apisService.deleteKafkaById(id, true).then(() => {
           setIsLoading(false);
           onCloseModal();
           //redirect on kafka list page
-          history.push(basename);
+          history.push('/streams/kafkas');
         });
       } catch (error) {
         setIsLoading(false);
@@ -69,11 +66,12 @@ const DeleteInstanceConnected = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert({
-      title: t('something_went_wrong'),
-      variant: AlertVariant.danger,
-      description: reason,
-    });
+    addAlert &&
+      addAlert({
+        title: t('something_went_wrong'),
+        variant: AlertVariant.danger,
+        description: reason,
+      });
   };
 
   const fetchKafkaServiceStatus = async () => {
