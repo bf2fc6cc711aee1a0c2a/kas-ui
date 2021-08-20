@@ -33,6 +33,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@redhat-cloud-services/frontend-components-config": "4.3.3",
     "@rhoas/api-mock": "0.12.2",
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "12.0.0",
@@ -96,7 +97,6 @@
     "@patternfly/react-styles": "4.11.8",
     "@patternfly/react-table": "4.29.37",
     "@redhat-cloud-services/frontend-components": "3.3.13",
-    "@redhat-cloud-services/frontend-components-config": "4.3.3",
     "axios": "0.21.1",
     "byte-size": "8.1.0",
     "dayjs": "1.10.6",
