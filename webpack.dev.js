@@ -12,15 +12,17 @@ module.exports = merge(common('development'), {
   mode: "development",
   devtool: "eval-source-map",
   devServer: {
-    contentBase: "./dist",
+    static: {
+      directory: "./dist",
+    },
+    client: {
+      overlay: true
+    },
     host: HOST,
     port: PORT,
-    compress: true,
-    inline: true,
     historyApiFallback: true,
     hot: true,
-    overlay: true,
-    open: true,
+    //open: true,
     https: PROTOCOL === "https",
     headers: {
       "Access-Control-Allow-Origin": "*",
