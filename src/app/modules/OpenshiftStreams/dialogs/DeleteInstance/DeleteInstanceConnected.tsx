@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { useAuth, useConfig, useAlert, useBasename } from '@bf2/ui-shared';
+import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
 import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
 import { useRootModalContext } from '@app/common';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
@@ -16,8 +16,6 @@ const DeleteInstanceConnected = () => {
   const history = useHistory();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
-  const { getBasename } = useBasename() || {};
-  const basename = (getBasename && getBasename()) || '';
 
   const { store, hideModal } = useRootModalContext();
   const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
@@ -41,11 +39,11 @@ const DeleteInstanceConnected = () => {
             basePath,
           })
         );
-        await apisService.deleteKafkaById(id, true).then((res) => {
+        await apisService.deleteKafkaById(id, true).then(() => {
           setIsLoading(false);
           onCloseModal();
           //redirect on kafka list page
-          history.push(basename);
+          history.push('/streams/kafkas');
         });
       } catch (error) {
         setIsLoading(false);
