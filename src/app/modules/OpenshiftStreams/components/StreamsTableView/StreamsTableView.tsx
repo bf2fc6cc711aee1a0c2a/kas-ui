@@ -142,7 +142,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const { addAlert } = useAlert() || {};
 
   const { showModal, hideModal } = useRootModalContext();
-  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest>({});
+  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest | undefined>({});
   const [activeRow, setActiveRow] = useState<string>();
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
@@ -458,6 +458,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         setActiveRow(undefined);
         setWaitingForDelete(true);
         refresh();
+        setSelectedInstance(undefined);
       });
     } catch (error) {
       let reason: string | undefined;
