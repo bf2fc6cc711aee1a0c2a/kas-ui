@@ -260,8 +260,9 @@
   "trial_kafka_title": "You already have an instance running",
   "trial_kafka_message": "You can deploy 1 instance at a time. To deploy a new instance, delete your existing one first.",
   "kafka_creation_failed_alert_title": "Kafka instance creation failed",
-  "kafka_creation_failed_alert_message": "Your organization reached the limit of kafka instances available for creation",
+  "kafka_creation_failed_alert_message": "Your organization reached the limit of kafka instances available for creation.",
   "deploy_one_instance_alert_title": "You can deploy 1 instance at a time",
+  "trial_quota_kafka_title":"Your instance will expire after 48 hours",
   "kafkaInstance": {
     "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
   },

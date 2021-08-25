@@ -8,6 +8,7 @@ export type QuotaAlertProps = {
   hasKafkaCreationFailed?: boolean;
   loadingQuota: boolean;
   hasUserTrialKafka?: boolean;
+  isKasTrial?: boolean;
 };
 
 export const QuotaAlert: React.FC<QuotaAlertProps> = ({
@@ -15,6 +16,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
   hasKafkaCreationFailed,
   loadingQuota,
   hasUserTrialKafka,
+  isKasTrial,
 }) => {
   const { t } = useTranslation();
   const { data, isServiceDown } = quota || {};
@@ -26,13 +28,13 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
   let variant: AlertVariant = AlertVariant.warning;
 
   //if user has no standard quota and no trial quota
-  if (kasQuota?.remaining === 0 && kasTrial?.remaining === 0) {
+  if (kasQuota?.remaining === 0 && !kasTrial) {
     variant = AlertVariant.warning;
     titleKey = 'no_quota_kafka_alert_title';
     messageKey = 'no_quota_kafka_alert_message';
   }
   //if user has no standard quota and has trial quota
-  else if ((!kasQuota || kasQuota?.remaining === 0) && kasTrial && kasTrial?.remaining > 0) {
+  else if ((!kasQuota || kasQuota?.remaining === 0) && kasTrial && kasTrial?.allowed) {
     variant = AlertVariant.warning;
     titleKey = 'trial_kafka_title';
     messageKey = 'trial_kafka_message';
@@ -59,6 +61,9 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
     variant = AlertVariant.danger;
     titleKey = 'kafka_creation_failed_alert_title';
     messageKey = 'kafka_creation_failed_alert_message';
+  } else if (isKasTrial) {
+    variant = AlertVariant.info;
+    titleKey = 'trial_quota_kafka_title';
   }
 
   return (

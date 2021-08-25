@@ -38,8 +38,7 @@ const emptyProvider: CloudProvider = {
 const CreateInstance: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
-  const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
-  let { hasUserTrialKafka } = store?.modalProps || {};
+  const { onCreate, refresh, cloudProviders, hasUserTrialKafka } = store?.modalProps || {};
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
@@ -59,14 +58,9 @@ const CreateInstance: React.FunctionComponent = () => {
   const kasQuota: QuotaValue | undefined = quota?.data?.get(QuotaType?.kas);
   const kasTrial: QuotaValue | undefined = quota?.data?.get(QuotaType?.kasTrial);
   const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
-  const isKasTrial = kasTrial && (!kasQuota || kasQuota?.remaining === 0);
-  hasUserTrialKafka = hasUserTrialKafka && (!kasQuota || kasQuota?.remaining === 0);
+  const isKasTrial = kasTrial && !kasQuota;
 
-  const shouldDisabledButton =
-    loadingQuota ||
-    hasUserTrialKafka ||
-    hasKafkaCreationFailed ||
-    (kasQuota?.remaining == 0 && kasTrial?.remaining === 0);
+  const shouldDisabledButton = loadingQuota || hasUserTrialKafka || hasKafkaCreationFailed || kasQuota?.remaining == 0;
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -397,6 +391,7 @@ const CreateInstance: React.FunctionComponent = () => {
           hasKafkaCreationFailed={hasKafkaCreationFailed}
           loadingQuota={loadingQuota}
           hasUserTrialKafka={hasUserTrialKafka}
+          isKasTrial={isKasTrial}
         />
         <Flex direction={{ default: 'column', lg: 'row' }}>
           <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
