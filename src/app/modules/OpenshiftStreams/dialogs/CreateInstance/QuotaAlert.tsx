@@ -27,43 +27,49 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
   let messageKey = '';
   let variant: AlertVariant = AlertVariant.warning;
 
+  //trial quota flows
+  //if user has no standard quota and already has a trial instance
+  if (!kasQuota && kasTrial && hasUserTrialKafka) {
+    titleKey = 'trial_kafka_title';
+    variant = AlertVariant.warning;
+    messageKey = 'deploy_one_instance_alert_message';
+  }
   //if user has no standard quota and no trial quota
-  if (kasQuota?.remaining === 0 && !kasTrial) {
+  else if (!kasQuota && !kasTrial && !loadingQuota) {
     variant = AlertVariant.warning;
     titleKey = 'no_quota_kafka_alert_title';
     messageKey = 'no_quota_kafka_alert_message';
   }
-  //if user has no standard quota and has trial quota
-  else if ((!kasQuota || kasQuota?.remaining === 0) && kasTrial && kasTrial?.allowed) {
-    variant = AlertVariant.warning;
-    titleKey = 'trial_kafka_title';
-    messageKey = 'trial_kafka_message';
+  //if user has no standard quota and trial instances are available
+  else if (!kasQuota && kasTrial && !hasUserTrialKafka) {
+    variant = AlertVariant.info;
+    titleKey = 'trial_quota_kafka_title';
   }
-  //if user has no standard quota
+  //standard quota flows
+  //if user has standard quota but all allowed instances are already provisioned
   else if (kasQuota && kasQuota?.remaining === 0) {
-    variant = AlertVariant.danger;
+    variant = AlertVariant.warning;
     titleKey = 'standard_kafka_alert_title';
     messageKey = 'standard_kafka_alert_message';
   }
+  //if user has standard quota and 1 or more allowed instances are available
+  else if (kasQuota && kasQuota?.remaining > 0) {
+    //don't show alert
+    titleKey = '';
+  }
+  //if kafka creation failed for quota related
+  if (hasKafkaCreationFailed) {
+    variant = AlertVariant.danger;
+    titleKey = 'kafka_creation_failed_alert_title';
+    messageKey = kasQuota
+      ? 'standard_kafka_creation_failed_alert_message'
+      : 'trial_kafka_creation_failed_alert_message';
+  }
   //if service down or any error
-  else if (isServiceDown) {
+  if (isServiceDown) {
     titleKey = 'something_went_wrong';
     variant = AlertVariant.danger;
     messageKey = 'ams_service_down_message';
-  }
-  //if user has already 1 trial kafka instance
-  else if (hasUserTrialKafka) {
-    variant = AlertVariant.warning;
-    titleKey = 'deploy_one_instance_alert_title';
-  }
-  //if kafka creation failed for quota related
-  else if (hasKafkaCreationFailed) {
-    variant = AlertVariant.danger;
-    titleKey = 'kafka_creation_failed_alert_title';
-    messageKey = 'kafka_creation_failed_alert_message';
-  } else if (isKasTrial) {
-    variant = AlertVariant.info;
-    titleKey = 'trial_quota_kafka_title';
   }
 
   return (
