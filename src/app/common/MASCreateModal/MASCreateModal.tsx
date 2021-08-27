@@ -15,6 +15,7 @@ export type MASCreateModalProps = {
   primaryButtonTitle: string;
   dataTestIdSubmit?: string;
   dataTestIdCancel?: string;
+  isDisabledButton?: boolean;
 };
 
 export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
@@ -29,6 +30,7 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
   dataTestIdSubmit,
   dataTestIdCancel,
   id = 'modalCreateKafka',
+  isDisabledButton,
 }: MASCreateModalProps) => {
   const { t } = useTranslation();
 
@@ -46,7 +48,7 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
           variant="primary"
           type="submit"
           onClick={onCreate}
-          isDisabled={!isFormValid || isCreationInProgress}
+          isDisabled={!isFormValid || isCreationInProgress || isDisabledButton}
           spinnerAriaValueText={t('submitting_request')}
           isLoading={isCreationInProgress}
           data-testid={dataTestIdSubmit}

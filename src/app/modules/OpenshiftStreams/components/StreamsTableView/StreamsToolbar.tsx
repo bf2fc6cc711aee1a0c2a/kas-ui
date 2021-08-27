@@ -21,12 +21,9 @@ import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '@rhoas/kafka-management-sdk';
-import { useFederated } from '@app/models';
+import { useFederated } from '@app/contexts';
 import './StreamsToolbar.css';
 
-/**
- * Todo: remove props isDisabledCreateButton, buttonTooltipContent and labelWithTooltip after summit
- */
 export type StreamsToolbarProps = {
   mainToggle: boolean;
   filterSelected?: string;
@@ -36,12 +33,10 @@ export type StreamsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  isDisabledCreateButton?: boolean;
-  buttonTooltipContent?: string | undefined;
-  labelWithTooltip?: ReactElement | undefined;
   onCreate?: () => void;
   refresh?: () => void;
   cloudProviders?: Array<CloudProvider>;
+  hasUserTrialKafka?: boolean | undefined;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -52,12 +47,10 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
-  isDisabledCreateButton,
-  buttonTooltipContent,
-  labelWithTooltip,
   onCreate,
   refresh,
   cloudProviders,
+  hasUserTrialKafka,
 }) => {
   const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
@@ -559,24 +552,11 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         onCreate,
         cloudProviders,
         refresh,
+        hasUserTrialKafka,
       });
   };
 
   const createButton = () => {
-    if (isDisabledCreateButton) {
-      return (
-        <Tooltip content={buttonTooltipContent}>
-          <Button
-            variant="primary"
-            onClick={handleCreateModal}
-            data-testid={'tableStreams-buttonCreateKafka'}
-            isAriaDisabled={isDisabledCreateButton}
-          >
-            {t('create_kafka_instance')}
-          </Button>
-        </Tooltip>
-      );
-    }
     return (
       <Button variant="primary" onClick={handleCreateModal} data-testid={'tableStreams-buttonCreateKafka'}>
         {t('create_kafka_instance')}
@@ -587,9 +567,6 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: createButton(),
-    },
-    {
-      item: labelWithTooltip,
     },
   ];
 

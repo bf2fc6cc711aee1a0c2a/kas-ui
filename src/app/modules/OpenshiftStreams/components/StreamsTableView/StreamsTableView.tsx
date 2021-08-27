@@ -18,6 +18,7 @@ import {
   getSkeletonForRows,
   InstanceStatus,
   isServiceApiError,
+  InstanceType,
 } from '@app/utils';
 import {
   MASEmptyState,
@@ -31,7 +32,7 @@ import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { AlertVariant, useAlert, useAuth, useConfig, useBasename } from '@bf2/ui-shared';
+import { AlertVariant, useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 export type FilterValue = {
   value: string;
@@ -56,7 +57,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   setOrderBy: (order: string) => void;
   isDrawerOpen?: boolean;
   loggedInUser: string | undefined;
-  isMaxCapacityReached?: boolean | undefined;
   setWaitingForDelete: (arg0: boolean) => void;
   currentUserkafkas: KafkaRequest[] | undefined;
 };
@@ -70,26 +70,18 @@ type ConfigDetail = {
 export const getDeleteInstanceModalConfig = (
   t: TFunction,
   status: string | undefined,
-  instanceName: string | undefined,
-  isMaxCapacityReached?: boolean | undefined
+  instanceName: string | undefined
 ): ConfigDetail => {
   const config: ConfigDetail = {
     title: '',
     confirmActionLabel: '',
     description: '',
   };
-  /**
-   * This is Onboarding changes
-   * Todo: remove this change after public eval
-   */
-  const additionalMessage = isMaxCapacityReached
-    ? ' You might not be able to create a new instance because all of them are currently provisioned by other users.'
-    : '';
 
   if (status === InstanceStatus.READY) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_complete', { instanceName }) + additionalMessage;
+    config.description = t('delete_instance_status_complete', { instanceName });
   } else if (
     status === InstanceStatus.ACCEPTED ||
     status === InstanceStatus.PROVISIONING ||
@@ -97,7 +89,7 @@ export const getDeleteInstanceModalConfig = (
   ) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName }) + additionalMessage;
+    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
   }
   return config;
 };
@@ -121,11 +113,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   orderBy,
   setOrderBy,
   isDrawerOpen,
-  isMaxCapacityReached,
-  buttonTooltipContent,
-  isDisabledCreateButton,
   loggedInUser,
-  labelWithTooltip,
   setWaitingForDelete,
   currentUserkafkas,
   cloudProviders,
@@ -134,12 +122,11 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
-  const { getBasename } = useBasename() || {};
-  const basename = getBasename && getBasename();
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
   const { addAlert } = useAlert() || {};
+  const hasUserTrialKafka = currentUserkafkas?.some((k) => k?.instance_type === InstanceType.eval);
 
   const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<KafkaRequest | undefined>({});
@@ -360,14 +347,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     return resolver;
   };
 
-  const renderNameLink = ({ name, row }) => {
-    return (
-      <Link to={`${basename}/${row?.id}`} data-testid="tableStreams-linkKafka">
-        {name}
-      </Link>
-    );
-  };
-
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
     const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
@@ -375,16 +354,18 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
-      const { name, cloud_provider, region, created_at, status, owner } = row;
+      const { name, cloud_provider, region, created_at, status, owner, instance_type } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
       tableRow.push({
         cells: [
           {
             title:
-              status === InstanceStatus.DEPROVISION || status !== InstanceStatus.READY
-                ? name
-                : renderNameLink({ name, row }),
+              status === InstanceStatus.DEPROVISION || status !== InstanceStatus.READY ? (
+                name
+              ) : (
+                <Link to={`kafkas/${row?.id}`}>{name}</Link>
+              ),
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -393,7 +374,13 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
             title: <StatusColumn status={status} instanceName={name} />,
           },
           {
-            title: getFormattedDate(created_at, t('ago')),
+            title: (
+              <>
+                {getFormattedDate(created_at, t('ago'))}
+                <br />
+                {instance_type === InstanceType?.eval && '48 hours duration'}
+              </>
+            ),
           },
         ],
         originalData: row,
@@ -412,12 +399,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
-      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(
-        t,
-        status,
-        name,
-        isMaxCapacityReached
-      );
+      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(t, status, name);
 
       showModal(MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
         instanceStatus: status,
@@ -561,12 +543,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
-        isDisabledCreateButton={isDisabledCreateButton}
-        buttonTooltipContent={buttonTooltipContent}
-        labelWithTooltip={labelWithTooltip}
         cloudProviders={cloudProviders}
         onCreate={onCreate}
         refresh={refresh}
+        hasUserTrialKafka={hasUserTrialKafka}
       />
       <MASTable
         tableProps={{

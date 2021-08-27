@@ -23,10 +23,11 @@ import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils/utils';
 import { MASCreateModal, useRootModalContext } from '@app/common';
 import { ErrorCodes } from '@app/utils';
 import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/kafka-management-sdk';
-import { NewKafka, FormDataValidationState } from '../../../../models';
+import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig, Quota, QuotaType, useQuota, QuotaValue } from '@bf2/ui-shared';
+import { QuotaAlert } from './QuotaAlert';
 
 const emptyProvider: CloudProvider = {
   kind: 'Empty provider',
@@ -37,11 +38,12 @@ const emptyProvider: CloudProvider = {
 const CreateInstance: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
-  const { onCreate, refresh, cloudProviders } = store?.modalProps || {};
+  const { onCreate, refresh, cloudProviders, hasUserTrialKafka } = store?.modalProps || {};
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
   const { addAlert } = useAlert() || {};
+  const { getQuota } = useQuota() || {};
   const newKafka: NewKafka = new NewKafka();
 
   const [kafkaFormData, setKafkaFormData] = useState<NewKafka>(newKafka);
@@ -50,6 +52,20 @@ const CreateInstance: React.FunctionComponent = () => {
   const [cloudRegions, setCloudRegions] = useState<CloudRegion[]>([]);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
+  const [quota, setQuota] = useState<Quota>();
+  const [hasKafkaCreationFailed, setHasKafkaCreationFailed] = useState<boolean>(false);
+
+  const kasQuota: QuotaValue | undefined = quota?.data?.get(QuotaType?.kas);
+  const kasTrial: QuotaValue | undefined = quota?.data?.get(QuotaType?.kasTrial);
+  const loadingQuota = quota?.loading === undefined ? true : quota?.loading;
+  const isKasTrial = kasTrial && !kasQuota;
+
+  const shouldDisabledButton =
+    loadingQuota ||
+    hasUserTrialKafka ||
+    hasKafkaCreationFailed ||
+    (kasQuota && kasQuota?.remaining === 0) ||
+    (!kasQuota && !kasTrial);
 
   const resetForm = () => {
     setKafkaFormData((prevState) => ({ ...prevState, name: '', multi_az: true }));
@@ -139,13 +155,26 @@ const CreateInstance: React.FunctionComponent = () => {
     return isValid;
   };
 
+  const manageQuota = async () => {
+    if (getQuota) {
+      await getQuota().then((res) => {
+        setQuota(res);
+      });
+    }
+  };
+
+  useEffect(() => {
+    manageQuota();
+  }, []);
+
   const onCreateInstance = async () => {
     const isValid = validateCreateForm();
-    const accessToken = await auth?.kas.getToken();
     if (!isValid) {
       setIsFormValid(false);
       return;
     }
+
+    const accessToken = await auth?.kas.getToken();
 
     if (accessToken) {
       try {
@@ -156,8 +185,8 @@ const CreateInstance: React.FunctionComponent = () => {
           })
         );
 
-        onCreate();
         setCreationInProgress(true);
+        onCreate();
 
         await apisService.createKafka(true, kafkaFormData).then(() => {
           resetForm();
@@ -167,13 +196,21 @@ const CreateInstance: React.FunctionComponent = () => {
       } catch (error) {
         if (isServiceApiError(error)) {
           const { code, reason } = error?.response?.data || {};
-
+          //if instance name duplicate
           if (code === ErrorCodes.DUPLICATE_INSTANCE_NAME) {
             setIsFormValid(false);
             setNameValidated({
               fieldState: 'error',
               message: t('the_name_already_exists_please_enter_a_unique_name', { name: kafkaFormData.name }),
             });
+          }
+          //if kafka creation failed due to quota
+          else if (
+            code === ErrorCodes.PREVIEW_KAFKA_INSTANCE_EXIST ||
+            code === ErrorCodes.INSUFFICIENT_QUOTA ||
+            code === ErrorCodes.FAILED_TO_CHECK_QUOTA
+          ) {
+            setHasKafkaCreationFailed(true);
           } else {
             addAlert &&
               addAlert({
@@ -184,7 +221,6 @@ const CreateInstance: React.FunctionComponent = () => {
               });
           }
         }
-
         setCreationInProgress(false);
       }
     }
@@ -352,21 +388,24 @@ const CreateInstance: React.FunctionComponent = () => {
       isCreationInProgress={isCreationInProgress}
       dataTestIdSubmit="modalCreateKafka-buttonSubmit"
       dataTestIdCancel="modalCreateKafka-buttonCancel"
+      isDisabledButton={shouldDisabledButton}
     >
-      <Alert
-        className="pf-u-mb-md"
-        variant="info"
-        title="Your preview instance will expire after 48 hours."
-        aria-live="polite"
-        isInline
-      />
-      <Flex direction={{ default: 'column', lg: 'row' }}>
-        <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
-        <Divider isVertical />
-        <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
-          <DrawerPanelContentInfo />
-        </FlexItem>
-      </Flex>
+      <>
+        <QuotaAlert
+          quota={quota}
+          hasKafkaCreationFailed={hasKafkaCreationFailed}
+          loadingQuota={loadingQuota}
+          hasUserTrialKafka={hasUserTrialKafka}
+          isKasTrial={isKasTrial}
+        />
+        <Flex direction={{ default: 'column', lg: 'row' }}>
+          <FlexItem flex={{ default: 'flex_2' }}>{createInstanceForm()}</FlexItem>
+          <Divider isVertical />
+          <FlexItem flex={{ default: 'flex_1' }} className="mk--create-instance-modal__sidebar--content">
+            <DrawerPanelContentInfo isKasTrial={isKasTrial} />
+          </FlexItem>
+        </Flex>
+      </>
     </MASCreateModal>
   );
 };

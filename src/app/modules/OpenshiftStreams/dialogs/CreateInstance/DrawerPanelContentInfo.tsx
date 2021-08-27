@@ -15,7 +15,11 @@ import {
 } from '@patternfly/react-core';
 import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickstarts';
 
-const DrawerPanelContentInfo: React.FunctionComponent = () => {
+export type DrawerPanelContentInfoProps = {
+  isKasTrial?: boolean;
+};
+
+const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({ isKasTrial }) => {
   const { t } = useTranslation();
   const qsContext: QuickStartContextValues = React.useContext(QuickStartContext);
 
@@ -24,10 +28,12 @@ const DrawerPanelContentInfo: React.FunctionComponent = () => {
       <Text component={TextVariants.h3}>{t('common.instance_information')}</Text>
       <TextList component={TextListVariants.dl}>
         <Grid sm={6} lg={12} hasGutter>
-          <GridItem>
-            <TextListItem component={TextListItemVariants.dt}>{t('common.duration')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>48 hours</TextListItem>
-          </GridItem>
+          {isKasTrial && (
+            <GridItem>
+              <TextListItem component={TextListItemVariants.dt}>{t('common.duration')}</TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>{t('common.duration_value')}</TextListItem>
+            </GridItem>
+          )}
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.ingress_egress')}</TextListItem>
             <TextListItem component={TextListItemVariants.dd}>{t('common.ingress_egress_value')}</TextListItem>
@@ -38,15 +44,15 @@ const DrawerPanelContentInfo: React.FunctionComponent = () => {
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.partitions')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 100</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.partitions_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.client_connections')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 100</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.client_connections_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.connection_rate')}</TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>up to 50 connections/second</TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>{t('common.connection_rate_value')}</TextListItem>
           </GridItem>
           <GridItem>
             <TextListItem component={TextListItemVariants.dt}>{t('common.message_size')}</TextListItem>
