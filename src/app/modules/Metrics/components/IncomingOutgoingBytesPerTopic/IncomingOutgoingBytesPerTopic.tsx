@@ -315,7 +315,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         setIsFilterApplied={setIsFilterApplied}
       />
       <CardTitle component="h2">
-        {t('metrics.total_bytes')} <ChartPopover title={t('metrics.total_bytes')} description="chart description" />
+        {t('metrics.total_bytes')}{' '}
+        <ChartPopover title={t('metrics.total_bytes')} description={t('metrics.topic_metrics_help_text')} />
       </CardTitle>
       <CardBody>
         <div ref={containerRef}>

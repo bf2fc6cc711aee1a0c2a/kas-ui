@@ -227,7 +227,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
       />
       <CardTitle component="h2">
         {t('metrics.used_disk_space')}{' '}
-        <ChartPopover title={t('metrics.used_disk_space')} description="chart description" />
+        <ChartPopover title={t('metrics.used_disk_space')} description={t('metrics.used_disk_space_help_text')} />
       </CardTitle>
       <CardBody>
         <div ref={containerRef}>

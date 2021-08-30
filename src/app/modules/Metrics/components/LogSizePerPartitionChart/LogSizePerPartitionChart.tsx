@@ -213,7 +213,10 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
     <Card>
       <CardTitle component="h2">
         {t('metrics.log_size_per_partition')}{' '}
-        <ChartPopover title={t('metrics.log_size_per_partition')} description="chart description" />
+        <ChartPopover
+          title={t('metrics.log_size_per_partition')}
+          description={t('metrics.log_size_per_partition_help_text')}
+        />
       </CardTitle>
       <CardBody>
         <div ref={containerRef}>
