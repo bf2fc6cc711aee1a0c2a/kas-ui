@@ -149,7 +149,7 @@ describe('<CreateInstance/>', () => {
     act(() => {
       userEvent.click(createInstanceButton);
     });
-    const instanceNameInput: any = screen.getByRole('textbox', { name: /Instance name/i });
+    const instanceNameInput: any = screen.getByRole('textbox', { name: /Name/i });
     act(() => {
       userEvent.type(instanceNameInput, '1');
     });
@@ -173,7 +173,7 @@ describe('<CreateInstance/>', () => {
     act(() => {
       userEvent.click(createInstanceButton);
     });
-    const instanceNameInput: any = screen.getByRole('textbox', { name: /Instance name/i });
+    const instanceNameInput: any = screen.getByRole('textbox', { name: /Name/i });
     act(() => {
       userEvent.type(instanceNameInput, '@');
     });
