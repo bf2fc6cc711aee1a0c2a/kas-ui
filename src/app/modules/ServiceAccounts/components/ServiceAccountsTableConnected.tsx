@@ -11,7 +11,7 @@ import { ServiceAccountsTableSection } from '@app/modules/ServiceAccounts/compon
 
 export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
   const { t } = useTranslation();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
   const auth = useAuth();
   const config = useConfig();
 
@@ -28,18 +28,19 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+      addAlert &&
+        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
     }
   };
 
   const fetchServiceAccounts = async () => {
     const accessToken = await auth?.kas.getToken();
-    if (accessToken) {
+    if (accessToken && config) {
       try {
         const apisService = new SecurityApi(
           new Configuration({
             accessToken,
-            basePath: config.ams.apiBasePath,
+            basePath: config?.ams?.apiBasePath,
           })
         );
         await apisService.getServiceAccounts().then((response) => {

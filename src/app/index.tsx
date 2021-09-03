@@ -43,6 +43,9 @@ const App: React.FunctionComponent = () => {
           kas: {
             apiBasePath: __BASE_PATH__,
           },
+          ams: {
+            apiBasePath: __BASE_PATH__,
+          },
         } as Config
       }
     >
