@@ -80,7 +80,6 @@ const cloudRegionOptions: KeyValueOptions[] = [
 const MAX_INSTANCE_NAME_LENGTH = 32;
 const MAX_FILTER_LIMIT = 10;
 const MAX_SERVICE_ACCOUNT_NAME_LENGTH = 50;
-const MAX_SERVICE_ACCOUNT_DESC_LENGTH = 255;
 
 const MAX_POLL_INTERVAL = 5000;
 
@@ -194,7 +193,6 @@ export {
   MAX_POLL_INTERVAL,
   getLoadingRowsCount,
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
-  MAX_SERVICE_ACCOUNT_DESC_LENGTH,
   sortValues,
   getFormattedDate,
   getModalAppendTo,

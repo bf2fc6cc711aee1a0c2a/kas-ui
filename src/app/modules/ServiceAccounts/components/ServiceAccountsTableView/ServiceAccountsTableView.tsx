@@ -60,10 +60,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   }, [auth]);
 
   const tableColumns = [
-    { title: t('common.name') },
+    { title: t('common.description') },
     { title: t('common.clientID') },
     { title: t('common.owner'), transforms: [cellWidth(20)] },
-    { title: t('common.description') },
     { title: t('time_created') },
   ];
 
@@ -86,9 +85,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner, description, client_id, created_at } = row;
+      const { name, owner, client_id, created_at } = row;
       tableRow.push({
-        cells: [name, client_id, owner, description, { title: getFormattedDate(created_at, t('ago')) }],
+        cells: [name, client_id, owner, { title: getFormattedDate(created_at, t('ago')) }],
         originalData: row,
       });
     });
@@ -157,8 +156,6 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       case 2:
         return 'owner';
       case 3:
-        return 'description';
-      case 4:
         return 'created_at';
       default:
         return '';
@@ -173,10 +170,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         return 1;
       case 'owner':
         return 2;
-      case 'description':
-        return 3;
       case 'created_at':
-        return 4;
+        return 3;
       default:
         return undefined;
     }

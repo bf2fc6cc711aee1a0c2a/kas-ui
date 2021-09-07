@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
+import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant, Popover } from '@patternfly/react-core';
 import { Configuration, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
 import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
-import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
+import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH } from '@app/utils';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import HelpIcon from '@patternfly/react-icons/dist/esm/icons/help-icon';
 
 const CreateServiceAccount: React.FunctionComponent = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
@@ -19,23 +20,21 @@ const CreateServiceAccount: React.FunctionComponent = () => {
   const { addAlert } = useAlert();
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
-  const [descriptionValidated, setDescriptionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
   const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
 
   const resetForm = () => {
     setNameValidated({ fieldState: 'default' });
-    setDescriptionValidated({ fieldState: 'default' });
     setServiceAccountFormData(newServiceAccount);
     setIsFormValid(true);
   };
 
   useEffect(() => {
-    if (nameValidated.fieldState !== 'error' && descriptionValidated.fieldState !== 'error') {
+    if (nameValidated.fieldState !== 'error') {
       setIsFormValid(true);
     }
-  }, [nameValidated.fieldState, descriptionValidated.fieldState]);
+  }, [nameValidated.fieldState]);
 
   const handleTextInputName = (name: string) => {
     setServiceAccountFormData({ ...serviceAccountFormData, name });
@@ -70,35 +69,9 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     });
   };
 
-  const handleTextInputDescription = (description: string) => {
-    setServiceAccountFormData({ ...serviceAccountFormData, description });
-    let isValid = true;
-    if (description && !/^[a-zA-Z0-9.,\-\s]*$/.test(description.trim())) {
-      isValid = false;
-    }
-    if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
-      setDescriptionValidated({
-        fieldState: 'error',
-        message: t('serviceAccount.service_account_description_length_is_greater_than_expected', {
-          maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
-        }),
-      });
-    } else if (isValid && descriptionValidated.fieldState === 'error') {
-      setDescriptionValidated({
-        fieldState: 'default',
-        message: '',
-      });
-    } else if (!isValid) {
-      setDescriptionValidated({
-        fieldState: 'error',
-        message: t('common.input_text_area_invalid_helper_text'),
-      });
-    }
-  };
-
   const validateCreateForm = () => {
     let isValid = true;
-    const { name, description } = serviceAccountFormData;
+    const { name } = serviceAccountFormData;
     if (!name || name.trim() === '') {
       isValid = false;
       setNameValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
@@ -108,12 +81,6 @@ const CreateServiceAccount: React.FunctionComponent = () => {
         fieldState: 'error',
         message: t('common.input_filed_invalid_helper_text'),
       });
-    } else if (!/^[a-zA-Z0-9.,\-\s]*$/.test(description.trim())) {
-      isValid = false;
-      setDescriptionValidated({
-        fieldState: 'error',
-        message: t('common.input_text_area_invalid_helper_text'),
-      });
     }
 
     if (name.length > MAX_SERVICE_ACCOUNT_NAME_LENGTH) {
@@ -122,16 +89,6 @@ const CreateServiceAccount: React.FunctionComponent = () => {
         fieldState: 'error',
         message: t('serviceAccount.service_account_name_length_is_greater_than_expected', {
           maxLength: MAX_SERVICE_ACCOUNT_NAME_LENGTH,
-        }),
-      });
-    }
-
-    if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
-      isValid = false;
-      setDescriptionValidated({
-        fieldState: 'error',
-        message: t('serviceAccount.service_account_name_length_is_greater_than_expected', {
-          maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
         }),
       });
     }
@@ -185,10 +142,11 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     createServiceAccount();
   };
 
+  const preventButtonSubmit = (event) => event.preventDefault();
+
   const createForm = () => {
     const { message, fieldState } = nameValidated;
-    const { name, description } = serviceAccountFormData;
-    const { message: descMessage, fieldState: descFieldState } = descriptionValidated;
+    const { name } = serviceAccountFormData;
     return (
       <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
@@ -197,37 +155,36 @@ const CreateServiceAccount: React.FunctionComponent = () => {
           </FormAlert>
         )}
         <FormGroup
-          label="Name"
+          label="Short description"
           isRequired
-          fieldId="text-input-name"
+          fieldId="text-input-short-description"
           helperTextInvalid={message}
           validated={fieldState}
           helperText={t('common.input_filed_invalid_helper_text')}
+          labelIcon={
+            <Popover
+              headerContent={<div>{t('serviceAccount.short_description_popover_title')}</div>}
+              bodyContent={<div>{t('serviceAccount.short_description_popover_body')}</div>}
+            >
+              <button
+                aria-label={'short description'}
+                onClick={preventButtonSubmit}
+                className="pf-c-form__group-label-help"
+              >
+                <HelpIcon noVerticalAlign />
+              </button>
+            </Popover>
+          }
         >
           <TextInput
             isRequired
             type="text"
-            id="text-input-name"
-            name="text-input-name"
+            id="text-input-short-description"
+            name="text-input-short-description"
             value={name}
             onChange={handleTextInputName}
             validated={fieldState}
             autoFocus={true}
-          />
-        </FormGroup>
-        <FormGroup
-          label="Description"
-          fieldId="text-input-description"
-          helperTextInvalid={descMessage}
-          validated={descFieldState}
-          helperText={t('common.input_text_area_invalid_helper_text')}
-        >
-          <TextArea
-            id="text-input-description"
-            name="text-input-description"
-            value={description}
-            onChange={handleTextInputDescription}
-            validated={descFieldState}
           />
         </FormGroup>
       </Form>
