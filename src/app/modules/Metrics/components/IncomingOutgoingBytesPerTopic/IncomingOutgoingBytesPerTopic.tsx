@@ -329,8 +329,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                   largestByteSize && (
                     <>
                       <Chart
-                        ariaDesc={t('metrics.total_bytes')}
-                        ariaTitle=" "
+                        ariaTitle={t('metrics.total_bytes')}
                         containerComponent={
                           <ChartVoronoiContainer
                             labels={({ datum }) => `${datum.name}: ${datum.y}`}

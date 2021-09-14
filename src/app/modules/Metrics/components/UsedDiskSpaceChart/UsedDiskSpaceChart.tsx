@@ -237,8 +237,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
               legend &&
               largestByteSize && (
                 <Chart
-                  ariaDesc={t('metrics.used_disk_space')}
-                  ariaTitle="Disk Space"
+                  ariaTitle={t('metrics.used_disk_space')}
                   containerComponent={
                     <ChartVoronoiContainer labels={({ datum }) => `${datum.name}: ${datum.y}`} constrainToVisibleArea />
                   }

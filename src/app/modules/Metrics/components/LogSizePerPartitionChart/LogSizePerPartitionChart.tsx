@@ -227,8 +227,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
                 legend &&
                 byteSize && (
                   <Chart
-                    ariaDesc={t('metrics.log_size_per_partition')}
-                    ariaTitle="Log Size"
+                    ariaTitle={t('metrics.log_size_per_partition')}
                     containerComponent={
                       <ChartVoronoiContainer
                         labels={({ datum }) => `${datum.name}: ${datum.y}`}

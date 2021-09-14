@@ -49,8 +49,7 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
     return (
       <div style={{ height: '300x', width: '450px' }}>
         <Chart
-          ariaDesc="Messages in to a topic"
-          ariaTitle="Messages in"
+          ariaTitle="Messages in to a topic"
           containerComponent={
             <CursorVoronoiContainer
               cursorDimension="x"
