@@ -330,7 +330,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                     <>
                       <Chart
                         ariaDesc={t('metrics.total_bytes')}
-                        ariaTitle="Total Bytes"
+                        ariaTitle=" "
                         containerComponent={
                           <ChartVoronoiContainer
                             labels={({ datum }) => `${datum.name}: ${datum.y}`}

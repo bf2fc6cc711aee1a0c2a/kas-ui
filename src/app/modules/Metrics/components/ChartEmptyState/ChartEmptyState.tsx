@@ -37,7 +37,7 @@ export const ChartEmptyState = ({ title, body, noData, noTopics, noFilter, onCre
         <br />
         {noTopics && (
           <Button variant="primary" onClick={onCreateTopic}>
-            Create Topic
+            Create topic
           </Button>
         )}
       </EmptyStateBody>
