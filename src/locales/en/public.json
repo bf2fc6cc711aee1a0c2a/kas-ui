@@ -318,7 +318,7 @@
   "serviceAccount": {
     "service_accounts": "Service Accounts",
     "service_accounts_small": "Service accounts",
-    "service_accounts_title_header_info": "Use service accounts to connect and authenticate your applications with Kafka instances. The service accounts that you create can access only the Kafka instances that you create.",
+    "service_accounts_title_header_info": "Use service accounts to connect and authenticate your applications with Kafka instances and Service Registry instances.",
     "no_permission_to_delete_service_account": "Ask the service account owner to delete this account.",
     "no_permission_to_reset_service_account": "Ask the service account owner to reset credentials.",
     "delete_service_account": "Delete service account",
@@ -355,10 +355,10 @@
     "topic_partition_size": "Topic partition size",
     "topic_metrics": "Topic metrics",
     "topic_metrics_help_text": "Bytes incoming and outgoing are the total bytes for all topics or total bytes for a selected topic in the Kafka instance. This metric enables you to assess data transfer in and out of your Kafka instance. To modify incoming and outgoing bytes, you can adjust topic message size or other topic properties as needed.",
-    "empty_state_no_data_body": "We’re creating your Kafka instance, so some details aren’t yet available.",
-    "empty_state_no_data_title": "No data yet",
-    "empty_state_no_topics_body": "Data will appear once you create and use topics.",
-    "empty_state_no_topics_title": "No topics yet",
+    "empty_state_no_data_body": "Your Kafka instance was recently created, so some metrics aren't yet available. Check back in a few minutes.",
+    "empty_state_no_data_title": "No metrics data",
+    "empty_state_no_topics_body": "Data might take a few minutes to appear once you start using topics.",
+    "empty_state_no_topics_title": "No topic data",
     "empty_state_no_filter_body": "In the filter dropdown select a topic to see log size per topic partition.",
     "empty_state_no_filter_title": "Filter by Topic"
   }
