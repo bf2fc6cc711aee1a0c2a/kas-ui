@@ -44,7 +44,7 @@ const setupRender = (props: any) => {
               apiBasePath: '',
             },
             ams: { trialQuotaId: 'fake-quota-id' },
-          } as Config
+          } as unknown as Config
         }
       >
         <AuthContext.Provider
