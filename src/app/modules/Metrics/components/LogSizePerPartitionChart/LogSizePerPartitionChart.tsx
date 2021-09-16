@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import { isServiceApiError } from '@app/utils';
 import { AlertVariant, Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
 import {

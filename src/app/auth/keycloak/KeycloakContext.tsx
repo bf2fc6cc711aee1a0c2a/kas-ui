@@ -1,7 +1,7 @@
 import React from 'react';
 import { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
 import { getKeyCloakToken, getParsedKeyCloakToken } from '@app/auth/keycloak/keycloakAuth';
-import { Auth, AuthContext } from '@bf2/ui-shared';
+import { Auth, AuthContext } from '@rhoas/app-services-ui-shared';
 
 // This is a context which can manage the keycloak
 export interface IKeycloakContext {

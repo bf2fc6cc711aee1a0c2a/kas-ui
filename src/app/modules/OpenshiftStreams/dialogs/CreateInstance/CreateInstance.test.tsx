@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@bf2/ui-shared';
+import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@rhoas/app-services-ui-shared';
 import { CloudRegionList } from '@rhoas/kafka-management-sdk';
 import { AxiosResponse } from 'axios';
 

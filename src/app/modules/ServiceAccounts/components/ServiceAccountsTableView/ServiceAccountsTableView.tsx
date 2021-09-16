@@ -14,7 +14,7 @@ import { MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
 import { getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
 import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
 import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
-import { useAuth } from '@bf2/ui-shared';
+import { useAuth } from '@rhoas/app-services-ui-shared';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;

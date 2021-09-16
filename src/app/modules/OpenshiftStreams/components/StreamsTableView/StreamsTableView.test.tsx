@@ -5,7 +5,7 @@ import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@bf2/ui-shared';
+import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@rhoas/app-services-ui-shared';
 
 const kafkaInstanceItems = [
   {

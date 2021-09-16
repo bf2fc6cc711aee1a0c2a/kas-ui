@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, AlertVariant, Spinner } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Quota, QuotaType, QuotaValue } from '@bf2/ui-shared';
+import { Quota, QuotaType, QuotaValue } from '@rhoas/app-services-ui-shared';
 
 export type QuotaAlertProps = {
   quota: Quota | undefined;

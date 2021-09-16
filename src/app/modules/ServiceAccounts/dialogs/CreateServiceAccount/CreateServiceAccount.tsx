@@ -5,7 +5,7 @@ import { NewServiceAccount, FormDataValidationState } from '../../../../models';
 import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 
 const CreateServiceAccount: React.FunctionComponent = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();

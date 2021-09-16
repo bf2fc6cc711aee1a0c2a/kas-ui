@@ -26,7 +26,7 @@ import { DefaultApi, CloudProvider, CloudRegion, Configuration } from '@rhoas/ka
 import { NewKafka, FormDataValidationState } from '@app/models';
 import './CreateInstance.css';
 import { DrawerPanelContentInfo } from './DrawerPanelContentInfo';
-import { useAlert, useAuth, useConfig, Quota, QuotaType, useQuota, QuotaValue } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig, Quota, QuotaType, useQuota, QuotaValue } from '@rhoas/app-services-ui-shared';
 import { QuotaAlert } from './QuotaAlert';
 
 const emptyProvider: CloudProvider = {

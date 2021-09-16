@@ -27,7 +27,7 @@ import { QuickStartContext, QuickStartContextValues } from '@cloudmosaic/quickst
 import { StreamsTableView, FilterType, InstanceDrawer, InstanceDrawerProps } from './components';
 import { DefaultApi, KafkaRequest, KafkaRequestList, CloudProvider, Configuration } from '@rhoas/kafka-management-sdk';
 import './OpenshiftStreams.css';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import { useFederated } from '@app/contexts';
 

@@ -5,7 +5,7 @@ import { useRootModalContext, MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
 import { Configuration, SecurityApi } from '@rhoas/kafka-management-sdk';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 
 const ResetServiceAccount: React.FunctionComponent = () => {
   const { t } = useTranslation();

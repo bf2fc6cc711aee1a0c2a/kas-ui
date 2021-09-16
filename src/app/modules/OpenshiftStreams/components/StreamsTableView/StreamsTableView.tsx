@@ -32,7 +32,7 @@ import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { AlertVariant, useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { AlertVariant, useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 
 export type FilterValue = {
   value: string;
