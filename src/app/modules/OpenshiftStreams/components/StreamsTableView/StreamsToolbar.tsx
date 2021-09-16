@@ -570,7 +570,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     },
   ];
 
-  if (total && total > 0 && toolbarItems.length > 1) {
+  if (total && total > 0 && toolbarItems.length > 0) {
     toolbarItems.push({
       item: (
         <MASPagination

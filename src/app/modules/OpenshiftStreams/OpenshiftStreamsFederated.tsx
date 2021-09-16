@@ -12,11 +12,10 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederat
   preCreateInstance,
   shouldOpenCreateModal,
   tokenEndPointUrl,
-  getQuota,
 }) => {
   return (
     <I18nextProvider i18n={initI18N()}>
-      <FederatedContext.Provider value={{ getQuota, tokenEndPointUrl, preCreateInstance, shouldOpenCreateModal }}>
+      <FederatedContext.Provider value={{ tokenEndPointUrl, preCreateInstance, shouldOpenCreateModal }}>
         <RootModal>
           <PaginationProvider>
             <OpenshiftStreams preCreateInstance={preCreateInstance} tokenEndPointUrl={tokenEndPointUrl} />
