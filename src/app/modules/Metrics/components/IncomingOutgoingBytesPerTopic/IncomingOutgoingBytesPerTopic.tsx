@@ -58,10 +58,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 }: KafkaInstanceProps) => {
   const { t } = useTranslation();
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { addAlert } = useAlert() || {};
   const containerRef = useRef();
   const [width, setWidth] = useState();
   const [timeDuration, setTimeDuration] = useState(6);
@@ -187,7 +186,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert &&
+          addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
       }
     }
   };

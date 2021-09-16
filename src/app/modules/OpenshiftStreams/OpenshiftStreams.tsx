@@ -17,7 +17,7 @@ import {
   ModalVariant,
   Card,
 } from '@patternfly/react-core';
-import { useRootModalContext, MODAL_TYPES, MASEmptyStateVariant } from '@app/common';
+import { useRootModalContext, MODAL_TYPES, MASEmptyStateVariant, usePagination } from '@app/common';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus, InstanceType } from '@app/utils';
 import { MASLoading, MASEmptyState } from '@app/common';
@@ -48,14 +48,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const { shouldOpenCreateModal } = useFederated() || {};
 
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig() || {};
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
   const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const page = parseInt(searchParams.get('page') || '', 10) || 1;
-  const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
+  const { page = 1, perPage = 10 } = usePagination() || {};
   const mainToggle = searchParams.has('user-testing');
   const { t } = useTranslation();
   const { addAlert } = useAlert() || {};
@@ -193,7 +191,8 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
     } else {
-      addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+      addAlert &&
+        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
     }
   };
 
@@ -312,7 +311,8 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert &&
+          addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
       }
     }
   };

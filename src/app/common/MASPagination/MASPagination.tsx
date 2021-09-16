@@ -1,5 +1,4 @@
-import React, { useCallback, FunctionComponent } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import React, { useCallback, FunctionComponent, createContext, useContext, useState } from 'react';
 import {
   Pagination as PFPagination,
   PaginationProps as PFPaginationProps,
@@ -8,46 +7,42 @@ import {
 
 export type PaginationProps = Omit<PFPaginationProps, 'children' | 'ref'>;
 
+export type PaginationContextProps = {
+  page: number | undefined;
+  perPage: number | undefined;
+  setPage: (page: number | undefined) => void;
+  setPerPage: (perPage: number | undefined) => void;
+};
+
+export const PaginationContext = createContext<PaginationContextProps | undefined>(undefined);
+export const usePagination = (): PaginationContextProps | undefined => useContext(PaginationContext);
+
+export const PaginationProvider: React.FC = ({ children }) => {
+  const [page, setPage] = useState<number | undefined>(1);
+  const [perPage, setPerPage] = useState<number | undefined>(10);
+
+  return (
+    <PaginationContext.Provider value={{ page, perPage, setPage, setPerPage }}>{children}</PaginationContext.Provider>
+  );
+};
+
 const MASPagination: FunctionComponent<PaginationProps> = ({
-  page,
-  perPage = 10,
   itemCount,
   variant = PaginationVariant.top,
   isCompact,
   titles,
   ...restProps
 }) => {
-  const history = useHistory();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const { setPage, setPerPage, perPage, page } = usePagination() || {};
 
-  const setSearchParam = useCallback(
-    (name: string, value: string) => {
-      searchParams.set(name, value.toString());
-    },
-    [searchParams]
-  );
+  const onSetPage = useCallback((_: unknown, newPage: number) => {
+    setPage && setPage(newPage);
+  }, []);
 
-  const onSetPage = useCallback(
-    (_: unknown, newPage: number) => {
-      setSearchParam('page', newPage.toString());
-      history.push({
-        search: searchParams.toString(),
-      });
-    },
-    [setSearchParam, history, searchParams]
-  );
-
-  const onPerPageSelect = useCallback(
-    (_: unknown, newPerPage: number) => {
-      setSearchParam('page', '1');
-      setSearchParam('perPage', newPerPage.toString());
-      history.push({
-        search: searchParams.toString(),
-      });
-    },
-    [setSearchParam, history, searchParams]
-  );
+  const onPerPageSelect = useCallback((_: unknown, newPerPage: number) => {
+    setPage && setPage(1);
+    setPerPage && setPerPage(newPerPage);
+  }, []);
 
   return (
     <PFPagination

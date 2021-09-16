@@ -15,9 +15,7 @@ import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { MASLoading } from '@app/common';
 import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
 import { initI18N } from '@i18n/i18n';
-import { MASErrorBoundary } from '@app/common';
-import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
-import { RootModal } from '@app/common/RootModal';
+import { MASErrorBoundary, RootModal, PaginationProvider, AlertProvider } from '@app/common';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 declare const __BASE_PATH__: string;
@@ -56,11 +54,13 @@ const App: React.FunctionComponent = () => {
               <Router>
                 <React.Suspense fallback={<MASLoading />}>
                   <MASErrorBoundary>
-                    <RootModal>
-                      <AppLayout>
-                        <AppRoutes />
-                      </AppLayout>
-                    </RootModal>
+                    <PaginationProvider>
+                      <RootModal>
+                        <AppLayout>
+                          <AppRoutes />
+                        </AppLayout>
+                      </RootModal>
+                    </PaginationProvider>
                   </MASErrorBoundary>
                 </React.Suspense>
               </Router>
