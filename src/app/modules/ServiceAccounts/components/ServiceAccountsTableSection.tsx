@@ -1,5 +1,5 @@
 import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
-import { MODAL_TYPES, useRootModalContext } from '@app/common';
+import { MODAL_TYPES, useRootModalContext, usePagination } from '@app/common';
 import React, { useState } from 'react';
 import { Card, PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
@@ -23,8 +23,7 @@ export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccount
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
 
   const searchParams = new URLSearchParams(location.search);
-  const page = parseInt(searchParams.get('page') || '', 10) || 1;
-  const perPage = parseInt(searchParams.get('perPage') || '', 10) || 10;
+  const { page = 1, perPage = 10 } = usePagination() || {};
   const mainToggle = searchParams.has('user-testing');
 
   const handleResetModal = (serviceAccount: ServiceAccountListItem) => {

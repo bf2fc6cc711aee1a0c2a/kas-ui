@@ -23,10 +23,10 @@ import {
 import {
   MASEmptyState,
   MASEmptyStateVariant,
-  MASPagination,
   MASTable,
   MODAL_TYPES,
   useRootModalContext,
+  MASPagination,
 } from '@app/common';
 import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management-sdk';
 import './StatusColumn.css';

@@ -60,10 +60,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   const containerRef = useRef();
   const { t } = useTranslation();
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { addAlert } = useAlert() || {};
   const [width, setWidth] = useState();
   const [legend, setLegend] = useState();
   const [chartData, setChartData] = useState<ChartData[]>();
@@ -143,7 +142,8 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert &&
+          addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
       }
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, ReactElement } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   InputGroup,
@@ -17,7 +17,7 @@ import {
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { MASPagination, MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES } from '@app/common';
+import { MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES, MASPagination } from '@app/common';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '@rhoas/kafka-management-sdk';
@@ -570,7 +570,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     },
   ];
 
-  if (total && total > 0 && toolbarItems.length > 1) {
+  if (total && total > 0 && toolbarItems.length > 0) {
     toolbarItems.push({
       item: (
         <MASPagination
