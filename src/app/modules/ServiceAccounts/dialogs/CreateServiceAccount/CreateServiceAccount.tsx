@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
 import { Configuration, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
-import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
+import { MASCreateModal, useRootModalContext, KAFKA_MODAL_TYPES } from '@app/common';
 import { useTranslation } from 'react-i18next';
 import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
@@ -160,7 +160,7 @@ const CreateServiceAccount: React.FunctionComponent = () => {
           //close current modal i.e. create service account
           hideModal();
           //open generate credential modal
-          showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
+          showModal(KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
           resetForm();
           addAlert({
             title: t('serviceAccount.service_account_creation_success_message'),

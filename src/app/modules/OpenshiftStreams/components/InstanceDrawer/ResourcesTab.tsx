@@ -13,7 +13,7 @@ import {
   ButtonVariant,
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
-import { useRootModalContext, MODAL_TYPES } from '@app/common';
+import { useRootModalContext, KAFKA_MODAL_TYPES } from '@app/common';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 
 export type ResourcesTabProps = {
@@ -35,7 +35,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   const { showModal } = useRootModalContext();
 
   const handleCreateServiceAccountModal = () => {
-    showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT);
+    showModal(KAFKA_MODAL_TYPES.CREATE_SERVICE_ACCOUNT);
   };
 
   return (

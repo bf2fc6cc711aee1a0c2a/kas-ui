@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
-import { useRootModalContext, MODAL_TYPES } from '@app/common';
+import { useRootModalContext, KAFKA_MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
 import { Configuration, SecurityApi } from '@rhoas/kafka-management-sdk';
@@ -47,7 +47,7 @@ const ResetServiceAccount: React.FunctionComponent = () => {
           const credential = response?.data;
           hideModal(); // Close first modal
           setIsModalLoading(false);
-          showModal(MODAL_TYPES.GENERATE_CREDENTIALS, {
+          showModal(KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS, {
             credential,
             title: t('serviceAccount.reset_service_account_credentials'),
           });

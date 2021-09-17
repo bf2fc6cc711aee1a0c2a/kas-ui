@@ -1,5 +1,5 @@
 import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
-import { MODAL_TYPES, useRootModalContext, usePagination } from '@app/common';
+import { KAFKA_MODAL_TYPES, useRootModalContext, usePagination } from '@app/common';
 import React, { useState } from 'react';
 import { Card, PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
@@ -27,15 +27,15 @@ export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccount
   const mainToggle = searchParams.has('user-testing');
 
   const handleResetModal = (serviceAccount: ServiceAccountListItem) => {
-    showModal(MODAL_TYPES.RESET_CREDENTIALS, { serviceAccountToReset: serviceAccount });
+    showModal(KAFKA_MODAL_TYPES.RESET_CREDENTIALS, { serviceAccountToReset: serviceAccount });
   };
 
   const handleCreateModal = () => {
-    showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT, { fetchServiceAccounts });
+    showModal(KAFKA_MODAL_TYPES.CREATE_SERVICE_ACCOUNT, { fetchServiceAccounts });
   };
 
   const handleDeleteModal = (serviceAccount: ServiceAccountListItem) => {
-    showModal(MODAL_TYPES.DELETE_SERVICE_ACCOUNT, { serviceAccountToDelete: serviceAccount, fetchServiceAccounts });
+    showModal(KAFKA_MODAL_TYPES.DELETE_SERVICE_ACCOUNT, { serviceAccountToDelete: serviceAccount, fetchServiceAccounts });
   };
 
   return (

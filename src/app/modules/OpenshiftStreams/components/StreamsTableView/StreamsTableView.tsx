@@ -24,7 +24,7 @@ import {
   MASEmptyState,
   MASEmptyStateVariant,
   MASTable,
-  MODAL_TYPES,
+  KAFKA_MODAL_TYPES,
   useRootModalContext,
   MASPagination,
 } from '@app/common';
@@ -401,7 +401,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     } else {
       const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(t, status, name);
 
-      showModal(MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
+      showModal(KAFKA_MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
         instanceStatus: status,
         selectedItemData: instance,
         title,
