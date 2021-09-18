@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageSection } from '@patternfly/react-core';
-import { MASEmptyState, MASEmptyStateVariant, MODAL_TYPES, useRootModalContext } from '@app/common';
+import { MASEmptyState, MASEmptyStateVariant, KAFKA_MODAL_TYPES, useRootModalContext } from '@app/common';
 
 export type ServiceAccountsEmptyProps = {
   fetchServiceAccounts: () => Promise<void>;
@@ -10,7 +10,7 @@ export const ServiceAccountsEmpty: React.FunctionComponent<ServiceAccountsEmptyP
   const { showModal } = useRootModalContext();
 
   const handleCreateModal = () => {
-    showModal(MODAL_TYPES.CREATE_SERVICE_ACCOUNT, { fetchServiceAccounts });
+    showModal(KAFKA_MODAL_TYPES.CREATE_SERVICE_ACCOUNT, { fetchServiceAccounts });
   };
 
   const { t } = useTranslation();

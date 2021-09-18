@@ -17,7 +17,7 @@ import {
   ModalVariant,
   Card,
 } from '@patternfly/react-core';
-import { useRootModalContext, MODAL_TYPES, MASEmptyStateVariant, usePagination } from '@app/common';
+import { useRootModalContext, KAFKA_MODAL_TYPES, MASEmptyStateVariant, usePagination } from '@app/common';
 import { useTimeout } from '@app/hooks/useTimeout';
 import { isServiceApiError, ErrorCodes, isMobileTablet, InstanceStatus, InstanceType } from '@app/utils';
 import { MASLoading, MASEmptyState } from '@app/common';
@@ -123,7 +123,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   }, [shouldOpenCreateModal, cloudProviders]);
 
   const handleCreateModal = () => {
-    showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+    showModal(KAFKA_MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
       onCreate,
       cloudProviders,
       mainToggle,

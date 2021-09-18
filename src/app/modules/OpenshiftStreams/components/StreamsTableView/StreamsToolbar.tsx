@@ -17,7 +17,7 @@ import {
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { MASToolbar, ToolbarItemProps, useRootModalContext, MODAL_TYPES, MASPagination } from '@app/common';
+import { MASToolbar, ToolbarItemProps, useRootModalContext, KAFKA_MODAL_TYPES, MASPagination } from '@app/common';
 import { FilterType, FilterValue } from './StreamsTableView';
 import { cloudProviderOptions, cloudRegionOptions, statusOptions, MAX_FILTER_LIMIT, InstanceStatus } from '@app/utils';
 import { CloudProvider } from '@rhoas/kafka-management-sdk';
@@ -548,7 +548,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
       open = await preCreateInstance(true);
     }
     open &&
-      showModal(MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
+      showModal(KAFKA_MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
         onCreate,
         cloudProviders,
         refresh,
