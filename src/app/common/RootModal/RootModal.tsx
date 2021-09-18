@@ -1,5 +1,4 @@
 import React, { useState, createContext, useContext } from 'react';
-import { MASGenerateCredentialsModal, MASLoading } from '@app/common';
 
 const CreateInstance = React.lazy(
   () =>
@@ -38,13 +37,20 @@ const ResetServiceAccount = React.lazy(
     )
 );
 
+const CredentialsModal = React.lazy(
+  () =>
+    import(
+      '@app/modules/ServiceAccounts/dialogs/CreateServiceAccount/CredentialsModal'
+    )
+);
+
 export const KAFKA_MODAL_TYPES = {
   CREATE_KAFKA_INSTANCE: 'CREATE_KAFKA_INSTANCE',
   DELETE_KAFKA_INSTANCE: 'DELETE_KAFKA_INSTANCE',
   CREATE_SERVICE_ACCOUNT: 'CREATE_SERVICE_ACCOUNT',
   DELETE_SERVICE_ACCOUNT: 'DELETE_SERVICE_ACCOUNT',
   RESET_CREDENTIALS: 'RESET_CREDENTIALS',
-  GENERATE_CREDENTIALS: 'GENERATE_CREDENTIALS',
+  CREDENTIALS: 'CREDENTIALS',
   DELETE_KAFKA_EXTERNALLY: 'DELETE_KAFKA_EXTERNALLY',
 };
 
@@ -54,7 +60,7 @@ const MODAL_COMPONENTS: any = {
   [KAFKA_MODAL_TYPES.CREATE_SERVICE_ACCOUNT]: CreateServiceAccount,
   [KAFKA_MODAL_TYPES.DELETE_SERVICE_ACCOUNT]: DeleteServiceAccount,
   [KAFKA_MODAL_TYPES.RESET_CREDENTIALS]: ResetServiceAccount,
-  [KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS]: MASGenerateCredentialsModal,
+  [KAFKA_MODAL_TYPES.CREDENTIALS]: CredentialsModal,
   [KAFKA_MODAL_TYPES.DELETE_KAFKA_EXTERNALLY]: DeleteInstanceConnected,
 };
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { useAuth, useConfig, useAlert } from '@rhoas/app-services-ui-shared';
@@ -9,28 +8,30 @@ import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 
-const DeleteInstanceConnected = () => {
+const DeleteInstanceConnected: React.FunctionComponent = () => {
   const { addAlert } = useAlert() || {};
   const { t } = useTranslation();
   const auth = useAuth();
-  const history = useHistory();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
 
   const { store, hideModal } = useRootModalContext();
-  const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } =
-    store?.modalProps || {};
+  const {
+    selectedItemData: instanceDetail,
+    setIsOpenDeleteInstanceModal,
+    onDeleteInstance,
+  } = store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { title, confirmActionLabel, description } =
     getDeleteInstanceModalConfig(t, status, name);
 
-  const onCloseModal = () => {
+  const closeModal = () => {
     setIsOpenDeleteInstanceModal && setIsOpenDeleteInstanceModal(false);
   };
 
-  const onDeleteInstance = async () => {
+  const deleteInstance = async () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken && id) {
       try {
@@ -43,10 +44,9 @@ const DeleteInstanceConnected = () => {
         );
         await apisService.deleteKafkaById(id, true).then(() => {
           setIsLoading(false);
-          onCloseModal();
-          //redirect on kafka list page
-          history.push('/streams/kafkas');
         });
+        closeModal();
+        onDeleteInstance && onDeleteInstance();
       } catch (error) {
         setIsLoading(false);
         handleServerError(error);
@@ -54,7 +54,7 @@ const DeleteInstanceConnected = () => {
     }
   };
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: unknown) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
@@ -67,23 +67,23 @@ const DeleteInstanceConnected = () => {
       });
   };
 
-  const props = {
-    ...store?.modalProps,
-    hideModal,
-    title,
-    confirmButtonProps: {
-      onClick: onDeleteInstance,
-      label: confirmActionLabel,
-      isLoading,
-    },
-    textProps: {
-      description,
-    },
-    onClose: onCloseModal,
-    instanceStatus: status,
-  };
-
-  return <DeleteInstanceModal {...props} />;
+  return (
+    <DeleteInstanceModal
+      {...store?.modalProps}
+      hideModal={hideModal}
+      title={title}
+      confirmButtonProps={{
+        onClick: deleteInstance,
+        label: confirmActionLabel,
+        isLoading,
+      }}
+      textProps={{
+        description,
+      }}
+      onClose={closeModal}
+      instanceStatus={status}
+    />
+  );
 };
 
 export { DeleteInstanceConnected };

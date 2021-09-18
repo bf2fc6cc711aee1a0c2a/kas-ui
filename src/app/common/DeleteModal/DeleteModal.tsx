@@ -1,49 +1,62 @@
 import React from 'react';
 import {
-  Modal,
   Button,
-  ButtonVariant,
-  ModalVariant,
-  ModalProps,
-  Text,
   ButtonProps,
-  TextProps,
+  ButtonVariant,
+  Modal,
+  ModalProps,
+  ModalVariant,
+  Text,
   TextInput,
   TextInputProps,
+  TextProps,
 } from '@patternfly/react-core';
 import { getModalAppendTo } from '@app/utils/utils';
-import './MASDeleteModal.css';
+import './DeleteModal.css';
 
-export type MASDeleteModalProps = {
-  isModalOpen: boolean;
-  title: string;
-  modalProps?: Omit<ModalProps, 'children' | 'ref'>;
-  handleModalToggle: () => void;
-  children?: React.ReactNode;
-  selectedItemData?: any;
-  confirmButtonProps?: Omit<ButtonProps, 'children' | 'onClick'> & {
-    id?: string;
-    key?: string;
-    label?: string;
-    onClick?: (data?: any) => Promise<void> | void;
-    'data-testid'?: string;
-  };
-  cancelButtonProps?: Omit<ButtonProps, 'children'> & {
-    id?: string;
-    key?: string;
-    label?: string;
-  };
-  textProps?: Omit<TextProps, 'children'> & {
-    description?: string;
-  };
-  textInputProps?: TextInputProps & {
-    showTextInput: boolean;
-    label: string;
-    value: string | undefined;
-  };
+export type ConfirmButtonProps<T> = Omit<
+  ButtonProps,
+  'children' | 'onClick'
+> & {
+  id?: string;
+  key?: string;
+  label?: string;
+  onClick?: (data?: T) => Promise<void> | void;
+  'data-testid'?: string;
 };
 
-export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
+export type NestedModalProps = Omit<ModalProps, 'children' | 'ref'>;
+
+export type CancelButtonProps = Omit<ButtonProps, 'children'> & {
+  id?: string;
+  key?: string;
+  label?: string;
+};
+
+export type NestedTextProps = Omit<TextProps, 'children'> & {
+  description?: string;
+};
+
+export type NestedTextInputProps = TextInputProps & {
+  showTextInput: boolean;
+  label: string;
+  value: string | undefined;
+};
+
+export type DeleteModalProps<T> = {
+  isModalOpen: boolean;
+  title: string;
+  modalProps?: NestedModalProps;
+  handleModalToggle: () => void;
+  children?: React.ReactNode;
+  selectedItemData?: T;
+  confirmButtonProps?: ConfirmButtonProps<T>;
+  cancelButtonProps?: CancelButtonProps;
+  textProps?: NestedTextProps;
+  textInputProps?: NestedTextInputProps;
+};
+
+export const DeleteModal = <T,>({
   isModalOpen,
   title,
   modalProps,
@@ -52,9 +65,9 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   handleModalToggle,
   textProps,
   children,
-  selectedItemData = '',
+  selectedItemData,
   textInputProps,
-}: MASDeleteModalProps) => {
+}: DeleteModalProps<T>): React.ReactElement => {
   const {
     variant = ModalVariant.small,
     titleIconVariant = 'warning',
@@ -64,7 +77,7 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   } = modalProps || {};
 
   const {
-    id = 'mas--confirm__button',
+    id = 'confirm__button',
     key = 'confirm-button',
     variant: buttonConfirmVariant = ButtonVariant.danger,
     onClick: onClickConfirmButton,
@@ -75,7 +88,7 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   } = confirmButtonProps || {};
 
   const {
-    id: cancelButtonId = 'mas--cancel__button',
+    id: cancelButtonId = 'cancel__button',
     key: cancelButtonKey = '"cancel-button',
     variant: cancelButtonVariant = ButtonVariant.link,
     label: cancelActionLabel = 'Cancel',
@@ -83,7 +96,7 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
   } = cancelButtonProps || {};
 
   const {
-    className = 'mas--delete-item__modal--text',
+    className = 'delete-item__modal--text',
     description,
     ...restTextProps
   } = textProps || {};
@@ -95,6 +108,31 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
     showTextInput,
     ...restInputFieldProps
   } = textInputProps || {};
+
+  const ConfirmDelete: React.FunctionComponent = () => {
+    if (showTextInput) {
+      return (
+        <>
+          <label
+            htmlFor='mas-name-input'
+            dangerouslySetInnerHTML={{ __html: label }}
+          />
+          <TextInput
+            id='name__input'
+            name='mas-name-input'
+            type='text'
+            value={value}
+            onChange={onChange}
+            onKeyPress={onKeyPress}
+            autoFocus={true}
+            {...restInputFieldProps}
+          />
+        </>
+      );
+    } else {
+      return <></>;
+    }
+  };
 
   return (
     <Modal
@@ -132,31 +170,12 @@ export const MASDeleteModal: React.FC<MASDeleteModalProps> = ({
       ]}
       {...restModalProps}
     >
-      {description && (
-        <Text
-          className={className}
-          dangerouslySetInnerHTML={{ __html: description || '' }}
-          {...restTextProps}
-        />
-      )}
-      {showTextInput && (
-        <>
-          <label
-            htmlFor='mas-name-input'
-            dangerouslySetInnerHTML={{ __html: label }}
-          />
-          <TextInput
-            id='mas--name__input'
-            name='mas-name-input'
-            type='text'
-            value={value}
-            onChange={onChange}
-            onKeyPress={onKeyPress}
-            autoFocus={true}
-            {...restInputFieldProps}
-          />
-        </>
-      )}
+      <Text
+        className={className}
+        dangerouslySetInnerHTML={{ __html: description || '' }}
+        {...restTextProps}
+      />
+      <ConfirmDelete />
       {children}
     </Modal>
   );

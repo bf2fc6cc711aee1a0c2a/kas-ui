@@ -9,13 +9,13 @@ export type MASCreateModalProps = {
   children?: React.ReactNode;
   title: string;
   handleModalToggle: () => void;
-  onCreate: () => void;
   isFormValid: boolean;
   isCreationInProgress: boolean;
   primaryButtonTitle: string;
   dataTestIdSubmit?: string;
   dataTestIdCancel?: string;
   isDisabledButton?: boolean;
+  formId: string;
 };
 
 export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
@@ -23,7 +23,6 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
   children,
   title,
   handleModalToggle,
-  onCreate,
   isFormValid,
   isCreationInProgress,
   primaryButtonTitle,
@@ -31,6 +30,7 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
   dataTestIdCancel,
   id = 'modalCreateKafka',
   isDisabledButton,
+  formId,
 }: MASCreateModalProps) => {
   const { t } = useTranslation();
 
@@ -44,10 +44,10 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
       appendTo={getModalAppendTo}
       actions={[
         <Button
-          key='create'
+          key='submit'
           variant='primary'
           type='submit'
-          onClick={onCreate}
+          form={formId}
           isDisabled={!isFormValid || isCreationInProgress || isDisabledButton}
           spinnerAriaValueText={t('submitting_request')}
           isLoading={isCreationInProgress}

@@ -1,19 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  ToolbarGroup,
-  ToolbarItem,
+  Button,
+  ButtonVariant,
+  InputGroup,
   Select,
   SelectOption,
-  SelectVariant,
   SelectOptionObject,
-  ToolbarFilter,
-  InputGroup,
+  SelectVariant,
   TextInput,
-  Button,
-  Tooltip,
   ToolbarChip,
-  ButtonVariant,
+  ToolbarFilter,
+  ToolbarGroup,
+  ToolbarItem,
+  Tooltip,
   ValidatedOptions,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
@@ -27,7 +27,7 @@ export type ServiceAccountsToolbarProps = {
   perPage: number;
   filteredValue: Array<FilterType>;
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
-  handleCreateModal: () => void;
+  onCreateServiceAccount: () => void;
   mainToggle?: boolean;
 };
 
@@ -46,7 +46,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   setFilterSelected,
   filteredValue,
   setFilteredValue,
-  handleCreateModal,
+  onCreateServiceAccount: onCreateServiceAccount,
 }: ServiceAccountsToolbarProps) => {
   const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
@@ -350,7 +350,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
       item: (
         <Button
           variant='primary'
-          onClick={handleCreateModal}
+          onClick={onCreateServiceAccount}
           data-testid={'tableServiceAccounts-buttonCreateServiceAccount'}
         >
           {t('serviceAccount.create_service_account')}

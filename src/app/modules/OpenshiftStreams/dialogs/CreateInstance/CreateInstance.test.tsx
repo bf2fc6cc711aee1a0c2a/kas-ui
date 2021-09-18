@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
@@ -40,7 +40,7 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
   };
 });
 
-const setupRender = (props: any) => {
+const setupRender = () => {
   render(
     <I18nextProvider i18n={i18nForTest}>
       <ConfigContext.Provider
@@ -70,7 +70,7 @@ const setupRender = (props: any) => {
               },
             }}
           >
-            <CreateInstance {...props} />
+            <CreateInstance />
           </AlertContext.Provider>
         </AuthContext.Provider>
       </ConfigContext.Provider>
@@ -79,25 +79,9 @@ const setupRender = (props: any) => {
 };
 
 describe('<CreateInstance/>', () => {
-  const props: any = {
-    createStreamsInstance: true,
-    mainToggle: true,
-    cloudProviders: [
-      {
-        display_name: 'Amazon Web Services',
-        enabled: true,
-        id: 'aws',
-        kind: 'CloudProvider',
-        name: 'aws',
-      },
-    ],
-    setCreateStreamsInstance: jest.fn(),
-    refresh: jest.fn(),
-  };
-
   it('should open create instance modal if createStreamsInstance is true', () => {
     //arange
-    setupRender(props);
+    setupRender();
 
     //assert
     expect(screen.getByText('Create a Kafka instance')).toBeInTheDocument();
@@ -106,7 +90,7 @@ describe('<CreateInstance/>', () => {
   // TODO Fix test
   it.skip('should call listCloudProviderRegions api by default and set the data in state', async () => {
     //arrange
-    setupRender(props);
+    setupRender();
 
     //assert
     await waitFor(() => {
@@ -116,7 +100,7 @@ describe('<CreateInstance/>', () => {
 
   it('should enabled create instance button by default', () => {
     //arrage
-    setupRender(props);
+    setupRender();
 
     //act
     const classList: string[] = screen
@@ -134,10 +118,10 @@ describe('<CreateInstance/>', () => {
 
   it('should disable the Create Instance Button if the mandatory fields are empty', async () => {
     //arrange
-    setupRender(props);
+    setupRender();
 
     //act
-    const btn: any = screen.getByRole('button', { name: /Create instance/i });
+    const btn = screen.getByRole('button', { name: /Create instance/i });
     act(() => {
       userEvent.click(btn);
     });
@@ -161,8 +145,8 @@ describe('<CreateInstance/>', () => {
 
   it('should enabled create instance button if filled all the mandatory fileds', async () => {
     //arrange
-    setupRender(props);
-    const createInstanceButton: any = screen.getByRole('button', {
+    setupRender();
+    const createInstanceButton = screen.getByRole('button', {
       name: /Create instance/i,
     });
 
@@ -170,7 +154,7 @@ describe('<CreateInstance/>', () => {
     act(() => {
       userEvent.click(createInstanceButton);
     });
-    const instanceNameInput: any = screen.getByRole('textbox', {
+    const instanceNameInput = screen.getByRole('textbox', {
       name: /Name/i,
     });
     act(() => {
@@ -193,16 +177,16 @@ describe('<CreateInstance/>', () => {
 
   it('should disabled create instance button and show error message if enter invalid instance name', async () => {
     //arrange
-    setupRender(props);
+    setupRender();
 
     //act
-    const createInstanceButton: any = screen.getByRole('button', {
+    const createInstanceButton = screen.getByRole('button', {
       name: /Create instance/i,
     });
     act(() => {
       userEvent.click(createInstanceButton);
     });
-    const instanceNameInput: any = screen.getByRole('textbox', {
+    const instanceNameInput = screen.getByRole('textbox', {
       name: /Name/i,
     });
     act(() => {

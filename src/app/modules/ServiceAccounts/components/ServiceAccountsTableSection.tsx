@@ -28,19 +28,19 @@ export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccount
     const { page = 1, perPage = 10 } = usePagination() || {};
     const mainToggle = searchParams.has('user-testing');
 
-    const handleResetModal = (serviceAccount: ServiceAccountListItem) => {
+    const onResetCredentials = (serviceAccount: ServiceAccountListItem) => {
       showModal(KAFKA_MODAL_TYPES.RESET_CREDENTIALS, {
         serviceAccountToReset: serviceAccount,
       });
     };
 
-    const handleCreateModal = () => {
+    const onCreateServiceAccount = () => {
       showModal(KAFKA_MODAL_TYPES.CREATE_SERVICE_ACCOUNT, {
         fetchServiceAccounts,
       });
     };
 
-    const handleDeleteModal = (serviceAccount: ServiceAccountListItem) => {
+    const onDeleteServiceAccount = (serviceAccount: ServiceAccountListItem) => {
       showModal(KAFKA_MODAL_TYPES.DELETE_SERVICE_ACCOUNT, {
         serviceAccountToDelete: serviceAccount,
         fetchServiceAccounts,
@@ -67,9 +67,9 @@ export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccount
             setFilterSelected={setFilterSelected}
             filteredValue={filteredValue}
             setFilteredValue={setFilteredValue}
-            onResetCredentials={handleResetModal}
-            onDeleteServiceAccount={handleDeleteModal}
-            handleCreateModal={handleCreateModal}
+            onResetCredentials={onResetCredentials}
+            onDeleteServiceAccount={onDeleteServiceAccount}
+            onCreateServiceAccount={onCreateServiceAccount}
             mainToggle={mainToggle}
           />
         </Card>
