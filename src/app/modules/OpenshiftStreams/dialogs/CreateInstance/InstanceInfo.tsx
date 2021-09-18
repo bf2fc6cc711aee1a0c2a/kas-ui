@@ -18,13 +18,11 @@ import {
   QuickStartContextValues,
 } from '@cloudmosaic/quickstarts';
 
-export type DrawerPanelContentInfoProps = {
+export type InstanceInfoProps = {
   isKasTrial?: boolean;
 };
 
-const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({
-  isKasTrial,
-}) => {
+const InstanceInfo: React.FC<InstanceInfoProps> = ({ isKasTrial }) => {
   const { t } = useTranslation();
   const qsContext: QuickStartContextValues =
     React.useContext(QuickStartContext);
@@ -112,4 +110,4 @@ const DrawerPanelContentInfo: React.FC<DrawerPanelContentInfoProps> = ({
   );
 };
 
-export { DrawerPanelContentInfo };
+export { InstanceInfo };

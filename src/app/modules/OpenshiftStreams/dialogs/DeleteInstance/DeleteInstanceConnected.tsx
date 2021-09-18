@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { useAuth, useConfig, useAlert } from '@rhoas/app-services-ui-shared';
@@ -9,11 +8,10 @@ import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 
-const DeleteInstanceConnected = () => {
+const DeleteInstanceConnected: React.FunctionComponent = () => {
   const { addAlert } = useAlert() || {};
   const { t } = useTranslation();
   const auth = useAuth();
-  const history = useHistory();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
 
@@ -43,9 +41,6 @@ const DeleteInstanceConnected = () => {
         );
         await apisService.deleteKafkaById(id, true).then(() => {
           setIsLoading(false);
-          onCloseModal();
-          //redirect on kafka list page
-          history.push('/streams/kafkas');
         });
       } catch (error) {
         setIsLoading(false);
@@ -54,7 +49,7 @@ const DeleteInstanceConnected = () => {
     }
   };
 
-  const handleServerError = (error: any) => {
+  const handleServerError = (error: unknown) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
@@ -67,23 +62,23 @@ const DeleteInstanceConnected = () => {
       });
   };
 
-  const props = {
-    ...store?.modalProps,
-    hideModal,
-    title,
-    confirmButtonProps: {
-      onClick: onDeleteInstance,
-      label: confirmActionLabel,
-      isLoading,
-    },
-    textProps: {
-      description,
-    },
-    onClose: onCloseModal,
-    instanceStatus: status,
-  };
-
-  return <DeleteInstanceModal {...props} />;
+  return (
+    <DeleteInstanceModal
+      {...store?.modalProps}
+      hideModal={hideModal}
+      title={title}
+      confirmButtonProps={{
+        onClick: onDeleteInstance,
+        label: confirmActionLabel,
+        isLoading,
+      }}
+      textProps={{
+        description,
+      }}
+      onClose={onCloseModal}
+      instanceStatus={status}
+    />
+  );
 };
 
 export { DeleteInstanceConnected };

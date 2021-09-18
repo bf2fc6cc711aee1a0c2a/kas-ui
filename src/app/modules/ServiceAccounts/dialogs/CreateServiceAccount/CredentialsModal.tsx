@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {
-  Modal,
-  ModalVariant,
   Bullseye,
   Button,
-  ClipboardCopy,
   Checkbox,
+  ClipboardCopy,
   EmptyStateVariant,
   InputGroup,
   InputGroupText,
-  TitleSizes,
-  TextContent,
+  Modal,
+  ModalVariant,
   Text,
+  TextContent,
   TextVariants,
+  TitleSizes,
 } from '@patternfly/react-core';
 import KeyIcon from '@patternfly/react-icons/dist/js/icons/key-icon';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
@@ -21,25 +21,59 @@ import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';
 import { useTranslation } from 'react-i18next';
 import { MASEmptyState, MASLoading, useRootModalContext } from '@app/common';
 import { getModalAppendTo } from '@app/utils/utils';
-import './MASGenerateCredentialsModal.css';
+import './CredentialsModal.css';
+import { ServiceAccount } from '@rhoas/kafka-management-sdk';
 
-const MASGenerateCredentialsModal: React.FunctionComponent = () => {
+const CredentialsModal: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const { store, hideModal } = useRootModalContext();
-  const { credential, isLoading, title } = store?.modalProps || {};
-
-  const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
+  const { serviceAccount, isLoading: loading, title } = store?.modalProps || {};
 
   const handleClose = () => {
     hideModal();
-    setConfirmationCheckbox(false);
   };
 
-  const handleChangeCheckbox = (checked: boolean) => {
+  return (
+    <Modal
+      variant={ModalVariant.medium}
+      title={title || t('serviceAccount.create_a_service_account')}
+      isOpen={true}
+      onClose={handleClose}
+      showClose={false}
+      appendTo={getModalAppendTo}
+    >
+      <Credentials
+        loading={loading}
+        serviceAccount={serviceAccount}
+        close={hideModal}
+      />
+    </Modal>
+  );
+};
+
+type CredentialsProps = {
+  loading: boolean;
+  serviceAccount: ServiceAccount;
+  close: () => void;
+};
+
+const Credentials: React.FunctionComponent<CredentialsProps> = ({
+  loading,
+  serviceAccount,
+  close,
+}) => {
+  const { t } = useTranslation();
+
+  const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
+
+  const confirm = (checked: boolean) => {
     setConfirmationCheckbox(checked);
   };
 
-  const generateCredentials = (
+  if (loading) {
+    return <MASLoading />;
+  }
+  return (
     <>
       <MASEmptyState
         emptyStateProps={{
@@ -69,7 +103,7 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
             data-testid='modalCredentials-copyClientID'
             textAriaLabel={t('client_id')}
           >
-            {credential?.client_id}
+            {serviceAccount?.client_id}
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className='pf-u-mt-md'>
@@ -82,7 +116,7 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
             data-testid='modalCredentials-copyClientSecret'
             textAriaLabel={t('common.client_secret')}
           >
-            {credential?.client_secret}
+            {serviceAccount?.client_secret}
           </ClipboardCopy>
         </InputGroup>
         <TextContent>
@@ -94,7 +128,7 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
           <Checkbox
             label={t('client_id_confirmation_checkbox_label')}
             isChecked={confirmationCheckbox}
-            onChange={handleChangeCheckbox}
+            onChange={confirm}
             id='check-1'
             name='check1'
           />
@@ -102,7 +136,7 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
         <Button
           variant='primary'
           isDisabled={!confirmationCheckbox}
-          onClick={handleClose}
+          onClick={close}
           data-testid='modalCredentials-buttonClose'
         >
           {t('close')}
@@ -110,19 +144,8 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
       </MASEmptyState>
     </>
   );
-
-  return (
-    <Modal
-      variant={ModalVariant.medium}
-      title={title || t('serviceAccount.create_a_service_account')}
-      isOpen={true}
-      onClose={handleClose}
-      showClose={false}
-      appendTo={getModalAppendTo}
-    >
-      {isLoading ? <MASLoading /> : generateCredentials}
-    </Modal>
-  );
 };
 
-export { MASGenerateCredentialsModal };
+export { CredentialsModal };
+
+export default CredentialsModal;

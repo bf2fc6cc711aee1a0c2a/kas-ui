@@ -3,21 +3,25 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ModalVariant } from '@patternfly/react-core';
 import { TextInput } from '@patternfly/react-core';
-import { MASDeleteModal, MASDeleteModalProps } from './MASDeleteModal';
+import { DeleteModal, DeleteModalProps } from './DeleteModal';
 
-describe('<MASDeleteModal/>', () => {
+type TestRequest = {
+  name: string;
+};
+
+describe('<DeleteModal/>', () => {
   const handleModalToggle = jest.fn();
-  const props: MASDeleteModalProps = {
+  const props: DeleteModalProps<TestRequest> = {
     isModalOpen: true,
     title: 'test title',
     handleModalToggle,
   };
 
-  const renderSetup = (props: MASDeleteModalProps) => {
-    return render(<MASDeleteModal {...props} />);
+  const renderSetup = (props: DeleteModalProps<TestRequest>) => {
+    return render(<DeleteModal {...props} />);
   };
 
-  it('should render default MASDeleteModal', () => {
+  it('should render default DeleteModal', () => {
     //arrange
     const { container } = renderSetup(props);
 
@@ -28,7 +32,7 @@ describe('<MASDeleteModal/>', () => {
     screen.getByRole('button', { name: /Cancel/ });
   });
 
-  it('should render MASDeleteModal with custom props', () => {
+  it('should render DeleteModal with custom props', () => {
     //arrange
     const onDelete = jest.fn();
     const props = {
@@ -40,7 +44,7 @@ describe('<MASDeleteModal/>', () => {
         showClose: true,
       },
       handleModalToggle,
-      selectedItemData: { selectedItem: 'test-item' },
+      selectedItemData: { name: 'test-item' },
       confirmButtonProps: {
         id: 'delete-button',
         key: 'delete-button',
@@ -61,7 +65,7 @@ describe('<MASDeleteModal/>', () => {
 
     //act
     act(() => {
-      const deleteButton: any = screen.getByRole('button', { name: /Delete/i });
+      const deleteButton = screen.getByRole('button', { name: /Delete/i });
       userEvent.click(deleteButton);
     });
 
@@ -75,7 +79,7 @@ describe('<MASDeleteModal/>', () => {
 
     //act
     act(() => {
-      const cancelButton: any = screen.getByRole('button', {
+      const cancelButton = screen.getByRole('button', {
         name: /Cancel instance/i,
       });
       userEvent.click(cancelButton);
@@ -84,14 +88,14 @@ describe('<MASDeleteModal/>', () => {
     expect(handleModalToggle).toHaveBeenCalled();
   });
 
-  it('should render MASDeleteModal with children', () => {
+  it('should render DeleteModal with children', () => {
     //arrange
     const selectedInstanceName = 'test-instance';
     const onKeyPress = jest.fn();
     const handleInstanceName = jest.fn();
 
     render(
-      <MASDeleteModal {...props}>
+      <DeleteModal {...props}>
         <>
           <label
             htmlFor='instance-name-input'
@@ -109,10 +113,10 @@ describe('<MASDeleteModal/>', () => {
             autoFocus={true}
           />
         </>
-      </MASDeleteModal>
+      </DeleteModal>
     );
 
-    const inputField: any = screen.getByRole('textbox');
+    const inputField = screen.getByRole('textbox');
     //act
     act(() => {
       userEvent.type(inputField, 'test input');
