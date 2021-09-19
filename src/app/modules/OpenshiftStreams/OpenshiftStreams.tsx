@@ -4,57 +4,59 @@ import { useTranslation } from 'react-i18next';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import dayjs from 'dayjs';
 import {
-  Level,
-  LevelItem,
-  PageSection,
-  PageSectionVariants,
-  TextContent,
-  Text,
   AlertVariant,
   Button,
   ButtonVariant,
+  Card,
+  Level,
+  LevelItem,
   Modal,
   ModalVariant,
-  Card,
+  PageSection,
+  PageSectionVariants,
+  Text,
+  TextContent,
 } from '@patternfly/react-core';
 import {
-  useRootModalContext,
   KAFKA_MODAL_TYPES,
+  MASEmptyState,
   MASEmptyStateVariant,
+  MASLoading,
   usePagination,
+  useRootModalContext,
 } from '@app/common';
 import { useTimeout } from '@app/hooks/useTimeout';
 import {
-  isServiceApiError,
   ErrorCodes,
-  isMobileTablet,
   InstanceStatus,
   InstanceType,
+  isMobileTablet,
+  isServiceApiError,
+  MAX_POLL_INTERVAL,
 } from '@app/utils';
-import { MASLoading, MASEmptyState } from '@app/common';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
-import { MAX_POLL_INTERVAL } from '@app/utils';
 import {
   QuickStartContext,
   QuickStartContextValues,
 } from '@patternfly/quickstarts';
 import {
-  StreamsTableView,
   FilterType,
   InstanceDrawer,
   InstanceDrawerProps,
+  StreamsTableView,
 } from './components';
 import {
+  CloudProvider,
+  Configuration,
   DefaultApi,
   KafkaRequest,
   KafkaRequestList,
-  CloudProvider,
-  Configuration,
 } from '@rhoas/kafka-management-sdk';
 import './OpenshiftStreams.css';
 import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import { useFederated } from '@app/contexts';
+import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
 
 export type OpenShiftStreamsProps = Pick<
   InstanceDrawerProps,
@@ -65,7 +67,7 @@ export type OpenShiftStreamsProps = Pick<
 
 type SelectedInstance = {
   instanceDetail: KafkaRequest;
-  activeTab: 'Details' | 'Connection';
+  activeTab: InstanceDrawerTabs.DETAILS | InstanceDrawerTabs.CONNECTION;
 };
 
 const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
@@ -192,11 +194,17 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   };
 
   const onViewInstance = (instance: KafkaRequest) => {
-    setSelectedInstance({ instanceDetail: instance, activeTab: 'Details' });
+    setSelectedInstance({
+      instanceDetail: instance,
+      activeTab: InstanceDrawerTabs.DETAILS,
+    });
   };
 
   const onViewConnection = (instance: KafkaRequest) => {
-    setSelectedInstance({ instanceDetail: instance, activeTab: 'Connection' });
+    setSelectedInstance({
+      instanceDetail: instance,
+      activeTab: InstanceDrawerTabs.CONNECTION,
+    });
   };
 
   const getFilterQuery = () => {
@@ -549,7 +557,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       <InstanceDrawer
         mainToggle={mainToggle}
         isExpanded={selectedInstance != null}
-        activeTab={activeTab}
+        initialTab={activeTab}
         isLoading={instanceDetail === undefined}
         instanceDetail={instanceDetail}
         onClose={onCloseDrawer}

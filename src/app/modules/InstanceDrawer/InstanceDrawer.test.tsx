@@ -7,6 +7,7 @@ import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 import { MemoryRouter } from 'react-router-dom';
+import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
@@ -43,7 +44,7 @@ const setup = (
   isExpanded: boolean,
   mainToggle: boolean,
   onClose: () => void,
-  activeTab: 'Details' | 'Connection',
+  activeTab: InstanceDrawerTabs,
   instance?: KafkaRequest
 ) => {
   return render(
@@ -53,9 +54,8 @@ const setup = (
           panelContent={
             <InstanceDrawer
               isExpanded={isExpanded}
-              mainToggle={mainToggle}
               onClose={onClose}
-              activeTab={activeTab}
+              initialTab={activeTab}
               instanceDetail={instance || instanceDetail}
               isLoading={instanceDetail === undefined}
               data-ouia-app-id='controlPlane-streams'
@@ -75,7 +75,13 @@ const setup = (
 };
 describe('Instance Drawer', () => {
   it('should render drawer', async () => {
-    const { getByTestId } = setup(jest.fn(), true, false, jest.fn(), 'Details');
+    const { getByTestId } = setup(
+      jest.fn(),
+      true,
+      false,
+      jest.fn(),
+      InstanceDrawerTabs.DETAILS
+    );
     await waitFor(() =>
       expect(getByTestId('mk--instance__drawer')).toBeInTheDocument()
     );
@@ -94,9 +100,8 @@ describe('Instance Drawer', () => {
                 }
                 isExpanded={true}
                 isLoading={instanceDetail === undefined}
-                mainToggle={false}
                 onClose={jest.fn()}
-                activeTab={'Details'}
+                initialTab={InstanceDrawerTabs.DETAILS}
               >
                 <></>
               </InstanceDrawer>
@@ -115,7 +120,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      'Details'
+      InstanceDrawerTabs.DETAILS
     );
 
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
@@ -124,7 +129,13 @@ describe('Instance Drawer', () => {
   });
 
   it('should render instance detail as active tab', () => {
-    const { getByRole } = setup(jest.fn(), true, false, jest.fn(), 'Details');
+    const { getByRole } = setup(
+      jest.fn(),
+      true,
+      false,
+      jest.fn(),
+      InstanceDrawerTabs.DETAILS
+    );
 
     const detailsButton = getByRole('button', { name: /Details/i });
     expect(detailsButton).toBeInTheDocument();
@@ -145,7 +156,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      'Connection'
+      InstanceDrawerTabs.CONNECTION
     );
 
     const detailsButton = getByRole('button', { name: /Details/i });
@@ -166,7 +177,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      'Connection'
+      InstanceDrawerTabs.CONNECTION
     );
 
     const detailsButton = getByRole('button', { name: /Details/i });
@@ -188,7 +199,13 @@ describe('Instance Drawer', () => {
 
 describe('Drawer Details Tab', () => {
   it('should render details in toggle off', () => {
-    const { getByText } = setup(jest.fn(), true, false, jest.fn(), 'Details');
+    const { getByText } = setup(
+      jest.fn(),
+      true,
+      false,
+      jest.fn(),
+      InstanceDrawerTabs.DETAILS
+    );
 
     expect(getByText('cloud_provider')).toBeInTheDocument();
     expect(getByText('region')).toBeInTheDocument();
@@ -200,23 +217,6 @@ describe('Drawer Details Tab', () => {
     expect(getByText('us_east_north_virginia')).toBeInTheDocument();
     expect(getByText('test_id')).toBeInTheDocument();
     expect(getByText('test instance')).toBeInTheDocument();
-  });
-
-  it('should render details in toggle on', () => {
-    const { getByText } = setup(jest.fn(), true, true, jest.fn(), 'Details');
-
-    expect(getByText('cloud_provider')).toBeInTheDocument();
-    expect(getByText('region')).toBeInTheDocument();
-    expect(getByText('id')).toBeInTheDocument();
-    expect(getByText('owner')).toBeInTheDocument();
-    expect(getByText('created')).toBeInTheDocument();
-    expect(getByText('updated')).toBeInTheDocument();
-    expect(getByText('amazon_web_services')).toBeInTheDocument();
-    expect(getByText('us_east_north_virginia')).toBeInTheDocument();
-    expect(getByText('test_id')).toBeInTheDocument();
-    expect(getByText('test instance')).toBeInTheDocument();
-    expect(getByText('topics')).toBeInTheDocument();
-    expect(getByText('consumer_groups')).toBeInTheDocument();
   });
 });
 
@@ -227,63 +227,12 @@ describe('Drawer Connection Tab', () => {
       true,
       false,
       jest.fn(),
-      'Connection'
+      InstanceDrawerTabs.CONNECTION
     );
     expect(
       getByText('drawer_resource_tab_body_description_1')
     ).toBeInTheDocument();
     expect(getByText('bootstrap_server')).toBeInTheDocument();
-  });
-
-  it('should render connection tab with resource and sample code tabs in toggle on', () => {
-    const { getByText, getByRole } = setup(
-      jest.fn(),
-      true,
-      true,
-      jest.fn(),
-      'Connection'
-    );
-    expect(
-      getByText('drawer_resource_tab_body_description_1')
-    ).toBeInTheDocument();
-    expect(getByText('bootstrap_server')).toBeInTheDocument();
-
-    expect(getByText('resources')).toBeInTheDocument();
-    expect(getByText('sample_code')).toBeInTheDocument();
-    expect(getByText('resources')).toBeInTheDocument();
-    expect(getByText('sample_code')).toBeInTheDocument();
-
-    const resourceButton = getByRole('button', { name: /resources/i });
-    expect(resourceButton).toBeInTheDocument();
-
-    const resourcesTabClasses =
-      resourceButton?.parentElement?.className?.split(' ');
-    expect(resourcesTabClasses).toContain('pf-m-current');
-  });
-
-  it('should render connection tab with sample code as active tab in toggle on', () => {
-    const { getByText, getByRole } = setup(
-      jest.fn(),
-      true,
-      true,
-      jest.fn(),
-      'Connection'
-    );
-    expect(getByText('drawer_resource_tab_body_description_1')).toBeDefined();
-    expect(getByText('bootstrap_server')).toBeDefined();
-
-    expect(getByText('resources')).toBeDefined();
-    expect(getByText('sample_code')).toBeDefined();
-
-    const resourceButton = getByRole('button', { name: /resources/i });
-    const sampleButton = getByRole('button', { name: /sample/i });
-    expect(resourceButton).toBeInTheDocument();
-    expect(sampleButton).toBeInTheDocument();
-
-    userEvent.click(sampleButton);
-    const sampleCodeTabClasses =
-      sampleButton?.parentElement?.className?.split(' ');
-    expect(sampleCodeTabClasses).toContain('pf-m-current');
   });
 
   it('should render server responded bootstrap server host', () => {
@@ -296,10 +245,12 @@ describe('Drawer Connection Tab', () => {
       true,
       false,
       jest.fn(),
-      'Connection'
+      InstanceDrawerTabs.CONNECTION
     );
 
-    const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
+    const clipboardInput = getByRole('textbox', {
+      name: /Copyable/i,
+    }) as HTMLInputElement;
     expect(clipboardInput.value).toEqual(instance.bootstrap_server_host);
   });
 
@@ -313,10 +264,12 @@ describe('Drawer Connection Tab', () => {
       true,
       false,
       jest.fn(),
-      'Connection',
+      InstanceDrawerTabs.CONNECTION,
       instance
     );
-    const clipboardInput: any = getByRole('textbox', { name: /Copyable/i });
+    const clipboardInput = getByRole('textbox', {
+      name: /Copyable/i,
+    }) as HTMLInputElement;
     expect(clipboardInput.value).toEqual(
       instanceDetail.bootstrap_server_host + ':443'
     );

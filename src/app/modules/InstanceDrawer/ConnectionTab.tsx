@@ -3,34 +3,29 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Button,
-  TextContent,
-  Text,
-  TextVariants,
+  ButtonVariant,
   ClipboardCopy,
   Label,
   Popover,
   Skeleton,
-  ButtonVariant,
+  Text,
+  TextContent,
+  TextVariants,
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
-import { useRootModalContext, KAFKA_MODAL_TYPES } from '@app/common';
-import { KafkaRequest } from '@rhoas/kafka-management-sdk';
+import { KAFKA_MODAL_TYPES, useRootModalContext } from '@app/common';
 
-export type ResourcesTabProps = {
-  mainToggle?: boolean;
+export type ConnectionTabProps = {
   externalServer?: string;
-  instance: KafkaRequest | undefined;
   isKafkaPending?: boolean;
   tokenEndPointUrl: string;
 };
 
-export const ResourcesTab: React.FC<ResourcesTabProps> = ({
-  mainToggle,
+export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   externalServer,
-  instance = {},
   isKafkaPending,
   tokenEndPointUrl,
-}: ResourcesTabProps) => {
+}: ConnectionTabProps) => {
   const { t } = useTranslation();
   const { showModal } = useRootModalContext();
 
@@ -122,19 +117,8 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
           {t('serviceAccount.sasl_plain_description')}
         </Text>
       </TextContent>
-      {mainToggle && (
-        <>
-          <TextContent className='pf-u-pb-sm pf-u-pt-lg'>
-            <Text component={TextVariants.h5}>
-              Producer endpoint and credentials
-            </Text>
-            <Text component={TextVariants.small}>
-              {t('drawer_resource_tab_body_description_3')}
-            </Text>
-          </TextContent>
-          <ClipboardCopy>https://:30123</ClipboardCopy>
-        </>
-      )}
     </div>
   );
 };
+
+export default ConnectionTab;
