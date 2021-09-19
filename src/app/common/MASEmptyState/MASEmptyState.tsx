@@ -59,7 +59,11 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   emptyStateBodyProps,
   children,
 }: MASEmptyStateProps) => {
-  const { variant: buttonVariant = ButtonVariant.primary, onClick, ...restButtonProps } = buttonProps || {};
+  const {
+    variant: buttonVariant = ButtonVariant.primary,
+    onClick,
+    ...restButtonProps
+  } = buttonProps || {};
   const { title, ...restTitleProps } = titleProps || {};
   const { body, ...restEmptyStateBodyProps } = emptyStateBodyProps || {};
   const {
@@ -68,7 +72,9 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
     ...restEmptyStateProps
   } = emptyStateProps || {};
 
-  const NotFoundImg = () => <img src={NotFoundIcon} alt="Not found page" width="128px" />;
+  const NotFoundImg = () => (
+    <img src={NotFoundIcon} alt='Not found page' width='128px' />
+  );
 
   const getVariantConfig = () => {
     let variantConfig: any = {};
@@ -147,7 +153,9 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           {title}
         </Title>
       )}
-      {body && <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>}
+      {body && (
+        <EmptyStateBody {...restEmptyStateBodyProps}>{body}</EmptyStateBody>
+      )}
       {buttonProps?.title && (
         <Button variant={buttonVariant} onClick={onClick} {...restButtonProps}>
           {buttonProps?.title}

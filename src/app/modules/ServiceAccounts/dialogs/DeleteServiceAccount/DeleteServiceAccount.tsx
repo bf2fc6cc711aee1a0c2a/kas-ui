@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { MASDeleteModal, useRootModalContext } from '@app/common';
 import { isServiceApiError } from '@app/utils';
-import { Configuration, SecurityApi, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
+import {
+  Configuration,
+  SecurityApi,
+  ServiceAccountListItem,
+} from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 
 const DeleteServiceAccount: React.FunctionComponent = () => {
@@ -14,7 +18,8 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
   } = useConfig();
   const { addAlert } = useAlert();
   const { store, hideModal } = useRootModalContext();
-  const { fetchServiceAccounts, serviceAccountToDelete } = store?.modalProps || {};
+  const { fetchServiceAccounts, serviceAccountToDelete } =
+    store?.modalProps || {};
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -22,7 +27,9 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
     hideModal();
   };
 
-  const deleteServiceAccount = async (serviceAccount: ServiceAccountListItem | undefined) => {
+  const deleteServiceAccount = async (
+    serviceAccount: ServiceAccountListItem | undefined
+  ) => {
     const serviceAccountId = serviceAccount?.id;
     if (serviceAccountId === undefined) {
       throw new Error('service account id not defined');
@@ -38,15 +45,19 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
       setIsLoading(true);
 
       try {
-        await apisService.deleteServiceAccountById(serviceAccountId).then(() => {
-          handleModalToggle();
-          setIsLoading(false);
-          addAlert({
-            title: t('serviceAccount.service_account_successfully_deleted', { name: serviceAccount?.name }),
-            variant: AlertVariant.success,
+        await apisService
+          .deleteServiceAccountById(serviceAccountId)
+          .then(() => {
+            handleModalToggle();
+            setIsLoading(false);
+            addAlert({
+              title: t('serviceAccount.service_account_successfully_deleted', {
+                name: serviceAccount?.name,
+              }),
+              variant: AlertVariant.success,
+            });
+            fetchServiceAccounts();
           });
-          fetchServiceAccounts();
-        });
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -76,7 +87,8 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
       }}
     >
       <p>
-        <b>{serviceAccountToDelete?.name}</b> {t('serviceAccount.will_be_deleted')}
+        <b>{serviceAccountToDelete?.name}</b>{' '}
+        {t('serviceAccount.will_be_deleted')}
       </p>
     </MASDeleteModal>
   );

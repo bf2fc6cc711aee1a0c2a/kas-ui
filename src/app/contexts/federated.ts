@@ -6,5 +6,8 @@ export type FederatedProps = {
   shouldOpenCreateModal: () => Promise<boolean>;
 };
 
-export const FederatedContext = React.createContext<FederatedProps | undefined>(undefined);
-export const useFederated = (): FederatedProps | undefined => useContext(FederatedContext);
+export const FederatedContext = React.createContext<FederatedProps | undefined>(
+  undefined
+);
+export const useFederated = (): FederatedProps | undefined =>
+  useContext(FederatedContext);

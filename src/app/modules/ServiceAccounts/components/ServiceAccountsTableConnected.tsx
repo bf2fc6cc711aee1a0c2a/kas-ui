@@ -1,9 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import React, { useEffect, useState } from 'react';
-import { Configuration, SecurityApi, ServiceAccountList, ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
+import {
+  Configuration,
+  SecurityApi,
+  ServiceAccountList,
+  ServiceAccountListItem,
+} from '@rhoas/kafka-management-sdk';
 import { ErrorCodes, isServiceApiError, sortValues } from '@app/utils';
-import { AlertVariant, PageSection, PageSectionVariants } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  PageSection,
+  PageSectionVariants,
+} from '@patternfly/react-core';
 import { UserUnauthorized } from '@app/modules/ServiceAccounts/components/UserUnauthorized';
 import { MASLoading } from '@app/common';
 import { ServiceAccountsEmpty } from '@app/modules/ServiceAccounts/components/ServiceAccountsEmpty';
@@ -15,7 +24,9 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
   const auth = useAuth();
   const config = useConfig();
 
-  const [serviceAccountItems, setServiceAccountItems] = useState<ServiceAccountListItem[] | undefined>();
+  const [serviceAccountItems, setServiceAccountItems] = useState<
+    ServiceAccountListItem[] | undefined
+  >();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
   const handleServerError = (error: Error) => {
@@ -29,7 +40,11 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
       setIsUserUnauthorized(true);
     } else {
       addAlert &&
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert({
+          variant: AlertVariant.danger,
+          title: t('common.something_went_wrong'),
+          description: reason,
+        });
     }
   };
 
@@ -46,11 +61,8 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
         await apisService.getServiceAccounts().then((response) => {
           const serviceAccounts: ServiceAccountList = response?.data;
           const items = serviceAccounts?.items || [];
-          const sortedServiceAccounts: ServiceAccountListItem[] | undefined = sortValues<ServiceAccountListItem>(
-            items,
-            'name',
-            'asc'
-          );
+          const sortedServiceAccounts: ServiceAccountListItem[] | undefined =
+            sortValues<ServiceAccountListItem>(items, 'name', 'asc');
           setServiceAccountItems(sortedServiceAccounts);
         });
       } catch (error) {
@@ -69,7 +81,10 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
 
   if (serviceAccountItems === undefined) {
     return (
-      <PageSection variant={PageSectionVariants.light} padding={{ default: 'noPadding' }}>
+      <PageSection
+        variant={PageSectionVariants.light}
+        padding={{ default: 'noPadding' }}
+      >
         <MASLoading />
       </PageSection>
     );

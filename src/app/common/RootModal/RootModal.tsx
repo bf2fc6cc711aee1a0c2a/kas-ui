@@ -1,19 +1,41 @@
 import React, { useState, createContext, useContext } from 'react';
 import { MASGenerateCredentialsModal, MASLoading } from '@app/common';
 
-const CreateInstance = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstance'));
-const DeleteInstance = React.lazy(() => import('@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstance'));
+const CreateInstance = React.lazy(
+  () =>
+    import(
+      '@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstance'
+    )
+);
+const DeleteInstance = React.lazy(
+  () =>
+    import(
+      '@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstance'
+    )
+);
 const DeleteInstanceConnected = React.lazy(
-  () => import('@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstanceConnected')
+  () =>
+    import(
+      '@app/modules/OpenshiftStreams/dialogs/DeleteInstance/DeleteInstanceConnected'
+    )
 );
 const CreateServiceAccount = React.lazy(
-  () => import('@app/modules/ServiceAccounts/dialogs/CreateServiceAccount/CreateServiceAccount')
+  () =>
+    import(
+      '@app/modules/ServiceAccounts/dialogs/CreateServiceAccount/CreateServiceAccount'
+    )
 );
 const DeleteServiceAccount = React.lazy(
-  () => import('@app/modules/ServiceAccounts/dialogs/DeleteServiceAccount/DeleteServiceAccount')
+  () =>
+    import(
+      '@app/modules/ServiceAccounts/dialogs/DeleteServiceAccount/DeleteServiceAccount'
+    )
 );
 const ResetServiceAccount = React.lazy(
-  () => import('@app/modules/ServiceAccounts/dialogs/ResetServiceAccount/ResetServiceAccount')
+  () =>
+    import(
+      '@app/modules/ServiceAccounts/dialogs/ResetServiceAccount/ResetServiceAccount'
+    )
 );
 
 export const KAFKA_MODAL_TYPES = {
@@ -43,13 +65,18 @@ type RootModalContext = {
 };
 
 const initalState: RootModalContext = {
-  showModal: () => {},
-  hideModal: () => {},
+  showModal: () => {
+    // No-op
+  },
+  hideModal: () => {
+    // No-op
+  },
   store: {},
 };
 
 const RootModalContext = createContext(initalState);
-export const useRootModalContext = (): RootModalContext => useContext(RootModalContext);
+export const useRootModalContext = (): RootModalContext =>
+  useContext(RootModalContext);
 
 type RootModalStore = {
   modalType: string;
@@ -83,7 +110,7 @@ export const RootModal = ({ children }) => {
     }
     return (
       <React.Suspense fallback={null}>
-        <ModalComponent id="global-modal" {...modalProps} />
+        <ModalComponent id='global-modal' {...modalProps} />
       </React.Suspense>
     );
   };

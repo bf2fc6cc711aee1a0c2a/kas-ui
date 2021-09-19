@@ -8,7 +8,9 @@ export interface IApiErrorData {
   reason: string;
 }
 
-const isServiceApiError = (error: unknown): error is AxiosError<IApiErrorData> => {
+const isServiceApiError = (
+  error: unknown
+): error is AxiosError<IApiErrorData> => {
   return (error as AxiosError<IApiErrorData>).response?.data.code !== undefined;
 };
 

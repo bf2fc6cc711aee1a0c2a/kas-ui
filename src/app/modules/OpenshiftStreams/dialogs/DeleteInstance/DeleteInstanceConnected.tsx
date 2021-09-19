@@ -18,11 +18,13 @@ const DeleteInstanceConnected = () => {
   const { apiBasePath: basePath } = kas || {};
 
   const { store, hideModal } = useRootModalContext();
-  const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
+  const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } =
+    store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(t, status, name);
+  const { title, confirmActionLabel, description } =
+    getDeleteInstanceModalConfig(t, status, name);
 
   const onCloseModal = () => {
     setIsOpenDeleteInstanceModal && setIsOpenDeleteInstanceModal(false);

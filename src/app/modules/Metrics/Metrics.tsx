@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Grid, GridItem, PageSection } from '@patternfly/react-core';
-import { UsedDiskSpaceChart, IncomingOutgoingBytesPerTopic } from '@app/modules/Metrics/components';
+import {
+  UsedDiskSpaceChart,
+  IncomingOutgoingBytesPerTopic,
+} from '@app/modules/Metrics/components';
 import { ChartEmptyState } from './components/ChartEmptyState';
 
 export interface MetricsProps {

@@ -52,7 +52,10 @@ const statusOptions: KeyValueOptions[] = [
 ];
 
 const getCloudProviderDisplayName = (value: string): string => {
-  return cloudProviderOptions.find((option) => option.value === value)?.label || value;
+  return (
+    cloudProviderOptions.find((option) => option.value === value)?.label ||
+    value
+  );
 };
 
 const cloudRegionOptions: KeyValueOptions[] = [
@@ -85,7 +88,11 @@ const MAX_SERVICE_ACCOUNT_DESC_LENGTH = 255;
 const MAX_POLL_INTERVAL = 5000;
 
 // function to get exact number of skeleton count required for the current page
-const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: number): number => {
+const getLoadingRowsCount = (
+  page: number,
+  perPage: number,
+  expectedTotal: number
+): number => {
   // initiaise loadingRowCount by perPage
   let loadingRowCount = perPage;
   /*
@@ -97,13 +104,16 @@ const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: numbe
   if (expectedTotal && expectedTotal > 0) {
     // get total number of pages
     const totalPage =
-      expectedTotal % perPage !== 0 ? Math.floor(expectedTotal / perPage) + 1 : Math.floor(expectedTotal / perPage);
+      expectedTotal % perPage !== 0
+        ? Math.floor(expectedTotal / perPage) + 1
+        : Math.floor(expectedTotal / perPage);
     // check whether the current page is the last page
     if (page === totalPage) {
       // check whether to total expected count is greater than perPage count
       if (expectedTotal > perPage) {
         // assign the calculated skelton rows count to display the exact number of expected loading skelton rows
-        loadingRowCount = expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
+        loadingRowCount =
+          expectedTotal % perPage === 0 ? perPage : expectedTotal % perPage;
       } else {
         loadingRowCount = expectedTotal;
       }
@@ -113,9 +123,16 @@ const getLoadingRowsCount = (page: number, perPage: number, expectedTotal: numbe
   return loadingRowCount !== 0 ? loadingRowCount : perPage;
 };
 
-const sortValues = <T>(items: T[] | undefined, key: string, order = 'asc'): T[] | undefined => {
+const sortValues = <T>(
+  items: T[] | undefined,
+  key: string,
+  order = 'asc'
+): T[] | undefined => {
   const compareValue = (a: T, b: T) => {
-    if (!Object.prototype.hasOwnProperty.call(a, key) || Object.prototype.hasOwnProperty.call(b, key)) {
+    if (
+      !Object.prototype.hasOwnProperty.call(a, key) ||
+      Object.prototype.hasOwnProperty.call(b, key)
+    ) {
       // property doesn't exist on either object
       return 0;
     }
@@ -134,13 +151,17 @@ const sortValues = <T>(items: T[] | undefined, key: string, order = 'asc'): T[] 
   return items?.sort(compareValue);
 };
 
-const getFormattedDate = (date: string | Date, translatePostfix: string): string => {
+const getFormattedDate = (
+  date: string | Date,
+  translatePostfix: string
+): string => {
   date = typeof date === 'string' ? new Date(date) : date;
   return formatDistance(date, new Date()) + ' ' + translatePostfix;
 };
 
 const getModalAppendTo = (): HTMLElement =>
-  (document.getElementById('chrome-app-render-root') as HTMLElement) || document.body;
+  (document.getElementById('chrome-app-render-root') as HTMLElement) ||
+  document.body;
 
 const isMobileTablet = (): boolean => {
   let check = false;

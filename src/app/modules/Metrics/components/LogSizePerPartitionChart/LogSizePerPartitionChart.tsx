@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
 import { isServiceApiError } from '@app/utils';
-import { AlertVariant, Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  Bullseye,
+  Card,
+  CardTitle,
+  CardBody,
+  Spinner,
+} from '@patternfly/react-core';
 import {
   Chart,
   ChartArea,
@@ -17,7 +24,10 @@ import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_b
 import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
 import byteSize from 'byte-size';
 import { ChartEmptyState, ChartPopover } from '@app/modules/Metrics/components';
-import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
+import {
+  getLargestByteSize,
+  convertToSpecifiedByte,
+} from '@app/modules/Metrics/utils';
 
 export type Partition = {
   name: string;
@@ -71,7 +81,8 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
 
   const colors = [chart_color_green_300.value, chart_color_blue_300.value];
 
-  const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+  const handleResize = () =>
+    containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
 
   // Functions
@@ -88,9 +99,12 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
-          'kafka_log_log_size',
-        ]);
+        const data = await apisService.getMetricsByRangeQuery(
+          kafkaID,
+          timeDuration * 60,
+          timeInterval * 60,
+          ['kafka_log_log_size']
+        );
 
         const partitionArray: Partition[] = [];
 
@@ -104,7 +118,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
               data: [],
             } as Partition;
 
-            const isTopicInArray = partitionArray.some((topic) => topic.name === topicName);
+            const isTopicInArray = partitionArray.some(
+              (topic) => topic.name === topicName
+            );
 
             item.values?.forEach((value) => {
               if (value.timestamp == undefined) {
@@ -134,7 +150,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
           });
           // Check if atleast one topic exists that isn't Strimzi Canary or Consumer Offsets - Keep this here for testing purposes
           const filteredTopics = partitionArray.filter(
-            (topic) => topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets'
+            (topic) =>
+              topic.name !== '__strimzi_canary' &&
+              topic.name !== '__consumer_offsets'
           );
 
           if (filteredTopics.length < 1) {
@@ -150,7 +168,11 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert({
+          variant: AlertVariant.danger,
+          title: t('common.something_went_wrong'),
+          description: reason,
+        });
       }
     }
   };
@@ -179,7 +201,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
       const area: Array<PartitionChartData> = [];
 
       const getCurrentLengthOfData = () => {
-        const timestampDiff = partition.data[partition.data.length - 1].timestamp - partition.data[0].timestamp;
+        const timestampDiff =
+          partition.data[partition.data.length - 1].timestamp -
+          partition.data[0].timestamp;
         const minutes = timestampDiff / 1000 / 60;
         return minutes;
       };
@@ -188,7 +212,9 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
 
       if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-          const newtimestamp = partition.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
+          const newtimestamp =
+            partition.data[0].timestamp -
+            (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newtimestamp);
           const time = date.getHours() + ':' + date.getMinutes();
           area.push({ name: partition.name, x: time, y: 0 });
@@ -211,7 +237,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
 
   return (
     <Card>
-      <CardTitle component="h2">
+      <CardTitle component='h2'>
         {t('metrics.log_size_per_partition')}{' '}
         <ChartPopover
           title={t('metrics.log_size_per_partition')}
@@ -228,15 +254,17 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
                 byteSize && (
                   <Chart
                     ariaDesc={t('metrics.log_size_per_partition')}
-                    ariaTitle="Log Size"
+                    ariaTitle='Log Size'
                     containerComponent={
                       <ChartVoronoiContainer
                         labels={({ datum }) => `${datum.name}: ${datum.y}`}
                         constrainToVisibleArea
                       />
                     }
-                    legendPosition="bottom-left"
-                    legendComponent={<ChartLegend data={legend} itemsPerRow={itemsPerRow} />}
+                    legendPosition='bottom-left'
+                    legendComponent={
+                      <ChartLegend data={legend} itemsPerRow={itemsPerRow} />
+                    }
                     height={350}
                     padding={{
                       bottom: 110,
@@ -249,25 +277,32 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
                     legendAllowWrap={true}
                   >
                     <ChartAxis label={'Time'} tickCount={6} />
-                    <ChartAxis dependentAxis tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`} />
+                    <ChartAxis
+                      dependentAxis
+                      tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+                    />
                     <ChartGroup>
                       {chartData.map((value, index) => (
-                        <ChartArea key={`chart-area-${index}`} data={value.area} interpolation="monotoneX" />
+                        <ChartArea
+                          key={`chart-area-${index}`}
+                          data={value.area}
+                          interpolation='monotoneX'
+                        />
                       ))}
                     </ChartGroup>
                   </Chart>
                 )
               ) : (
                 <ChartEmptyState
-                  title="No topics yet"
-                  body="Data will show when topics exist and are in use."
+                  title='No topics yet'
+                  body='Data will show when topics exist and are in use.'
                   noTopics
                 />
               )
             ) : (
               <ChartEmptyState
-                title="No data"
-                body="We’re creating your Kafka instance, so some details aren’t yet available."
+                title='No data'
+                body='We’re creating your Kafka instance, so some details aren’t yet available.'
                 noData
               />
             )

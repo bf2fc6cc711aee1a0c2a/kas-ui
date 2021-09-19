@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Modal, ModalVariant, AlertVariant } from '@patternfly/react-core';
+import {
+  Button,
+  Modal,
+  ModalVariant,
+  AlertVariant,
+} from '@patternfly/react-core';
 import { useRootModalContext, KAFKA_MODAL_TYPES } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import { getModalAppendTo } from '@app/utils/utils';
@@ -43,15 +48,17 @@ const ResetServiceAccount: React.FunctionComponent = () => {
           })
         );
         setIsModalLoading(true);
-        await apisService.resetServiceAccountCreds(serviceAccountId).then((response) => {
-          const credential = response?.data;
-          hideModal(); // Close first modal
-          setIsModalLoading(false);
-          showModal(KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS, {
-            credential,
-            title: t('serviceAccount.reset_service_account_credentials'),
+        await apisService
+          .resetServiceAccountCreds(serviceAccountId)
+          .then((response) => {
+            const credential = response?.data;
+            hideModal(); // Close first modal
+            setIsModalLoading(false);
+            showModal(KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS, {
+              credential,
+              title: t('serviceAccount.reset_service_account_credentials'),
+            });
           });
-        });
       } catch (error) {
         handleServerError(error);
         setIsModalLoading(false);
@@ -68,7 +75,7 @@ const ResetServiceAccount: React.FunctionComponent = () => {
 
   return (
     <Modal
-      id="reset-service-account-modal"
+      id='reset-service-account-modal'
       variant={ModalVariant.medium}
       title={`${t('serviceAccount.reset_service_account_credentials')}?`}
       isOpen={true}
@@ -76,23 +83,26 @@ const ResetServiceAccount: React.FunctionComponent = () => {
       appendTo={getModalAppendTo}
       actions={[
         <Button
-          key="create"
-          variant="primary"
-          type="submit"
+          key='create'
+          variant='primary'
+          type='submit'
           onClick={() => resetServiceAccount(serviceAccountToReset)}
           spinnerAriaValueText={t('common.submitting_request')}
           isLoading={isModalLoading}
         >
           {t('serviceAccount.reset')}
         </Button>,
-        <Button key="cancel" variant="link" onClick={handleModalToggle}>
+        <Button key='cancel' variant='link' onClick={handleModalToggle}>
           {t('common.cancel')}
         </Button>,
       ]}
     >
       <span
         dangerouslySetInnerHTML={{
-          __html: t('serviceAccount.client_secret_will_be_reset', { serviceAccountId, client_id }),
+          __html: t('serviceAccount.client_secret_will_be_reset', {
+            serviceAccountId,
+            client_id,
+          }),
         }}
       />
     </Modal>

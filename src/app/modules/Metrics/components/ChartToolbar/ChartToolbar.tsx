@@ -1,5 +1,13 @@
 import React from 'react';
-import { Button, CardTitle, Divider, Level, LevelItem, Toolbar, ToolbarContent } from '@patternfly/react-core';
+import {
+  Button,
+  CardTitle,
+  Divider,
+  Level,
+  LevelItem,
+  Toolbar,
+  ToolbarContent,
+} from '@patternfly/react-core';
 import { SyncIcon } from '@patternfly/react-icons';
 import { FilterByTopic } from './FilterByTopic';
 import { FilterByTime } from './FilterByTime';
@@ -36,7 +44,7 @@ export const ChartToolbar = ({
     <>
       <Level>
         <LevelItem>
-          <CardTitle component="h2">{title}</CardTitle>
+          <CardTitle component='h2'>{title}</CardTitle>
         </LevelItem>
         <LevelItem>
           {showTopicFilter ? (
@@ -55,7 +63,11 @@ export const ChartToolbar = ({
                   disableToolbar={!showTopicToolbar}
                   keyText={'topic-metrics-time-filter'}
                 />
-                <Button variant="plain" aria-label="sync" onClick={onRefreshTopicToolbar}>
+                <Button
+                  variant='plain'
+                  aria-label='sync'
+                  onClick={onRefreshTopicToolbar}
+                >
                   <SyncIcon />
                 </Button>
               </ToolbarContent>
@@ -69,7 +81,11 @@ export const ChartToolbar = ({
                   keyText={'kafka-metrics-time-filter'}
                   disableToolbar={!showKafkaToolbar}
                 />
-                <Button variant="plain" aria-label="sync" onClick={onRefreshKafkaToolbar}>
+                <Button
+                  variant='plain'
+                  aria-label='sync'
+                  onClick={onRefreshKafkaToolbar}
+                >
                   <SyncIcon />
                 </Button>
               </ToolbarContent>
