@@ -11,6 +11,6 @@ declare module '*.rdf';
 declare module '*.ttl';
 declare module '*.pdf';
 declare module '*.json' {
-    const value: any;
-    export default value;
-  }
+  const value: any;
+  export default value;
+}

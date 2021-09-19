@@ -1,1 +1,1 @@
-export * from "./MASPagination";
+export * from './MASPagination';

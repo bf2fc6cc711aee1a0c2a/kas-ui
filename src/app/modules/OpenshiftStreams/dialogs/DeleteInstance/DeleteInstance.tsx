@@ -32,7 +32,9 @@ export const DeleteInstanceModal = (props) => {
 
   const isConfirmButtonDisabled = () => {
     if (instanceStatus === InstanceStatus.READY) {
-      if (instanceNameInput?.toLowerCase() === selectedInstanceName?.toLowerCase()) {
+      if (
+        instanceNameInput?.toLowerCase() === selectedInstanceName?.toLowerCase()
+      ) {
         return false;
       }
       return true;
@@ -42,7 +44,8 @@ export const DeleteInstanceModal = (props) => {
 
   const onKeyPress = (event) => {
     if (event.key === 'Enter' && !isConfirmButtonDisabled()) {
-      confirmButtonProps?.onClick && confirmButtonProps.onClick(selectedItemData);
+      confirmButtonProps?.onClick &&
+        confirmButtonProps.onClick(selectedItemData);
     }
   };
 

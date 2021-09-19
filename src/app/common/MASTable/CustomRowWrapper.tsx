@@ -12,19 +12,24 @@ export type CustomRowWrapperContextProps = {
 
 const CustomRowWrapperContext = createContext<CustomRowWrapperContextProps>({
   activeRow: '',
-  onRowClick: () => {},
+  onRowClick: () => {
+    // No-op
+  },
   loggedInUser: '',
 });
 
 export const CustomRowWrapperProvider = CustomRowWrapperContext.Provider;
 
 export const CustomRowWrapper = (rowWrapperProps) => {
-  const { activeRow, onRowClick, rowDataTestId, loggedInUser } = useContext(CustomRowWrapperContext);
+  const { activeRow, onRowClick, rowDataTestId, loggedInUser } = useContext(
+    CustomRowWrapperContext
+  );
   const { trRef, className, rowProps, row, ...props } = rowWrapperProps || {};
   const { rowIndex } = rowProps;
   const { isExpanded, originalData } = row;
   const isRowDeleted =
-    originalData?.status === InstanceStatus.DEPROVISION || originalData?.status === InstanceStatus.DELETED;
+    originalData?.status === InstanceStatus.DEPROVISION ||
+    originalData?.status === InstanceStatus.DELETED;
   const isLoggedInUserOwner = loggedInUser === originalData?.owner;
   const isRowDisabled = isRowDeleted || !isLoggedInUserOwner;
 
@@ -36,11 +41,18 @@ export const CustomRowWrapper = (rowWrapperProps) => {
       className={css(
         className,
         'pf-c-table-row__item',
-        isRowDeleted ? 'pf-m-disabled' : isLoggedInUserOwner && 'pf-m-selectable',
-        !isRowDisabled && activeRow && activeRow === originalData?.name && 'pf-m-selected'
+        isRowDeleted
+          ? 'pf-m-disabled'
+          : isLoggedInUserOwner && 'pf-m-selectable',
+        !isRowDisabled &&
+          activeRow &&
+          activeRow === originalData?.name &&
+          'pf-m-selected'
       )}
       hidden={isExpanded !== undefined && !isExpanded}
-      onClick={(event: MouseEvent) => !isRowDisabled && onRowClick && onRowClick(event, rowIndex, row)}
+      onClick={(event: MouseEvent) =>
+        !isRowDisabled && onRowClick && onRowClick(event, rowIndex, row)
+      }
       {...props}
     />
   );

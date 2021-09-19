@@ -55,55 +55,55 @@ const MASGenerateCredentialsModal: React.FunctionComponent = () => {
         }}
       >
         <TextContent>
-          <Text component={TextVariants.small} className="pf-u-mt-lg">
+          <Text component={TextVariants.small} className='pf-u-mt-lg'>
             {t('connect_to_the_kafka_instance_using_this_clientID_and_secret')}
           </Text>
         </TextContent>
-        <InputGroup className="pf-u-mt-lg">
-          <InputGroupText className="mk--generate-credential__empty-state--input-group">
+        <InputGroup className='pf-u-mt-lg'>
+          <InputGroupText className='mk--generate-credential__empty-state--input-group'>
             {t('client_id')}
           </InputGroupText>
           <ClipboardCopy
             isReadOnly
-            className="pf-u-w-100"
-            data-testid="modalCredentials-copyClientID"
+            className='pf-u-w-100'
+            data-testid='modalCredentials-copyClientID'
             textAriaLabel={t('client_id')}
           >
             {credential?.client_id}
           </ClipboardCopy>
         </InputGroup>
-        <InputGroup className="pf-u-mt-md">
-          <InputGroupText className="mk--generate-credential__empty-state--input-group">
+        <InputGroup className='pf-u-mt-md'>
+          <InputGroupText className='mk--generate-credential__empty-state--input-group'>
             {t('common.client_secret')}
           </InputGroupText>
           <ClipboardCopy
             isReadOnly
-            className="pf-u-w-100"
-            data-testid="modalCredentials-copyClientSecret"
+            className='pf-u-w-100'
+            data-testid='modalCredentials-copyClientSecret'
             textAriaLabel={t('common.client_secret')}
           >
             {credential?.client_secret}
           </ClipboardCopy>
         </InputGroup>
         <TextContent>
-          <Text component={TextVariants.small} className="pf-u-mt-lg">
+          <Text component={TextVariants.small} className='pf-u-mt-lg'>
             {t('create_service_account_credentials_warning_message')}
           </Text>
         </TextContent>
-        <Bullseye className="pf-u-mt-lg">
+        <Bullseye className='pf-u-mt-lg'>
           <Checkbox
             label={t('client_id_confirmation_checkbox_label')}
             isChecked={confirmationCheckbox}
             onChange={handleChangeCheckbox}
-            id="check-1"
-            name="check1"
+            id='check-1'
+            name='check1'
           />
         </Bullseye>
         <Button
-          variant="primary"
+          variant='primary'
           isDisabled={!confirmationCheckbox}
           onClick={handleClose}
-          data-testid="modalCredentials-buttonClose"
+          data-testid='modalCredentials-buttonClose'
         >
           {t('close')}
         </Button>

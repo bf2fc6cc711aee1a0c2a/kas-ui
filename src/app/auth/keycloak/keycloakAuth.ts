@@ -9,7 +9,9 @@ export let keycloak: KeycloakInstance | undefined;
  * if keycloak isn't configured
  *
  */
-export const getKeycloakInstance = async (): Promise<KeycloakInstance | undefined> => {
+export const getKeycloakInstance = async (): Promise<
+  KeycloakInstance | undefined
+> => {
   if (!keycloak) await init();
   return keycloak;
 };
@@ -31,7 +33,9 @@ export const init = async (): Promise<void> => {
     }
   } catch {
     keycloak = undefined;
-    console.warn('Auth: Unable to initialize keycloak. Client side will not be configured to use authentication');
+    console.warn(
+      'Auth: Unable to initialize keycloak. Client side will not be configured to use authentication'
+    );
   }
 };
 
@@ -58,12 +62,13 @@ export const getKeyCloakToken = async (): Promise<string> => {
  * isn't configured
  *
  */
-export const getParsedKeyCloakToken = async (): Promise<KeycloakTokenParsed> => {
-  await keycloak?.updateToken(50);
-  if (keycloak?.tokenParsed) return keycloak.tokenParsed;
-  console.error('No keycloak token available');
-  return {} as KeycloakTokenParsed;
-};
+export const getParsedKeyCloakToken =
+  async (): Promise<KeycloakTokenParsed> => {
+    await keycloak?.updateToken(50);
+    if (keycloak?.tokenParsed) return keycloak.tokenParsed;
+    console.error('No keycloak token available');
+    return {} as KeycloakTokenParsed;
+  };
 
 /**
  * logout of keycloak, clear cache and offline store then redirect to
@@ -73,7 +78,9 @@ export const getParsedKeyCloakToken = async (): Promise<KeycloakTokenParsed> => 
  * @param client offix client
  *
  */
-export const logout = async (keycloak: Keycloak.KeycloakInstance | undefined): Promise<void> => {
+export const logout = async (
+  keycloak: Keycloak.KeycloakInstance | undefined
+): Promise<void> => {
   if (keycloak) {
     await keycloak.logout();
   }

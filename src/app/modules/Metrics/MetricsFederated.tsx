@@ -5,7 +5,10 @@ import { I18nextProvider } from 'react-i18next';
 
 // Version of Metrics for federation
 
-const MetricsFederated: React.FunctionComponent<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
+const MetricsFederated: React.FunctionComponent<MetricsProps> = ({
+  kafkaId,
+  onCreateTopic,
+}) => {
   return (
     <I18nextProvider i18n={initI18N()}>
       <Metrics kafkaId={kafkaId} onCreateTopic={onCreateTopic} />

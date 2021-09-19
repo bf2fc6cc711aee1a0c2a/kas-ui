@@ -5,7 +5,13 @@ import { StreamsTableView } from './StreamsTableView';
 import { render, screen, act } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@bf2/ui-shared';
+import {
+  AlertContext,
+  Auth,
+  AuthContext,
+  Config,
+  ConfigContext,
+} from '@bf2/ui-shared';
 
 const kafkaInstanceItems = [
   {
@@ -18,7 +24,8 @@ const kafkaInstanceItems = [
     region: 'us-east-1',
     owner: 'api_kafka_service',
     name: 'serviceapi',
-    bootstrap_server_host: 'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
+    bootstrap_server_host:
+      'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
     created_at: '2020-10-05T12:51:24.053142Z',
     updated_at: '2020-10-05T12:56:36.362208Z',
   },
@@ -61,7 +68,9 @@ describe('<StreamsTableView/>', () => {
             <AuthContext.Provider value={authValue}>
               <AlertContext.Provider
                 value={{
-                  addAlert: () => {},
+                  addAlert: () => {
+                    // No-op
+                  },
                 }}
               >
                 <StreamsTableView {...args} />
@@ -109,11 +118,15 @@ describe('<StreamsTableView/>', () => {
     setup(newProps);
 
     //act
-    const kebabDropdownButton: any = screen.getByText('test-user')?.parentElement?.lastChild?.lastChild?.lastChild;
+    const kebabDropdownButton: any =
+      screen.getByText('test-user')?.parentElement?.lastChild?.lastChild
+        ?.lastChild;
     act(() => {
       userEvent.click(kebabDropdownButton);
     });
-    const classList: string[] = screen.getByRole('button', { name: /Delete/i }).className.split(' ');
+    const classList: string[] = screen
+      .getByRole('button', { name: /Delete/i })
+      .className.split(' ');
 
     //assert
     expect(classList).toContain('pf-m-disabled');
