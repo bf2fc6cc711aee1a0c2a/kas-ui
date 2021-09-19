@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import TachometerAltIcon from '@patternfly/react-icons/dist/js/icons/tachometer-alt-icon';
 import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
-import { FilterIcon } from '@patternfly/react-icons';
+import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 
 type ChartEmptyState = {
   title: string;

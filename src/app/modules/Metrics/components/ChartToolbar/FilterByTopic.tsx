@@ -6,7 +6,7 @@ import {
   SelectGroup,
   SelectOption,
 } from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons';
+import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 
 type FilterByTopicProps = {
   setSelectedTopic?: (value: string | boolean) => void;

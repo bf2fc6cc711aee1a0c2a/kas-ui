@@ -1,12 +1,12 @@
 import React from 'react';
-import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
-  ButtonVariant,
   Button,
+  ButtonVariant,
   EmptyStateVariant,
 } from '@patternfly/react-core';
+import MinusCircleIcon from '@patternfly/react-icons/dist/js/icons/minus-circle-icon';
 import { MASEmptyState, MASEmptyStateProps } from './MASEmptyState';
-import { render, screen, act } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 describe('<MASEmptyState/>', () => {

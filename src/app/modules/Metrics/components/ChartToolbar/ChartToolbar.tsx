@@ -8,7 +8,7 @@ import {
   Toolbar,
   ToolbarContent,
 } from '@patternfly/react-core';
-import { SyncIcon } from '@patternfly/react-icons';
+import SyncIcon from '@patternfly/react-icons/dist/js/icons/sync-icon';
 import { FilterByTopic } from './FilterByTopic';
 import { FilterByTime } from './FilterByTime';
 
