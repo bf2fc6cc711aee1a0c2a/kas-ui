@@ -38,6 +38,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run lint
+      - run: git diff --no-ext-diff --exit-code
+        name: check if there are changes
 
   test:
     runs-on: ubuntu-latest
