@@ -10,7 +10,7 @@ import {
   AuthContext,
   Config,
   ConfigContext,
-} from '@bf2/ui-shared';
+} from '@rhoas/app-services-ui-shared';
 import { CloudRegionList } from '@rhoas/kafka-management-sdk';
 import { AxiosResponse } from 'axios';
 
@@ -50,7 +50,7 @@ const setupRender = (props: any) => {
               apiBasePath: '',
             },
             ams: { trialQuotaId: 'fake-quota-id' },
-          } as Config
+          } as unknown as Config
         }
       >
         <AuthContext.Provider

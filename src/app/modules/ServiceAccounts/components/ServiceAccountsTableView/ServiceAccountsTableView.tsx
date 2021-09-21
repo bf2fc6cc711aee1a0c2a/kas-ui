@@ -21,7 +21,7 @@ import {
   ServiceAccountsToolbar,
   ServiceAccountsToolbarProps,
 } from './ServiceAccountsToolbar';
-import { useAuth } from '@bf2/ui-shared';
+import { useAuth } from '@rhoas/app-services-ui-shared';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;

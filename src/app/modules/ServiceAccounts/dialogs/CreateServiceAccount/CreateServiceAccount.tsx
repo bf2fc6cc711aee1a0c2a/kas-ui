@@ -21,7 +21,7 @@ import {
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
   MAX_SERVICE_ACCOUNT_DESC_LENGTH,
 } from '@app/utils';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 
 const CreateServiceAccount: React.FunctionComponent = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
@@ -32,7 +32,7 @@ const CreateServiceAccount: React.FunctionComponent = () => {
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
 
   const [nameValidated, setNameValidated] = useState<FormDataValidationState>({
     fieldState: 'default',
@@ -92,11 +92,12 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert({
-      title: t('something_went_wrong'),
-      variant: AlertVariant.danger,
-      description: reason,
-    });
+    addAlert &&
+      addAlert({
+        title: t('something_went_wrong'),
+        variant: AlertVariant.danger,
+        description: reason,
+      });
   };
 
   const handleTextInputDescription = (description: string) => {
@@ -205,12 +206,13 @@ const CreateServiceAccount: React.FunctionComponent = () => {
             //open generate credential modal
             showModal(KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
             resetForm();
-            addAlert({
-              title: t(
-                'serviceAccount.service_account_creation_success_message'
-              ),
-              variant: AlertVariant.success,
-            });
+            addAlert &&
+              addAlert({
+                title: t(
+                  'serviceAccount.service_account_creation_success_message'
+                ),
+                variant: AlertVariant.success,
+              });
             fetchServiceAccounts && fetchServiceAccounts();
           });
       } catch (error) {

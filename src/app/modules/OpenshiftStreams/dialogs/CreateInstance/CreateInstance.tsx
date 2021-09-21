@@ -39,7 +39,7 @@ import {
   QuotaType,
   useQuota,
   QuotaValue,
-} from '@bf2/ui-shared';
+} from '@rhoas/app-services-ui-shared';
 import { QuotaAlert } from './QuotaAlert';
 
 const emptyProvider: CloudProvider = {

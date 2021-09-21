@@ -11,7 +11,7 @@ import {
   AuthContext,
   Config,
   ConfigContext,
-} from '@bf2/ui-shared';
+} from '@rhoas/app-services-ui-shared';
 
 const kafkaInstanceItems = [
   {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MASAlertToastGroup } from '@app/common';
-import { AlertContext, AlertProps } from '@bf2/ui-shared';
+import { AlertContext, AlertProps } from '@rhoas/app-services-ui-shared';
 
 type TimeOut = {
   key: string | undefined;
