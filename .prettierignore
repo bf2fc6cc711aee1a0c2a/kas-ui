@@ -1,1 +1,11 @@
-package.json
+# prettier ignore file - files/directories to be excluded
+dist/
+generated/
+coverage/
+.*
+*.txt
+*.feature
+dockerfile
+*.conf
+*.sh
+*.svg
