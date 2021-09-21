@@ -37,7 +37,6 @@ type GreetProps = { age?: number };
 const Greet: FunctionComponent<GreetingProps> = ({ age = 21 }: GreetProps) => // etc
 ```
 
-
 ### State objects should be types
 
 When maintaining state for a component that requires it's state to be defined by an object, it is recommended that you use a [type instead of an interface](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/types_or_interfaces). For example if you need to maintain the currentApiId and isExpanded in a single object you can do the following:
@@ -93,12 +92,9 @@ export const ExampleNoPropsComponent: FunctionComponent<{}> = () => (
 
 Additional details around function components can be found [here](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/function_components).
 
-
 ### Hooks
 
 When using hooks with Typescript there are few recommendations that we follow below. Additional recommendations besides the ones mention in this document can be found [here](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/hooks).
-
-
 
 ### Inference vs Types for useState
 
@@ -115,7 +111,6 @@ const [user, setUser] = useState<IUser | null>(null);
 
 setUser(newUser);
 ```
-
 
 ### useReducers
 
@@ -174,7 +169,6 @@ function DelayedEffect(props: { timerMs: number }) {
 }
 ```
 
-
 ### useRef
 
 When using useRef there are two options with Typescript. The first one is when creating a [read-only ref](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/hooks#useref).
@@ -191,7 +185,6 @@ The second option is for creating [mutable refs](https://react-typescript-cheats
 const refExampleMutable = (useRef < HTMLElement) | (null > null);
 ```
 
-
 ### Additional Typescript Pointers
 
 Besides the details outlined above a list of recommendations for Typescript is maintained by several Typescript React developers [here](https://react-typescript-cheatsheet.netlify.app/). This is a great reference to use for any additional questions that are not outlined within the coding standards.
@@ -205,28 +198,30 @@ IDs and classes should follow:
 where:
 
 - `mk` = Managed Kafka
-- `page or context = the context that the component is part of 
+- `page or context = the context that the component is part of
 - `component` = name of the component
 - `element` = element in the component
 
 ## Testing
 
-More information about testing will be available here soon. We expect to follow Strimzi's [testing guidelines](https://github.com/strimzi/strimzi-ui/blob/master/docs/Test.md). 
+More information about testing will be available here soon. We expect to follow Strimzi's [testing guidelines](https://github.com/strimzi/strimzi-ui/blob/master/docs/Test.md).
 
 ## Configurations
-* [TypeScript Config](./tsconfig.json)
-* [Webpack Config](./webpack.common.js)
-* [Jest Config](./jest.config.js)
-* [Editor Config](./.editorconfig)
+
+- [TypeScript Config](./tsconfig.json)
+- [Webpack Config](./webpack.common.js)
+- [Jest Config](./jest.config.js)
+- [Editor Config](./.editorconfig)
 
 ## Raster Image Support
 
 To use an image asset that's shipped with PatternFly core, you'll prefix the paths with "@assets". `@assets` is an alias for the PatternFly assets directory in node_modules.
 
 For example:
+
 ```js
 import imgSrc from '@assets/images/g_sizing.png';
-<img src={imgSrc} alt="Some image" />
+<img src={imgSrc} alt='Some image' />;
 ```
 
 You can use a similar technique to import assets from your local app, just prefix the paths with "@app". `@app` is an alias for the main src/app directory.
@@ -237,14 +232,16 @@ import loader from '@app/assets/images/loader.gif';
 ```
 
 ## Vector Image Support
+
 Inlining SVG in the app's markup is also possible.
 
 ```js
 import logo from '@app/assets/images/logo.svg';
-<span dangerouslySetInnerHTML={{__html: logo}} />
+<span dangerouslySetInnerHTML={{ __html: logo }} />;
 ```
 
 You can also use SVG when applying background images with CSS. To do this, your SVG's must live under a `bgimages` directory (this directory name is configurable in [webpack.common.js](./webpack.common.js#L5)). This is necessary because you may need to use SVG's in several other context (inline images, fonts, icons, etc.) and so we need to be able to differentiate between these usages so the appropriate loader is invoked.
+
 ```css
 body {
   background: url(./assets/bgimages/img_avatar.svg);
@@ -252,12 +249,13 @@ body {
 ```
 
 ## Code Quality Tools
-* For accessibility compliance, we use [react-axe](https://github.com/dequelabs/react-axe)
-* To keep our bundle size in check, we use [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)
-* To keep our code formatting in check, we use [prettier](https://github.com/prettier/prettier)
-* To keep our code logic and test coverage in check, we use [jest](https://github.com/facebook/jest)
-* To ensure code styles remain consistent, we use [eslint](https://eslint.org/)
-* To provide a place to showcase custom components, we integrate with [storybook](https://storybook.js.org/)
+
+- For accessibility compliance, we use [react-axe](https://github.com/dequelabs/react-axe)
+- To keep our bundle size in check, we use [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)
+- To keep our code formatting in check, we use [prettier](https://github.com/prettier/prettier)
+- To keep our code logic and test coverage in check, we use [jest](https://github.com/facebook/jest)
+- To ensure code styles remain consistent, we use [eslint](https://eslint.org/)
+- To provide a place to showcase custom components, we integrate with [storybook](https://storybook.js.org/)
 
 ## Keycloak integration
 
@@ -265,13 +263,13 @@ In our dev environment we use keycloak to obtain the token to authenticate reque
 
 In stage and prod we use the insights chrome to do this. The `InsightsAuthProvider` (which lives in the `mk-ui-host` project) is responsible for setting this up.
 
-1. To integrate with keycloak go to your keycloak instance and retrieve keycloak.json config 
-file for public client. Make sure that client config supports redirect uris:
+1. To integrate with keycloak go to your keycloak instance and retrieve keycloak.json config
+   file for public client. Make sure that client config supports redirect uris:
 
 `localhost*` or `localhost:8080`
 
-2. Put `keycloak.json` info dist folder. 
-See`keycloak.example.json` for example content.
+2. Put `keycloak.json` info dist folder.
+   See`keycloak.example.json` for example content.
 
 3. Run the application.
 
@@ -280,14 +278,13 @@ See`keycloak.example.json` for example content.
 ### Using Keycloak Profile in the application
 
 ```js
-  const { keycloak, profile } = useContext(AuthContext);
-  console.log(user.profile)
+const { keycloak, profile } = useContext(AuthContext);
+console.log(user.profile);
 ```
 
 ### Using Keycloak Token for backend requests
 
 ```js
-  const { keycloak } = useContext(AuthContext);
-  const header = keycloak.getAuthHeader()
+const { keycloak } = useContext(AuthContext);
+const header = keycloak.getAuthHeader();
 ```
-

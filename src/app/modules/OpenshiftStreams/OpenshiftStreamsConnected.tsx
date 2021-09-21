@@ -5,7 +5,10 @@ import { RootModal } from '@app/common/RootModal';
 export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
   return (
     <RootModal>
-      <OpenshiftStreams preCreateInstance={(open) => Promise.resolve(open)} tokenEndPointUrl="fake-token-url" />
+      <OpenshiftStreams
+        preCreateInstance={(open) => Promise.resolve(open)}
+        tokenEndPointUrl='fake-token-url'
+      />
     </RootModal>
   );
 };

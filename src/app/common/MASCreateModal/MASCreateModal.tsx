@@ -44,9 +44,9 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
       appendTo={getModalAppendTo}
       actions={[
         <Button
-          key="create"
-          variant="primary"
-          type="submit"
+          key='create'
+          variant='primary'
+          type='submit'
           onClick={onCreate}
           isDisabled={!isFormValid || isCreationInProgress || isDisabledButton}
           spinnerAriaValueText={t('submitting_request')}
@@ -55,7 +55,12 @@ export const MASCreateModal: React.FunctionComponent<MASCreateModalProps> = ({
         >
           {primaryButtonTitle}
         </Button>,
-        <Button key="cancel" variant="link" onClick={handleModalToggle} data-testid={dataTestIdCancel}>
+        <Button
+          key='cancel'
+          variant='link'
+          onClick={handleModalToggle}
+          data-testid={dataTestIdCancel}
+        >
           {t('cancel')}
         </Button>,
       ]}

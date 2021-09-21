@@ -24,15 +24,24 @@ import {
   MASEmptyState,
   MASEmptyStateVariant,
   MASTable,
-  MODAL_TYPES,
+  KAFKA_MODAL_TYPES,
   useRootModalContext,
   MASPagination,
 } from '@app/common';
-import { Configuration, DefaultApi, KafkaRequest } from '@rhoas/kafka-management-sdk';
+import {
+  Configuration,
+  DefaultApi,
+  KafkaRequest,
+} from '@rhoas/kafka-management-sdk';
 import './StatusColumn.css';
 import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
-import { AlertVariant, useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
+import {
+  AlertVariant,
+  useAlert,
+  useAuth,
+  useConfig,
+} from '@rhoas/app-services-ui-shared';
 
 export type FilterValue = {
   value: string;
@@ -89,7 +98,9 @@ export const getDeleteInstanceModalConfig = (
   ) {
     config.title = `${t('delete_instance')}?`;
     config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_accepted_or_provisioning', { instanceName });
+    config.description = t('delete_instance_status_accepted_or_provisioning', {
+      instanceName,
+    });
   }
   return config;
 };
@@ -126,10 +137,14 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
   const { addAlert } = useAlert() || {};
-  const hasUserTrialKafka = currentUserkafkas?.some((k) => k?.instance_type === InstanceType.eval);
+  const hasUserTrialKafka = currentUserkafkas?.some(
+    (k) => k?.instance_type === InstanceType.eval
+  );
 
   const { showModal, hideModal } = useRootModalContext();
-  const [selectedInstance, setSelectedInstance] = useState<KafkaRequest | undefined>({});
+  const [selectedInstance, setSelectedInstance] = useState<
+    KafkaRequest | undefined
+  >({});
   const [activeRow, setActiveRow] = useState<string>();
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
@@ -174,7 +189,9 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     if (currentUserkafkas) {
       // filter all kafkas with status as deprovision
       const deprovisonedKafkas: KafkaRequest[] = currentUserkafkas.filter(
-        (k) => k.status === InstanceStatus.DEPROVISION || k.status === InstanceStatus.DELETED
+        (k) =>
+          k.status === InstanceStatus.DEPROVISION ||
+          k.status === InstanceStatus.DELETED
       );
 
       // filter all new kafka which is not in deleteKafka state
@@ -182,13 +199,18 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
         .map((k) => k.name || '');
       // create new array by merging old and new kafka with status as deprovion
-      const allDeletedKafkas: string[] = [...deletedKafkas, ...notPresentKafkas];
+      const allDeletedKafkas: string[] = [
+        ...deletedKafkas,
+        ...notPresentKafkas,
+      ];
       // update deleteKafka with new arraycurrentUserkafkaInstanceItems
       setDeletedKafkas(allDeletedKafkas);
 
       // add alert for deleted kafkas which are completely deleted from the response
       allDeletedKafkas.forEach((k) => {
-        const kafkaIndex = currentUserkafkas?.findIndex((item) => item.name === k);
+        const kafkaIndex = currentUserkafkas?.findIndex(
+          (item) => item.name === k
+        );
         if (kafkaIndex < 0) {
           removeKafkaFromDeleted(k);
           addAlert &&
@@ -204,8 +226,13 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const addAlertAfterSuccessCreation = () => {
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
-      const completedOrFailedItems = Object.assign([], kafkaInstanceItems).filter(
-        (item: KafkaRequest) => item.status === InstanceStatus.READY || item.status === InstanceStatus.FAILED
+      const completedOrFailedItems = Object.assign(
+        [],
+        kafkaInstanceItems
+      ).filter(
+        (item: KafkaRequest) =>
+          item.status === InstanceStatus.READY ||
+          item.status === InstanceStatus.FAILED
       );
       lastItemsState.forEach((item: KafkaRequest) => {
         const instances: KafkaRequest[] = completedOrFailedItems.filter(
@@ -219,7 +246,11 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
                 variant: AlertVariant.success,
                 description: (
                   <span
-                    dangerouslySetInnerHTML={{ __html: t('kafka_success_message', { name: instances[0]?.name }) }}
+                    dangerouslySetInnerHTML={{
+                      __html: t('kafka_success_message', {
+                        name: instances[0]?.name,
+                      }),
+                    }}
                   />
                 ),
                 dataTestId: 'toastCreateKafka-success',
@@ -230,7 +261,13 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
                 title: t('kafka_not_created'),
                 variant: AlertVariant.danger,
                 description: (
-                  <span dangerouslySetInnerHTML={{ __html: t('kafka_failed_message', { name: instances[0]?.name }) }} />
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: t('kafka_failed_message', {
+                        name: instances[0]?.name,
+                      }),
+                    }}
+                  />
                 ),
                 dataTestId: 'toastCreateKafka-failed',
               });
@@ -241,7 +278,9 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     const incompleteKafkas = Object.assign(
       [],
       kafkaInstanceItems?.filter(
-        (item: KafkaRequest) => item.status === InstanceStatus.PROVISIONING || item.status === InstanceStatus.ACCEPTED
+        (item: KafkaRequest) =>
+          item.status === InstanceStatus.PROVISIONING ||
+          item.status === InstanceStatus.ACCEPTED
       )
     );
     setItems(incompleteKafkas);
@@ -280,7 +319,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       onSelectDeleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
-    const previousNode = event?.target?.parentElement?.parentElement?.previousSibling;
+    const previousNode =
+      event?.target?.parentElement?.parentElement?.previousSibling;
     if (previousNode !== undefined && previousNode !== null) {
       (previousNode as HTMLElement).focus();
     }
@@ -291,10 +331,14 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       return [];
     }
     const originalData: KafkaRequest = rowData.originalData;
-    if (originalData.status === InstanceStatus.DEPROVISION || originalData.status === InstanceStatus.DELETED) {
+    if (
+      originalData.status === InstanceStatus.DEPROVISION ||
+      originalData.status === InstanceStatus.DELETED
+    ) {
       return [];
     }
-    const isUserSameAsLoggedIn = originalData.owner === loggedInUser || isOrgAdmin;
+    const isUserSameAsLoggedIn =
+      originalData.owner === loggedInUser || isOrgAdmin;
     let additionalProps: any;
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
@@ -312,7 +356,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         id: 'view-instance',
         ['data-testid']: 'tableStreams-actionDetails',
         onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'view-instance'),
+          isUserSameAsLoggedIn &&
+          onSelectKebabDropdownOption(event, originalData, 'view-instance'),
         ...additionalProps,
         tooltipProps: {
           position: 'left',
@@ -324,7 +369,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         id: 'connect-instance',
         ['data-testid']: 'tableStreams-actionConnection',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
+          isUserSameAsLoggedIn &&
+          onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
         ...additionalProps,
         tooltipProps: {
           position: 'left',
@@ -336,7 +382,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         id: 'delete-instance',
         ['data-testid']: 'tableStreams-actionDelete',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
+          isUserSameAsLoggedIn &&
+          onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
         tooltipProps: {
           position: 'left',
@@ -349,19 +396,36 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
-    const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
+    const loadingCount: number = getLoadingRowsCount(
+      page,
+      perPage,
+      expectedTotal
+    );
     if (!kafkaDataLoaded) {
-      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
+      return getSkeletonForRows({
+        loadingCount,
+        skeleton: <Skeleton />,
+        length: tableColumns.length,
+      });
     }
     kafkaInstanceItems.forEach((row: IRowData) => {
-      const { name, cloud_provider, region, created_at, status, owner, instance_type } = row;
+      const {
+        name,
+        cloud_provider,
+        region,
+        created_at,
+        status,
+        owner,
+        instance_type,
+      } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
       tableRow.push({
         cells: [
           {
             title:
-              status === InstanceStatus.DEPROVISION || status !== InstanceStatus.READY ? (
+              status === InstanceStatus.DEPROVISION ||
+              status !== InstanceStatus.READY ? (
                 name
               ) : (
                 <Link to={`kafkas/${row?.id}`}>{name}</Link>
@@ -399,9 +463,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
-      const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(t, status, name);
+      const { title, confirmActionLabel, description } =
+        getDeleteInstanceModalConfig(t, status, name);
 
-      showModal(MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
+      showModal(KAFKA_MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
         instanceStatus: status,
         selectedItemData: instance,
         title,
@@ -499,7 +564,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     }
   };
 
-  const onSort = (_event: any, index: number, direction: string, extraData: IExtraColumnData) => {
+  const onSort = (
+    _event: any,
+    index: number,
+    direction: string,
+    extraData: IExtraColumnData
+  ) => {
     let myDirection = direction;
     if (getSortBy()?.index !== index && extraData.property === 'time-created') {
       // trick table to sort descending first for date column
@@ -514,7 +584,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     if (sort.length > 1) {
       return {
         index: getindexForSortParameter(sort[0]),
-        direction: sort[1] === SortByDirection.asc ? SortByDirection.asc : SortByDirection.desc,
+        direction:
+          sort[1] === SortByDirection.asc
+            ? SortByDirection.asc
+            : SortByDirection.desc,
       };
     }
     return;
@@ -560,7 +633,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         }}
         activeRow={activeRow}
         onRowClick={onRowClick}
-        rowDataTestId="tableStreams-row"
+        rowDataTestId='tableStreams-row'
         loggedInUser={loggedInUser}
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
@@ -578,7 +651,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       )}
       {total > 0 && (
         <MASPagination
-          widgetId="pagination-options-menu-bottom"
+          widgetId='pagination-options-menu-bottom'
           itemCount={total}
           variant={PaginationVariant.bottom}
           page={page}

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ToolbarItem, Select, SelectVariant, SelectGroup, SelectOption } from '@patternfly/react-core';
+import {
+  ToolbarItem,
+  Select,
+  SelectVariant,
+  SelectGroup,
+  SelectOption,
+} from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 
 type FilterByTopicProps = {
@@ -30,18 +36,22 @@ export const FilterByTopic = ({
 
   const onTopicSelect = (_, selection) => {
     setSelectedTopic && setSelectedTopic(selection);
-    setIsFilterApplied && (selection !== 'All topics' ? setIsFilterApplied(true) : setIsFilterApplied(false));
+    setIsFilterApplied &&
+      (selection !== 'All topics'
+        ? setIsFilterApplied(true)
+        : setIsFilterApplied(false));
     setIsTopicSelectOpen(false);
   };
 
   const onTopicFilter = (_, textInput) => {
-    const filteredTopics = topicListFinal?.filter((topic) => topic.indexOf(textInput) != -1) || [];
+    const filteredTopics =
+      topicListFinal?.filter((topic) => topic.indexOf(textInput) != -1) || [];
     return topicOptions(filteredTopics);
   };
 
   const topicOptions = (topicList) => [
-    <SelectOption key={'topic-filter-0'} value="All topics" />,
-    <SelectGroup label="Filter by topic" key="topic-filter-group">
+    <SelectOption key={'topic-filter-0'} value='All topics' />,
+    <SelectGroup label='Filter by topic' key='topic-filter-group'>
       {topicList?.map((topic, index) => (
         <SelectOption key={`topic-filter-${index + 1}`} value={topic} />
       ))}

@@ -1,1 +1,1 @@
-export * from "./MASTable";
+export * from './MASTable';

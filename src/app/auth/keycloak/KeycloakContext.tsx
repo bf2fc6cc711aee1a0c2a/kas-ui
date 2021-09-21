@@ -1,6 +1,9 @@
 import React from 'react';
 import { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
-import { getKeyCloakToken, getParsedKeyCloakToken } from '@app/auth/keycloak/keycloakAuth';
+import {
+  getKeyCloakToken,
+  getParsedKeyCloakToken,
+} from '@app/auth/keycloak/keycloakAuth';
 import { Auth, AuthContext } from '@rhoas/app-services-ui-shared';
 
 // This is a context which can manage the keycloak
@@ -9,7 +12,9 @@ export interface IKeycloakContext {
   profile?: KeycloakProfile | undefined;
 }
 
-export const KeycloakContext = React.createContext<IKeycloakContext>({ keycloak: undefined });
+export const KeycloakContext = React.createContext<IKeycloakContext>({
+  keycloak: undefined,
+});
 
 export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
   const getUsername = () => {
@@ -27,5 +32,9 @@ export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
     getUsername,
     isOrgAdmin,
   } as Auth;
-  return <AuthContext.Provider value={authTokenContext}>{props.children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={authTokenContext}>
+      {props.children}
+    </AuthContext.Provider>
+  );
 };

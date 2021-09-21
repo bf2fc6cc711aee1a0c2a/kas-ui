@@ -30,8 +30,14 @@ describe('<MASPagination/>', () => {
 
     //assert
     expect(container.getElementsByClassName('pf-c-pagination').length).toBe(1);
-    expect(container.getElementsByClassName('pf-c-pagination__nav-control pf-m-first').length).toBe(1);
-    expect(container.getElementsByClassName('pf-c-pagination__total-items').length).toBe(1);
+    expect(
+      container.getElementsByClassName(
+        'pf-c-pagination__nav-control pf-m-first'
+      ).length
+    ).toBe(1);
+    expect(
+      container.getElementsByClassName('pf-c-pagination__total-items').length
+    ).toBe(1);
     screen.getAllByText(/1/);
     screen.getAllByText(/10/);
   });
@@ -57,11 +63,15 @@ describe('<MASPagination/>', () => {
     const { container } = renderSetup(newPorps);
 
     //assert
-    expect(container.getElementsByClassName('pf-c-pagination pf-m-bottom').length).toBe(1);
+    expect(
+      container.getElementsByClassName('pf-c-pagination pf-m-bottom').length
+    ).toBe(1);
     screen.getAllByLabelText(/Items per page/);
     screen.getAllByLabelText(/full pagination/);
     //current page
-    expect(container.getElementsByClassName('pf-c-form-control').length).toBe(1);
+    expect(container.getElementsByClassName('pf-c-form-control').length).toBe(
+      1
+    );
     const currentPageButton: any = screen.getByLabelText(/Current page/);
     expect(currentPageButton).toBeDisabled();
     expect(currentPageButton).toHaveValue(1);
@@ -74,7 +84,8 @@ describe('<MASPagination/>', () => {
     const lastPageButton: any = screen.getByLabelText(/Go to last page/);
     expect(lastPageButton).toHaveClass('pf-m-disabled');
     //previous button
-    const previousPageButton: any = screen.getByLabelText(/Go to previous page/);
+    const previousPageButton: any =
+      screen.getByLabelText(/Go to previous page/);
     expect(previousPageButton).toHaveClass('pf-m-disabled');
     //next button
     const nextPageButton: any = screen.getByLabelText(/Go to next page/);
@@ -103,9 +114,13 @@ describe('<MASPagination/>', () => {
     const { container } = renderSetup(props);
 
     //assert
-    expect(container.getElementsByClassName('pf-c-pagination pf-m-bottom').length).toBe(1);
+    expect(
+      container.getElementsByClassName('pf-c-pagination pf-m-bottom').length
+    ).toBe(1);
     //current page
-    expect(container.getElementsByClassName('pf-c-form-control').length).toBe(1);
+    expect(container.getElementsByClassName('pf-c-form-control').length).toBe(
+      1
+    );
     const currentPageButton: any = screen.getByLabelText(/Current page/);
     expect(currentPageButton).not.toBeDisabled();
     expect(currentPageButton).toHaveValue(1);

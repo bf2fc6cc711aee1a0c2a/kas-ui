@@ -1,5 +1,10 @@
 import React from 'react';
-import { Bullseye, BullseyeProps, Spinner, SpinnerProps } from '@patternfly/react-core';
+import {
+  Bullseye,
+  BullseyeProps,
+  Spinner,
+  SpinnerProps,
+} from '@patternfly/react-core';
 
 export type MASLoadingProps = {
   bullseyeProps?: Omit<BullseyeProps, 'children'>;

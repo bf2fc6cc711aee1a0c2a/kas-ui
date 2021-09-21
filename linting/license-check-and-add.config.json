@@ -1,0 +1,40 @@
+{
+  "license": "./utils/tooling/headers/StrimziHeader.txt",
+  "ignore": [
+    ".**",
+    ".git/**",
+    "./utils/headers",
+    "**.md",
+    "**.pptx",
+    "./build/dockerfile",
+    "./generated/**",
+    "./coverage/**",
+    "./.idea/**"
+  ],
+  "licenseFormats": {
+    "tsx|jsx|ts|js|css|scss": {
+      "prepend": "/*",
+      "append": " */",
+      "eachLine": {
+        "prepend": " * "
+      }
+    },
+    "html|svg": {
+      "prepend": "<!-- ",
+      "append": "-->",
+      "eachLine": {
+        "prepend": " "
+      }
+    },
+    "dotfiles|prettierignore|feature|conf": {
+      "eachLine": {
+        "prepend": "# "
+      }
+    }
+  },
+  "defaultFormat": {
+    "eachLine": {
+      "prepend": "# "
+    }
+  }
+}

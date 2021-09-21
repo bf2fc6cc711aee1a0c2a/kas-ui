@@ -39,17 +39,17 @@ export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({
     );
 
   return (
-    <div className="mas--details__drawer--tab-content">
+    <div className='mas--details__drawer--tab-content'>
       {mainToggle && (
-        <Grid className="mas--details__drawer--grid">
-          <GridItem span={6} className="mas--details__drawer--grid--column-one">
+        <Grid className='mas--details__drawer--grid'>
+          <GridItem span={6} className='mas--details__drawer--grid--column-one'>
             <Card isFlat>
               <CardBody>
                 <TextContent>
-                  <Text component={TextVariants.small} className="pf-u-mb-0">
+                  <Text component={TextVariants.small} className='pf-u-mb-0'>
                     {t('topics')}
                   </Text>
-                  <Text component={TextVariants.h3} className="pf-u-mt-0">
+                  <Text component={TextVariants.h3} className='pf-u-mt-0'>
                     10
                   </Text>
                 </TextContent>
@@ -60,10 +60,10 @@ export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({
             <Card isFlat>
               <CardBody>
                 <TextContent>
-                  <Text component={TextVariants.small} className="pf-u-mb-0">
+                  <Text component={TextVariants.small} className='pf-u-mb-0'>
                     {t('consumer_groups')}
                   </Text>
-                  <Text component={TextVariants.h3} className="pf-u-mt-0">
+                  <Text component={TextVariants.h3} className='pf-u-mt-0'>
                     8
                   </Text>
                 </TextContent>

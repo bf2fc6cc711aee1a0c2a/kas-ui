@@ -25,7 +25,13 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
   toolbarItems,
   toggleGroupItems,
 }) => {
-  const { id, clearAllFilters, collapseListedFiltersBreakpoint = 'md', inset, ...restToolbarProps } = toolbarProps;
+  const {
+    id,
+    clearAllFilters,
+    collapseListedFiltersBreakpoint = 'md',
+    inset,
+    ...restToolbarProps
+  } = toolbarProps;
 
   return (
     <>
@@ -38,12 +44,23 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
       >
         <ToolbarContent>
           {toggleGroupProps && (
-            <ToolbarToggleGroup toggleIcon={toggleGroupProps.toggleIcon} {...toggleGroupProps}>
+            <ToolbarToggleGroup
+              {...toggleGroupProps}
+              toggleIcon={toggleGroupProps.toggleIcon}
+            >
               {toggleGroupItems}
             </ToolbarToggleGroup>
           )}
           {toolbarItems?.map((toolbarItem, index) => {
-            const { key = 'mas', variant, className, id, alignment, item, ...restItemProps } = toolbarItem;
+            const {
+              key = 'mas',
+              variant,
+              className,
+              id,
+              alignment,
+              item,
+              ...restItemProps
+            } = toolbarItem;
             return (
               <ToolbarItem
                 key={`${key}-${index}`}

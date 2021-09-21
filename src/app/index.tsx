@@ -13,9 +13,17 @@ import { AppRoutes } from '@app/routes';
 import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { MASLoading } from '@app/common';
-import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
+import {
+  KeycloakAuthProvider,
+  KeycloakContext,
+} from '@app/auth/keycloak/KeycloakContext';
 import { initI18N } from '@i18n/i18n';
-import { MASErrorBoundary, RootModal, PaginationProvider, AlertProvider } from '@app/common';
+import {
+  MASErrorBoundary,
+  RootModal,
+  PaginationProvider,
+  AlertProvider,
+} from '@app/common';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 declare const __BASE_PATH__: string;
@@ -48,7 +56,9 @@ const App: React.FunctionComponent = () => {
       }
     >
       <I18nextProvider i18n={initI18N()}>
-        <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
+        <KeycloakContext.Provider
+          value={{ keycloak, profile: keycloak?.profile }}
+        >
           <KeycloakAuthProvider>
             <AlertProvider>
               <Router>

@@ -8,7 +8,11 @@ import {
   TableBodyProps,
 } from '@patternfly/react-table';
 import { css } from '@patternfly/react-styles';
-import { CustomRowWrapper, CustomRowWrapperProvider, CustomRowWrapperContextProps } from './CustomRowWrapper';
+import {
+  CustomRowWrapper,
+  CustomRowWrapperProvider,
+  CustomRowWrapperContextProps,
+} from './CustomRowWrapper';
 
 export type MASTableProps = CustomRowWrapperContextProps & {
   tableProps: Omit<PFTableProps, 'children'> & {
@@ -59,7 +63,10 @@ const MASTable: FunctionComponent<MASTableProps> = ({
       }}
     >
       <PFTable
-        className={css(hasDefaultCustomRowWrapper && 'mas--streams-table-view__table', className)}
+        className={css(
+          hasDefaultCustomRowWrapper && 'mas--streams-table-view__table',
+          className
+        )}
         cells={cells}
         variant={variant}
         rows={rows}

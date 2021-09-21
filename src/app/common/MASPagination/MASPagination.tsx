@@ -1,4 +1,10 @@
-import React, { useCallback, FunctionComponent, createContext, useContext, useState } from 'react';
+import React, {
+  useCallback,
+  FunctionComponent,
+  createContext,
+  useContext,
+  useState,
+} from 'react';
 import {
   Pagination as PFPagination,
   PaginationProps as PFPaginationProps,
@@ -14,15 +20,20 @@ export type PaginationContextProps = {
   setPerPage: (perPage: number | undefined) => void;
 };
 
-export const PaginationContext = createContext<PaginationContextProps | undefined>(undefined);
-export const usePagination = (): PaginationContextProps | undefined => useContext(PaginationContext);
+export const PaginationContext = createContext<
+  PaginationContextProps | undefined
+>(undefined);
+export const usePagination = (): PaginationContextProps | undefined =>
+  useContext(PaginationContext);
 
 export const PaginationProvider: React.FC = ({ children }) => {
   const [page, setPage] = useState<number | undefined>(1);
   const [perPage, setPerPage] = useState<number | undefined>(10);
 
   return (
-    <PaginationContext.Provider value={{ page, perPage, setPage, setPerPage }}>{children}</PaginationContext.Provider>
+    <PaginationContext.Provider value={{ page, perPage, setPage, setPerPage }}>
+      {children}
+    </PaginationContext.Provider>
   );
 };
 

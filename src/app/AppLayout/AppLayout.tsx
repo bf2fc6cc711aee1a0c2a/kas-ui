@@ -42,7 +42,7 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
     function handleClick() {
       history.push('/');
     }
-    return <img src={logo} onClick={handleClick} alt="PatternFly Logo" />;
+    return <img src={logo} onClick={handleClick} alt='PatternFly Logo' />;
   }
 
   if (!keycloakContext.keycloak) {
@@ -58,7 +58,9 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
     return <></>;
   }
 
-  const email = keycloakContext.keycloak.tokenParsed && keycloakContext.keycloak.tokenParsed['email'];
+  const email =
+    keycloakContext.keycloak.tokenParsed &&
+    keycloakContext.keycloak.tokenParsed['email'];
 
   const HeaderTools = <PageHeaderTools>{email}</PageHeaderTools>;
 
@@ -76,7 +78,7 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
   const renderNavItem = (route: IAppRoute, index: number) => {
     return (
       <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`}>
-        <NavLink exact to={route.path} activeClassName="pf-m-current">
+        <NavLink exact to={route.path} activeClassName='pf-m-current'>
           {route?.label && t(route.label)}
         </NavLink>
       </NavItem>
@@ -91,25 +93,46 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
       isActive={group.routes.some((route) => route.path === location.pathname)}
       // aria-label={t()}
     >
-      {group.routes.map((route, idx) => route.label && renderNavItem(route, idx))}
+      {group.routes.map(
+        (route, idx) => route.label && renderNavItem(route, idx)
+      )}
     </NavExpandable>
   );
 
   const Navigation = (
-    <Nav id="nav-primary-simple" role="navigation" theme="dark" aria-label={t('global')}>
-      <NavList id="nav-list-simple">
+    <Nav
+      id='nav-primary-simple'
+      role='navigation'
+      theme='dark'
+      aria-label={t('global')}
+    >
+      <NavList id='nav-list-simple'>
         {routes.map(
-          (route, idx) => route.label && (!route.routes ? renderNavItem(route, idx) : renderNavGroup(route, idx))
+          (route, idx) =>
+            route.label &&
+            (!route.routes
+              ? renderNavItem(route, idx)
+              : renderNavGroup(route, idx))
         )}
       </NavList>
     </Nav>
   );
-  const Sidebar = <PageSidebar theme="dark" nav={Navigation} isNavOpen={isMobileView ? isNavOpenMobile : isNavOpen} />;
-  const PageSkipToContent = <SkipToContent href="#primary-app-container">{t('skip_to_content')}</SkipToContent>;
+  const Sidebar = (
+    <PageSidebar
+      theme='dark'
+      nav={Navigation}
+      isNavOpen={isMobileView ? isNavOpenMobile : isNavOpen}
+    />
+  );
+  const PageSkipToContent = (
+    <SkipToContent href='#primary-app-container'>
+      {t('skip_to_content')}
+    </SkipToContent>
+  );
   return (
     <Page
-      mainContainerId="primary-app-container"
-      role="main"
+      mainContainerId='primary-app-container'
+      role='main'
       header={Header}
       sidebar={Sidebar}
       onPageResize={onPageResize}
