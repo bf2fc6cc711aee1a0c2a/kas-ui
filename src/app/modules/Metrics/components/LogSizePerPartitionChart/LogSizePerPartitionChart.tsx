@@ -253,8 +253,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
                 legend &&
                 byteSize && (
                   <Chart
-                    ariaDesc={t('metrics.log_size_per_partition')}
-                    ariaTitle='Log Size'
+                    ariaTitle={t('metrics.log_size_per_partition')}
                     containerComponent={
                       <ChartVoronoiContainer
                         labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -294,15 +293,15 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
                 )
               ) : (
                 <ChartEmptyState
-                  title='No topics yet'
-                  body='Data will show when topics exist and are in use.'
+                  title='No topic data'
+                  body='Data might take a few minutes to appear once you start using topics.'
                   noTopics
                 />
               )
             ) : (
               <ChartEmptyState
-                title='No data'
-                body='We’re creating your Kafka instance, so some details aren’t yet available.'
+                title='No metrics data'
+                body='Your Kafka instance was recently created, so some metrics aren’t yet available. Metrics should be available around 30 minutes after creation.'
                 noData
               />
             )
