@@ -1,7 +1,7 @@
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Config, ConfigContext } from '@bf2/ui-shared';
+import { Config, ConfigContext } from '@rhoas/app-services-ui-shared';
 import '@patternfly/patternfly/patternfly.min.css';
 import '@patternfly/patternfly/utilities/Accessibility/accessibility.css';
 import '@patternfly/patternfly/utilities/Sizing/sizing.css';
@@ -13,11 +13,17 @@ import { AppRoutes } from '@app/routes';
 import '@app/app.css';
 import { getKeycloakInstance } from './auth/keycloak/keycloakAuth';
 import { MASLoading } from '@app/common';
-import { KeycloakAuthProvider, KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
+import {
+  KeycloakAuthProvider,
+  KeycloakContext,
+} from '@app/auth/keycloak/KeycloakContext';
 import { initI18N } from '@i18n/i18n';
-import { MASErrorBoundary } from '@app/common';
-import { AlertProvider } from '@app/common/MASAlerts/MASAlerts';
-import { RootModal } from '@app/common/RootModal';
+import {
+  MASErrorBoundary,
+  RootModal,
+  PaginationProvider,
+  AlertProvider,
+} from '@app/common';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 declare const __BASE_PATH__: string;
@@ -50,17 +56,21 @@ const App: React.FunctionComponent = () => {
       }
     >
       <I18nextProvider i18n={initI18N()}>
-        <KeycloakContext.Provider value={{ keycloak, profile: keycloak?.profile }}>
+        <KeycloakContext.Provider
+          value={{ keycloak, profile: keycloak?.profile }}
+        >
           <KeycloakAuthProvider>
             <AlertProvider>
               <Router>
                 <React.Suspense fallback={<MASLoading />}>
                   <MASErrorBoundary>
-                    <RootModal>
-                      <AppLayout>
-                        <AppRoutes />
-                      </AppLayout>
-                    </RootModal>
+                    <PaginationProvider>
+                      <RootModal>
+                        <AppLayout>
+                          <AppRoutes />
+                        </AppLayout>
+                      </RootModal>
+                    </PaginationProvider>
                   </MASErrorBoundary>
                 </React.Suspense>
               </Router>

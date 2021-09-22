@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { Tabs, Tab, TabTitleText, Alert, AlertVariant } from '@patternfly/react-core';
+import {
+  Tabs,
+  Tab,
+  TabTitleText,
+  Alert,
+  AlertVariant,
+} from '@patternfly/react-core';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
 import { MASDrawerProps, MASLoading } from '@app/common';
@@ -13,10 +19,15 @@ import './InstanceDrawer.css';
 
 export const ConnectionTab = React.lazy(() => import('./ConnectionTab'));
 export const DetailsTab = React.lazy(() => import('./DetailsTab'));
-export const MASDrawer = React.lazy(() => import('@app/common/MASDrawer/MASDrawer'));
+export const MASDrawer = React.lazy(
+  () => import('@app/common/MASDrawer/MASDrawer')
+);
 
 export type InstanceDrawerProps = Pick<ConnectionTabProps, 'tokenEndPointUrl'> &
-  Omit<MASDrawerProps, 'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'> &
+  Omit<
+    MASDrawerProps,
+    'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'
+  > &
   DetailsTabProps & {
     activeTab?: string;
   };
@@ -56,22 +67,28 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
 
   const getExternalServer = () => {
     const { bootstrap_server_host } = instanceDetail || {};
-    return bootstrap_server_host?.endsWith(':443') ? bootstrap_server_host : `${bootstrap_server_host}:443`;
+    return bootstrap_server_host?.endsWith(':443')
+      ? bootstrap_server_host
+      : `${bootstrap_server_host}:443`;
   };
 
-  const isKafkaPending = status === InstanceStatus.ACCEPTED || status === InstanceStatus.PREPARING;
+  const isKafkaPending =
+    status === InstanceStatus.ACCEPTED || status === InstanceStatus.PREPARING;
 
   const panelBodyContent = () => {
     return (
       <React.Suspense fallback={<MASLoading />}>
         <Tabs activeKey={activeTab1Key} onSelect={handleTab1Click}>
           <Tab eventKey={0} title={<TabTitleText>{t('details')}</TabTitleText>}>
-            <DetailsTab mainToggle={mainToggle} instanceDetail={instanceDetail} />
+            <DetailsTab
+              mainToggle={mainToggle}
+              instanceDetail={instanceDetail}
+            />
           </Tab>
           <Tab
             eventKey={1}
             title={<TabTitleText>{t('connection')}</TabTitleText>}
-            data-testid="drawerStreams-tabConnect"
+            data-testid='drawerStreams-tabConnect'
           >
             <ConnectionTab
               mainToggle={mainToggle}

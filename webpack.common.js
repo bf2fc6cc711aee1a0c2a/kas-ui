@@ -11,7 +11,9 @@ const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const isPatternflyStyles = (stylesheet) => stylesheet.includes('@patternfly/react-styles/css/') || stylesheet.includes('@patternfly/react-core/');
+const isPatternflyStyles = (stylesheet) =>
+  stylesheet.includes('@patternfly/react-styles/css/') ||
+  stylesheet.includes('@patternfly/react-core/');
 
 module.exports = (env, argv) => {
   const isProduction = argv && argv.mode === 'production';
@@ -36,7 +38,7 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/,
           use: [MiniCssExtractPlugin.loader, 'css-loader'],
-          include: (stylesheet => !isPatternflyStyles(stylesheet)),
+          include: (stylesheet) => !isPatternflyStyles(stylesheet),
           sideEffects: true,
         },
         {
@@ -106,25 +108,30 @@ module.exports = (env, argv) => {
         filename: '[name].[contenthash:8].css',
         chunkFilename: '[contenthash:8].css',
         insert: (linkTag) => {
-          const preloadLinkTag = document.createElement('link')
-          preloadLinkTag.rel = 'preload'
-          preloadLinkTag.as = 'style'
-          preloadLinkTag.href = linkTag.href
-          document.head.appendChild(preloadLinkTag)
-          document.head.appendChild(linkTag)
-        }
+          const preloadLinkTag = document.createElement('link');
+          preloadLinkTag.rel = 'preload';
+          preloadLinkTag.as = 'style';
+          preloadLinkTag.href = linkTag.href;
+          document.head.appendChild(preloadLinkTag);
+          document.head.appendChild(linkTag);
+        },
       }),
       new ChunkMapper({
         modules: [federatedModuleName],
       }),
       new webpack.container.ModuleFederationPlugin({
         name: federatedModuleName,
-        filename: `${federatedModuleName}${isProduction ? '[chunkhash:8]' : ''}.js`,
+        filename: `${federatedModuleName}${
+          isProduction ? '[chunkhash:8]' : ''
+        }.js`,
         exposes: {
-          "./OpenshiftStreams": "./src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated",
-          "./ServiceAccounts":"./src/app/modules/ServiceAccounts/ServiceAccountsFederated",
-          "./InstanceDrawer":"./src/app/modules/OpenshiftStreams/components/InstanceDrawer/InstanceDrawerFederated",
-          './Metrics': './src/app/modules/Metrics/MetricsFederated'
+          './OpenshiftStreams':
+            './src/app/modules/OpenshiftStreams/OpenshiftStreamsFederated',
+          './ServiceAccounts':
+            './src/app/modules/ServiceAccounts/ServiceAccountsFederated',
+          './InstanceDrawer':
+            './src/app/modules/OpenshiftStreams/components/InstanceDrawer/InstanceDrawerFederated',
+          './Metrics': './src/app/modules/Metrics/MetricsFederated',
         },
         shared: {
           ...dependencies,
@@ -138,16 +145,16 @@ module.exports = (env, argv) => {
             singleton: true,
             requiredVersion: dependencies['react-dom'],
           },
-          "react-router-dom": {
+          'react-router-dom': {
             singleton: true,
             eager: true,
-            requiredVersion: dependencies["react-router-dom"],
+            requiredVersion: dependencies['react-router-dom'],
           },
-          "@bf2/ui-shared": {
+          '@rhoas/app-services-ui-shared': {
             eager: true,
             singleton: true,
-            requiredVersion: dependencies["@bf2/ui-shared"]
-          }         
+            requiredVersion: dependencies['@rhoas/app-services-ui-shared'],
+          },
         },
       }),
     ],

@@ -1,9 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import { isServiceApiError } from '@app/utils';
-import { AlertVariant, Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
+import {
+  AlertVariant,
+  Bullseye,
+  Card,
+  CardTitle,
+  CardBody,
+  Spinner,
+} from '@patternfly/react-core';
 import {
   Chart,
   ChartArea,
@@ -60,10 +67,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   const containerRef = useRef();
   const { t } = useTranslation();
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { addAlert } = useAlert() || {};
   const [width, setWidth] = useState();
   const [legend, setLegend] = useState();
   const [chartData, setChartData] = useState<ChartData[]>();
@@ -73,7 +79,8 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   const [timeInterval, setTimeInterval] = useState(60);
   const usageLimit = 60; // Replace with limit from API
 
-  const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+  const handleResize = () =>
+    containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
 
   const fetchUsedDiskSpaceMetrics = async () => {
@@ -90,9 +97,12 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
           return;
         }
 
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
-          'kubelet_volume_stats_used_bytes',
-        ]);
+        const data = await apisService.getMetricsByRangeQuery(
+          kafkaID,
+          timeDuration * 60,
+          timeInterval * 60,
+          ['kubelet_volume_stats_used_bytes']
+        );
 
         const avgBroker = {
           name: `Used disk space`,
@@ -120,7 +130,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                   }
 
                   if (index > 0) {
-                    const newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(value.value);
+                    const newArray = avgBroker.data[indexJ].usedSpaceAvg.concat(
+                      value.value
+                    );
                     avgBroker.data[indexJ].usedSpaceAvg = newArray;
                   } else {
                     avgBroker.data.push({
@@ -143,7 +155,12 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert &&
+          addAlert({
+            variant: AlertVariant.danger,
+            title: t('common.something_went_wrong'),
+            description: reason,
+          });
       }
     }
   };
@@ -162,7 +179,10 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
   const getChartData = (avgBroker) => {
     const legendData: Array<LegendData> = [
-      { name: 'Limit', symbol: { fill: chart_color_black_500.value, type: 'threshold' } },
+      {
+        name: 'Limit',
+        symbol: { fill: chart_color_black_500.value, type: 'threshold' },
+      },
       { name: avgBroker.name, symbol: { fill: chart_color_blue_300.value } },
     ];
 
@@ -174,7 +194,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
     const largestByteSize = 'GiB'; // Hard code GiB as the largest byte size because there will always be a 20 GiB limit.
 
     const getCurrentLengthOfData = () => {
-      const timestampDiff = avgBroker.data[avgBroker.data.length - 1].timestamp - avgBroker.data[0].timestamp;
+      const timestampDiff =
+        avgBroker.data[avgBroker.data.length - 1].timestamp -
+        avgBroker.data[0].timestamp;
       const minutes = timestampDiff / 1000 / 60;
       return minutes;
     };
@@ -184,7 +206,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
     if (lengthOfData <= 360 && timeDuration >= 6) {
       for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-        const newTimestamp = avgBroker.data[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
+        const newTimestamp =
+          avgBroker.data[0].timestamp -
+          (lengthOfDataPer5Mins - i) * (5 * 60000);
         const date = new Date(newTimestamp);
         const time = date.getHours() + ':' + date.getMinutes();
         area.push({ name: avgBroker.name, x: time, y: 0 });
@@ -225,9 +249,12 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         showKafkaToolbar={!metricsDataUnavailable}
         onRefreshKafkaToolbar={onRefreshKafkaToolbar}
       />
-      <CardTitle component="h2">
+      <CardTitle component='h2'>
         {t('metrics.used_disk_space')}{' '}
-        <ChartPopover title={t('metrics.used_disk_space')} description={t('metrics.used_disk_space_help_text')} />
+        <ChartPopover
+          title={t('metrics.used_disk_space')}
+          description={t('metrics.used_disk_space_help_text')}
+        />
       </CardTitle>
       <CardBody>
         <div ref={containerRef}>
@@ -239,10 +266,19 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                 <Chart
                   ariaTitle={t('metrics.used_disk_space')}
                   containerComponent={
-                    <ChartVoronoiContainer labels={({ datum }) => `${datum.name}: ${datum.y}`} constrainToVisibleArea />
+                    <ChartVoronoiContainer
+                      labels={({ datum }) => `${datum.name}: ${datum.y}`}
+                      constrainToVisibleArea
+                    />
                   }
-                  legendPosition="bottom-left"
-                  legendComponent={<ChartLegend orientation={'horizontal'} data={legend} itemsPerRow={itemsPerRow} />}
+                  legendPosition='bottom-left'
+                  legendComponent={
+                    <ChartLegend
+                      orientation={'horizontal'}
+                      data={legend}
+                      itemsPerRow={itemsPerRow}
+                    />
+                  }
                   height={350}
                   padding={{
                     bottom: 110, // Adjusted to accomodate legend
@@ -256,13 +292,17 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                   legendAllowWrap={true}
                 >
                   <ChartAxis label={'Time'} tickCount={6} />
-                  <ChartAxis dependentAxis tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`} tickCount={4} />
+                  <ChartAxis
+                    dependentAxis
+                    tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+                    tickCount={4}
+                  />
                   <ChartGroup>
                     {chartData.map((value, index) => (
                       <ChartArea
                         key={`chart-area-${index}`}
                         data={value.area}
-                        interpolation="monotoneX"
+                        interpolation='monotoneX'
                         style={{
                           data: {
                             stroke: value.color,

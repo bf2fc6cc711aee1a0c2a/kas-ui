@@ -83,10 +83,16 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   };
 
   const isInputValid = (value?: string) => {
-    return value ? /^([a-zA-Z0-9-_%]*[a-zA-Z0-9-_%])?$/.test(value.trim()) : true;
+    return value
+      ? /^([a-zA-Z0-9-_%]*[a-zA-Z0-9-_%])?$/.test(value.trim())
+      : true;
   };
 
-  const updateFilter = (key: string, filter: FilterValue, removeIfPresent: boolean) => {
+  const updateFilter = (
+    key: string,
+    filter: FilterValue,
+    removeIfPresent: boolean
+  ) => {
     const newFilterValue: FilterType[] = Object.assign([], filteredValue); // a copy for applied filter
     const filterIndex = newFilterValue.findIndex((f) => f.filterKey === key); // index of current key in applied filter
     if (filterIndex > -1) {
@@ -95,7 +101,9 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
       if (filterValue.filterValue && filterValue.filterValue.length > 0) {
         // if some filters are already there in applied filter for same key
         // index of current filter value in applied filter
-        const filterValueIndex = filterValue.filterValue.findIndex((f) => f.value === filter.value);
+        const filterValueIndex = filterValue.filterValue.findIndex(
+          (f) => f.value === filter.value
+        );
         if (filterValueIndex > -1) {
           // filter value is already present
           if (removeIfPresent) {
@@ -119,16 +127,28 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   };
 
   const onFilter = (filterType: string) => {
-    if (filterType === 'name' && nameInputValue && nameInputValue.trim() != '') {
+    if (
+      filterType === 'name' &&
+      nameInputValue &&
+      nameInputValue.trim() != ''
+    ) {
       if (isInputValid(nameInputValue)) {
         updateFilter('name', { value: nameInputValue, isExact: false }, false);
         setNameInputValue('');
       } else {
         setIsNameValid(false);
       }
-    } else if (filterType === 'owner' && ownerInputValue && ownerInputValue.trim() != '') {
+    } else if (
+      filterType === 'owner' &&
+      ownerInputValue &&
+      ownerInputValue.trim() != ''
+    ) {
       if (isInputValid(ownerInputValue)) {
-        updateFilter('owner', { value: ownerInputValue, isExact: false }, false);
+        updateFilter(
+          'owner',
+          { value: ownerInputValue, isExact: false },
+          false
+        );
         setOwnerInputValue('');
       } else {
         setIsOwnerValid(false);
@@ -156,28 +176,43 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   };
 
   const getSelectionForFilter = (key: string) => {
-    const selectedFilters = filteredValue.filter((filter) => filter.filterKey === key);
+    const selectedFilters = filteredValue.filter(
+      (filter) => filter.filterKey === key
+    );
     if (selectedFilters.length > 0) {
       return selectedFilters[0].filterValue.map((val) => val.value);
     }
     return [];
   };
 
-  const onDeleteChip = (category: string, chip: string | ToolbarChip, filterOptions?: Array<any>) => {
+  const onDeleteChip = (
+    category: string,
+    chip: string | ToolbarChip,
+    filterOptions?: Array<any>
+  ) => {
     const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
-    const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
-    const prevFilterValue: FilterValue[] = Object.assign([], newFilteredValue[filterIndex]?.filterValue);
+    const filterIndex = newFilteredValue.findIndex(
+      (filter) => filter.filterKey === category
+    );
+    const prevFilterValue: FilterValue[] = Object.assign(
+      [],
+      newFilteredValue[filterIndex]?.filterValue
+    );
     let filterChip: string | undefined = chip.toString();
     /**
      * Filter chip from filter options
      */
     if (filterOptions && filterOptions?.length > 0) {
-      filterChip = filterOptions?.find((option) => option.label === chip.toString())?.value;
+      filterChip = filterOptions?.find(
+        (option) => option.label === chip.toString()
+      )?.value;
     }
     /**
      * Delete selected chip from filter options
      */
-    const chipIndex = prevFilterValue.findIndex((val) => val.value === filterChip);
+    const chipIndex = prevFilterValue.findIndex(
+      (val) => val.value === filterChip
+    );
     if (chipIndex >= 0) {
       newFilteredValue[filterIndex].filterValue.splice(chipIndex, 1);
       setFilteredValue(newFilteredValue);
@@ -186,7 +221,9 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
 
   const onDeleteChipGroup = (category: string) => {
     const newFilteredValue: FilterType[] = Object.assign([], filteredValue);
-    const filterIndex = newFilteredValue.findIndex((filter) => filter.filterKey === category);
+    const filterIndex = newFilteredValue.findIndex(
+      (filter) => filter.filterKey === category
+    );
     if (filterIndex >= 0) {
       newFilteredValue.splice(filterIndex, 1);
       setFilteredValue(newFilteredValue);
@@ -195,18 +232,22 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
 
   const toggleGroupItems = (
     <>
-      <ToolbarGroup variant="filter-group">
+      <ToolbarGroup variant='filter-group'>
         <ToolbarItem>
           <Select
             variant={SelectVariant.single}
-            aria-label="Select filter"
+            aria-label='Select filter'
             onToggle={onToggleFilter}
             selections={filterSelected}
             isOpen={isFilterExpanded}
             onSelect={onSelect}
           >
             {mainFilterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+              <SelectOption
+                isDisabled={option.disabled}
+                key={index}
+                value={option.value}
+              >
                 {option.label}
               </SelectOption>
             ))}
@@ -220,13 +261,17 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         >
           {filterSelected?.toLowerCase() === 'name' && (
             <ToolbarItem>
-              <InputGroup className="mk--filter-instances__toolbar--text-input">
+              <InputGroup className='mk--filter-instances__toolbar--text-input'>
                 <TextInput
-                  name="name"
-                  id="name-input"
-                  type="search"
+                  name='name'
+                  id='name-input'
+                  type='search'
                   aria-label={t('filter_by_name_lower')}
-                  validated={!isNameValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
+                  validated={
+                    !isNameValid || isMaxFilter
+                      ? ValidatedOptions.error
+                      : ValidatedOptions.default
+                  }
                   placeholder={t('filter_by_name_lower')}
                   onChange={onNameInputChange}
                   onKeyPress={onInputPress}
@@ -260,14 +305,18 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         >
           {filterSelected?.toLowerCase() === 'owner' && (
             <ToolbarItem>
-              <InputGroup className="mk--filter-instances__toolbar--text-input">
+              <InputGroup className='mk--filter-instances__toolbar--text-input'>
                 <TextInput
-                  name="owner"
-                  id="owner-input"
-                  type="search"
+                  name='owner'
+                  id='owner-input'
+                  type='search'
                   aria-label={t('filter_by_owner')}
                   placeholder={t('filter_by_owner')}
-                  validated={!isOwnerValid || isMaxFilter ? ValidatedOptions.error : ValidatedOptions.default}
+                  validated={
+                    !isOwnerValid || isMaxFilter
+                      ? ValidatedOptions.error
+                      : ValidatedOptions.default
+                  }
                   onChange={onOwnerInputChange}
                   onKeyPress={onInputPress}
                   value={ownerInputValue}
@@ -300,7 +349,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
     {
       item: (
         <Button
-          variant="primary"
+          variant='primary'
           onClick={handleCreateModal}
           data-testid={'tableServiceAccounts-buttonCreateServiceAccount'}
         >

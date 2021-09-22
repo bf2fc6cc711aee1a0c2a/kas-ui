@@ -45,18 +45,22 @@ describe('<MASToolbar/>', () => {
     const nameInputValue = 'name';
 
     const toggleGroupItems = (
-      <ToolbarGroup variant="filter-group">
+      <ToolbarGroup variant='filter-group'>
         <ToolbarItem>
           <Select
             variant={SelectVariant.single}
-            aria-label="Select filter"
+            aria-label='Select filter'
             onToggle={onFilterToggle}
             selections={filterSelected}
             isOpen={isFilterExpanded}
             onSelect={onChangeSelect}
           >
             {mainFilterOptions.map((option, index) => (
-              <SelectOption isDisabled={option.disabled} key={index} value={option.value}>
+              <SelectOption
+                isDisabled={option.disabled}
+                key={index}
+                value={option.value}
+              >
                 {option.label}
               </SelectOption>
             ))}
@@ -69,18 +73,22 @@ describe('<MASToolbar/>', () => {
           categoryName={'Name'}
         >
           <ToolbarItem>
-            <InputGroup className="mk--filter-instances__toolbar--text-input">
+            <InputGroup className='mk--filter-instances__toolbar--text-input'>
               <TextInput
-                name="name"
-                id="filterText"
-                type="search"
-                aria-label="Search filter input"
+                name='name'
+                id='filterText'
+                type='search'
+                aria-label='Search filter input'
                 placeholder={'Filter by name'}
                 onChange={onNameInputChange}
                 onKeyPress={onInputPress}
                 value={nameInputValue}
               />
-              <Button variant={ButtonVariant.control} onClick={() => onFilter('name')} aria-label="Search instances">
+              <Button
+                variant={ButtonVariant.control}
+                onClick={() => onFilter('name')}
+                aria-label='Search instances'
+              >
                 <SearchIcon />
               </Button>
             </InputGroup>
@@ -92,7 +100,7 @@ describe('<MASToolbar/>', () => {
     const toolbarItems: ToolbarItemProps[] = [
       {
         item: (
-          <Button variant="primary" onClick={setIsModalOpen}>
+          <Button variant='primary' onClick={setIsModalOpen}>
             Create kafka instance
           </Button>
         ),
@@ -115,11 +123,17 @@ describe('<MASToolbar/>', () => {
 
     //act
     act(() => {
-      const createButton: any = screen.getByRole('button', { name: /Create kafka instance/i });
+      const createButton: any = screen.getByRole('button', {
+        name: /Create kafka instance/i,
+      });
       userEvent.click(createButton);
-      const filterSelect: any = screen.getByRole('listbox', { name: /Select filter/i });
+      const filterSelect: any = screen.getByRole('listbox', {
+        name: /Select filter/i,
+      });
       userEvent.click(filterSelect);
-      const searchButton: any = screen.getByRole('button', { name: /Search instances/i });
+      const searchButton: any = screen.getByRole('button', {
+        name: /Search instances/i,
+      });
       userEvent.click(searchButton);
     });
 
@@ -131,7 +145,9 @@ describe('<MASToolbar/>', () => {
     screen.getAllByText(/name/i);
     screen.getAllByText(/status/i);
     //input field
-    const nameInput: any = screen.getByRole('searchbox', { name: /Search filter input/i });
+    const nameInput: any = screen.getByRole('searchbox', {
+      name: /Search filter input/i,
+    });
     expect(nameInput).toHaveValue('name');
   });
 });

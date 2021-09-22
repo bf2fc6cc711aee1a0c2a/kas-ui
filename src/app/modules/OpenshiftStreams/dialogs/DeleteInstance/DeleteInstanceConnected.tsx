@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { useAuth, useConfig, useAlert } from '@bf2/ui-shared';
+import { useAuth, useConfig, useAlert } from '@rhoas/app-services-ui-shared';
 import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
 import { useRootModalContext } from '@app/common';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
@@ -18,11 +18,13 @@ const DeleteInstanceConnected = () => {
   const { apiBasePath: basePath } = kas || {};
 
   const { store, hideModal } = useRootModalContext();
-  const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } = store?.modalProps || {};
+  const { selectedItemData: instanceDetail, setIsOpenDeleteInstanceModal } =
+    store?.modalProps || {};
   const { status, name, id } = instanceDetail || {};
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { title, confirmActionLabel, description } = getDeleteInstanceModalConfig(t, status, name);
+  const { title, confirmActionLabel, description } =
+    getDeleteInstanceModalConfig(t, status, name);
 
   const onCloseModal = () => {
     setIsOpenDeleteInstanceModal && setIsOpenDeleteInstanceModal(false);

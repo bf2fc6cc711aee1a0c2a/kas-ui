@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Form, FormAlert, FormGroup, TextInput, TextArea, AlertVariant } from '@patternfly/react-core';
+import {
+  Alert,
+  Form,
+  FormAlert,
+  FormGroup,
+  TextInput,
+  TextArea,
+  AlertVariant,
+} from '@patternfly/react-core';
 import { Configuration, SecurityApi } from '@rhoas/kafka-management-sdk';
 import { NewServiceAccount, FormDataValidationState } from '../../../../models';
-import { MASCreateModal, useRootModalContext, MODAL_TYPES } from '@app/common';
+import {
+  MASCreateModal,
+  useRootModalContext,
+  KAFKA_MODAL_TYPES,
+} from '@app/common';
 import { useTranslation } from 'react-i18next';
-import { isServiceApiError, MAX_SERVICE_ACCOUNT_NAME_LENGTH, MAX_SERVICE_ACCOUNT_DESC_LENGTH } from '@app/utils';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import {
+  isServiceApiError,
+  MAX_SERVICE_ACCOUNT_NAME_LENGTH,
+  MAX_SERVICE_ACCOUNT_DESC_LENGTH,
+} from '@app/utils';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 
 const CreateServiceAccount: React.FunctionComponent = () => {
   const newServiceAccount: NewServiceAccount = new NewServiceAccount();
@@ -16,11 +32,15 @@ const CreateServiceAccount: React.FunctionComponent = () => {
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlert() || {};
 
-  const [nameValidated, setNameValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
-  const [descriptionValidated, setDescriptionValidated] = useState<FormDataValidationState>({ fieldState: 'default' });
-  const [serviceAccountFormData, setServiceAccountFormData] = useState<NewServiceAccount>(newServiceAccount);
+  const [nameValidated, setNameValidated] = useState<FormDataValidationState>({
+    fieldState: 'default',
+  });
+  const [descriptionValidated, setDescriptionValidated] =
+    useState<FormDataValidationState>({ fieldState: 'default' });
+  const [serviceAccountFormData, setServiceAccountFormData] =
+    useState<NewServiceAccount>(newServiceAccount);
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
   const [isCreationInProgress, setCreationInProgress] = useState(false);
 
@@ -32,7 +52,10 @@ const CreateServiceAccount: React.FunctionComponent = () => {
   };
 
   useEffect(() => {
-    if (nameValidated.fieldState !== 'error' && descriptionValidated.fieldState !== 'error') {
+    if (
+      nameValidated.fieldState !== 'error' &&
+      descriptionValidated.fieldState !== 'error'
+    ) {
       setIsFormValid(true);
     }
   }, [nameValidated.fieldState, descriptionValidated.fieldState]);
@@ -47,14 +70,20 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     if (name && name.length > MAX_SERVICE_ACCOUNT_NAME_LENGTH) {
       setNameValidated({
         fieldState: 'error',
-        message: t('serviceAccount.service_account_name_length_is_greater_than_expected', {
-          maxLength: MAX_SERVICE_ACCOUNT_NAME_LENGTH,
-        }),
+        message: t(
+          'serviceAccount.service_account_name_length_is_greater_than_expected',
+          {
+            maxLength: MAX_SERVICE_ACCOUNT_NAME_LENGTH,
+          }
+        ),
       });
     } else if (isValid && nameValidated.fieldState === 'error') {
       setNameValidated({ fieldState: 'default', message: '' });
     } else if (!isValid) {
-      setNameValidated({ fieldState: 'error', message: t('common.input_filed_invalid_helper_text') });
+      setNameValidated({
+        fieldState: 'error',
+        message: t('common.input_filed_invalid_helper_text'),
+      });
     }
   };
 
@@ -63,11 +92,12 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert({
-      title: t('something_went_wrong'),
-      variant: AlertVariant.danger,
-      description: reason,
-    });
+    addAlert &&
+      addAlert({
+        title: t('something_went_wrong'),
+        variant: AlertVariant.danger,
+        description: reason,
+      });
   };
 
   const handleTextInputDescription = (description: string) => {
@@ -79,9 +109,12 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     if (description && description.length > MAX_SERVICE_ACCOUNT_DESC_LENGTH) {
       setDescriptionValidated({
         fieldState: 'error',
-        message: t('serviceAccount.service_account_description_length_is_greater_than_expected', {
-          maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
-        }),
+        message: t(
+          'serviceAccount.service_account_description_length_is_greater_than_expected',
+          {
+            maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
+          }
+        ),
       });
     } else if (isValid && descriptionValidated.fieldState === 'error') {
       setDescriptionValidated({
@@ -101,7 +134,10 @@ const CreateServiceAccount: React.FunctionComponent = () => {
     const { name, description } = serviceAccountFormData;
     if (!name || name.trim() === '') {
       isValid = false;
-      setNameValidated({ fieldState: 'error', message: t('common.this_is_a_required_field') });
+      setNameValidated({
+        fieldState: 'error',
+        message: t('common.this_is_a_required_field'),
+      });
     } else if (!/^[a-z]([-a-z0-9]*[a-z0-9])?$/.test(name.trim())) {
       isValid = false;
       setNameValidated({
@@ -120,9 +156,12 @@ const CreateServiceAccount: React.FunctionComponent = () => {
       isValid = false;
       setNameValidated({
         fieldState: 'error',
-        message: t('serviceAccount.service_account_name_length_is_greater_than_expected', {
-          maxLength: MAX_SERVICE_ACCOUNT_NAME_LENGTH,
-        }),
+        message: t(
+          'serviceAccount.service_account_name_length_is_greater_than_expected',
+          {
+            maxLength: MAX_SERVICE_ACCOUNT_NAME_LENGTH,
+          }
+        ),
       });
     }
 
@@ -130,9 +169,12 @@ const CreateServiceAccount: React.FunctionComponent = () => {
       isValid = false;
       setDescriptionValidated({
         fieldState: 'error',
-        message: t('serviceAccount.service_account_name_length_is_greater_than_expected', {
-          maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
-        }),
+        message: t(
+          'serviceAccount.service_account_name_length_is_greater_than_expected',
+          {
+            maxLength: MAX_SERVICE_ACCOUNT_DESC_LENGTH,
+          }
+        ),
       });
     }
 
@@ -155,19 +197,24 @@ const CreateServiceAccount: React.FunctionComponent = () => {
           })
         );
         setCreationInProgress(true);
-        await apisService.createServiceAccount(serviceAccountFormData).then((res) => {
-          const credential = res?.data;
-          //close current modal i.e. create service account
-          hideModal();
-          //open generate credential modal
-          showModal(MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
-          resetForm();
-          addAlert({
-            title: t('serviceAccount.service_account_creation_success_message'),
-            variant: AlertVariant.success,
+        await apisService
+          .createServiceAccount(serviceAccountFormData)
+          .then((res) => {
+            const credential = res?.data;
+            //close current modal i.e. create service account
+            hideModal();
+            //open generate credential modal
+            showModal(KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS, { credential });
+            resetForm();
+            addAlert &&
+              addAlert({
+                title: t(
+                  'serviceAccount.service_account_creation_success_message'
+                ),
+                variant: AlertVariant.success,
+              });
+            fetchServiceAccounts && fetchServiceAccounts();
           });
-          fetchServiceAccounts && fetchServiceAccounts();
-        });
       } catch (error) {
         handleServerError(error);
       }
@@ -188,27 +235,33 @@ const CreateServiceAccount: React.FunctionComponent = () => {
   const createForm = () => {
     const { message, fieldState } = nameValidated;
     const { name, description } = serviceAccountFormData;
-    const { message: descMessage, fieldState: descFieldState } = descriptionValidated;
+    const { message: descMessage, fieldState: descFieldState } =
+      descriptionValidated;
     return (
       <Form onSubmit={onFormSubmit}>
         {!isFormValid && (
           <FormAlert>
-            <Alert variant="danger" title={t('common.form_invalid_alert')} aria-live="polite" isInline />
+            <Alert
+              variant='danger'
+              title={t('common.form_invalid_alert')}
+              aria-live='polite'
+              isInline
+            />
           </FormAlert>
         )}
         <FormGroup
-          label="Name"
+          label='Name'
           isRequired
-          fieldId="text-input-name"
+          fieldId='text-input-name'
           helperTextInvalid={message}
           validated={fieldState}
           helperText={t('common.input_filed_invalid_helper_text')}
         >
           <TextInput
             isRequired
-            type="text"
-            id="text-input-name"
-            name="text-input-name"
+            type='text'
+            id='text-input-name'
+            name='text-input-name'
             value={name}
             onChange={handleTextInputName}
             validated={fieldState}
@@ -216,15 +269,15 @@ const CreateServiceAccount: React.FunctionComponent = () => {
           />
         </FormGroup>
         <FormGroup
-          label="Description"
-          fieldId="text-input-description"
+          label='Description'
+          fieldId='text-input-description'
           helperTextInvalid={descMessage}
           validated={descFieldState}
           helperText={t('common.input_text_area_invalid_helper_text')}
         >
           <TextArea
-            id="text-input-description"
-            name="text-input-description"
+            id='text-input-description'
+            name='text-input-description'
             value={description}
             onChange={handleTextInputDescription}
             validated={descFieldState}
@@ -236,16 +289,16 @@ const CreateServiceAccount: React.FunctionComponent = () => {
 
   return (
     <MASCreateModal
-      id="modalCreateSAccount"
+      id='modalCreateSAccount'
       isModalOpen={true}
       title={t('serviceAccount.create_a_service_account')}
       handleModalToggle={handleCreateModal}
       onCreate={createServiceAccount}
       isFormValid={isFormValid}
-      primaryButtonTitle="Create"
+      primaryButtonTitle='Create'
       isCreationInProgress={isCreationInProgress}
-      dataTestIdSubmit="modalCreateServiceAccount-buttonSubmit"
-      dataTestIdCancel="modalCreateServiceAccount-buttonCancel"
+      dataTestIdSubmit='modalCreateServiceAccount-buttonSubmit'
+      dataTestIdCancel='modalCreateServiceAccount-buttonCancel'
     >
       {createForm()}
     </MASCreateModal>

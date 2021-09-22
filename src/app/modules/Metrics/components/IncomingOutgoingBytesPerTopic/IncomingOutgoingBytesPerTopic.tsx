@@ -1,13 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
-import { useAlert, useAuth, useConfig } from '@bf2/ui-shared';
+import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import { isServiceApiError } from '@app/utils';
 import { AlertVariant, Divider } from '@patternfly/react-core';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import { getLargestByteSize, convertToSpecifiedByte } from '@app/modules/Metrics/utils';
-import { Bullseye, Card, CardTitle, CardBody, Spinner } from '@patternfly/react-core';
+import {
+  getLargestByteSize,
+  convertToSpecifiedByte,
+} from '@app/modules/Metrics/utils';
+import {
+  Bullseye,
+  Card,
+  CardTitle,
+  CardBody,
+  Spinner,
+} from '@patternfly/react-core';
 import {
   Chart,
   ChartLine,
@@ -17,7 +26,12 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { ChartEmptyState, ChartPopover, ChartToolbar, LogSizePerPartitionChart } from '@app/modules/Metrics/components';
+import {
+  ChartEmptyState,
+  ChartPopover,
+  ChartToolbar,
+  LogSizePerPartitionChart,
+} from '@app/modules/Metrics/components';
 
 type Topic = {
   name: string;
@@ -58,10 +72,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 }: KafkaInstanceProps) => {
   const { t } = useTranslation();
   const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
+  const { kas } = useConfig() || {};
+  const { apiBasePath: basePath } = kas || {};
+  const { addAlert } = useAlert() || {};
   const containerRef = useRef();
   const [width, setWidth] = useState();
   const [timeDuration, setTimeDuration] = useState(6);
@@ -69,7 +82,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
   const [selectedTopic, setSelectedTopic] = useState<boolean | string>(false);
   const [isFilterApplied, setIsFilterApplied] = useState<boolean>(false);
 
-  const handleResize = () => containerRef.current && setWidth(containerRef.current.clientWidth);
+  const handleResize = () =>
+    containerRef.current && setWidth(containerRef.current.clientWidth);
   const itemsPerRow = width && width > 650 ? 6 : 3;
 
   useEffect(() => {
@@ -98,10 +112,15 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         if (!kafkaID) {
           return;
         }
-        const data = await apisService.getMetricsByRangeQuery(kafkaID, timeDuration * 60, timeInterval * 60, [
-          'kafka_server_brokertopicmetrics_bytes_in_total',
-          'kafka_server_brokertopicmetrics_bytes_out_total',
-        ]);
+        const data = await apisService.getMetricsByRangeQuery(
+          kafkaID,
+          timeDuration * 60,
+          timeInterval * 60,
+          [
+            'kafka_server_brokertopicmetrics_bytes_in_total',
+            'kafka_server_brokertopicmetrics_bytes_out_total',
+          ]
+        );
 
         const incomingTopics = {
           name: 'Total incoming bytes',
@@ -125,7 +144,10 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
               throw new Error('item.values cannot be undefined');
             }
 
-            if (labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets') {
+            if (
+              labels['topic'] !== '__strimzi_canary' &&
+              labels['topic'] !== '__consumer_offsets'
+            ) {
               topicList &&
                 labels['topic'] &&
                 topicList.indexOf(labels['topic']) === -1 &&
@@ -136,46 +158,72 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
               ? labels['topic'] !== '__strimzi_canary' &&
                 labels['topic'] !== '__consumer_offsets' &&
                 selectedTopic === labels['topic']
-              : labels['topic'] !== '__strimzi_canary' && labels['topic'] !== '__consumer_offsets';
+              : labels['topic'] !== '__strimzi_canary' &&
+                labels['topic'] !== '__consumer_offsets';
 
             if (isSelectedItem) {
-              if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total') {
+              if (
+                labels['__name__'] ===
+                'kafka_server_brokertopicmetrics_bytes_in_total'
+              ) {
                 item.values?.forEach((value, indexJ) => {
                   if (value.timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
                   if (incomingTopics.rawData.has(value.timestamp)) {
-                    incomingTopics.rawData.get(value.timestamp)?.push(value.value);
+                    incomingTopics.rawData
+                      .get(value.timestamp)
+                      ?.push(value.value);
                   } else {
-                    incomingTopics.rawData.set(value.timestamp, [value.value] as number[]);
+                    incomingTopics.rawData.set(value.timestamp, [
+                      value.value,
+                    ] as number[]);
                   }
                 });
               }
-              if (labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total') {
+              if (
+                labels['__name__'] ===
+                'kafka_server_brokertopicmetrics_bytes_out_total'
+              ) {
                 item.values?.forEach((value, indexJ) => {
                   if (value.timestamp == undefined) {
                     throw new Error('timestamp cannot be undefined');
                   }
                   if (outgoingTopics.rawData.has(value.timestamp)) {
-                    outgoingTopics.rawData.get(value.timestamp)?.push(value.value);
+                    outgoingTopics.rawData
+                      .get(value.timestamp)
+                      ?.push(value.value);
                   } else {
-                    outgoingTopics.rawData.set(value.timestamp, [value.value] as number[]);
+                    outgoingTopics.rawData.set(value.timestamp, [
+                      value.value,
+                    ] as number[]);
                   }
                 });
               }
             }
           });
 
-          if (incomingTopics.rawData.size < 1 && outgoingTopics.rawData.size < 1) {
+          if (
+            incomingTopics.rawData.size < 1 &&
+            outgoingTopics.rawData.size < 1
+          ) {
             setNoTopics(true);
             setChartDataLoading(false);
           } else {
             const incomingDataArr = [] as TopicDataArray;
-            incomingTopics.rawData.forEach((value, key) => incomingDataArr.push({ timestamp: key, bytes: value }));
-            incomingTopics.sortedData = incomingDataArr.sort((a, b) => a.timestamp - b.timestamp);
+            incomingTopics.rawData.forEach((value, key) =>
+              incomingDataArr.push({ timestamp: key, bytes: value })
+            );
+            incomingTopics.sortedData = incomingDataArr.sort(
+              (a, b) => a.timestamp - b.timestamp
+            );
             const outgoingDataArr = [] as TopicDataArray;
-            outgoingTopics.rawData.forEach((value, key) => outgoingDataArr.push({ timestamp: key, bytes: value }));
-            outgoingTopics.sortedData = outgoingDataArr.sort((a, b) => a.timestamp - b.timestamp);
+            outgoingTopics.rawData.forEach((value, key) =>
+              outgoingDataArr.push({ timestamp: key, bytes: value })
+            );
+            outgoingTopics.sortedData = outgoingDataArr.sort(
+              (a, b) => a.timestamp - b.timestamp
+            );
             getChartData(incomingTopics, outgoingTopics);
           }
         } else {
@@ -187,7 +235,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         if (isServiceApiError(error)) {
           reason = error.response?.data.reason;
         }
-        addAlert({ variant: AlertVariant.danger, title: t('common.something_went_wrong'), description: reason });
+        addAlert &&
+          addAlert({
+            variant: AlertVariant.danger,
+            title: t('common.something_went_wrong'),
+            description: reason,
+          });
       }
     }
   };
@@ -198,10 +251,16 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
   // useTimeout(() => fetchBytesData(), 1000 * 60 * 5);
 
-  const getChartData = (incomingTopicArray: Topic, outgoingTopicArray: Topic) => {
+  const getChartData = (
+    incomingTopicArray: Topic,
+    outgoingTopicArray: Topic
+  ) => {
     const legendData: Array<LegendData> = [];
     const chartData: Array<ChartData> = [];
-    const largestByteSize = getLargestByteSize(incomingTopicArray, outgoingTopicArray);
+    const largestByteSize = getLargestByteSize(
+      incomingTopicArray,
+      outgoingTopicArray
+    );
 
     // Aggregate of Incoming Bytes per Topic
     if (incomingTopicArray) {
@@ -210,8 +269,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       const getCurrentLengthOfData = () => {
         const timestampDiff =
-          incomingTopicArray.sortedData[incomingTopicArray.sortedData.length - 1].timestamp -
-          incomingTopicArray.sortedData[0].timestamp;
+          incomingTopicArray.sortedData[
+            incomingTopicArray.sortedData.length - 1
+          ].timestamp - incomingTopicArray.sortedData[0].timestamp;
         const minutes = timestampDiff / 1000 / 60;
         return minutes;
       };
@@ -220,7 +280,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-          const newTimestamp = incomingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
+          const newTimestamp =
+            incomingTopicArray.sortedData[0].timestamp -
+            (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
           const time = date.getHours() + ':' + date.getMinutes();
           line.push({ name: incomingTopicArray.name, x: time, y: 0 });
@@ -255,8 +317,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       const getCurrentLengthOfData = () => {
         const timestampDiff =
-          outgoingTopicArray.sortedData[outgoingTopicArray.sortedData.length - 1].timestamp -
-          outgoingTopicArray.sortedData[0].timestamp;
+          outgoingTopicArray.sortedData[
+            outgoingTopicArray.sortedData.length - 1
+          ].timestamp - outgoingTopicArray.sortedData[0].timestamp;
         const minutes = timestampDiff / 1000 / 60;
         return minutes;
       };
@@ -265,7 +328,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
 
       if (lengthOfData <= 360 && timeDuration >= 6) {
         for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-          const newTimestamp = outgoingTopicArray.sortedData[0].timestamp - (lengthOfDataPer5Mins - i) * (5 * 60000);
+          const newTimestamp =
+            outgoingTopicArray.sortedData[0].timestamp -
+            (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
           const time = date.getHours() + ':' + date.getMinutes();
           line.push({ name: outgoingTopicArray.name, x: time, y: 0 });
@@ -314,9 +379,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
         topicList={topicList}
         setIsFilterApplied={setIsFilterApplied}
       />
-      <CardTitle component="h2">
+      <CardTitle component='h2'>
         {t('metrics.total_bytes')}{' '}
-        <ChartPopover title={t('metrics.total_bytes')} description={t('metrics.topic_metrics_help_text')} />
+        <ChartPopover
+          title={t('metrics.total_bytes')}
+          description={t('metrics.topic_metrics_help_text')}
+        />
       </CardTitle>
       <CardBody>
         <div ref={containerRef}>
@@ -337,8 +405,13 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                           />
                         }
                         legendAllowWrap={true}
-                        legendPosition="bottom-left"
-                        legendComponent={<ChartLegend data={legend} itemsPerRow={itemsPerRow} />}
+                        legendPosition='bottom-left'
+                        legendComponent={
+                          <ChartLegend
+                            data={legend}
+                            itemsPerRow={itemsPerRow}
+                          />
+                        }
                         height={300}
                         padding={{
                           bottom: 110,
@@ -352,7 +425,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                         <ChartAxis label={'Time'} tickCount={6} />
                         <ChartAxis
                           dependentAxis
-                          tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+                          tickFormat={(t) =>
+                            `${Math.round(t)} ${largestByteSize}`
+                          }
                           tickCount={4}
                           minDomain={{ y: 0 }}
                         />
@@ -380,7 +455,9 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
                         />
                       ) : (
                         <Card>
-                          <CardTitle component="h2">{t('metrics.topic_partition_size')}</CardTitle>
+                          <CardTitle component='h2'>
+                            {t('metrics.topic_partition_size')}
+                          </CardTitle>
                           <CardBody>
                             <ChartEmptyState
                               title={t('metrics.empty_state_no_filter_title')}

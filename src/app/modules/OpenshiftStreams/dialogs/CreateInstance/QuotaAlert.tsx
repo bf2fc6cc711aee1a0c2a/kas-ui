@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, AlertVariant, Spinner } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Quota, QuotaType, QuotaValue } from '@bf2/ui-shared';
+import { Quota, QuotaType, QuotaValue } from '@rhoas/app-services-ui-shared';
 
 export type QuotaAlertProps = {
   quota: Quota | undefined;
@@ -76,17 +76,25 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
     <>
       {loadingQuota && (
         <Alert
-          className="pf-u-mb-md"
+          className='pf-u-mb-md'
           variant={AlertVariant.info}
           title={t('instance_checking_message')}
-          aria-live="polite"
+          aria-live='polite'
           isInline
-          customIcon={<Spinner size="md" aria-valuetext="Checking kafka availability" />}
+          customIcon={
+            <Spinner size='md' aria-valuetext='Checking kafka availability' />
+          }
         />
       )}
 
       {titleKey && (
-        <Alert className="pf-u-mb-md" variant={variant} title={t(titleKey)} aria-live="polite" isInline>
+        <Alert
+          className='pf-u-mb-md'
+          variant={variant}
+          title={t(titleKey)}
+          aria-live='polite'
+          isInline
+        >
           {t(messageKey)}
         </Alert>
       )}

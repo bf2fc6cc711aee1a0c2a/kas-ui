@@ -21,7 +21,11 @@ export const getLargestByteSize = (data1, data2) => {
           }
         }
         if (byteString === 'GiB') {
-          if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
+          if (
+            currentByteSize === 'B' ||
+            currentByteSize === 'kiB' ||
+            currentByteSize === 'MiB'
+          ) {
             currentByteSize = 'GiB';
           }
         }
@@ -43,7 +47,11 @@ export const getLargestByteSize = (data1, data2) => {
           }
         }
         if (byteString === 'GiB') {
-          if (currentByteSize === 'B' || currentByteSize === 'kiB' || currentByteSize === 'MiB') {
+          if (
+            currentByteSize === 'B' ||
+            currentByteSize === 'kiB' ||
+            currentByteSize === 'MiB'
+          ) {
             currentByteSize = 'GiB';
           }
         }

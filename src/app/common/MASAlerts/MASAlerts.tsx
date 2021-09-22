@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MASAlertToastGroup } from '@app/common';
-import { AlertContext, AlertProps } from '@bf2/ui-shared';
+import { AlertContext, AlertProps } from '@rhoas/app-services-ui-shared';
 
 type TimeOut = {
   key: string | undefined;
@@ -17,11 +17,15 @@ export const AlertProvider: React.FunctionComponent = ({ children }) => {
       .filter((alert) => !timersKeys.includes(alert?.id))
       .map((alert) => {
         const { id = '' } = alert;
-        const timeOut: ReturnType<typeof setTimeout> = setTimeout(() => hideAlert(id), 8000);
+        const timeOut: ReturnType<typeof setTimeout> = setTimeout(
+          () => hideAlert(id),
+          8000
+        );
         return { key: alert.id, timeOut } as TimeOut;
       });
     setTimers([...timers, ...timeOuts]);
-    return () => timers.forEach((timer) => timer?.timeOut && clearTimeout(timer.timeOut));
+    return () =>
+      timers.forEach((timer) => timer?.timeOut && clearTimeout(timer.timeOut));
   }, [alerts]);
 
   const createId = () => new Date().getTime();

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { InstanceDrawer, InstanceDrawerProps } from './InstanceDrawer';
-import { useRootModalContext, MODAL_TYPES } from '@app/common';
+import { useRootModalContext, KAFKA_MODAL_TYPES } from '@app/common';
 
 export type InstanceDrawerConnectedProps = InstanceDrawerProps & {
   isOpenDeleteInstanceModal: boolean;
@@ -23,7 +23,7 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
   const { showModal } = useRootModalContext();
 
   const showDeleteInstanceModal = () => {
-    showModal(MODAL_TYPES.DELETE_KAFKA_EXTERNALLY, {
+    showModal(KAFKA_MODAL_TYPES.DELETE_KAFKA_EXTERNALLY, {
       selectedItemData: instanceDetail,
       setIsOpenDeleteInstanceModal,
     });

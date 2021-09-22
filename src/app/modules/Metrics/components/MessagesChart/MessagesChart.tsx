@@ -49,19 +49,24 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
     return (
       <div style={{ height: '300x', width: '450px' }}>
         <Chart
-          ariaTitle="Messages in to a topic"
+          ariaTitle='Messages in to a topic'
           containerComponent={
             <CursorVoronoiContainer
-              cursorDimension="x"
+              cursorDimension='x'
               labels={({ datum }) => `${datum.y}`}
-              labelComponent={<ChartLegendTooltip legendData={legendData} title={(datum) => datum.x} />}
+              labelComponent={
+                <ChartLegendTooltip
+                  legendData={legendData}
+                  title={(datum) => datum.x}
+                />
+              }
               mouseFollowTooltips
-              voronoiDimension="x"
+              voronoiDimension='x'
               voronoiPadding={50}
             />
           }
           legendData={legendData}
-          legendPosition="bottom"
+          legendPosition='bottom'
           height={300}
           maxDomain={{ y: 10 }}
           minDomain={{ y: 0 }}
@@ -74,7 +79,7 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
           themeColor={ChartThemeColor.green}
           width={450}
         >
-          <ChartAxis label="time" tickCount={6} />
+          <ChartAxis label='time' tickCount={6} />
           <ChartAxis dependentAxis showGrid label={'messages'} />
           <ChartGroup>
             {chartData.map((value, index) => (

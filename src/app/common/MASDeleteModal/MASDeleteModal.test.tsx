@@ -75,7 +75,9 @@ describe('<MASDeleteModal/>', () => {
 
     //act
     act(() => {
-      const cancelButton: any = screen.getByRole('button', { name: /Cancel instance/i });
+      const cancelButton: any = screen.getByRole('button', {
+        name: /Cancel instance/i,
+      });
       userEvent.click(cancelButton);
     });
     //assert
@@ -92,13 +94,15 @@ describe('<MASDeleteModal/>', () => {
       <MASDeleteModal {...props}>
         <>
           <label
-            htmlFor="instance-name-input"
-            dangerouslySetInnerHTML={{ __html: `Type <b>${selectedInstanceName}</b> to confirm` }}
+            htmlFor='instance-name-input'
+            dangerouslySetInnerHTML={{
+              __html: `Type <b>${selectedInstanceName}</b> to confirm`,
+            }}
           />
           <TextInput
-            id="mk--instance-name__input"
-            name="instance-name-input"
-            type="text"
+            id='mk--instance-name__input'
+            name='instance-name-input'
+            type='text'
             value={selectedInstanceName}
             onChange={handleInstanceName}
             onKeyPress={onKeyPress}

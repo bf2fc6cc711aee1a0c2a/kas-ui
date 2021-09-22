@@ -1,22 +1,38 @@
 .mas--streams-table-view__table {
   --pf-c-table-row__item--m-selected--ZIndex: var(--pf-global--ZIndex--xs);
-  --pf-c-table-row__item--m-selected--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+  --pf-c-table-row__item--m-selected--BoxShadow: var(
+      --pf-global--BoxShadow--sm-top
+    ),
     var(--pf-global--BoxShadow--sm-bottom);
-  --pf-c-table-row__item--m-selectable--focus--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+  --pf-c-table-row__item--m-selectable--focus--BoxShadow: var(
+      --pf-global--BoxShadow--sm-top
+    ),
     var(--pf-global--BoxShadow--sm-bottom);
-  --pf-c-table-row__item--m-selectable--hover--ZIndex: calc(var(--pf-c-table-row__item--m-selected--ZIndex) + 1);
+  --pf-c-table-row__item--m-selectable--hover--ZIndex: calc(
+    var(--pf-c-table-row__item--m-selected--ZIndex) + 1
+  );
   --pf-c-table-row__item--before--BackgroundColor: transparent;
-  --pf-c-table-row__item--m-selected--before--BackgroundColor: var(--pf-global--active-color--100);
+  --pf-c-table-row__item--m-selected--before--BackgroundColor: var(
+    --pf-global--active-color--100
+  );
   --pf-c-table-row__item--before--Top: 0;
   --pf-c-table-row__item--before--Width: var(--pf-global--BorderWidth--lg);
   --pf-c-table-row__item--before--Transition: var(--pf-global--Transition);
-  --pf-c-table-row__item--m-selectable--active--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+  --pf-c-table-row__item--m-selectable--active--BoxShadow: var(
+      --pf-global--BoxShadow--sm-top
+    ),
     var(--pf-global--BoxShadow--sm-bottom);
-  --pf-c-table-row__item--m-selectable--OutlineOffset: calc(-1 * var(--pf-global--spacer--xs));
-  --pf-c-table-row__item--m-selectable--hover--BoxShadow: var(--pf-global--BoxShadow--sm-top),
+  --pf-c-table-row__item--m-selectable--OutlineOffset: calc(
+    -1 * var(--pf-global--spacer--xs)
+  );
+  --pf-c-table-row__item--m-selectable--hover--BoxShadow: var(
+      --pf-global--BoxShadow--sm-top
+    ),
     var(--pf-global--BoxShadow--sm-bottom);
 
-  margin-bottom: var(--pf-global--spacer--xs); /* Makes bottom box shadow visible */
+  margin-bottom: var(
+    --pf-global--spacer--xs
+  ); /* Makes bottom box shadow visible */
 }
 
 @media screen and (min-width: 769px) {
@@ -54,7 +70,9 @@
 }
 
 .pf-c-table-row__item.pf-m-selectable.pf-m-selected {
-  --pf-c-table-row__item--before--BackgroundColor: var(--pf-c-table-row__item--m-selected--before--BackgroundColor);
+  --pf-c-table-row__item--before--BackgroundColor: var(
+    --pf-c-table-row__item--m-selected--before--BackgroundColor
+  );
 
   position: relative;
   z-index: var(--pf-c-table-row__item--m-selected--ZIndex);

@@ -11,10 +11,17 @@ import {
 } from '@patternfly/react-table';
 import { Skeleton } from '@patternfly/react-core';
 import { MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
-import { getLoadingRowsCount, getFormattedDate, getSkeletonForRows } from '@app/utils';
+import {
+  getLoadingRowsCount,
+  getFormattedDate,
+  getSkeletonForRows,
+} from '@app/utils';
 import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
-import { ServiceAccountsToolbar, ServiceAccountsToolbarProps } from './ServiceAccountsToolbar';
-import { useAuth } from '@bf2/ui-shared';
+import {
+  ServiceAccountsToolbar,
+  ServiceAccountsToolbarProps,
+} from './ServiceAccountsToolbar';
+import { useAuth } from '@rhoas/app-services-ui-shared';
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -48,7 +55,9 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   const { t } = useTranslation();
   const auth = useAuth();
 
-  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(undefined);
+  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(
+    undefined
+  );
   const [isOrgAdmin, setIsOrgAdmin] = useState<boolean>();
 
   useEffect(() => {
@@ -67,7 +76,11 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     { title: t('time_created') },
   ];
 
-  const onSelectKebabDropdownOption = (event: any, originalData: ServiceAccountListItem, selectedOption: string) => {
+  const onSelectKebabDropdownOption = (
+    event: any,
+    originalData: ServiceAccountListItem,
+    selectedOption: string
+  ) => {
     if (selectedOption === 'reset-credentials') {
       onResetCredentials && onResetCredentials(originalData);
     } else if (selectedOption === 'delete-account') {
@@ -80,15 +93,29 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 
   const preparedTableCells = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
-    const loadingCount: number = getLoadingRowsCount(page, perPage, expectedTotal);
+    const loadingCount: number = getLoadingRowsCount(
+      page,
+      perPage,
+      expectedTotal
+    );
     if (!serviceAccountsDataLoaded) {
-      return getSkeletonForRows({ loadingCount, skeleton: <Skeleton />, length: tableColumns.length });
+      return getSkeletonForRows({
+        loadingCount,
+        skeleton: <Skeleton />,
+        length: tableColumns.length,
+      });
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
       const { name, owner, description, client_id, created_at } = row;
       tableRow.push({
-        cells: [name, client_id, owner, description, { title: getFormattedDate(created_at, t('ago')) }],
+        cells: [
+          name,
+          client_id,
+          owner,
+          description,
+          { title: getFormattedDate(created_at, t('ago')) },
+        ],
         originalData: row,
       });
     });
@@ -101,7 +128,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
 
     const originalData: ServiceAccountListItem = rowData.originalData;
-    const isUserSameAsLoggedIn = originalData.owner === loggedInUser || isOrgAdmin;
+    const isUserSameAsLoggedIn =
+      originalData.owner === loggedInUser || isOrgAdmin;
     let additionalProps: any;
 
     if (!isUserSameAsLoggedIn) {
@@ -121,7 +149,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         id: 'reset-credentials',
         ['data-testid']: 'tableServiceAccounts-actionResetCredentials',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'reset-credentials'),
+          isUserSameAsLoggedIn &&
+          onSelectKebabDropdownOption(event, originalData, 'reset-credentials'),
         ...additionalProps,
         tooltipProps: {
           position: 'left',
@@ -133,7 +162,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         id: 'delete-account',
         ['data-testid']: 'tableServiceAccounts-actionDeleteAccount',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn && onSelectKebabDropdownOption(event, originalData, 'delete-account'),
+          isUserSameAsLoggedIn &&
+          onSelectKebabDropdownOption(event, originalData, 'delete-account'),
         ...additionalProps,
         tooltipProps: {
           position: 'left',
@@ -182,8 +212,13 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     }
   };
 
-  const onSort = (_event: any, columnIndex: number, sortByDirection: SortByDirection) => {
-    setOrderBy && setOrderBy(`${getParameterForSortIndex(columnIndex)} ${sortByDirection}`);
+  const onSort = (
+    _event: any,
+    columnIndex: number,
+    sortByDirection: SortByDirection
+  ) => {
+    setOrderBy &&
+      setOrderBy(`${getParameterForSortIndex(columnIndex)} ${sortByDirection}`);
   };
 
   const sortBy = (): ISortBy | undefined => {
@@ -191,7 +226,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     if (sort.length > 1) {
       return {
         index: getindexForSortParameter(sort[0]),
-        direction: sort[1] === SortByDirection.asc ? SortByDirection.asc : SortByDirection.desc,
+        direction:
+          sort[1] === SortByDirection.asc
+            ? SortByDirection.asc
+            : SortByDirection.desc,
       };
     }
     return;
@@ -220,19 +258,21 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           sortBy: sortBy(),
         }}
       />
-      {serviceAccountItems && serviceAccountItems?.length < 1 && serviceAccountsDataLoaded && (
-        <MASEmptyState
-          emptyStateProps={{
-            variant: MASEmptyStateVariant.NoResult,
-          }}
-          titleProps={{
-            title: t('no_results_found'),
-          }}
-          emptyStateBodyProps={{
-            body: t('adjust_your_filters_and_try_again'),
-          }}
-        />
-      )}
+      {serviceAccountItems &&
+        serviceAccountItems?.length < 1 &&
+        serviceAccountsDataLoaded && (
+          <MASEmptyState
+            emptyStateProps={{
+              variant: MASEmptyStateVariant.NoResult,
+            }}
+            titleProps={{
+              title: t('no_results_found'),
+            }}
+            emptyStateBodyProps={{
+              body: t('adjust_your_filters_and_try_again'),
+            }}
+          />
+        )}
       {/* {total && total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"

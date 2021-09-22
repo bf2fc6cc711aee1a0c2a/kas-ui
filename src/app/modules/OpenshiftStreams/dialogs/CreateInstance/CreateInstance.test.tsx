@@ -4,7 +4,13 @@ import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
 import i18nForTest from '../../../../../../test-utils/i18n';
-import { AlertContext, Auth, AuthContext, Config, ConfigContext } from '@bf2/ui-shared';
+import {
+  AlertContext,
+  Auth,
+  AuthContext,
+  Config,
+  ConfigContext,
+} from '@rhoas/app-services-ui-shared';
 import { CloudRegionList } from '@rhoas/kafka-management-sdk';
 import { AxiosResponse } from 'axios';
 
@@ -44,7 +50,7 @@ const setupRender = (props: any) => {
               apiBasePath: '',
             },
             ams: { trialQuotaId: 'fake-quota-id' },
-          } as Config
+          } as unknown as Config
         }
       >
         <AuthContext.Provider
@@ -59,7 +65,9 @@ const setupRender = (props: any) => {
         >
           <AlertContext.Provider
             value={{
-              addAlert: () => {},
+              addAlert: () => {
+                // No-op
+              },
             }}
           >
             <CreateInstance {...props} />
@@ -111,10 +119,14 @@ describe('<CreateInstance/>', () => {
     setupRender(props);
 
     //act
-    const classList: string[] = screen.getByRole('button', { name: /Create instance/i }).className.split(' ');
+    const classList: string[] = screen
+      .getByRole('button', { name: /Create instance/i })
+      .className.split(' ');
 
     //assert
-    expect(screen.getByRole('button', { name: /Create instance/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Create instance/i })
+    ).toBeInTheDocument();
     expect(classList).toContain('pf-m-primary');
     expect(classList).toContain('pf-c-button');
     //expect(classList).not.toContain('pf-m-disabled');
@@ -132,32 +144,46 @@ describe('<CreateInstance/>', () => {
 
     //assert
     await waitFor(() => {
-      const classList: string[] = screen.getByRole('button', { name: /Create instance/i }).className.split(' ');
-      expect(screen.getByRole('button', { name: /Create instance/i })).toBeInTheDocument();
+      const classList: string[] = screen
+        .getByRole('button', { name: /Create instance/i })
+        .className.split(' ');
+      expect(
+        screen.getByRole('button', { name: /Create instance/i })
+      ).toBeInTheDocument();
       expect(classList).toContain('pf-m-primary');
       expect(classList).toContain('pf-c-button');
       expect(classList).toContain('pf-m-disabled');
-      expect(screen.getByRole('button', { name: /Create instance/i })).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: /Create instance/i })
+      ).toBeDisabled();
     });
   });
 
   it('should enabled create instance button if filled all the mandatory fileds', async () => {
     //arrange
     setupRender(props);
-    const createInstanceButton: any = screen.getByRole('button', { name: /Create instance/i });
+    const createInstanceButton: any = screen.getByRole('button', {
+      name: /Create instance/i,
+    });
 
     //act
     act(() => {
       userEvent.click(createInstanceButton);
     });
-    const instanceNameInput: any = screen.getByRole('textbox', { name: /Name/i });
+    const instanceNameInput: any = screen.getByRole('textbox', {
+      name: /Name/i,
+    });
     act(() => {
       userEvent.type(instanceNameInput, '1');
     });
 
     //assert
-    const classList: string[] = screen.getByRole('button', { name: /Create instance/i }).className.split(' ');
-    expect(screen.getByRole('button', { name: /Create instance/i })).toBeInTheDocument();
+    const classList: string[] = screen
+      .getByRole('button', { name: /Create instance/i })
+      .className.split(' ');
+    expect(
+      screen.getByRole('button', { name: /Create instance/i })
+    ).toBeInTheDocument();
     expect(classList).toContain('pf-m-primary');
     expect(classList).toContain('pf-c-button');
     //expect(classList).not.toContain('pf-m-disabled');
@@ -170,23 +196,33 @@ describe('<CreateInstance/>', () => {
     setupRender(props);
 
     //act
-    const createInstanceButton: any = screen.getByRole('button', { name: /Create instance/i });
+    const createInstanceButton: any = screen.getByRole('button', {
+      name: /Create instance/i,
+    });
     act(() => {
       userEvent.click(createInstanceButton);
     });
-    const instanceNameInput: any = screen.getByRole('textbox', { name: /Name/i });
+    const instanceNameInput: any = screen.getByRole('textbox', {
+      name: /Name/i,
+    });
     act(() => {
       userEvent.type(instanceNameInput, '@');
     });
 
     //assert
     await waitFor(() => {
-      const classList: string[] = screen.getByRole('button', { name: /Create instance/i }).className.split(' ');
-      expect(screen.getByRole('button', { name: /Create instance/i })).toBeInTheDocument();
+      const classList: string[] = screen
+        .getByRole('button', { name: /Create instance/i })
+        .className.split(' ');
+      expect(
+        screen.getByRole('button', { name: /Create instance/i })
+      ).toBeInTheDocument();
       expect(classList).toContain('pf-m-primary');
       expect(classList).toContain('pf-c-button');
       expect(classList).toContain('pf-m-disabled');
-      expect(screen.getByRole('button', { name: /Create instance/i })).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: /Create instance/i })
+      ).toBeDisabled();
       expect(instanceNameInput).toHaveValue('@');
       expect(
         screen.getByText(
