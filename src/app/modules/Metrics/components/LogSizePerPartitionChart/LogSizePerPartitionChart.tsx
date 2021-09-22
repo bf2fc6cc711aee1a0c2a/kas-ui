@@ -266,7 +266,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
             ) : (
               <ChartEmptyState
                 title="No metrics data"
-                body="Your Kafka instance was recently created, so some metrics aren’t yet available. Check back in a few minutes."
+                body="Your Kafka instance was recently created, so some metrics aren’t yet available. Metrics should be available around 30 minutes after creation."
                 noData
               />
             )
