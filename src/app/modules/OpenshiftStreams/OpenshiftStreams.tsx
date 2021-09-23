@@ -37,7 +37,7 @@ import { MAX_POLL_INTERVAL } from '@app/utils';
 import {
   QuickStartContext,
   QuickStartContextValues,
-} from '@cloudmosaic/quickstarts';
+} from '@patternfly/quickstarts';
 import {
   StreamsTableView,
   FilterType,

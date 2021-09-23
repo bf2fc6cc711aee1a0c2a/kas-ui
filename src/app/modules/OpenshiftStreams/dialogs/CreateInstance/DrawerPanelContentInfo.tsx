@@ -16,7 +16,7 @@ import {
 import {
   QuickStartContext,
   QuickStartContextValues,
-} from '@cloudmosaic/quickstarts';
+} from '@patternfly/quickstarts';
 
 export type DrawerPanelContentInfoProps = {
   isKasTrial?: boolean;
