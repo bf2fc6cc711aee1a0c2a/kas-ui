@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { MASDeleteModal, useRootModalContext } from '@app/common';
+import { DeleteModal, useRootModalContext } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import {
   Configuration,
@@ -15,8 +15,8 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
+  } = useConfig() || { kas: {} };
+  const { addAlert } = useAlert() || {};
   const { store, hideModal } = useRootModalContext();
   const { fetchServiceAccounts, serviceAccountToDelete } =
     store?.modalProps || {};
@@ -50,12 +50,16 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
           .then(() => {
             handleModalToggle();
             setIsLoading(false);
-            addAlert({
-              title: t('serviceAccount.service_account_successfully_deleted', {
-                name: serviceAccount?.name,
-              }),
-              variant: AlertVariant.success,
-            });
+            addAlert &&
+              addAlert({
+                title: t(
+                  'serviceAccount.service_account_successfully_deleted',
+                  {
+                    name: serviceAccount?.name,
+                  }
+                ),
+                variant: AlertVariant.success,
+              });
             fetchServiceAccounts();
           });
       } catch (error) {
@@ -66,17 +70,18 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
 
         handleModalToggle();
         setIsLoading(false);
-        addAlert({
-          title: t('common.something_went_wrong'),
-          variant: AlertVariant.danger,
-          description: reason,
-        });
+        addAlert &&
+          addAlert({
+            title: t('common.something_went_wrong'),
+            variant: AlertVariant.danger,
+            description: reason,
+          });
       }
     }
   };
 
   return (
-    <MASDeleteModal
+    <DeleteModal
       isModalOpen={true}
       handleModalToggle={handleModalToggle}
       title={t('serviceAccount.delete_service_account') + '?'}
@@ -90,7 +95,7 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
         <b>{serviceAccountToDelete?.name}</b>{' '}
         {t('serviceAccount.will_be_deleted')}
       </p>
-    </MASDeleteModal>
+    </DeleteModal>
   );
 };
 

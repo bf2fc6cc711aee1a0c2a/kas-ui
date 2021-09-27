@@ -20,6 +20,7 @@ const InstanceDrawerFederated = ({
   instanceDetail,
   setIsOpenDeleteInstanceModal,
   isOpenDeleteInstanceModal,
+  onDeleteInstance,
 }) => {
   return (
     <I18nextProvider i18n={initI18N()}>
@@ -35,6 +36,7 @@ const InstanceDrawerFederated = ({
           instanceDetail={instanceDetail}
           setIsOpenDeleteInstanceModal={setIsOpenDeleteInstanceModal}
           isOpenDeleteInstanceModal={isOpenDeleteInstanceModal}
+          onDeleteInstance={onDeleteInstance}
         >
           {children}
         </InstanceDrawerConnected>

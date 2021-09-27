@@ -17,23 +17,24 @@ const ResetServiceAccount: React.FunctionComponent = () => {
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
-  } = useConfig();
-  const { addAlert } = useAlert();
+  } = useConfig() || { kas: {} };
+  const { addAlert } = useAlert() || {};
   const { store, showModal, hideModal } = useRootModalContext();
   const { serviceAccountToReset } = store?.modalProps || {};
 
   const [isModalLoading, setIsModalLoading] = useState(false);
 
-  const handleServerError = (error: Error) => {
+  const handleServerError = (error: unknown) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
     }
-    addAlert({
-      title: t('something_went_wrong'),
-      variant: AlertVariant.danger,
-      description: reason,
-    });
+    addAlert &&
+      addAlert({
+        title: t('something_went_wrong'),
+        variant: AlertVariant.danger,
+        description: reason,
+      });
   };
 
   const resetServiceAccount = async (serviceAccount) => {
@@ -51,11 +52,11 @@ const ResetServiceAccount: React.FunctionComponent = () => {
         await apisService
           .resetServiceAccountCreds(serviceAccountId)
           .then((response) => {
-            const credential = response?.data;
+            const serviceAccount = response?.data;
             hideModal(); // Close first modal
             setIsModalLoading(false);
-            showModal(KAFKA_MODAL_TYPES.GENERATE_CREDENTIALS, {
-              credential,
+            showModal(KAFKA_MODAL_TYPES.CREDENTIALS, {
+              serviceAccount,
               title: t('serviceAccount.reset_service_account_credentials'),
             });
           });

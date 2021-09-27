@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  cellWidth,
   IAction,
-  IExtraData,
   IRowData,
   ISeparator,
   ISortBy,
   SortByDirection,
-  cellWidth,
 } from '@patternfly/react-table';
 import { Skeleton } from '@patternfly/react-core';
-import { MASTable, MASEmptyState, MASEmptyStateVariant } from '@app/common';
+import { MASEmptyState, MASEmptyStateVariant, MASTable } from '@app/common';
 import {
-  getLoadingRowsCount,
   getFormattedDate,
+  getLoadingRowsCount,
   getSkeletonForRows,
 } from '@app/utils';
 import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
@@ -31,7 +30,7 @@ export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   setOrderBy?: (order: string) => void;
   onResetCredentials?: (serviceAccount: ServiceAccountListItem) => void;
   onDeleteServiceAccount?: (serviceAccount: ServiceAccountListItem) => void;
-  handleCreateModal: () => void;
+  onCreateServiceAccount: () => void;
 };
 
 const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
@@ -49,7 +48,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   setFilteredValue,
   filterSelected,
   setFilterSelected,
-  handleCreateModal,
+  onCreateServiceAccount,
   mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation();
@@ -76,18 +75,13 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     { title: t('time_created') },
   ];
 
-  const onSelectKebabDropdownOption = (
-    event: any,
-    originalData: ServiceAccountListItem,
-    selectedOption: string
-  ) => {
-    if (selectedOption === 'reset-credentials') {
-      onResetCredentials && onResetCredentials(originalData);
-    } else if (selectedOption === 'delete-account') {
-      onDeleteServiceAccount && onDeleteServiceAccount(originalData);
-    }
+  const resetCredentials = (event, originalData: ServiceAccountListItem) => {
+    onResetCredentials && onResetCredentials(originalData);
+    event?.target?.parentElement?.parentElement?.previousSibling?.focus();
+  };
 
-    // Set focus back on previous selected element i.e. kebab button
+  const deleteAccount = (event, originalData: ServiceAccountListItem) => {
+    onDeleteServiceAccount && onDeleteServiceAccount(originalData);
     event?.target?.parentElement?.parentElement?.previousSibling?.focus();
   };
 
@@ -122,7 +116,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
     return tableRow;
   };
 
-  const getActionResolver = (rowData: IRowData) => {
+  const buildActionResolver = (rowData: IRowData) => {
     if (!serviceAccountsDataLoaded) {
       return [];
     }
@@ -149,8 +143,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         id: 'reset-credentials',
         ['data-testid']: 'tableServiceAccounts-actionResetCredentials',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn &&
-          onSelectKebabDropdownOption(event, originalData, 'reset-credentials'),
+          isUserSameAsLoggedIn && resetCredentials(event, originalData),
         ...additionalProps,
         tooltipProps: {
           position: 'left',
@@ -162,8 +155,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         id: 'delete-account',
         ['data-testid']: 'tableServiceAccounts-actionDeleteAccount',
         onClick: (event: any) =>
-          isUserSameAsLoggedIn &&
-          onSelectKebabDropdownOption(event, originalData, 'delete-account'),
+          isUserSameAsLoggedIn && deleteAccount(event, originalData),
         ...additionalProps,
         tooltipProps: {
           position: 'left',
@@ -172,10 +164,6 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       },
     ];
     return resolver;
-  };
-
-  const actionResolver = (rowData: IRowData, _extraData: IExtraData) => {
-    return getActionResolver(rowData);
   };
 
   const getParameterForSortIndex = (index: number) => {
@@ -245,7 +233,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
-        handleCreateModal={handleCreateModal}
+        onCreateServiceAccount={onCreateServiceAccount}
         mainToggle={mainToggle}
       />
       <MASTable
@@ -253,7 +241,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
           cells: tableColumns,
           rows: preparedTableCells(),
           'aria-label': t('serviceAccount.service_account_list'),
-          actionResolver: actionResolver,
+          actionResolver: (rowData) => buildActionResolver(rowData),
           onSort: onSort,
           sortBy: sortBy(),
         }}
