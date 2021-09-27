@@ -130,7 +130,7 @@ module.exports = (env, argv) => {
           './ServiceAccounts':
             './src/app/modules/ServiceAccounts/ServiceAccountsFederated',
           './InstanceDrawer':
-            './src/app/modules/OpenshiftStreams/components/InstanceDrawer/InstanceDrawerFederated',
+            './src/app/modules/InstanceDrawer/InstanceDrawerFederated',
           './Metrics': './src/app/modules/Metrics/MetricsFederated',
         },
         shared: {

@@ -1,2 +1,2 @@
 export * from './StreamsTableView';
-export * from './InstanceDrawer';
+export * from '../../InstanceDrawer';

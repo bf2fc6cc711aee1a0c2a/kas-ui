@@ -10,12 +10,11 @@ export type InstanceDrawerConnectedProps = InstanceDrawerProps & {
 
 const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
   isExpanded,
-  activeTab,
+  initialTab,
   onClose,
   'data-ouia-app-id': dataOuiaAppId,
   tokenEndPointUrl,
   children,
-  mainToggle,
   instanceDetail,
   isLoading,
   isOpenDeleteInstanceModal,
@@ -41,11 +40,10 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
   return (
     <InstanceDrawer
       isExpanded={isExpanded}
-      activeTab={activeTab}
+      initialTab={initialTab}
       onClose={onClose}
       data-ouia-app-id={dataOuiaAppId}
       tokenEndPointUrl={tokenEndPointUrl}
-      mainToggle={mainToggle}
       isLoading={isLoading}
       instanceDetail={instanceDetail}
     >
