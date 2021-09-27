@@ -10,6 +10,8 @@ import {
   AuthContext,
   Config,
   ConfigContext,
+  Quota,
+  QuotaContext,
 } from '@rhoas/app-services-ui-shared';
 import { CloudRegionList } from '@rhoas/kafka-management-sdk';
 import { AxiosResponse } from 'axios';
@@ -70,7 +72,19 @@ const setupRender = () => {
               },
             }}
           >
-            <CreateInstance />
+            <QuotaContext.Provider
+              value={{
+                getQuota: () => {
+                  return Promise.resolve({
+                    loading: true,
+                    data: undefined,
+                    isServiceDown: false,
+                  } as Quota);
+                },
+              }}
+            >
+              <CreateInstance />
+            </QuotaContext.Provider>
           </AlertContext.Provider>
         </AuthContext.Provider>
       </ConfigContext.Provider>
