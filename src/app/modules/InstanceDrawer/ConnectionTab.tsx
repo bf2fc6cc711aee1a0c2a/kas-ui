@@ -106,7 +106,7 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
         {isKafkaPending ? (
           <Skeleton fontSize='2xl' />
         ) : (
-          <ClipboardCopy>{tokenEndPointUrl}</ClipboardCopy>
+          <ClipboardCopy isReadOnly>{tokenEndPointUrl}</ClipboardCopy>
         )}
       </TextContent>
       <TextContent className='pf-u-pb-sm'>
