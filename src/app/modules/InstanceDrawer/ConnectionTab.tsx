@@ -13,7 +13,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
-import { KAFKA_MODAL_TYPES, useRootModalContext } from '@app/common';
+import { ModalType, useModal } from '@rhoas/app-services-ui-shared';
 
 export type ConnectionTabProps = {
   externalServer?: string;
@@ -27,10 +27,10 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   tokenEndPointUrl,
 }: ConnectionTabProps) => {
   const { t } = useTranslation();
-  const { showModal } = useRootModalContext();
+  const { showModal } = useModal<ModalType.KasCreateServiceAccount>();
 
   const handleCreateServiceAccountModal = () => {
-    showModal(KAFKA_MODAL_TYPES.CREATE_SERVICE_ACCOUNT);
+    showModal(ModalType.KasCreateServiceAccount, {});
   };
 
   return (

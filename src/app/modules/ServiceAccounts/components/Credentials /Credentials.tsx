@@ -7,8 +7,6 @@ import {
   EmptyStateVariant,
   InputGroup,
   InputGroupText,
-  Modal,
-  ModalVariant,
   Text,
   TextContent,
   TextVariants,
@@ -19,46 +17,16 @@ import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Flex/flex.css';
 import '@patternfly/react-styles/css/utilities/Sizing/sizing.css';
 import { useTranslation } from 'react-i18next';
-import { MASEmptyState, MASLoading, useRootModalContext } from '@app/common';
-import { getModalAppendTo } from '@app/utils/utils';
-import './CredentialsModal.css';
+import { MASEmptyState } from '@app/common';
+import './Credentials.css';
 import { ServiceAccount } from '@rhoas/kafka-management-sdk';
 
-const CredentialsModal: React.FunctionComponent = () => {
-  const { t } = useTranslation();
-  const { store, hideModal } = useRootModalContext();
-  const { serviceAccount, isLoading: loading, title } = store?.modalProps || {};
-
-  const handleClose = () => {
-    hideModal();
-  };
-
-  return (
-    <Modal
-      variant={ModalVariant.medium}
-      title={title || t('serviceAccount.create_a_service_account')}
-      isOpen={true}
-      onClose={handleClose}
-      showClose={false}
-      appendTo={getModalAppendTo}
-    >
-      <Credentials
-        loading={loading}
-        serviceAccount={serviceAccount}
-        close={hideModal}
-      />
-    </Modal>
-  );
-};
-
 type CredentialsProps = {
-  loading: boolean;
   serviceAccount: ServiceAccount;
   close: () => void;
 };
 
 const Credentials: React.FunctionComponent<CredentialsProps> = ({
-  loading,
   serviceAccount,
   close,
 }) => {
@@ -70,9 +38,6 @@ const Credentials: React.FunctionComponent<CredentialsProps> = ({
     setConfirmationCheckbox(checked);
   };
 
-  if (loading) {
-    return <MASLoading />;
-  }
   return (
     <>
       <MASEmptyState
@@ -146,6 +111,6 @@ const Credentials: React.FunctionComponent<CredentialsProps> = ({
   );
 };
 
-export { CredentialsModal };
+export { Credentials };
 
-export default CredentialsModal;
+export default Credentials;

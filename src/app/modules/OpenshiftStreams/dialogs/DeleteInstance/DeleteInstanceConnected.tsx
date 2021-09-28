@@ -1,39 +1,35 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { useAuth, useConfig, useAlert } from '@rhoas/app-services-ui-shared';
-import { getDeleteInstanceModalConfig } from '@app/modules/OpenshiftStreams/components';
-import { useRootModalContext } from '@app/common';
+import {
+  BaseModalProps,
+  DeleteInstanceProps,
+  useAlert,
+  useAuth,
+  useConfig,
+} from '@rhoas/app-services-ui-shared';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { DeleteInstanceModal } from './DeleteInstance';
 import { isServiceApiError } from '@app/utils';
 
-const DeleteInstanceConnected: React.FunctionComponent = () => {
+const DeleteInstanceConnected: React.FunctionComponent<
+  DeleteInstanceProps & BaseModalProps
+> = ({ kafka, onDelete, hideModal }) => {
   const { addAlert } = useAlert() || {};
   const { t } = useTranslation();
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
 
-  const { store, hideModal } = useRootModalContext();
-  const {
-    selectedItemData: instanceDetail,
-    setIsOpenDeleteInstanceModal,
-    onDeleteInstance,
-  } = store?.modalProps || {};
-  const { status, name, id } = instanceDetail || {};
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { title, confirmActionLabel, description } =
-    getDeleteInstanceModalConfig(t, status, name);
-
   const closeModal = () => {
-    setIsOpenDeleteInstanceModal && setIsOpenDeleteInstanceModal(false);
+    hideModal();
   };
 
   const deleteInstance = async () => {
     const accessToken = await auth?.kas.getToken();
-    if (accessToken && id) {
+    if (accessToken && kafka.id) {
       try {
         setIsLoading(true);
         const apisService = new DefaultApi(
@@ -42,11 +38,11 @@ const DeleteInstanceConnected: React.FunctionComponent = () => {
             basePath,
           })
         );
-        await apisService.deleteKafkaById(id, true).then(() => {
+        await apisService.deleteKafkaById(kafka.id, true).then(() => {
           setIsLoading(false);
         });
         closeModal();
-        onDeleteInstance && onDeleteInstance();
+        onDelete && onDelete();
       } catch (error) {
         setIsLoading(false);
         handleServerError(error);
@@ -69,19 +65,11 @@ const DeleteInstanceConnected: React.FunctionComponent = () => {
 
   return (
     <DeleteInstanceModal
-      {...store?.modalProps}
       hideModal={hideModal}
-      title={title}
-      confirmButtonProps={{
-        onClick: deleteInstance,
-        label: confirmActionLabel,
-        isLoading,
-      }}
-      textProps={{
-        description,
-      }}
       onClose={closeModal}
-      instanceStatus={status}
+      kafka={kafka}
+      onDelete={deleteInstance}
+      isLoading={isLoading}
     />
   );
 };

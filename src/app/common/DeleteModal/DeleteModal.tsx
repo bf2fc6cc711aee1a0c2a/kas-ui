@@ -45,7 +45,7 @@ export type NestedTextInputProps = TextInputProps & {
 
 export type DeleteModalProps<T> = {
   isModalOpen: boolean;
-  title: string;
+  title?: string;
   modalProps?: NestedModalProps;
   handleModalToggle: () => void;
   children?: React.ReactNode;

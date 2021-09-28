@@ -1,14 +1,11 @@
 import { ServiceAccountListItem } from '@rhoas/kafka-management-sdk';
-import {
-  KAFKA_MODAL_TYPES,
-  useRootModalContext,
-  usePagination,
-} from '@app/common';
+import { usePagination } from '@app/common';
 import React, { useState } from 'react';
 import { Card, PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
 import { FilterType } from '@app/modules/OpenshiftStreams/components';
 import { ServiceAccountsTableView } from '@app/modules/ServiceAccounts/components/ServiceAccountsTableView';
+import { ModalType, useModal } from '@rhoas/app-services-ui-shared';
 
 export type ServiceAccountTableSectionProps = {
   fetchServiceAccounts: () => Promise<void>;
@@ -17,7 +14,12 @@ export type ServiceAccountTableSectionProps = {
 
 export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccountTableSectionProps> =
   ({ fetchServiceAccounts, serviceAccountItems }) => {
-    const { showModal } = useRootModalContext();
+    const { showModal: showResetCredentialsModal } =
+      useModal<ModalType.KasResetServiceAccountCredentials>();
+    const { showModal: showCreateServiceAccountModal } =
+      useModal<ModalType.KasCreateServiceAccount>();
+    const { showModal: showDeleteServiceAccountModal } =
+      useModal<ModalType.KasDeleteServiceAccount>();
     const location = useLocation();
 
     const [orderBy, setOrderBy] = useState<string>('name asc');
@@ -29,21 +31,21 @@ export const ServiceAccountsTableSection: React.FunctionComponent<ServiceAccount
     const mainToggle = searchParams.has('user-testing');
 
     const onResetCredentials = (serviceAccount: ServiceAccountListItem) => {
-      showModal(KAFKA_MODAL_TYPES.RESET_CREDENTIALS, {
-        serviceAccountToReset: serviceAccount,
+      showResetCredentialsModal(ModalType.KasResetServiceAccountCredentials, {
+        serviceAccount,
       });
     };
 
     const onCreateServiceAccount = () => {
-      showModal(KAFKA_MODAL_TYPES.CREATE_SERVICE_ACCOUNT, {
-        fetchServiceAccounts,
+      showCreateServiceAccountModal(ModalType.KasCreateServiceAccount, {
+        onCreate: fetchServiceAccounts,
       });
     };
 
     const onDeleteServiceAccount = (serviceAccount: ServiceAccountListItem) => {
-      showModal(KAFKA_MODAL_TYPES.DELETE_SERVICE_ACCOUNT, {
-        serviceAccountToDelete: serviceAccount,
-        fetchServiceAccounts,
+      showDeleteServiceAccountModal(ModalType.KasDeleteServiceAccount, {
+        serviceAccount,
+        onDelete: fetchServiceAccounts,
       });
     };
 

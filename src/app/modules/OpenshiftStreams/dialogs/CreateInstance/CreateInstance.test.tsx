@@ -83,7 +83,12 @@ const setupRender = () => {
                 },
               }}
             >
-              <CreateInstance />
+              <CreateInstance
+                title='Create a Kafka instance'
+                hideModal={() => {
+                  //no-op
+                }}
+              />
             </QuotaContext.Provider>
           </AlertContext.Provider>
         </AuthContext.Provider>

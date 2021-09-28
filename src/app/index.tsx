@@ -20,10 +20,11 @@ import {
 import { initI18N } from '@i18n/i18n';
 import {
   MASErrorBoundary,
-  RootModal,
   PaginationProvider,
   AlertProvider,
 } from '@app/common';
+import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { KasModalLoader } from '@app/modals';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
 declare const __BASE_PATH__: string;
@@ -65,11 +66,12 @@ const App: React.FunctionComponent = () => {
                 <React.Suspense fallback={<MASLoading />}>
                   <MASErrorBoundary>
                     <PaginationProvider>
-                      <RootModal>
+                      <ModalProvider>
                         <AppLayout>
                           <AppRoutes />
                         </AppLayout>
-                      </RootModal>
+                        <KasModalLoader />
+                      </ModalProvider>
                     </PaginationProvider>
                   </MASErrorBoundary>
                 </React.Suspense>

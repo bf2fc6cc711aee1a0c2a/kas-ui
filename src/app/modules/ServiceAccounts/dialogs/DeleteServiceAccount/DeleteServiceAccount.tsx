@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { DeleteModal, useRootModalContext } from '@app/common';
+import { DeleteModal } from '@app/common';
 import { isServiceApiError } from '@app/utils';
 import {
   Configuration,
   SecurityApi,
   ServiceAccountListItem,
 } from '@rhoas/kafka-management-sdk';
-import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
+import {
+  BaseModalProps,
+  DeleteServiceAccountProps,
+  useAlert,
+  useAuth,
+  useConfig,
+} from '@rhoas/app-services-ui-shared';
 
-const DeleteServiceAccount: React.FunctionComponent = () => {
+const DeleteServiceAccount: React.FunctionComponent<
+  DeleteServiceAccountProps & BaseModalProps
+> = ({ onDelete, serviceAccount, title, hideModal }) => {
   const { t } = useTranslation();
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
   } = useConfig() || { kas: {} };
   const { addAlert } = useAlert() || {};
-  const { store, hideModal } = useRootModalContext();
-  const { fetchServiceAccounts, serviceAccountToDelete } =
-    store?.modalProps || {};
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -60,7 +65,7 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
                 ),
                 variant: AlertVariant.success,
               });
-            fetchServiceAccounts();
+            onDelete && onDelete();
           });
       } catch (error) {
         let reason: string | undefined;
@@ -84,16 +89,15 @@ const DeleteServiceAccount: React.FunctionComponent = () => {
     <DeleteModal
       isModalOpen={true}
       handleModalToggle={handleModalToggle}
-      title={t('serviceAccount.delete_service_account') + '?'}
+      title={title}
       confirmButtonProps={{
-        onClick: () => deleteServiceAccount(serviceAccountToDelete),
+        onClick: () => deleteServiceAccount(serviceAccount),
         label: 'Delete',
         isLoading,
       }}
     >
       <p>
-        <b>{serviceAccountToDelete?.name}</b>{' '}
-        {t('serviceAccount.will_be_deleted')}
+        <b>{serviceAccount?.name}</b> {t('serviceAccount.will_be_deleted')}
       </p>
     </DeleteModal>
   );

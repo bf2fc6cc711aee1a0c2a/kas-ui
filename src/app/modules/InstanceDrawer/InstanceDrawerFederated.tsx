@@ -5,13 +5,14 @@ import '@patternfly/patternfly/utilities/Sizing/sizing.css';
 import '@patternfly/patternfly/utilities/Spacing/spacing.css';
 import '@patternfly/patternfly/utilities/Display/display.css';
 import '@patternfly/patternfly/utilities/Flex/flex.css';
-import { RootModal } from '@app/common';
 import { initI18N } from '@i18n/i18n';
 import {
   InstanceDrawer,
   InstanceDrawerProps,
 } from '@app/modules/InstanceDrawer/InstanceDrawer';
 import { FederatedProps } from '@app/contexts';
+import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { KasModalLoader } from '@app/modals';
 
 export type InstanceDrawerFederatedProps = InstanceDrawerProps & FederatedProps;
 
@@ -27,7 +28,7 @@ const InstanceDrawerFederated: React.FunctionComponent<InstanceDrawerFederatedPr
   }) => {
     return (
       <I18nextProvider i18n={initI18N()}>
-        <RootModal>
+        <ModalProvider>
           <InstanceDrawer
             isExpanded={isExpanded}
             initialTab={initialTab}
@@ -39,7 +40,8 @@ const InstanceDrawerFederated: React.FunctionComponent<InstanceDrawerFederatedPr
           >
             {children}
           </InstanceDrawer>
-        </RootModal>
+          <KasModalLoader />
+        </ModalProvider>
       </I18nextProvider>
     );
   };

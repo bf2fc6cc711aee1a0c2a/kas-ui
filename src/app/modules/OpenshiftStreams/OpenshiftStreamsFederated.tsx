@@ -4,9 +4,11 @@ import {
   OpenshiftStreams,
   OpenShiftStreamsProps,
 } from '@app/modules/OpenshiftStreams/OpenshiftStreams';
-import { RootModal, PaginationProvider } from '@app/common';
+import { PaginationProvider } from '@app/common';
 import { initI18N } from '@i18n/i18n';
 import { FederatedContext, FederatedProps } from '@app/contexts';
+import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { KasModalLoader } from '@app/modals';
 
 // Version of OpenshiftStreams for federation
 type OpenshiftStreamsFederatedProps = OpenShiftStreamsProps & FederatedProps;
@@ -18,14 +20,15 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederat
         <FederatedContext.Provider
           value={{ tokenEndPointUrl, preCreateInstance, shouldOpenCreateModal }}
         >
-          <RootModal>
+          <ModalProvider>
             <PaginationProvider>
               <OpenshiftStreams
                 preCreateInstance={preCreateInstance}
                 tokenEndPointUrl={tokenEndPointUrl}
               />
             </PaginationProvider>
-          </RootModal>
+            <KasModalLoader />
+          </ModalProvider>
         </FederatedContext.Provider>
       </I18nextProvider>
     );

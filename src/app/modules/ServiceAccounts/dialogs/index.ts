@@ -1,3 +1,3 @@
 export * from './CreateServiceAccount';
 export * from './DeleteServiceAccount';
-export * from './ResetServiceAccount';
+export * from './ResetServiceAccountCredentials';
