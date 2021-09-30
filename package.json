@@ -89,7 +89,7 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/app-services-ui-shared": "0.14.0",
+    "@rhoas/app-services-ui-shared": "0.14.1",
     "@cloudmosaic/quickstarts": "0.0.24",
     "@patternfly/patternfly": "4.132.2",
     "@patternfly/quickstarts": "1.2.2",
