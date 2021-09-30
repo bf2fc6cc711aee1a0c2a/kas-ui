@@ -98,6 +98,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
         messageKey: 'standard_kafka_alert_message',
       };
     }
+    return undefined;
   };
 
   const alertProps = getQuotaAlertProps();
