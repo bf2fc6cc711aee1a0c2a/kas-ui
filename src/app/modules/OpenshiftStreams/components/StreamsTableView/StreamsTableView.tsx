@@ -106,7 +106,6 @@ export const getDeleteInstanceModalConfig = (
 };
 
 const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
-  mainToggle,
   kafkaInstanceItems,
   onViewInstance,
   onViewConnection,
@@ -127,8 +126,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   loggedInUser,
   setWaitingForDelete,
   currentUserkafkas,
-  cloudProviders,
   onCreate,
+  handleCreateInstanceModal,
 }) => {
   const auth = useAuth();
   const { kas } = useConfig() || {};
@@ -137,9 +136,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
   const { addAlert } = useAlert() || {};
-  const hasUserTrialKafka = currentUserkafkas?.some(
-    (k) => k?.instance_type === InstanceType.eval
-  );
 
   const { showModal, hideModal } = useRootModalContext();
   const [selectedInstance, setSelectedInstance] = useState<
@@ -608,7 +604,6 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   return (
     <>
       <StreamsToolbar
-        mainToggle={mainToggle}
         filterSelected={filterSelected}
         setFilterSelected={setFilterSelected}
         total={total}
@@ -616,10 +611,9 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         perPage={perPage}
         filteredValue={filteredValue}
         setFilteredValue={setFilteredValue}
-        cloudProviders={cloudProviders}
         onCreate={onCreate}
         refresh={refresh}
-        hasUserTrialKafka={hasUserTrialKafka}
+        handleCreateInstanceModal={handleCreateInstanceModal}
       />
       <MASTable
         tableProps={{

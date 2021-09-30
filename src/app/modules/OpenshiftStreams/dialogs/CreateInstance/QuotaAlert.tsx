@@ -43,6 +43,26 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
     const kasQuota = quota.data?.get(QuotaType?.kas);
     const kasTrial = quota.data?.get(QuotaType?.kasTrial);
 
+    //if kafka creation failed for quota related
+    if (hasKafkaCreationFailed) {
+      return {
+        variant: AlertVariant.danger,
+        titleKey: 'kafka_creation_failed_alert_title',
+        messageKey: kasQuota
+          ? 'standard_kafka_creation_failed_alert_message'
+          : 'trial_kafka_creation_failed_alert_message',
+      };
+    }
+
+    //if service down or any error
+    if (quota.isServiceDown) {
+      return {
+        titleKey: 'something_went_wrong',
+        variant: AlertVariant.danger,
+        messageKey: 'ams_service_down_message',
+      };
+    }
+
     //trial quota flows
     //if user has no standard quota and already has a trial instance
     if (!kasQuota && kasTrial && hasUserTrialKafka) {
@@ -78,35 +98,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
         messageKey: 'standard_kafka_alert_message',
       };
     }
-    //if user has standard quota and 1 or more allowed instances are available
-    if (kasQuota && kasQuota?.remaining > 0) {
-      //don't show alert
-      return undefined;
-    }
-    //if kafka creation failed for quota related
-    if (hasKafkaCreationFailed) {
-      return {
-        variant: AlertVariant.danger,
-        titleKey: 'kafka_creation_failed_alert_title',
-        messageKey: kasQuota
-          ? 'standard_kafka_creation_failed_alert_message'
-          : 'trial_kafka_creation_failed_alert_message',
-      };
-    }
-    //if service down or any error
-    if (quota.isServiceDown) {
-      return {
-        titleKey: 'something_went_wrong',
-        variant: AlertVariant.danger,
-        messageKey: 'ams_service_down_message',
-      };
-    } else {
-      return {
-        titleKey: 'something_went_wrong',
-        variant: AlertVariant.danger,
-        messageKey: 'ams_service_down_message',
-      };
-    }
+    return undefined;
   };
 
   const alertProps = getQuotaAlertProps();

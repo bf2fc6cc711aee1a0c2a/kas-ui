@@ -186,7 +186,11 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       // The callback can override the new state of opening
       open = await preCreateInstance(true);
     }
-    open && handleCreateModal();
+
+    if (open) {
+      fetchCurrentUserKafkas();
+      handleCreateModal();
+    }
   };
 
   const onCloseDrawer = () => {
@@ -543,7 +547,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               loggedInUser={loggedInUser}
               currentUserkafkas={currentUserKafkas}
               onCreate={onCreate}
-              cloudProviders={cloudProviders}
+              handleCreateInstanceModal={handleCreateInstanceModal}
             />
           </Card>
         </PageSection>
@@ -555,7 +559,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   return (
     <>
       <InstanceDrawer
-        mainToggle={mainToggle}
         isExpanded={selectedInstance != null}
         initialTab={activeTab}
         isLoading={instanceDetail === undefined}
