@@ -17,13 +17,7 @@ import {
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import {
-  MASToolbar,
-  ToolbarItemProps,
-  useRootModalContext,
-  KAFKA_MODAL_TYPES,
-  MASPagination,
-} from '@app/common';
+import { MASToolbar, ToolbarItemProps, MASPagination } from '@app/common';
 import { FilterType, FilterValue } from './StreamsTableView';
 import {
   cloudProviderOptions,
@@ -32,12 +26,9 @@ import {
   MAX_FILTER_LIMIT,
   InstanceStatus,
 } from '@app/utils';
-import { CloudProvider } from '@rhoas/kafka-management-sdk';
-import { useFederated } from '@app/contexts';
 import './StreamsToolbar.css';
 
 export type StreamsToolbarProps = {
-  mainToggle: boolean;
   filterSelected?: string;
   setFilterSelected: (value: string) => void;
   total: number;
@@ -47,8 +38,7 @@ export type StreamsToolbarProps = {
   setFilteredValue: (filteredValue: Array<FilterType>) => void;
   onCreate?: () => void;
   refresh?: () => void;
-  cloudProviders?: Array<CloudProvider>;
-  hasUserTrialKafka?: boolean | undefined;
+  handleCreateInstanceModal?: () => void;
 };
 
 const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
@@ -59,17 +49,12 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   perPage,
   filteredValue,
   setFilteredValue,
-  onCreate,
-  refresh,
-  cloudProviders,
-  hasUserTrialKafka,
+  handleCreateInstanceModal,
 }) => {
   const { t } = useTranslation();
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
-  const { showModal } = useRootModalContext();
-  const { preCreateInstance } = useFederated() || {};
-
+  //states
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isCloudProviderFilterExpanded, setIsCloudProviderFilterExpanded] =
     useState(false);
@@ -669,35 +654,17 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     </>
   );
 
-  const handleCreateModal = async () => {
-    let open;
-    if (preCreateInstance) {
-      open = await preCreateInstance(true);
-    }
-    open &&
-      showModal(KAFKA_MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
-        onCreate,
-        cloudProviders,
-        refresh,
-        hasUserTrialKafka,
-      });
-  };
-
-  const createButton = () => {
-    return (
-      <Button
-        variant='primary'
-        onClick={handleCreateModal}
-        data-testid={'tableStreams-buttonCreateKafka'}
-      >
-        {t('create_kafka_instance')}
-      </Button>
-    );
-  };
-
   const toolbarItems: ToolbarItemProps[] = [
     {
-      item: createButton(),
+      item: (
+        <Button
+          variant='primary'
+          onClick={handleCreateInstanceModal}
+          data-testid={'tableStreams-buttonCreateKafka'}
+        >
+          {t('create_kafka_instance')}
+        </Button>
+      ),
     },
   ];
 
