@@ -356,7 +356,10 @@
     "short_description": "Short description",
     "short_description_popover_button": "Short description help",
     "short_description_popover_title": "Short description",
-    "short_description_popover_body": "The short description is the same as the client name in the underlying OAuth system."
+    "short_description_popover_body": "The short description is the same as the client name in the underlying OAuth system.",
+    "current_instance": "Accounts do not have access to this instance unless granted under the instance’s",
+    "access_tab": "Access tab.",
+    "alter_allow": "The owner, the organization administrator, or users with the Allow Alter permission on this instance can manage access."
   },
   "metrics": {
     "used_disk_space": "Used disk space",

@@ -76,6 +76,15 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
       >
         {t('serviceAccount.create_service_account')}
       </Button>
+      <TextContent className='pf-u-pt-sm'>
+        <Text component={TextVariants.small}>
+        {t('serviceAccount.current_instance')}{' '}
+        <Link to={'service-accounts'} >
+            {t('serviceAccount.access_tab')}
+          </Link>{' '}
+          {t('serviceAccount.alter_allow')}.
+          </Text>
+      </TextContent>
       <TextContent className='pf-u-pb-sm'>
         <Text component={TextVariants.h3} className='pf-u-mt-xl'>
           {t('common.authentication_method')}
