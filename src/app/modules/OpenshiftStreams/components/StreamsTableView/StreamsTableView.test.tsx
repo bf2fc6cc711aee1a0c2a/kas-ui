@@ -12,6 +12,8 @@ import {
   Config,
   ConfigContext,
 } from '@rhoas/app-services-ui-shared';
+import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { KasModalLoader } from '@app/modals';
 
 const kafkaInstanceItems = [
   {
@@ -55,29 +57,32 @@ describe('<StreamsTableView/>', () => {
   ) => {
     render(
       <MemoryRouter>
-        <I18nextProvider i18n={i18nForTest}>
-          <ConfigContext.Provider
-            value={
-              {
-                kas: {
-                  apiBasePath: '',
-                },
-              } as Config
-            }
-          >
-            <AuthContext.Provider value={authValue}>
-              <AlertContext.Provider
-                value={{
-                  addAlert: () => {
-                    // No-op
+        <ModalProvider>
+          <I18nextProvider i18n={i18nForTest}>
+            <ConfigContext.Provider
+              value={
+                {
+                  kas: {
+                    apiBasePath: '',
                   },
-                }}
-              >
-                <StreamsTableView {...args} />
-              </AlertContext.Provider>
-            </AuthContext.Provider>
-          </ConfigContext.Provider>
-        </I18nextProvider>
+                } as Config
+              }
+            >
+              <AuthContext.Provider value={authValue}>
+                <AlertContext.Provider
+                  value={{
+                    addAlert: () => {
+                      // No-op
+                    },
+                  }}
+                >
+                  <StreamsTableView {...args} />
+                </AlertContext.Provider>
+              </AuthContext.Provider>
+            </ConfigContext.Provider>
+          </I18nextProvider>
+          <KasModalLoader />
+        </ModalProvider>
       </MemoryRouter>
     );
   };

@@ -20,7 +20,7 @@
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "lint": "npm-run-all 'lint:src -- .' 'lint:format -- .'",
-    "lint:src": "eslint --config ./linting/eslint.config.js --fix --max-warnings 82 --ignore-path ./linting/.eslintignore",
+    "lint:src": "eslint --config ./linting/eslint.config.js --fix --max-warnings 79 --ignore-path ./linting/.eslintignore",
     "lint:styling": "stylelint --config ./linting/stylelint.config.js --fix --max-warnings 5",
     "lint:format": "prettier --config ./linting/prettier.config.js --write",
     "type-check": "tsc --noEmit",
@@ -89,7 +89,6 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/app-services-ui-shared": "0.14.1",
     "@cloudmosaic/quickstarts": "0.0.24",
     "@patternfly/patternfly": "4.132.2",
     "@patternfly/quickstarts": "1.2.2",
@@ -99,6 +98,8 @@
     "@patternfly/react-styles": "4.11.13",
     "@patternfly/react-table": "4.29.58",
     "@redhat-cloud-services/frontend-components": "3.4.5",
+    "@rhoas/app-services-ui-components": "1.1.1",
+    "@rhoas/app-services-ui-shared": "0.14.1",
     "@rhoas/kafka-management-sdk": "0.12.3",
     "axios": "0.22.0",
     "byte-size": "8.1.0",

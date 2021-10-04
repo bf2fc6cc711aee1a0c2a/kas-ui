@@ -8,6 +8,8 @@ import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 import { MemoryRouter } from 'react-router-dom';
 import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
+import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { KasModalLoader } from '@app/modals';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
@@ -49,27 +51,30 @@ const setup = (
 ) => {
   return render(
     <MemoryRouter>
-      <Drawer isExpanded={true} onExpand={onExpand}>
-        <DrawerContent
-          panelContent={
-            <InstanceDrawer
-              isExpanded={isExpanded}
-              onClose={onClose}
-              initialTab={activeTab}
-              instanceDetail={instance || instanceDetail}
-              isLoading={instanceDetail === undefined}
-              data-ouia-app-id='controlPlane-streams'
-              data-testId='mk--instance__drawer'
-              tokenEndPointUrl={
-                'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
-              }
-              notRequiredDrawerContentBackground={true}
-            >
-              <></>
-            </InstanceDrawer>
-          }
-        />
-      </Drawer>
+      <ModalProvider>
+        <Drawer isExpanded={true} onExpand={onExpand}>
+          <DrawerContent
+            panelContent={
+              <InstanceDrawer
+                isExpanded={isExpanded}
+                onClose={onClose}
+                initialTab={activeTab}
+                instanceDetail={instance || instanceDetail}
+                isLoading={instanceDetail === undefined}
+                data-ouia-app-id='controlPlane-streams'
+                data-testId='mk--instance__drawer'
+                tokenEndPointUrl={
+                  'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
+                }
+                notRequiredDrawerContentBackground={true}
+              >
+                <></>
+              </InstanceDrawer>
+            }
+          />
+        </Drawer>
+        <KasModalLoader />
+      </ModalProvider>
     </MemoryRouter>
   );
 };

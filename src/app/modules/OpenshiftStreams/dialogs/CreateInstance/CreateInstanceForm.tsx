@@ -7,26 +7,29 @@ import { CloudProvider, CloudRegion } from '@rhoas/kafka-management-sdk';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MAX_INSTANCE_NAME_LENGTH } from '@app/utils';
-import AwsIcon from '@patternfly/react-icons/dist/js/icons/aws-icon';
 import {
   Alert,
   Form,
   FormAlert,
   FormGroup,
-  FormSelect,
-  FormSelectOption,
   TextInput,
-  Tile,
   ToggleGroup,
   ToggleGroupItem,
   Tooltip,
 } from '@patternfly/react-core';
+import { CloudRegionSelect } from '@app/modules/OpenshiftStreams/dialogs/CreateInstance/CloudRegionsSelect';
+import {
+  CloudProvidersTileProps,
+  CloudProvidersTiles,
+} from '@app/modules/OpenshiftStreams/dialogs/CreateInstance/CloudProviderTiles';
 
-export type CreateInstanceFormProps = {
+export type CreateInstanceFormProps = Pick<
+  CloudProvidersTileProps,
+  'cloudProviders'
+> & {
   createInstance: () => Promise<void>;
   kafkaRequest: NewKafkaRequestPayload;
   setKafkaRequest: React.Dispatch<React.SetStateAction<NewKafkaRequestPayload>>;
-  cloudProviders: CloudProvider[];
   getCloudRegions: (id: string) => Promise<CloudRegion[] | undefined>;
   id: string;
 };
@@ -37,7 +40,7 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
     kafkaRequest,
     setKafkaRequest,
     cloudProviders,
-    getCloudRegions,
+    getCloudRegions: fetchCloudRegions,
     id,
   }) => {
     const { t } = useTranslation();
@@ -161,7 +164,11 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
     };
 
     useEffect(() => {
-      if (cloudProviders?.length > 0 && cloudProviders[0].name) {
+      if (
+        cloudProviders !== undefined &&
+        cloudProviders.length > 0 &&
+        cloudProviders[0].name
+      ) {
         selectCloudProvider(cloudProviders[0]);
       }
     }, [cloudProviders]);
@@ -172,7 +179,7 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
 
     useEffect(() => {
       const loadCloudRegions = async (cloudProvider: string) => {
-        const cloudRegions = await getCloudRegions(cloudProvider);
+        const cloudRegions = await fetchCloudRegions(cloudProvider);
         //set default selected region if there is one region
         if (
           cloudRegions !== undefined &&
@@ -187,21 +194,6 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
         loadCloudRegions(kafkaRequest.cloud_provider.value);
       }
     }, [kafkaRequest.cloud_provider]);
-
-    const getTileIcon = (provider?: string) => {
-      switch (provider?.toLowerCase()) {
-        case 'aws':
-          return (
-            <AwsIcon
-              size='lg'
-              color='black'
-              className='mk--create-instance__tile--icon'
-            />
-          );
-        default:
-          return;
-      }
-    };
 
     const FormValidAlert: React.FunctionComponent = () => {
       if (formSubmitted && isKafkaRequestInvalid(kafkaRequest)) {
@@ -245,17 +237,11 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
           label={t('cloud_provider')}
           fieldId='form-cloud-provider-name'
         >
-          {cloudProviders?.map((provider: CloudProvider) => {
-            return (
-              <Tile
-                key={`tile-${provider.name}`}
-                title={provider.display_name || ''}
-                icon={getTileIcon(provider.name)}
-                isSelected={kafkaRequest.cloud_provider.value === provider.name}
-                onClick={() => selectCloudProvider(provider)}
-              />
-            );
-          })}
+          <CloudProvidersTiles
+            kafkaRequest={kafkaRequest}
+            selectCloudProvider={selectCloudProvider}
+            cloudProviders={cloudProviders}
+          />
         </FormGroup>
         <FormGroup
           label={t('cloud_region')}
@@ -264,34 +250,11 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
           fieldId='form-cloud-region-option'
           isRequired
         >
-          <FormSelect
-            validated={kafkaRequest.region.validated}
-            value={kafkaRequest.region.value}
-            onChange={selectCloudRegion}
-            id='cloud-region-select'
-            name='cloud-region'
-            aria-label={t('cloud_region')}
-            isDisabled={cloudRegions === undefined}
-          >
-            {[
-              <FormSelectOption
-                value=''
-                key='placeholder'
-                label={t('please_select')}
-              />,
-              (cloudRegions || []).map(
-                ({ id, display_name = '' }: CloudRegion, index) => {
-                  return (
-                    <FormSelectOption
-                      key={index}
-                      value={id}
-                      label={id ? t(id) : display_name}
-                    />
-                  );
-                }
-              ),
-            ]}
-          </FormSelect>
+          <CloudRegionSelect
+            kafkaRequest={kafkaRequest}
+            selectCloudRegion={selectCloudRegion}
+            cloudRegions={cloudRegions}
+          />
         </FormGroup>
         <FormGroup label={t('availabilty_zones')} fieldId='availability-zones'>
           <ToggleGroup aria-label={t('availability_zone_selection')}>

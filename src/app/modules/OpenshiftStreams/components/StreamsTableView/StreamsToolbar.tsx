@@ -1,30 +1,30 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  InputGroup,
-  TextInput,
   Button,
   ButtonVariant,
+  InputGroup,
   Select,
-  SelectVariant,
   SelectOption,
-  ToolbarGroup,
   SelectOptionObject,
+  SelectVariant,
+  TextInput,
   ToolbarChip,
-  ValidatedOptions,
-  Tooltip,
   ToolbarFilter,
+  ToolbarGroup,
+  Tooltip,
+  ValidatedOptions,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { MASToolbar, ToolbarItemProps, MASPagination } from '@app/common';
+import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
 import { FilterType, FilterValue } from './StreamsTableView';
 import {
   cloudProviderOptions,
   cloudRegionOptions,
-  statusOptions,
-  MAX_FILTER_LIMIT,
   InstanceStatus,
+  MAX_FILTER_LIMIT,
+  statusOptions,
 } from '@app/utils';
 import './StreamsToolbar.css';
 

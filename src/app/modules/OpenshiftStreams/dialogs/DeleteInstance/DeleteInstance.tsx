@@ -1,46 +1,21 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  CancelButtonProps,
-  ConfirmButtonProps,
-  DeleteModal,
-  NestedTextProps,
-  useRootModalContext,
-} from '@app/common';
+import { DeleteModal } from '@app/common';
 import { InstanceStatus } from '@app/utils';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 
-export const DeleteInstance: React.FunctionComponent = () => {
-  const { store, hideModal } = useRootModalContext();
-  const props = { ...store?.modalProps, hideModal };
-
-  return <DeleteInstanceModal {...props} />;
-};
-
 export type DeleteInstanceModalProps = {
-  title: string;
-  confirmButtonProps: ConfirmButtonProps<KafkaRequest>;
-  cancelButtonProps: CancelButtonProps;
-  textProps: NestedTextProps;
-  instanceStatus: InstanceStatus;
-  selectedItemData: KafkaRequest;
+  kafka: KafkaRequest;
   onClose?: () => void;
   hideModal: () => void;
+  onDelete: () => void;
+  isLoading: boolean;
 };
 
 export const DeleteInstanceModal: React.FunctionComponent<DeleteInstanceModalProps> =
-  ({
-    title,
-    confirmButtonProps,
-    cancelButtonProps,
-    textProps,
-    instanceStatus,
-    selectedItemData,
-    onClose,
-    hideModal,
-  }) => {
+  ({ kafka, onClose, hideModal, onDelete, isLoading }) => {
     const { t } = useTranslation();
-    const selectedInstanceName = selectedItemData?.name;
+    const selectedInstanceName = kafka?.name;
 
     const [instanceNameInput, setInstanceNameInput] = useState<string>();
 
@@ -49,7 +24,7 @@ export const DeleteInstanceModal: React.FunctionComponent<DeleteInstanceModalPro
     };
 
     const isConfirmButtonDisabled = () => {
-      if (instanceStatus === InstanceStatus.READY) {
+      if (kafka.status === InstanceStatus.READY) {
         if (
           instanceNameInput?.toLowerCase() ===
           selectedInstanceName?.toLowerCase()
@@ -63,9 +38,12 @@ export const DeleteInstanceModal: React.FunctionComponent<DeleteInstanceModalPro
 
     const onKeyPress = (event) => {
       if (event.key === 'Enter' && !isConfirmButtonDisabled()) {
-        confirmButtonProps?.onClick &&
-          confirmButtonProps.onClick(selectedItemData);
+        submit();
       }
+    };
+
+    const submit = () => {
+      onDelete && onDelete();
     };
 
     const handleToggle = () => {
@@ -74,29 +52,93 @@ export const DeleteInstanceModal: React.FunctionComponent<DeleteInstanceModalPro
       onClose && onClose();
     };
 
-    return (
-      <DeleteModal
-        isModalOpen={true}
-        title={title}
-        confirmButtonProps={{
-          isDisabled: isConfirmButtonDisabled(),
-          'data-testid': 'modalDeleteKafka-buttonDelete',
-          ...confirmButtonProps,
-        }}
-        cancelButtonProps={cancelButtonProps}
-        handleModalToggle={handleToggle}
-        textProps={textProps}
-        selectedItemData={selectedItemData}
-        textInputProps={{
-          showTextInput: instanceStatus === InstanceStatus.READY,
-          label: t('instance_name_label', { name: selectedInstanceName }),
-          value: instanceNameInput,
-          onChange: handleInstanceName,
-          onKeyPress,
-          autoFocus: true,
-        }}
-      />
-    );
+    if (kafka.status === InstanceStatus.READY) {
+      return (
+        <DeleteModal
+          isModalOpen={true}
+          title={`${t('delete_instance')}?`}
+          confirmButtonProps={{
+            isDisabled: isConfirmButtonDisabled(),
+            'data-testid': 'modalDeleteKafka-buttonDelete',
+            label: t('delete'),
+            onClick: submit,
+            isLoading,
+          }}
+          handleModalToggle={handleToggle}
+          textProps={{
+            description: t('delete_instance_status_complete', {
+              instanceName: kafka.name,
+            }),
+          }}
+          selectedItemData={kafka}
+          textInputProps={{
+            showTextInput: kafka.status === InstanceStatus.READY,
+            label: t('instance_name_label', { name: selectedInstanceName }),
+            value: instanceNameInput,
+            onChange: handleInstanceName,
+            onKeyPress,
+            autoFocus: true,
+          }}
+        />
+      );
+    } else if (
+      kafka.status === InstanceStatus.ACCEPTED ||
+      kafka.status === InstanceStatus.PROVISIONING ||
+      kafka.status === InstanceStatus.PREPARING
+    ) {
+      return (
+        <DeleteModal
+          isModalOpen={true}
+          title={`${t('delete_instance')}?`}
+          confirmButtonProps={{
+            isDisabled: isConfirmButtonDisabled(),
+            'data-testid': 'modalDeleteKafka-buttonDelete',
+            label: t('delete'),
+            onClick: submit,
+            isLoading,
+          }}
+          handleModalToggle={handleToggle}
+          textProps={{
+            description: t('delete_instance_status_accepted_or_provisioning', {
+              instanceName: kafka.name,
+            }),
+          }}
+          selectedItemData={kafka}
+          textInputProps={{
+            showTextInput: false,
+            label: t('instance_name_label', { name: selectedInstanceName }),
+            value: instanceNameInput,
+            onChange: handleInstanceName,
+            onKeyPress,
+            autoFocus: true,
+          }}
+        />
+      );
+    } else {
+      return (
+        <DeleteModal
+          isModalOpen={true}
+          title=''
+          confirmButtonProps={{
+            isDisabled: isConfirmButtonDisabled(),
+            'data-testid': 'modalDeleteKafka-buttonDelete',
+            label: t('delete'),
+            onClick: submit,
+            isLoading,
+          }}
+          handleModalToggle={handleToggle}
+          selectedItemData={kafka}
+          textInputProps={{
+            showTextInput: kafka.status === InstanceStatus.READY,
+            label: t('instance_name_label', { name: selectedInstanceName }),
+            value: instanceNameInput,
+            onChange: handleInstanceName,
+            onKeyPress,
+            autoFocus: true,
+          }}
+        />
+      );
+    }
   };
 
-export default DeleteInstance;
+export default DeleteInstanceModal;

@@ -7,14 +7,14 @@ export type QuotaAlertProps = {
   quota: Quota | undefined;
   hasKafkaCreationFailed?: boolean;
   loadingQuota: boolean;
-  hasUserTrialKafka?: boolean;
+  userHasTrialInstance?: boolean;
   isKasTrial?: boolean;
 };
 
 export const QuotaAlert: React.FC<QuotaAlertProps> = ({
   quota,
   hasKafkaCreationFailed,
-  hasUserTrialKafka,
+  userHasTrialInstance,
 }) => {
   const { t } = useTranslation();
 
@@ -65,7 +65,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
 
     //trial quota flows
     //if user has no standard quota and already has a trial instance
-    if (!kasQuota && kasTrial && hasUserTrialKafka) {
+    if (!kasQuota && kasTrial && userHasTrialInstance) {
       return {
         titleKey: 'trial_kafka_title',
         variant: AlertVariant.warning,
@@ -81,7 +81,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
       };
     }
     //if user has no standard quota and trial instances are available
-    if (!kasQuota && kasTrial && !hasUserTrialKafka) {
+    if (!kasQuota && kasTrial && !userHasTrialInstance) {
       return {
         variant: AlertVariant.info,
         titleKey: 'trial_quota_kafka_title',

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { Link, useHistory } from 'react-router-dom';
 import {
   IAction,
@@ -17,16 +16,14 @@ import {
   getLoadingRowsCount,
   getSkeletonForRows,
   InstanceStatus,
-  isServiceApiError,
   InstanceType,
+  isServiceApiError,
 } from '@app/utils';
 import {
   MASEmptyState,
   MASEmptyStateVariant,
-  MASTable,
-  KAFKA_MODAL_TYPES,
-  useRootModalContext,
   MASPagination,
+  MASTable,
 } from '@app/common';
 import {
   Configuration,
@@ -38,9 +35,11 @@ import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
 import { StatusColumn } from './StatusColumn';
 import {
   AlertVariant,
+  ModalType,
   useAlert,
   useAuth,
   useConfig,
+  useModal,
 } from '@rhoas/app-services-ui-shared';
 
 export type FilterValue = {
@@ -68,41 +67,6 @@ export type StreamsTableProps = StreamsToolbarProps & {
   loggedInUser: string | undefined;
   setWaitingForDelete: (arg0: boolean) => void;
   currentUserkafkas: KafkaRequest[] | undefined;
-};
-
-type ConfigDetail = {
-  title: string;
-  confirmActionLabel: string;
-  description: string;
-};
-
-export const getDeleteInstanceModalConfig = (
-  t: TFunction,
-  status: string | undefined,
-  instanceName: string | undefined
-): ConfigDetail => {
-  const config: ConfigDetail = {
-    title: '',
-    confirmActionLabel: '',
-    description: '',
-  };
-
-  if (status === InstanceStatus.READY) {
-    config.title = `${t('delete_instance')}?`;
-    config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_complete', { instanceName });
-  } else if (
-    status === InstanceStatus.ACCEPTED ||
-    status === InstanceStatus.PROVISIONING ||
-    status === InstanceStatus.PREPARING
-  ) {
-    config.title = `${t('delete_instance')}?`;
-    config.confirmActionLabel = t('delete');
-    config.description = t('delete_instance_status_accepted_or_provisioning', {
-      instanceName,
-    });
-  }
-  return config;
 };
 
 const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
@@ -137,7 +101,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const history = useHistory();
   const { addAlert } = useAlert() || {};
 
-  const { showModal, hideModal } = useRootModalContext();
+  const { showModal, hideModal } = useModal<ModalType.KasDeleteInstance>();
   const [selectedInstance, setSelectedInstance] = useState<
     KafkaRequest | undefined
   >({});
@@ -459,20 +423,9 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
     } else {
-      const { title, confirmActionLabel, description } =
-        getDeleteInstanceModalConfig(t, status, name);
-
-      showModal(KAFKA_MODAL_TYPES.DELETE_KAFKA_INSTANCE, {
-        instanceStatus: status,
-        selectedItemData: instance,
-        title,
-        confirmButtonProps: {
-          onClick: onDeleteInstance,
-          label: confirmActionLabel,
-        },
-        textProps: {
-          description,
-        },
+      showModal(ModalType.KasDeleteInstance, {
+        onDelete: () => onDeleteInstance(instance),
+        kafka: instance,
       });
     }
   };

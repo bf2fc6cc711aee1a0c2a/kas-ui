@@ -1,14 +1,16 @@
 import React from 'react';
 import { OpenshiftStreams } from './OpenshiftStreams';
-import { RootModal } from '@app/common/RootModal';
+import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { KasModalLoader } from '@app/modals';
 
 export const OpenshiftStreamsConnected: React.FunctionComponent = () => {
   return (
-    <RootModal>
+    <ModalProvider>
       <OpenshiftStreams
         preCreateInstance={(open) => Promise.resolve(open)}
         tokenEndPointUrl='fake-token-url'
       />
-    </RootModal>
+      <KasModalLoader />
+    </ModalProvider>
   );
 };

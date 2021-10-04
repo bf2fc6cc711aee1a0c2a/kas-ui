@@ -18,12 +18,10 @@ import {
   TextContent,
 } from '@patternfly/react-core';
 import {
-  KAFKA_MODAL_TYPES,
   MASEmptyState,
   MASEmptyStateVariant,
   MASLoading,
   usePagination,
-  useRootModalContext,
 } from '@app/common';
 import { useTimeout } from '@app/hooks/useTimeout';
 import {
@@ -46,14 +44,19 @@ import {
   StreamsTableView,
 } from './components';
 import {
-  CloudProvider,
   Configuration,
   DefaultApi,
   KafkaRequest,
   KafkaRequestList,
 } from '@rhoas/kafka-management-sdk';
 import './OpenshiftStreams.css';
-import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
+import {
+  ModalType,
+  useAlert,
+  useAuth,
+  useConfig,
+  useModal,
+} from '@rhoas/app-services-ui-shared';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import { useFederated } from '@app/contexts';
 import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
@@ -87,7 +90,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const mainToggle = searchParams.has('user-testing');
   const { t } = useTranslation();
   const { addAlert } = useAlert() || {};
-  const { showModal } = useRootModalContext();
+  const { showModal } = useModal<ModalType.KasCreateInstance>();
   const localStorage = window.localStorage;
   const qsContext: QuickStartContextValues =
     React.useContext(QuickStartContext);
@@ -98,7 +101,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   >();
   const [kafkaInstancesList, setKafkaInstancesList] =
     useState<KafkaRequestList>({} as KafkaRequestList);
-  const [cloudProviders, setCloudProviders] = useState<CloudProvider[]>([]);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] =
@@ -159,23 +161,19 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     const openModal = async () => {
       const shouldOpen =
         shouldOpenCreateModal && (await shouldOpenCreateModal());
-      if (shouldOpen && cloudProviders?.length < 1) {
-        fetchCloudProviders();
-      }
-      if (shouldOpen && cloudProviders?.length > 0) {
+      if (shouldOpen) {
         handleCreateModal();
       }
     };
     openModal();
-  }, [shouldOpenCreateModal, cloudProviders]);
+  }, [shouldOpenCreateModal]);
 
   const handleCreateModal = () => {
-    showModal(KAFKA_MODAL_TYPES.CREATE_KAFKA_INSTANCE, {
-      onCreate,
-      cloudProviders,
-      mainToggle,
-      refresh: refreshKafkas,
-      hasUserTrialKafka,
+    showModal(ModalType.KasCreateInstance, {
+      onCreate: () => {
+        onCreate();
+        refreshKafkas();
+      },
     });
   };
 
@@ -241,7 +239,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     return filters.join(' and ');
   };
 
-  const handleServerError = (error: Error) => {
+  const handleServerError = (error: unknown) => {
     let reason: string | undefined;
     let errorCode: string | undefined;
     if (isServiceApiError(error)) {
@@ -370,45 +368,12 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
 
   useTimeout(() => fetchCurrentUserKafkas(), MAX_POLL_INTERVAL);
 
-  const fetchCloudProviders = async () => {
-    const accessToken = await auth?.kas.getToken();
-    if (accessToken) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
-        await apisService.getCloudProviders().then((res) => {
-          const providers = res?.data?.items || [];
-          const enabledCloudProviders: CloudProvider[] = providers?.filter(
-            (p: CloudProvider) => p.enabled
-          );
-          setCloudProviders(enabledCloudProviders);
-        });
-      } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        addAlert &&
-          addAlert({
-            variant: AlertVariant.danger,
-            title: t('common.something_went_wrong'),
-            description: reason,
-          });
-      }
-    }
-  };
-
   useEffect(() => {
     setKafkaDataLoaded(false);
     fetchKafkas();
   }, [auth, page, perPage, filteredValue, orderBy]);
 
   useEffect(() => {
-    fetchCloudProviders();
     fetchKafkas();
   }, []);
 
@@ -417,7 +382,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   }, [kafkaInstanceItems]);
 
   useEffect(() => {
-    auth?.getUsername().then((username) => setLoggedInUser(username));
+    auth.getUsername()?.then((username) => setLoggedInUser(username));
   }, [auth]);
 
   useTimeout(() => fetchKafkas(), MAX_POLL_INTERVAL);
