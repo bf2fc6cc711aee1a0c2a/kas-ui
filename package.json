@@ -103,7 +103,7 @@
     "@rhoas/kafka-management-sdk": "0.12.3",
     "axios": "0.22.0",
     "byte-size": "8.1.0",
-    "date-fns": "2.24.0",
+    "date-fns": "2.25.0",
     "dayjs": "1.10.7",
     "express": "4.17.1",
     "i18next": "21.2.4",
