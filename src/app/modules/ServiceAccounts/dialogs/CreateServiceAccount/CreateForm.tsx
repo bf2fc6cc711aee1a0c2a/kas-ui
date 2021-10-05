@@ -144,7 +144,7 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
             }
           >
             <button
-              aria-label={t('serviceAccount.short_description')}
+              aria-label={t('serviceAccount.short_description_popover_button')}
               onClick={preventButtonSubmit}
               className='pf-c-form__group-label-help'
             >

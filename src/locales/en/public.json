@@ -341,6 +341,7 @@
     "sasl_plain_popover_content": "Explanation that this is available for tools that do not support the Oauth method.",
     "sasl_plain_description": " Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance.",
     "short_description": "Short description",
+    "short_description_popover_button": "Short description help",
     "short_description_popover_title": "Short description",
     "short_description_popover_body": "The short description is the same as the client name in the underlying OAuth system."
   },
