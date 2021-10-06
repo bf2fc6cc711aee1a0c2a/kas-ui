@@ -453,20 +453,20 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
             emptyStateBodyProps={{
               body: (
                 <>
-                  <Trans>
-                    {t('create_a_kafka_instance_to_get_started')}{' '}
-                    <Button
-                      variant={ButtonVariant.link}
-                      isSmall
-                      isInline
-                      onClick={() =>
-                        qsContext.setActiveQuickStart &&
-                        qsContext.setActiveQuickStart('getting-started')
-                      }
-                    >
-                      quick start guide.
-                    </Button>
-                  </Trans>
+                  <Trans
+                    i18nKey="create_a_kafka_instance_to_get_started"
+                    components={[
+                      <Button
+                        variant={ButtonVariant.link}
+                        isSmall
+                        isInline
+                        onClick={() =>
+                          qsContext.setActiveQuickStart &&
+                          qsContext.setActiveQuickStart("getting-started")
+                        }
+                      />
+                    ]}
+                  />
                 </>
               ),
             }}
