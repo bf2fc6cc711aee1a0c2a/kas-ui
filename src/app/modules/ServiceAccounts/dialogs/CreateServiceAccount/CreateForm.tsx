@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   MAX_INSTANCE_NAME_LENGTH,
-  MAX_SERVICE_ACCOUNT_DESC_LENGTH,
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
 } from '@app/utils';
 import {
@@ -15,9 +14,10 @@ import {
   Form,
   FormAlert,
   FormGroup,
-  TextArea,
   TextInput,
+  Popover,
 } from '@patternfly/react-core';
+import HelpIcon from '@patternfly/react-icons/dist/esm/icons/help-icon';
 
 export type CreateFormProps = {
   createServiceAccount: () => Promise<void>;
@@ -36,40 +36,6 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  const validateDescription = (
-    serviceAccountRequest: NewServiceAccountRequest
-  ) => {
-    //validate required field
-    if (
-      serviceAccountRequest.description.value !== undefined &&
-      !/^[a-zA-Z0-9.,\-\s]*$/.test(
-        serviceAccountRequest.description.value.trim()
-      )
-    ) {
-      serviceAccountRequest.description.validated = 'error';
-      serviceAccountRequest.description.errorMessage = t(
-        'common.input_filed_invalid_helper_text'
-      );
-    }
-    //validate max length
-    else if (
-      serviceAccountRequest.description.value !== undefined &&
-      serviceAccountRequest.description.value.length >
-        MAX_SERVICE_ACCOUNT_DESC_LENGTH
-    ) {
-      serviceAccountRequest.description.validated = 'error';
-      serviceAccountRequest.description.errorMessage = t(
-        'serviceAccount.service_account_description_length_is_greater_than_expected',
-        {
-          maxLength: MAX_INSTANCE_NAME_LENGTH,
-        }
-      );
-    } else {
-      serviceAccountRequest.description.validated = 'default';
-    }
-    return serviceAccountRequest;
-  };
 
   const validateName = (serviceAccountRequest: NewServiceAccountRequest) => {
     //validate required field
@@ -122,18 +88,6 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
     });
   };
 
-  const setDescription = (description: string) => {
-    setServiceAccountRequest((prevState) => {
-      const value = {
-        ...prevState,
-        description: {
-          value: description,
-        },
-      };
-      return validateDescription(value);
-    });
-  };
-
   const FormValidAlert: React.FunctionComponent = () => {
     if (
       formSubmitted &&
@@ -156,7 +110,7 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
   const submit = (event) => {
     event.preventDefault();
     setFormSubmitted(true);
-    const validated = validateName(validateDescription(serviceAccountRequest));
+    const validated = validateName(serviceAccountRequest);
     setServiceAccountRequest({ ...validated });
 
     if (!isServiceAccountRequestInvalid(validated)) {
@@ -168,41 +122,46 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
     setServiceAccountRequest(createEmptyNewServiceAccountRequest());
   };
 
+  const preventButtonSubmit = (event) => event.preventDefault();
+
   return (
     <Form onSubmit={submit} id={id}>
       <FormValidAlert />
       <FormGroup
-        label='Name'
+        label={t('serviceAccount.short_description')}
         isRequired
-        fieldId='text-input-name'
+        fieldId='text-input-short-description'
         helperTextInvalid={serviceAccountRequest.name.errorMessage}
         validated={serviceAccountRequest.name.validated}
         helperText={t('common.input_filed_invalid_helper_text')}
+        labelIcon={
+          <Popover
+            headerContent={
+              <div>{t('serviceAccount.short_description_popover_title')}</div>
+            }
+            bodyContent={
+              <div>{t('serviceAccount.short_description_popover_body')}</div>
+            }
+          >
+            <button
+              aria-label={t('serviceAccount.short_description_popover_button')}
+              onClick={preventButtonSubmit}
+              className='pf-c-form__group-label-help'
+            >
+              <HelpIcon noVerticalAlign />
+            </button>
+          </Popover>
+        }
       >
         <TextInput
           isRequired
           type='text'
-          id='text-input-name'
-          name='text-input-name'
+          id='text-input-short-description'
+          name='text-input-short-description'
           value={serviceAccountRequest.name.value}
           onChange={setName}
           validated={serviceAccountRequest.name.validated}
           autoFocus={true}
-        />
-      </FormGroup>
-      <FormGroup
-        label='Description'
-        fieldId='text-input-description'
-        helperTextInvalid={serviceAccountRequest.description.errorMessage}
-        validated={serviceAccountRequest.description.validated}
-        helperText={t('common.input_text_area_invalid_helper_text')}
-      >
-        <TextArea
-          id='text-input-description'
-          name='text-input-description'
-          value={serviceAccountRequest.description.value}
-          onChange={setDescription}
-          validated={serviceAccountRequest.description.validated}
         />
       </FormGroup>
     </Form>
