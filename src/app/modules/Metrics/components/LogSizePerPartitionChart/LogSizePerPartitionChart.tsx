@@ -294,14 +294,14 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
               ) : (
                 <ChartEmptyState
                   title='No topic data'
-                  body='Data might take a few minutes to appear once you start using topics.'
+                  body='Data will appear shortly after you start using topics.'
                   noTopics
                 />
               )
             ) : (
               <ChartEmptyState
                 title='No metrics data'
-                body='Your Kafka instance was recently created, so some metrics aren’t yet available. Metrics should be available around 30 minutes after creation.'
+                body='We’re setting up your monitoring instance. Your metrics will appear shortly.'
                 noData
               />
             )
