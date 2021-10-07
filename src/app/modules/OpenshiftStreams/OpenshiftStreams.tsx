@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import dayjs from 'dayjs';
 import {
@@ -453,18 +453,21 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
             emptyStateBodyProps={{
               body: (
                 <>
-                  {t('create_a_kafka_instance_to_get_started')}{' '}
-                  <Button
-                    variant={ButtonVariant.link}
-                    isSmall
-                    isInline
-                    onClick={() =>
-                      qsContext.setActiveQuickStart &&
-                      qsContext.setActiveQuickStart('getting-started')
-                    }
-                  >
-                    quick start guide.
-                  </Button>
+                  <Trans
+                    i18nKey='create_a_kafka_instance_to_get_started'
+                    components={[
+                      <Button
+                        variant={ButtonVariant.link}
+                        isSmall
+                        isInline
+                        key='btn-quick-start'
+                        onClick={() =>
+                          qsContext.setActiveQuickStart &&
+                          qsContext.setActiveQuickStart('getting-started')
+                        }
+                      />,
+                    ]}
+                  />
                 </>
               ),
             }}
