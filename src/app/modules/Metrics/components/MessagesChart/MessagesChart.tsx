@@ -36,7 +36,7 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
 
       const messages = topic.data.map((value) => {
         const date = new Date(value.timestamp);
-        const time = date.getHours() + ':' + date.getMinutes();
+        const time = date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
         return {
           x: time,
           y: value.count,
@@ -79,7 +79,7 @@ export class MessagesChart extends React.Component<MessagesChartProps> {
           themeColor={ChartThemeColor.green}
           width={450}
         >
-          <ChartAxis label='time' tickCount={6} />
+            <ChartAxis label={'\n'+'Time'} tickCount={6} />
           <ChartAxis dependentAxis showGrid label={'messages'} />
           <ChartGroup>
             {chartData.map((value, index) => (
