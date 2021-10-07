@@ -12,6 +12,7 @@ import {
   ModalType,
   ResetServiceAccountCredentialsProps,
   useModal,
+  ChangeOwnerProps,
 } from '@rhoas/app-services-ui-shared';
 
 export const useKasModals = (): ModalRegistry => {
@@ -37,6 +38,17 @@ export const useKasModals = (): ModalRegistry => {
           )
       ) as React.LazyExoticComponent<
         React.FunctionComponent<DeleteInstanceProps>
+      >,
+      variant: 'small',
+    },
+    [ModalType.KasChangeOwner]: {
+      lazyComponent: React.lazy(
+        () =>
+          import(
+            /* webpackPrefetch: true */ '@app/modules/OpenshiftStreams/dialogs/ChangeOwner/ChangeOwnerModal'
+          )
+      ) as React.LazyExoticComponent<
+        React.FunctionComponent<ChangeOwnerProps>
       >,
       variant: 'small',
     },

@@ -101,7 +101,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const history = useHistory();
   const { addAlert } = useAlert() || {};
 
-  const { showModal, hideModal } = useModal<ModalType.KasDeleteInstance>();
+  const { showModal, hideModal } = useModal<ModalType.KasDeleteInstance | ModalType.KasChangeOwner>();
   const [selectedInstance, setSelectedInstance] = useState<
     KafkaRequest | undefined
   >({});
@@ -275,6 +275,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     } else if (selectedOption === 'connect-instance') {
       onViewConnection(originalData);
       setActiveRow(originalData?.name);
+    } else if (selectedOption === 'change-owner') {
+      onChangeOwner(originalData);
     } else if (selectedOption === 'delete-instance') {
       onSelectDeleteInstance(originalData);
     }
@@ -338,6 +340,19 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         },
       },
       {
+        title: t('change_owner'),
+        id: 'change-owner',
+        ['data-testid']: 'tableStreams-actionChangeOwner',
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn &&
+          onSelectKebabDropdownOption(event, originalData, 'change-owner'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_change_owner'),
+        },
+      },
+      {
         title: t('delete_instance'),
         id: 'delete-instance',
         ['data-testid']: 'tableStreams-actionDelete',
@@ -385,7 +400,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           {
             title:
               status === InstanceStatus.DEPROVISION ||
-              status !== InstanceStatus.READY ? (
+                status !== InstanceStatus.READY ? (
                 name
               ) : (
                 <Link to={`kafkas/${row?.id}`}>{name}</Link>
@@ -416,6 +431,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const actionResolver = (rowData: IRowData) => {
     return getActionResolver(rowData);
   };
+
+  const onChangeOwner = (instance: KafkaRequest) => {
+    setSelectedInstance(instance);
+    showModal(ModalType.KasChangeOwner, { kafka: instance });
+
+  }
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
     const { status, name } = instance;
