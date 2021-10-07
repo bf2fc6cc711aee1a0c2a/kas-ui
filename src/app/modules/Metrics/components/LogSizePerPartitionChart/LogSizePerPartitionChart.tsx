@@ -294,7 +294,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
               ) : (
                 <ChartEmptyState
                   title='No topic data'
-                  body='Data might take a few minutes to appear once you start using topics.'
+                  body='Data will appear shortly after you start using topics.'
                   noTopics
                 />
               )

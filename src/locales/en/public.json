@@ -359,7 +359,7 @@
     "topic_metrics_help_text": "Bytes incoming and outgoing are the total bytes for all topics or total bytes for a selected topic in the Kafka instance. This metric enables you to assess data transfer in and out of your Kafka instance. To modify incoming and outgoing bytes, you can adjust topic message size or other topic properties as needed.",
     "empty_state_no_data_body": "Your Kafka instance was recently created, so some metrics aren’t yet available. Metrics should be available around 30 minutes after creation.",
     "empty_state_no_data_title": "No metrics data",
-    "empty_state_no_topics_body": "Data might take around 30 minutes to appear once you start using topics.",
+    "empty_state_no_topics_body": "Data will appear shortly after you start using topics.",
     "empty_state_no_topics_title": "No topic data",
     "empty_state_no_filter_body": "In the filter dropdown select a topic to see log size per topic partition.",
     "empty_state_no_filter_title": "Filter by Topic"
