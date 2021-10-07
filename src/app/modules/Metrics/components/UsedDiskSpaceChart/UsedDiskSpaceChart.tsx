@@ -210,9 +210,22 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
           avgBroker.data[0].timestamp -
           (lengthOfDataPer5Mins - i) * (5 * 60000);
         const date = new Date(newTimestamp);
-        const time = timeDuration>=24?
-        date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '\n'+date.getUTCDate()+'/'+ date.getUTCMonth()+'/'+date.getUTCFullYear()
-        :date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
+        const time =
+          timeDuration >= 24
+            ? date.getHours() +
+              ':' +
+              (date.getMinutes() < 10 ? '0' : '') +
+              date.getMinutes() +
+              '\n' +
+              date.getUTCDate() +
+              '/' +
+              date.getUTCMonth() +
+              '/' +
+              date.getUTCFullYear()
+            : date.getHours() +
+              ':' +
+              (date.getMinutes() < 10 ? '0' : '') +
+              date.getMinutes();
         area.push({ name: avgBroker.name, x: time, y: 0 });
         softLimit.push({ name: 'Limit', x: time, y: usageLimit });
       }
@@ -220,9 +233,22 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
     avgBroker.data.map((value) => {
       const date = new Date(value.timestamp);
-      const time = timeDuration>=24?
-          date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '\n'+date.getUTCDate()+'/'+ date.getUTCMonth()+'/'+date.getUTCFullYear()
-          :date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
+      const time =
+        timeDuration >= 24
+          ? date.getHours() +
+            ':' +
+            (date.getMinutes() < 10 ? '0' : '') +
+            date.getMinutes() +
+            '\n' +
+            date.getUTCDate() +
+            '/' +
+            date.getUTCMonth() +
+            '/' +
+            date.getUTCFullYear()
+          : date.getHours() +
+            ':' +
+            (date.getMinutes() < 10 ? '0' : '') +
+            date.getMinutes();
       const aggregateBytes = value.usedSpaceAvg.reduce(function (a, b) {
         return a + b;
       }, 0);
@@ -295,7 +321,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                   minDomain={{ y: 0 }}
                   legendAllowWrap={true}
                 >
-                    <ChartAxis label={'\n'+'Time'} tickCount={6} />
+                  <ChartAxis label={'\n' + 'Time'} tickCount={6} />
                   <ChartAxis
                     dependentAxis
                     tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}

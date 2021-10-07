@@ -216,18 +216,44 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
             partition.data[0].timestamp -
             (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newtimestamp);
-          const time = timeDuration>=24?
-          date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '\n'+date.getUTCDate()+'/'+ date.getUTCMonth()+'/'+date.getUTCFullYear()
-          :date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
+          const time =
+            timeDuration >= 24
+              ? date.getHours() +
+                ':' +
+                (date.getMinutes() < 10 ? '0' : '') +
+                date.getMinutes() +
+                '\n' +
+                date.getUTCDate() +
+                '/' +
+                date.getUTCMonth() +
+                '/' +
+                date.getUTCFullYear()
+              : date.getHours() +
+                ':' +
+                (date.getMinutes() < 10 ? '0' : '') +
+                date.getMinutes();
           area.push({ name: partition.name, x: time, y: 0 });
         }
       }
 
       partition.data.map((value) => {
         const date = new Date(value.timestamp);
-        const time = timeDuration>=24?
-        date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '\n'+date.getUTCDate()+'/'+ date.getUTCMonth()+'/'+date.getUTCFullYear()
-        :date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes()
+        const time =
+          timeDuration >= 24
+            ? date.getHours() +
+              ':' +
+              (date.getMinutes() < 10 ? '0' : '') +
+              date.getMinutes() +
+              '\n' +
+              date.getUTCDate() +
+              '/' +
+              date.getUTCMonth() +
+              '/' +
+              date.getUTCFullYear()
+            : date.getHours() +
+              ':' +
+              (date.getMinutes() < 10 ? '0' : '') +
+              date.getMinutes();
         const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
         area.push({ name: value.name, x: time, y: bytes });
       });
@@ -279,7 +305,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
                     width={width}
                     legendAllowWrap={true}
                   >
-                    <ChartAxis label={'\n'+'Time'} tickCount={6} />
+                    <ChartAxis label={'\n' + 'Time'} tickCount={6} />
                     <ChartAxis
                       dependentAxis
                       tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
