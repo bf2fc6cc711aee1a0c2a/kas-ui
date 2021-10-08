@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, FormGroup, Select, SelectVariant, Modal, Button } from '@patternfly/react-core';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
+import { PrincipalType, usePrincipals } from '@rhoas/app-services-ui-shared';
 
 export type ChangeOwnerModalProps = {
     kafka: KafkaRequest;
@@ -31,6 +32,10 @@ export const ChangeOwnerModal: React.FC<ChangeOwnerModalProps> = ({
     const onToggle = () => {
         setIsOpen(true)
     }
+
+    //const principals = usePrincipals().getAllPrincipals();
+
+    //console.log(principals);
 
     return (
         <Modal title={t('change_owner')} isOpen={isModalOpen} onClose={handleToggle} variant="small"

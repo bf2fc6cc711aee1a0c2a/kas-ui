@@ -41,6 +41,7 @@ import {
   useConfig,
   useModal,
 } from '@rhoas/app-services-ui-shared';
+import { useFederated } from '@app/contexts';
 
 export type FilterValue = {
   value: string;
@@ -109,6 +110,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
   const [items, setItems] = useState<Array<KafkaRequest>>([]);
   const [isOrgAdmin, setIsOrgAdmin] = useState<boolean>();
+
+  const { getKafkaInstance } = useFederated() || {};
 
   const tableColumns = [
     { title: t('name'), transforms: [sortable] },
@@ -434,6 +437,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
 
   const onChangeOwner = (instance: KafkaRequest) => {
     setSelectedInstance(instance);
+    getKafkaInstance && getKafkaInstance(instance);
     showModal(ModalType.KasChangeOwner, { kafka: instance });
 
   }
