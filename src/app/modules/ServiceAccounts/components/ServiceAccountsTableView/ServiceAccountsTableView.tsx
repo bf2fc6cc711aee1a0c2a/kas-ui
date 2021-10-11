@@ -166,31 +166,35 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
 
   const getParameterForSortIndex = (index: number) => {
     switch (index) {
-      case 0:
-        return 'name';
-      case 1:
-        return 'client_id';
-      case 2:
-        return 'owner';
-      case 3:
-        return 'created_at';
-      default:
-        return '';
+    case 0:
+      return 'name';
+    case 1:
+      return 'client_id';
+    case 2:
+      return 'owner';
+    case 3:
+      return 'description';
+    case 4:
+      return 'created_at';
+    default:
+      return '';
     }
   };
 
   const getindexForSortParameter = (parameter: string) => {
     switch (parameter.toLowerCase()) {
-      case 'name':
-        return 0;
-      case 'client_id':
-        return 1;
-      case 'owner':
-        return 2;
-      case 'created_at':
-        return 3;
-      default:
-        return undefined;
+    case 'name':
+      return 0;
+    case 'client_id':
+      return 1;
+    case 'owner':
+      return 2;
+    case 'description':
+      return 3;
+    case 'created_at':
+      return 4;
+    default:
+      return undefined;
     }
   };
 
@@ -243,18 +247,18 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       {serviceAccountItems &&
         serviceAccountItems?.length < 1 &&
         serviceAccountsDataLoaded && (
-          <MASEmptyState
-            emptyStateProps={{
-              variant: MASEmptyStateVariant.NoResult,
-            }}
-            titleProps={{
-              title: t('no_results_found'),
-            }}
-            emptyStateBodyProps={{
-              body: t('adjust_your_filters_and_try_again'),
-            }}
-          />
-        )}
+        <MASEmptyState
+          emptyStateProps={{
+            variant: MASEmptyStateVariant.NoResult,
+          }}
+          titleProps={{
+            title: t('no_results_found'),
+          }}
+          emptyStateBodyProps={{
+            body: t('adjust_your_filters_and_try_again'),
+          }}
+        />
+      )}
       {/* {total && total > 0 && (
         <MASPagination
           widgetId="pagination-options-menu-bottom"

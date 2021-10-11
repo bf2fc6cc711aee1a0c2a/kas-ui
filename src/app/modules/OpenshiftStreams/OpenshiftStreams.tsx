@@ -226,8 +226,8 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
             }
             return value !== ''
               ? `${filterKey} ${
-                  val.isExact === true ? `= ${value}` : `like %${value}%`
-                }`
+                val.isExact === true ? `= ${value}` : `like %${value}%`
+              }`
               : '';
           })
           .join(' or ');

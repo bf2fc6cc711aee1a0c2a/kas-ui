@@ -5,14 +5,13 @@ import { useTranslation } from 'react-i18next';
 import {
   CreateInstanceProps,
   CreateServiceAccountProps,
-  CredentialsProps,
   DeleteInstanceProps,
   DeleteServiceAccountProps,
   ModalRegistry,
   ModalType,
   ResetServiceAccountCredentialsProps,
   useModal,
-  ChangeOwnerProps,
+  TransferOwnershipProps,
 } from '@rhoas/app-services-ui-shared';
 
 export const useKasModals = (): ModalRegistry => {
@@ -45,10 +44,10 @@ export const useKasModals = (): ModalRegistry => {
       lazyComponent: React.lazy(
         () =>
           import(
-            /* webpackPrefetch: true */ '@app/modules/OpenshiftStreams/dialogs/ChangeOwner/ChangeOwnerModal'
+            /* webpackPrefetch: true */ '@app/modules/OpenshiftStreams/dialogs/TransferOwnership/TransferOwnership'
           )
       ) as React.LazyExoticComponent<
-        React.FunctionComponent<ChangeOwnerProps>
+        React.FunctionComponent<TransferOwnershipProps>
       >,
       variant: 'small',
     },

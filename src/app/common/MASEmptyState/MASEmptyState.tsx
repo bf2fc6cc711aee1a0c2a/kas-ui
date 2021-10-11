@@ -79,62 +79,62 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   const getVariantConfig = () => {
     let variantConfig: any = {};
     switch (masEmptyStateVariant) {
-      case MASEmptyStateVariant.GettingStarted:
-        variantConfig = {
-          variant: EmptyStateVariant.xl,
-          icon: SpaceShuttleIcon,
-          titleSize: TitleSizes['4xl'],
-          headingLevel: 'h1',
-        };
-        break;
-      case MASEmptyStateVariant.NoAccess:
-        variantConfig = {
-          variant: EmptyStateVariant.large,
-          icon: LockIcon,
-          titleSize: TitleSizes.xl,
-          headingLevel: 'h2',
-        };
-        break;
-      case MASEmptyStateVariant.NoItems:
-        variantConfig = {
-          variant: EmptyStateVariant.large,
-          icon: PlusCircleIcon,
-          titleSize: TitleSizes.xl,
-          headingLevel: 'h2',
-        };
-        break;
-      case MASEmptyStateVariant.NoResult:
-        variantConfig = {
-          variant: EmptyStateVariant.large,
-          icon: SearchIcon,
-          titleSize: TitleSizes.lg,
-          headingLevel: 'h2',
-        };
-        break;
-      case MASEmptyStateVariant.UnexpectedError:
-        variantConfig = {
-          variant: EmptyStateVariant.full,
-          icon: ExclamationCircleIcon,
-          titleSize: TitleSizes.lg,
-          headingLevel: 'h1',
-        };
-        break;
-      case MASEmptyStateVariant.PageNotFound:
-        variantConfig = {
-          variant: EmptyStateVariant.full,
-          icon: NotFoundImg,
-          titleSize: TitleSizes.lg,
-          headingLevel: 'h1',
-        };
-        break;
-      default:
-        variantConfig = {
-          variant: masEmptyStateVariant || EmptyStateVariant.full,
-          icon: emptyStateIconProps?.icon,
-          titleSize: titleProps?.size,
-          headingLevel: titleProps?.headingLevel,
-        };
-        break;
+    case MASEmptyStateVariant.GettingStarted:
+      variantConfig = {
+        variant: EmptyStateVariant.xl,
+        icon: SpaceShuttleIcon,
+        titleSize: TitleSizes['4xl'],
+        headingLevel: 'h1',
+      };
+      break;
+    case MASEmptyStateVariant.NoAccess:
+      variantConfig = {
+        variant: EmptyStateVariant.large,
+        icon: LockIcon,
+        titleSize: TitleSizes.xl,
+        headingLevel: 'h2',
+      };
+      break;
+    case MASEmptyStateVariant.NoItems:
+      variantConfig = {
+        variant: EmptyStateVariant.large,
+        icon: PlusCircleIcon,
+        titleSize: TitleSizes.xl,
+        headingLevel: 'h2',
+      };
+      break;
+    case MASEmptyStateVariant.NoResult:
+      variantConfig = {
+        variant: EmptyStateVariant.large,
+        icon: SearchIcon,
+        titleSize: TitleSizes.lg,
+        headingLevel: 'h2',
+      };
+      break;
+    case MASEmptyStateVariant.UnexpectedError:
+      variantConfig = {
+        variant: EmptyStateVariant.full,
+        icon: ExclamationCircleIcon,
+        titleSize: TitleSizes.lg,
+        headingLevel: 'h1',
+      };
+      break;
+    case MASEmptyStateVariant.PageNotFound:
+      variantConfig = {
+        variant: EmptyStateVariant.full,
+        icon: NotFoundImg,
+        titleSize: TitleSizes.lg,
+        headingLevel: 'h1',
+      };
+      break;
+    default:
+      variantConfig = {
+        variant: masEmptyStateVariant || EmptyStateVariant.full,
+        icon: emptyStateIconProps?.icon,
+        titleSize: titleProps?.size,
+        headingLevel: titleProps?.headingLevel,
+      };
+      break;
     }
     return variantConfig;
   };
