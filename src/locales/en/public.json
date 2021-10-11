@@ -319,7 +319,7 @@
     "sasl_plain": "SASL/PLAIN",
     "48_hours_duration": "48 hours duration",
     "change_owner": "Change owner",
-    "use":"Use"
+    "use": "Use"
   },
   "serviceAccount": {
     "service_accounts": "Service Accounts",

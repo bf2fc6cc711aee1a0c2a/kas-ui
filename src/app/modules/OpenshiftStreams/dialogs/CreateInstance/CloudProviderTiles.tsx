@@ -14,16 +14,16 @@ export const CloudProvidersTiles: React.FunctionComponent<CloudProvidersTileProp
   ({ cloudProviders, kafkaRequest, selectCloudProvider }) => {
     const getTileIcon = (provider?: string) => {
       switch (provider?.toLowerCase()) {
-      case 'aws':
-        return (
-          <AwsIcon
-            size='lg'
-            color='black'
-            className='mk--create-instance__tile--icon'
-          />
-        );
-      default:
-        return;
+        case 'aws':
+          return (
+            <AwsIcon
+              size='lg'
+              color='black'
+              className='mk--create-instance__tile--icon'
+            />
+          );
+        default:
+          return;
       }
     };
 

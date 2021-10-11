@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Trans, useTranslation } from "react-i18next";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-import dayjs from "dayjs";
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import dayjs from 'dayjs';
 import {
   AlertVariant,
   Button,
@@ -16,14 +16,14 @@ import {
   PageSectionVariants,
   Text,
   TextContent,
-} from "@patternfly/react-core";
+} from '@patternfly/react-core';
 import {
   MASEmptyState,
   MASEmptyStateVariant,
   MASLoading,
   usePagination,
-} from "@app/common";
-import { useTimeout } from "@app/hooks/useTimeout";
+} from '@app/common';
+import { useTimeout } from '@app/hooks/useTimeout';
 import {
   ErrorCodes,
   InstanceStatus,
@@ -31,39 +31,39 @@ import {
   isMobileTablet,
   isServiceApiError,
   MAX_POLL_INTERVAL,
-} from "@app/utils";
-import { usePageVisibility } from "@app/hooks/usePageVisibility";
+} from '@app/utils';
+import { usePageVisibility } from '@app/hooks/usePageVisibility';
 import {
   QuickStartContext,
   QuickStartContextValues,
-} from "@patternfly/quickstarts";
+} from '@patternfly/quickstarts';
 import {
   FilterType,
   InstanceDrawer,
   InstanceDrawerProps,
   StreamsTableView,
-} from "./components";
+} from './components';
 import {
   Configuration,
   DefaultApi,
   KafkaRequest,
   KafkaRequestList,
-} from "@rhoas/kafka-management-sdk";
-import "./OpenshiftStreams.css";
+} from '@rhoas/kafka-management-sdk';
+import './OpenshiftStreams.css';
 import {
   ModalType,
   useAlert,
   useAuth,
   useConfig,
   useModal,
-} from "@rhoas/app-services-ui-shared";
-import LockIcon from "@patternfly/react-icons/dist/js/icons/lock-icon";
-import { useFederated } from "@app/contexts";
-import { InstanceDrawerTabs } from "@app/modules/InstanceDrawer/InstanceDrawerContent";
+} from '@rhoas/app-services-ui-shared';
+import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
+import { useFederated } from '@app/contexts';
+import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
 
 export type OpenShiftStreamsProps = Pick<
   InstanceDrawerProps,
-  "tokenEndPointUrl"
+  'tokenEndPointUrl'
 > & {
   preCreateInstance: (open: boolean) => Promise<boolean>;
 };
@@ -87,7 +87,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const { page = 1, perPage = 10 } = usePagination() || {};
-  const mainToggle = searchParams.has("user-testing");
+  const mainToggle = searchParams.has('user-testing');
   const { t } = useTranslation();
   const { addAlert } = useAlert() || {};
   const { showModal } = useModal<ModalType.KasCreateInstance>();
@@ -102,7 +102,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const [kafkaInstancesList, setKafkaInstancesList] =
     useState<KafkaRequestList>({} as KafkaRequestList);
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
-  const [orderBy, setOrderBy] = useState<string>("created_at desc");
+  const [orderBy, setOrderBy] = useState<string>('created_at desc');
   const [selectedInstance, setSelectedInstance] =
     useState<SelectedInstance | null>();
   // state to store the expected total kafka instances based on the operation
@@ -110,7 +110,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const [isDisplayKafkaEmptyState, setIsDisplayKafkaEmptyState] = useState<
     boolean | undefined
   >(undefined);
-  const [filterSelected, setFilterSelected] = useState("name");
+  const [filterSelected, setFilterSelected] = useState('name');
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
@@ -139,10 +139,10 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   useEffect(() => {
     if (isMobileTablet()) {
       if (localStorage) {
-        const count = parseInt(localStorage.getItem("openSessions") || "0");
+        const count = parseInt(localStorage.getItem('openSessions') || '0');
         const newCount = count + 1;
         if (count < 1) {
-          localStorage.setItem("openSessions", `${newCount}`);
+          localStorage.setItem('openSessions', `${newCount}`);
           setIsMobileModalOpen(true);
         }
       }
@@ -210,7 +210,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     filteredValue.forEach((filter) => {
       const { filterKey, filterValue } = filter;
       if (filterValue && filterValue.length > 0) {
-        let filterQuery = "(";
+        let filterQuery = '(';
         filterQuery += filterValue
           .map((val) => {
             const value = val.value.trim();
@@ -220,19 +220,19 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
             if (value === InstanceStatus.DEPROVISION) {
               return `${filterKey} = ${InstanceStatus.DEPROVISION} or ${filterKey} = ${InstanceStatus.DELETED}`;
             }
-            return value !== ""
+            return value !== ''
               ? `${filterKey} ${
-                val.isExact === true ? `= ${value}` : `like %${value}%`
-              }`
-              : "";
+                  val.isExact === true ? `= ${value}` : `like %${value}%`
+                }`
+              : '';
           })
-          .join(" or ");
-        filterQuery += ")";
+          .join(' or ');
+        filterQuery += ')';
 
         filters.push(filterQuery);
       }
     });
-    return filters.join(" and ");
+    return filters.join(' and ');
   };
 
   const handleServerError = (error: unknown) => {
@@ -249,7 +249,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       addAlert &&
         addAlert({
           variant: AlertVariant.danger,
-          title: t("common.something_went_wrong"),
+          title: t('common.something_went_wrong'),
           description: reason,
         });
     }
@@ -317,7 +317,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
           })
         );
 
-        await apisService.getKafkas("1", "1").then((res) => {
+        await apisService.getKafkas('1', '1').then((res) => {
           const kafkaItemsLength = res?.data?.items?.length;
           if (!kafkaItemsLength || kafkaItemsLength < 1) {
             setIsDisplayKafkaEmptyState(true);
@@ -348,7 +348,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
             basePath,
           })
         );
-        await apisService.getKafkas("", "", "", filter).then((res) => {
+        await apisService.getKafkas('', '', '', filter).then((res) => {
           const kafkaInstances = res.data;
           setCurrentUserKafkas(kafkaInstances.items);
         });
@@ -408,20 +408,20 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     return (
       <PageSection
         variant={PageSectionVariants.default}
-        padding={{ default: "noPadding" }}
+        padding={{ default: 'noPadding' }}
         isFilled
       >
         <MASEmptyState
           titleProps={{
-            title: t("access_permissions_needed"),
-            headingLevel: "h2",
+            title: t('access_permissions_needed'),
+            headingLevel: 'h2',
           }}
           emptyStateIconProps={{
             icon: LockIcon,
           }}
           emptyStateBodyProps={{
             body: t(
-              "to_access_kafka_instances_contact_your_organization_administrators"
+              'to_access_kafka_instances_contact_your_organization_administrators'
             ),
           }}
         />
@@ -434,14 +434,14 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       return (
         <PageSection
           variant={PageSectionVariants.light}
-          padding={{ default: "noPadding" }}
+          padding={{ default: 'noPadding' }}
         >
           <MASLoading />
         </PageSection>
       );
     } else if (isDisplayKafkaEmptyState) {
       return (
-        <PageSection padding={{ default: "noPadding" }} isFilled>
+        <PageSection padding={{ default: 'noPadding' }} isFilled>
           <MASEmptyState
             emptyStateProps={{
               variant: MASEmptyStateVariant.NoItems,
@@ -450,16 +450,16 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               body: (
                 <>
                   <Trans
-                    i18nKey="create_a_kafka_instance_to_get_started"
+                    i18nKey='create_a_kafka_instance_to_get_started'
                     components={[
                       <Button
                         variant={ButtonVariant.link}
                         isSmall
                         isInline
-                        key="btn-quick-start"
+                        key='btn-quick-start'
                         onClick={() =>
                           qsContext.setActiveQuickStart &&
-                          qsContext.setActiveQuickStart("getting-started")
+                          qsContext.setActiveQuickStart('getting-started')
                         }
                       />,
                     ]}
@@ -467,14 +467,14 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
                 </>
               ),
             }}
-            titleProps={{ title: t("no_kafka_instances_yet") }}
+            titleProps={{ title: t('no_kafka_instances_yet') }}
           >
             <Button
-              data-testid="emptyStateStreams-buttonCreateKafka"
+              data-testid='emptyStateStreams-buttonCreateKafka'
               variant={ButtonVariant.primary}
               onClick={() => handleCreateInstanceModal()}
             >
-              {t("create_kafka_instance")}
+              {t('create_kafka_instance')}
             </Button>
           </MASEmptyState>
           )
@@ -483,9 +483,9 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
     } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
       return (
         <PageSection
-          className="mk--main-page__page-section--table pf-m-padding-on-xl"
+          className='mk--main-page__page-section--table pf-m-padding-on-xl'
           variant={PageSectionVariants.default}
-          padding={{ default: "noPadding" }}
+          padding={{ default: 'noPadding' }}
         >
           <Card>
             <StreamsTableView
@@ -528,16 +528,16 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
         isLoading={instanceDetail === undefined}
         instanceDetail={instanceDetail}
         onClose={onCloseDrawer}
-        data-ouia-app-id="controlPlane-streams"
+        data-ouia-app-id='controlPlane-streams'
         tokenEndPointUrl={tokenEndPointUrl}
         notRequiredDrawerContentBackground={isDisplayKafkaEmptyState}
       >
-        <main className="pf-c-page__main">
+        <main className='pf-c-page__main'>
           <PageSection variant={PageSectionVariants.light}>
             <Level>
               <LevelItem>
                 <TextContent>
-                  <Text component="h1">{t("kafka_instances")}</Text>
+                  <Text component='h1'>{t('kafka_instances')}</Text>
                 </TextContent>
               </LevelItem>
             </Level>
@@ -547,13 +547,13 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
       </InstanceDrawer>
       <Modal
         variant={ModalVariant.small}
-        title="Mobile experience"
+        title='Mobile experience'
         isOpen={isMobileModalOpen}
         onClose={() => handleMobileModal()}
         actions={[
           <Button
-            key="confirm"
-            variant="primary"
+            key='confirm'
+            variant='primary'
             onClick={() => handleMobileModal()}
           >
             Ok

@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Link, useHistory } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useHistory } from 'react-router-dom';
 import {
   IAction,
   IExtraColumnData,
@@ -9,8 +9,8 @@ import {
   ISortBy,
   sortable,
   SortByDirection,
-} from "@patternfly/react-table";
-import { PaginationVariant, Skeleton } from "@patternfly/react-core";
+} from '@patternfly/react-table';
+import { PaginationVariant, Skeleton } from '@patternfly/react-core';
 import {
   getFormattedDate,
   getLoadingRowsCount,
@@ -18,21 +18,21 @@ import {
   InstanceStatus,
   InstanceType,
   isServiceApiError,
-} from "@app/utils";
+} from '@app/utils';
 import {
   MASEmptyState,
   MASEmptyStateVariant,
   MASPagination,
   MASTable,
-} from "@app/common";
+} from '@app/common';
 import {
   Configuration,
   DefaultApi,
   KafkaRequest,
-} from "@rhoas/kafka-management-sdk";
-import "./StatusColumn.css";
-import { StreamsToolbar, StreamsToolbarProps } from "./StreamsToolbar";
-import { StatusColumn } from "./StatusColumn";
+} from '@rhoas/kafka-management-sdk';
+import './StatusColumn.css';
+import { StreamsToolbar, StreamsToolbarProps } from './StreamsToolbar';
+import { StatusColumn } from './StatusColumn';
 import {
   AlertVariant,
   ModalType,
@@ -40,8 +40,8 @@ import {
   useAuth,
   useConfig,
   useModal,
-} from "@rhoas/app-services-ui-shared";
-import { useFederated } from "@app/contexts";
+} from '@rhoas/app-services-ui-shared';
+import { useFederated } from '@app/contexts';
 
 export type FilterValue = {
   value: string;
@@ -116,12 +116,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const [isOrgAdmin, setIsOrgAdmin] = useState<boolean>();
 
   const tableColumns = [
-    { title: t("name"), transforms: [sortable] },
-    { title: t("cloud_provider"), transforms: [sortable] },
-    { title: t("region"), transforms: [sortable] },
-    { title: t("owner"), transforms: [sortable] },
-    { title: t("status"), transforms: [sortable] },
-    { title: t("time_created"), transforms: [sortable] },
+    { title: t('name'), transforms: [sortable] },
+    { title: t('cloud_provider'), transforms: [sortable] },
+    { title: t('region'), transforms: [sortable] },
+    { title: t('owner'), transforms: [sortable] },
+    { title: t('status'), transforms: [sortable] },
+    { title: t('time_created'), transforms: [sortable] },
   ];
 
   useEffect(() => {
@@ -146,7 +146,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
 
   useEffect(() => {
     if (!isDrawerOpen) {
-      setActiveRow("");
+      setActiveRow('');
     }
   }, [isDrawerOpen]);
 
@@ -162,7 +162,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
       // filter all new kafka which is not in deleteKafka state
       const notPresentKafkas = deprovisonedKafkas
         .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
-        .map((k) => k.name || "");
+        .map((k) => k.name || '');
       // create new array by merging old and new kafka with status as deprovion
       const allDeletedKafkas: string[] = [
         ...deletedKafkas,
@@ -180,7 +180,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           removeKafkaFromDeleted(k);
           addAlert &&
             addAlert({
-              title: t("kafka_successfully_deleted", { name: k }),
+              title: t('kafka_successfully_deleted', { name: k }),
               variant: AlertVariant.success,
             });
         }
@@ -207,34 +207,34 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           if (instances[0].status === InstanceStatus.READY) {
             addAlert &&
               addAlert({
-                title: t("kafka_successfully_created"),
+                title: t('kafka_successfully_created'),
                 variant: AlertVariant.success,
                 description: (
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: t("kafka_success_message", {
+                      __html: t('kafka_success_message', {
                         name: instances[0]?.name,
                       }),
                     }}
                   />
                 ),
-                dataTestId: "toastCreateKafka-success",
+                dataTestId: 'toastCreateKafka-success',
               });
           } else if (instances[0].status === InstanceStatus.FAILED) {
             addAlert &&
               addAlert({
-                title: t("kafka_not_created"),
+                title: t('kafka_not_created'),
                 variant: AlertVariant.danger,
                 description: (
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: t("kafka_failed_message", {
+                      __html: t('kafka_failed_message', {
                         name: instances[0]?.name,
                       }),
                     }}
                   />
                 ),
-                dataTestId: "toastCreateKafka-failed",
+                dataTestId: 'toastCreateKafka-failed',
               });
           }
         }
@@ -255,8 +255,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   useEffect(() => {
     if (page > 1) {
       if (kafkaInstanceItems.length === 0) {
-        setSearchParam("page", (page - 1).toString());
-        setSearchParam("perPage", perPage.toString());
+        setSearchParam('page', (page - 1).toString());
+        setSearchParam('perPage', perPage.toString());
         history.push({
           search: searchParams.toString(),
         });
@@ -273,16 +273,16 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     originalData: KafkaRequest,
     selectedOption: string
   ) => {
-    if (selectedOption === "view-instance") {
+    if (selectedOption === 'view-instance') {
       onViewInstance(originalData);
       //set selected row for view instance and connect instance
       setActiveRow(originalData?.name);
-    } else if (selectedOption === "connect-instance") {
+    } else if (selectedOption === 'connect-instance') {
       onViewConnection(originalData);
       setActiveRow(originalData?.name);
-    } else if (selectedOption === "change-owner") {
+    } else if (selectedOption === 'change-owner') {
       onChangeOwner(originalData);
-    } else if (selectedOption === "delete-instance") {
+    } else if (selectedOption === 'delete-instance') {
       onSelectDeleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
@@ -312,62 +312,62 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         tooltip: true,
         isDisabled: true,
         style: {
-          pointerEvents: "auto",
-          cursor: "default",
+          pointerEvents: 'auto',
+          cursor: 'default',
         },
       };
     }
     const resolver: (IAction | ISeparator)[] = [
       {
-        title: t("view_details"),
-        id: "view-instance",
-        ["data-testid"]: "tableStreams-actionDetails",
+        title: t('view_details'),
+        id: 'view-instance',
+        ['data-testid']: 'tableStreams-actionDetails',
         onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
           isUserSameAsLoggedIn &&
-          onSelectKebabDropdownOption(event, originalData, "view-instance"),
+          onSelectKebabDropdownOption(event, originalData, 'view-instance'),
         ...additionalProps,
         tooltipProps: {
-          position: "left",
-          content: t("no_permission_to_view_kafka"),
+          position: 'left',
+          content: t('no_permission_to_view_kafka'),
         },
       },
       {
-        title: t("view_connection_information"),
-        id: "connect-instance",
-        ["data-testid"]: "tableStreams-actionConnection",
+        title: t('view_connection_information'),
+        id: 'connect-instance',
+        ['data-testid']: 'tableStreams-actionConnection',
         onClick: (event: any) =>
           isUserSameAsLoggedIn &&
-          onSelectKebabDropdownOption(event, originalData, "connect-instance"),
+          onSelectKebabDropdownOption(event, originalData, 'connect-instance'),
         ...additionalProps,
         tooltipProps: {
-          position: "left",
-          content: t("no_permission_to_connect_kafka"),
+          position: 'left',
+          content: t('no_permission_to_connect_kafka'),
         },
       },
       {
-        title: t("change_owner"),
-        id: "change-owner",
-        ["data-testid"]: "tableStreams-actionChangeOwner",
+        title: t('change_owner'),
+        id: 'change-owner',
+        ['data-testid']: 'tableStreams-actionChangeOwner',
         onClick: (event: any) =>
           isUserSameAsLoggedIn &&
-          onSelectKebabDropdownOption(event, originalData, "change-owner"),
+          onSelectKebabDropdownOption(event, originalData, 'change-owner'),
         ...additionalProps,
         tooltipProps: {
-          position: "left",
-          content: t("no_permission_to_change_owner"),
+          position: 'left',
+          content: t('no_permission_to_change_owner'),
         },
       },
       {
-        title: t("delete_instance"),
-        id: "delete-instance",
-        ["data-testid"]: "tableStreams-actionDelete",
+        title: t('delete_instance'),
+        id: 'delete-instance',
+        ['data-testid']: 'tableStreams-actionDelete',
         onClick: (event: any) =>
           isUserSameAsLoggedIn &&
-          onSelectKebabDropdownOption(event, originalData, "delete-instance"),
+          onSelectKebabDropdownOption(event, originalData, 'delete-instance'),
         ...additionalProps,
         tooltipProps: {
-          position: "left",
-          content: t("no_permission_to_delete_kafka"),
+          position: 'left',
+          content: t('no_permission_to_delete_kafka'),
         },
       },
     ];
@@ -420,9 +420,9 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
           {
             title: (
               <>
-                {getFormattedDate(created_at, t("ago"))}
+                {getFormattedDate(created_at, t('ago'))}
                 <br />
-                {instance_type === InstanceType?.eval && "48 hours duration"}
+                {instance_type === InstanceType?.eval && '48 hours duration'}
               </>
             ),
           },
@@ -466,7 +466,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
      * and avoid delete instance api call
      */
     if (instanceId === undefined) {
-      throw new Error("kafka instance id is not set");
+      throw new Error('kafka instance id is not set');
     }
     const accessToken = await auth?.kas.getToken();
     const apisService = new DefaultApi(
@@ -497,7 +497,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
        */
       addAlert &&
         addAlert({
-          title: t("common.something_went_wrong"),
+          title: t('common.something_went_wrong'),
           variant: AlertVariant.danger,
           description: reason,
         });
@@ -507,35 +507,35 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const getParameterForSortIndex = (index: number) => {
     switch (index) {
       case 0:
-        return "name";
+        return 'name';
       case 1:
-        return "cloud_provider";
+        return 'cloud_provider';
       case 2:
-        return "region";
+        return 'region';
       case 3:
-        return "owner";
+        return 'owner';
       case 4:
-        return "status";
+        return 'status';
       case 5:
-        return "created_at";
+        return 'created_at';
       default:
-        return "";
+        return '';
     }
   };
 
   const getindexForSortParameter = (parameter: string) => {
     switch (parameter.toLowerCase()) {
-      case "name":
+      case 'name':
         return 0;
-      case "cloud_provider":
+      case 'cloud_provider':
         return 1;
-      case "region":
+      case 'region':
         return 2;
-      case "owner":
+      case 'owner':
         return 3;
-      case "status":
+      case 'status':
         return 4;
-      case "created_at":
+      case 'created_at':
         return 5;
       default:
         return undefined;
@@ -549,16 +549,16 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     extraData: IExtraColumnData
   ) => {
     let myDirection = direction;
-    if (getSortBy()?.index !== index && extraData.property === "time-created") {
+    if (getSortBy()?.index !== index && extraData.property === 'time-created') {
       // trick table to sort descending first for date column
       // https://github.com/patternfly/patternfly-react/issues/5329
-      myDirection = "desc";
+      myDirection = 'desc';
     }
     setOrderBy(`${getParameterForSortIndex(index)} ${myDirection}`);
   };
 
   const getSortBy = (): ISortBy | undefined => {
-    const sort: string[] = orderBy?.split(" ") || [];
+    const sort: string[] = orderBy?.split(' ') || [];
     if (sort.length > 1) {
       return {
         index: getindexForSortParameter(sort[0]),
@@ -577,7 +577,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     const tagName = event?.target?.tagName;
 
     // Open modal on row click except kebab button click
-    if (clickedEventType !== "button" && tagName?.toLowerCase() !== "a") {
+    if (clickedEventType !== 'button' && tagName?.toLowerCase() !== 'a') {
       onViewInstance(originalData);
       setActiveRow(originalData?.name);
     }
@@ -601,7 +601,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         tableProps={{
           cells: tableColumns,
           rows: preparedTableCells(),
-          "aria-label": t("cluster_instance_list"),
+          'aria-label': t('cluster_instance_list'),
           actionResolver: actionResolver,
           onSort: onSort,
           sortBy: getSortBy(),
@@ -609,7 +609,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         }}
         activeRow={activeRow}
         onRowClick={onRowClick}
-        rowDataTestId="tableStreams-row"
+        rowDataTestId='tableStreams-row'
         loggedInUser={loggedInUser}
       />
       {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
@@ -618,29 +618,29 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
             variant: MASEmptyStateVariant.NoResult,
           }}
           titleProps={{
-            title: t("no_results_found"),
+            title: t('no_results_found'),
           }}
           emptyStateBodyProps={{
-            body: t("adjust_your_filters_and_try_again"),
+            body: t('adjust_your_filters_and_try_again'),
           }}
         />
       )}
       {total > 0 && (
         <MASPagination
-          widgetId="pagination-options-menu-bottom"
+          widgetId='pagination-options-menu-bottom'
           itemCount={total}
           variant={PaginationVariant.bottom}
           page={page}
           perPage={perPage}
           titles={{
-            paginationTitle: t("full_pagination"),
-            perPageSuffix: t("per_page_suffix"),
-            toFirstPage: t("to_first_page"),
-            toPreviousPage: t("to_previous_page"),
-            toLastPage: t("to_last_page"),
-            toNextPage: t("to_next_page"),
-            optionsToggle: t("options_toggle"),
-            currPage: t("curr_page"),
+            paginationTitle: t('full_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
           }}
         />
       )}
