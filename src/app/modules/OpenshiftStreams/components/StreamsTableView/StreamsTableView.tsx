@@ -102,10 +102,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
   const { addAlert } = useAlert() || {};
-  const { getKafkaInstance } = useFederated() || {};
+  const { setKafkaInstance } = useFederated() || {};
 
   const { showModal, hideModal } = useModal<
-    ModalType.KasDeleteInstance | ModalType.KasChangeOwner
+    ModalType.KasDeleteInstance | ModalType.KasTransferOwnership
   >();
   //states
   const [selectedInstance, setSelectedInstance] = useState<
@@ -439,7 +439,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   };
 
   const onChangeOwner = async (instance: KafkaRequest) => {
-    getKafkaInstance && getKafkaInstance(instance);
+    setKafkaInstance && setKafkaInstance(instance);
     setSelectedInstance(instance);
     showModal(ModalType.KasTransferOwnership, {
       kafka: instance,
