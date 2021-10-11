@@ -40,7 +40,7 @@ export const useKasModals = (): ModalRegistry => {
       >,
       variant: 'small',
     },
-    [ModalType.KasChangeOwner]: {
+    [ModalType.KasTransferOwnership]: {
       lazyComponent: React.lazy(
         () =>
           import(
