@@ -97,7 +97,7 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
       try {
         await apisService
           .updateKafkaById(kafka.id, kafkaUpdateRequest)
-          .then((res) => {
+          .then(() => {
             refreshKafkas && refreshKafkas();
             addAlert({
               title: t("owner_change_sucess_message"),

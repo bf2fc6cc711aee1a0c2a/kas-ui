@@ -40,7 +40,6 @@ import {
   useAuth,
   useConfig,
   useModal,
-  usePrincipals,
 } from "@rhoas/app-services-ui-shared";
 import { useFederated } from "@app/contexts";
 
@@ -307,7 +306,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     }
     const isUserSameAsLoggedIn =
       originalData.owner === loggedInUser || isOrgAdmin;
-    let additionalProps: any;
+    let additionalProps;
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
@@ -448,7 +447,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
-    const { status, name } = instance;
+    const { status } = instance;
     setSelectedInstance(instance);
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);
