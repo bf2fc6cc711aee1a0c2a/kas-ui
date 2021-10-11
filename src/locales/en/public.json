@@ -283,9 +283,8 @@
     "sample_code": "Sample code",
     "copy_clipboard": "Copy to clipboard",
     "copy_clipboard_successfully": "Successfully copied to clipboard!",
-    "name": "Name",
+    "name": "Description",
     "owner": "Owner",
-    "description": "Description",
     "reset_credentials": "Reset credentials",
     "cancel": "Cancel",
     "submitting_request": "Submitting request",
@@ -310,7 +309,6 @@
     "connection_rate": "Connection rate",
     "connection_rate_value": "up to 100 connections/second",
     "quick_start_guide_message": "Need help getting started? Follow our quick start guide.",
-    "input_text_area_invalid_helper_text": "Valid characters include letters from Aa to Zz, numbers from 0 to 9, spaces, and line breaks.",
     "page": "page",
     "authentication_method": "Authentication method",
     "sasl_oauthbearer": "SASL/OAUTHBEARER",
@@ -345,7 +343,11 @@
     "sasl_oauthbearer_popover_content": "OpenShift Streams for Apache Kafka uses the industry-standard OAuth protocol via the SASL/OAUTHBEARER provided by Apache Kafka.",
     "sasl_oauthbearer_description": "Use your service account credentials and a token endpoint URL to authenticate your client with the Kafka instance.",
     "sasl_plain_popover_content": "Explanation that this is available for tools that do not support the Oauth method.",
-    "sasl_plain_description": " Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance."
+    "sasl_plain_description": " Use your service account credentials (Client ID and Client secret) as the user name and password to authenticate your client with the Kafka instance.",
+    "short_description": "Short description",
+    "short_description_popover_button": "Short description help",
+    "short_description_popover_title": "Short description",
+    "short_description_popover_body": "The short description is the same as the client name in the underlying OAuth system."
   },
   "metrics": {
     "used_disk_space": "Used disk space",
