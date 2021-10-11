@@ -407,10 +407,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
             title:
               status === InstanceStatus.DEPROVISION ||
               status !== InstanceStatus.READY ? (
-                  name
-                ) : (
-                  <Link to={`kafkas/${row?.id}`}>{name}</Link>
-                ),
+                name
+              ) : (
+                <Link to={`kafkas/${row?.id}`}>{name}</Link>
+              ),
           },
           cloudProviderDisplayName,
           regionDisplayName,
@@ -441,7 +441,10 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const onChangeOwner = async (instance: KafkaRequest) => {
     getKafkaInstance && getKafkaInstance(instance);
     setSelectedInstance(instance);
-    showModal(ModalType.KasTransferOwnership, { kafka: instance });
+    showModal(ModalType.KasTransferOwnership, {
+      kafka: instance,
+      refreshKafkas: refresh,
+    });
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
@@ -504,39 +507,39 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
 
   const getParameterForSortIndex = (index: number) => {
     switch (index) {
-    case 0:
-      return "name";
-    case 1:
-      return "cloud_provider";
-    case 2:
-      return "region";
-    case 3:
-      return "owner";
-    case 4:
-      return "status";
-    case 5:
-      return "created_at";
-    default:
-      return "";
+      case 0:
+        return "name";
+      case 1:
+        return "cloud_provider";
+      case 2:
+        return "region";
+      case 3:
+        return "owner";
+      case 4:
+        return "status";
+      case 5:
+        return "created_at";
+      default:
+        return "";
     }
   };
 
   const getindexForSortParameter = (parameter: string) => {
     switch (parameter.toLowerCase()) {
-    case "name":
-      return 0;
-    case "cloud_provider":
-      return 1;
-    case "region":
-      return 2;
-    case "owner":
-      return 3;
-    case "status":
-      return 4;
-    case "created_at":
-      return 5;
-    default:
-      return undefined;
+      case "name":
+        return 0;
+      case "cloud_provider":
+        return 1;
+      case "region":
+        return 2;
+      case "owner":
+        return 3;
+      case "status":
+        return 4;
+      case "created_at":
+        return 5;
+      default:
+        return undefined;
     }
   };
 

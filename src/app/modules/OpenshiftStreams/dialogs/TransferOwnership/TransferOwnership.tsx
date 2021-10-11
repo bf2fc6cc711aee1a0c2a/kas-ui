@@ -9,12 +9,26 @@ import {
   Button,
   SelectOption,
   SelectOptionObject,
+  AlertVariant,
 } from "@patternfly/react-core";
-import { KafkaRequest } from "@rhoas/kafka-management-sdk";
-import { Principal, usePrincipals } from "@rhoas/app-services-ui-shared";
+import {
+  KafkaRequest,
+  Configuration,
+  DefaultApi,
+  KafkaUpdateRequest,
+} from "@rhoas/kafka-management-sdk";
+import {
+  Principal,
+  usePrincipals,
+  useAuth,
+  useConfig,
+  useAlert,
+} from "@rhoas/app-services-ui-shared";
+import { isServiceApiError } from "@app/utils/error";
 
 export type TransferOwnershipProps = {
   kafka: KafkaRequest;
+  refreshKafkas: () => void;
   onClose?: () => void;
   hideModal: () => void;
 };
@@ -23,17 +37,25 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
   kafka,
   onClose,
   hideModal,
+  refreshKafkas,
 }) => {
   const { t } = useTranslation();
   const { getAllUserAccounts } = usePrincipals() || {
     getAllUserAccounts: () => [],
   };
   const userAccounts = getAllUserAccounts();
+  const auth = useAuth();
+  const {
+    kas: { apiBasePath: basePath },
+  } = useConfig();
+  const { addAlert } = useAlert() || { addAlert: () => "" };
+
   //states
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selection, SetSelection] = useState();
+  const [loading, setLoading] = useState<boolean>();
 
-  const handleToggle = () => {
+  const onCloseModal = () => {
     hideModal();
     onClose && onClose();
   };
@@ -59,8 +81,46 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
     setIsOpen(false);
   };
 
-  const onSubmitChangeOwner = () => {
-    return;
+  const onSubmitTransferOwnership = async () => {
+    const accessToken = await auth?.kas.getToken();
+    if (accessToken && selection?.trim() && kafka?.id) {
+      setLoading(true);
+      const kafkaUpdateRequest: KafkaUpdateRequest = { owner: selection };
+
+      const apisService = new DefaultApi(
+        new Configuration({
+          accessToken,
+          basePath,
+        })
+      );
+
+      try {
+        await apisService
+          .updateKafkaById(kafka.id, kafkaUpdateRequest)
+          .then((res) => {
+            refreshKafkas && refreshKafkas();
+            addAlert({
+              title: t("owner_change_sucess_message"),
+              variant: AlertVariant.success,
+            });
+            setLoading(false);
+            onCloseModal();
+          });
+      } catch (error) {
+        let reason: string | undefined;
+        if (isServiceApiError(error)) {
+          reason = error.response?.data.reason;
+        }
+
+        addAlert({
+          title: t("common.something_went_wrong"),
+          variant: AlertVariant.danger,
+          description: reason,
+        });
+        setLoading(false);
+        onCloseModal();
+      }
+    }
   };
 
   return (
@@ -68,19 +128,21 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
       id="manage-permissions-modal"
       title={t("change_owner")}
       isOpen={true}
-      onClose={handleToggle}
+      onClose={onCloseModal}
       variant="medium"
       position="top"
       actions={[
         <Button
           key="changeowner"
           variant="primary"
-          onClick={onSubmitChangeOwner}
+          onClick={onSubmitTransferOwnership}
+          isLoading={loading}
+          disabled={!selection?.trim()}
         >
-          Change owner
+          {t("common.change_owner")}
         </Button>,
-        <Button key="cancel" variant="link" onClick={handleToggle}>
-          Cancel
+        <Button key="cancel" variant="link" onClick={onCloseModal}>
+          {t("cancel")}
         </Button>,
       ]}
     >
@@ -93,8 +155,8 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
             variant={SelectVariant.typeahead}
             onToggle={onToggle}
             isOpen={isOpen}
-            placeholderText="Select user account"
-            createText={"Use"}
+            placeholderText={t("select_user_account")}
+            createText={t("common.use")}
             menuAppendTo="parent"
             maxHeight={400}
             onSelect={onSlect}

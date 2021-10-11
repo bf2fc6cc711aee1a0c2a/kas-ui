@@ -268,6 +268,8 @@
   "trial_kafka_creation_failed_alert_message": "Kafka instances are no longer available. Try again in a few hours.",
   "deploy_one_instance_alert_message": "You can deploy 1 instance at a time. To deploy a new instance, delete your existing one first.",
   "trial_quota_kafka_title": "Your instance will expire after 48 hours.",
+  "owner_change_sucess_message": "Owner successfully changed",
+  "select_user_account": "Select user account",
   "kafkaInstance": {
     "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
   },
@@ -315,7 +317,9 @@
     "recommended": "Recommended",
     "token_endpoint_url": "Token endpoint URL",
     "sasl_plain": "SASL/PLAIN",
-    "48_hours_duration": "48 hours duration"
+    "48_hours_duration": "48 hours duration",
+    "change_owner": "Change owner",
+    "use":"Use"
   },
   "serviceAccount": {
     "service_accounts": "Service Accounts",
