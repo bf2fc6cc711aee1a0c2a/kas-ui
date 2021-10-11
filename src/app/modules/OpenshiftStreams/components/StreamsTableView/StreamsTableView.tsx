@@ -441,7 +441,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const onChangeOwner = async (instance: KafkaRequest) => {
     getKafkaInstance && getKafkaInstance(instance);
     setSelectedInstance(instance);
-    showModal(ModalType.KasChangeOwner, { kafka: instance });
+    showModal(ModalType.KasTransferOwnership, { kafka: instance });
   };
 
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
