@@ -20,12 +20,12 @@ import {
 } from '@rhoas/kafka-management-sdk';
 import {
   Principal,
-  usePrincipals,
   useAuth,
   useConfig,
   useAlert,
 } from '@rhoas/app-services-ui-shared';
 import { isServiceApiError } from '@app/utils/error';
+import { useFederated } from '@app/contexts';
 
 export type TransferOwnershipProps = {
   kafka: KafkaRequest;
@@ -41,10 +41,10 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
   refreshKafkas,
 }) => {
   const { t } = useTranslation();
-  const { getAllUserAccounts } = usePrincipals() || {
+  const { getAllUserAccounts } = useFederated() || {
     getAllUserAccounts: () => [],
   };
-  const userAccounts = getAllUserAccounts();
+  const userAccounts = getAllUserAccounts && getAllUserAccounts();
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },

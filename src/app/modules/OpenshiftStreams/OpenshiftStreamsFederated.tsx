@@ -19,6 +19,7 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederat
     shouldOpenCreateModal,
     tokenEndPointUrl,
     setKafkaInstance,
+    getAllUserAccounts,
   }) => {
     return (
       <I18nextProvider i18n={initI18N()}>
@@ -28,6 +29,7 @@ const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederat
             preCreateInstance,
             shouldOpenCreateModal,
             setKafkaInstance,
+            getAllUserAccounts,
           }}
         >
           <ModalProvider>
