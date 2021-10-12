@@ -125,29 +125,30 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
   };
 
   const renderAlert = () => {
+    let title, description;
     if (errorCode === ErrorCodes.OWNER_DOES_NOT_EXIST) {
-      return (
-        <Alert
-          variant={AlertVariant.danger}
-          aria-live='polite'
-          isInline
-          title={t('new_owner_does_not_exist_title')}
-        >
-          {t('new_owner_does_not_exist_message', { newOwner: selection })}
-        </Alert>
-      );
+      title = t('new_owner_does_not_exist_title');
+      description = t('new_owner_does_not_exist_message', {
+        newOwner: selection,
+      });
     } else if (errorCode) {
+      title = t('can_not_change_owner_title');
+      description = t('onwer_transfer_failed_message', { name: kafka?.name });
+    }
+
+    if (title && description) {
       return (
         <Alert
           variant={AlertVariant.danger}
           aria-live='polite'
           isInline
-          title={t('common.something_went_wrong')}
+          title={title}
         >
-          {t('onwer_transfer_failed_message')}
+          {description}
         </Alert>
       );
     }
+
     return <></>;
   };
 

@@ -268,11 +268,12 @@
   "trial_kafka_creation_failed_alert_message": "Kafka instances are no longer available. Try again in a few hours.",
   "deploy_one_instance_alert_message": "You can deploy 1 instance at a time. To deploy a new instance, delete your existing one first.",
   "trial_quota_kafka_title": "Your instance will expire after 48 hours.",
-  "owner_change_sucess_title": "Kafka instance owner change",
+  "owner_change_sucess_title": "Kafka instance owner changed",
   "owner_change_sucess_message": "{{newOwner}} is now the owner of the {{name}} Kafka instance.",
   "new_owner_does_not_exist_title": "New owner doesn’t exist",
   "new_owner_does_not_exist_message": "A user with the user ID {{newOwner}} doesn’t exist in your organization.",
-  "onwer_transfer_failed_message": "We are unable to change the owner of this Kafka instance at this time. Try again later.",
+  "can_not_change_owner_title": "Cannot change owner",
+  "onwer_transfer_failed_message": "We're unable to change the owner of {{name}} at this time. Try again later.",
   "select_user_account": "Select user account",
   "kafkaInstance": {
     "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
