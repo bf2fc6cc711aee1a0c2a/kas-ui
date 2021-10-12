@@ -11,8 +11,8 @@ import {
   AuthContext,
   Config,
   ConfigContext,
+  ModalContext,
 } from '@rhoas/app-services-ui-shared';
-import { ModalProvider } from '@rhoas/app-services-ui-components';
 import { KasModalLoader } from '@app/modals';
 
 const kafkaInstanceItems = [
@@ -57,7 +57,13 @@ describe('<StreamsTableView/>', () => {
   ) => {
     render(
       <MemoryRouter>
-        <ModalProvider>
+        <ModalContext.Provider
+          value={{
+            registerModals: () => '',
+            showModal: () => '',
+            hideModal: () => '',
+          }}
+        >
           <I18nextProvider i18n={i18nForTest}>
             <ConfigContext.Provider
               value={
@@ -82,7 +88,7 @@ describe('<StreamsTableView/>', () => {
             </ConfigContext.Provider>
           </I18nextProvider>
           <KasModalLoader />
-        </ModalProvider>
+        </ModalContext.Provider>
       </MemoryRouter>
     );
   };
