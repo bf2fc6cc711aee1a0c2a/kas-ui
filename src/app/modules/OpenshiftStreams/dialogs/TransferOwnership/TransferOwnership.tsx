@@ -11,6 +11,7 @@ import {
   SelectOptionObject,
   AlertVariant,
   ModalVariant,
+  Alert,
 } from '@patternfly/react-core';
 import {
   KafkaRequest,
@@ -24,7 +25,7 @@ import {
   useConfig,
   useAlert,
 } from '@rhoas/app-services-ui-shared';
-import { isServiceApiError } from '@app/utils/error';
+import { isServiceApiError, ErrorCodes } from '@app/utils/error';
 import { useFederated } from '@app/contexts';
 
 export type TransferOwnershipProps = {
@@ -55,6 +56,7 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selection, SetSelection] = useState();
   const [loading, setLoading] = useState<boolean>();
+  const [errorCode, setErrorCode] = useState();
 
   const onCloseModal = () => {
     hideModal();
@@ -101,27 +103,52 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
           .then(() => {
             refreshKafkas && refreshKafkas();
             addAlert({
-              title: t('owner_change_sucess_message'),
+              title: t('owner_change_sucess_title'),
               variant: AlertVariant.success,
+              description: t('owner_change_sucess_message', {
+                newOwner: selection,
+                name: kafka?.name,
+              }),
             });
             setLoading(false);
             onCloseModal();
           });
       } catch (error) {
-        let reason: string | undefined;
+        let code: string | undefined;
         if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
+          code = error.response?.data.code;
         }
-
-        addAlert({
-          title: t('common.something_went_wrong'),
-          variant: AlertVariant.danger,
-          description: reason,
-        });
+        setErrorCode(code);
         setLoading(false);
-        onCloseModal();
       }
     }
+  };
+
+  const renderAlert = () => {
+    if (errorCode === ErrorCodes.OWNER_DOES_NOT_EXIST) {
+      return (
+        <Alert
+          variant={AlertVariant.danger}
+          aria-live='polite'
+          isInline
+          title={t('new_owner_does_not_exist_title')}
+        >
+          {t('new_owner_does_not_exist_message', { newOwner: selection })}
+        </Alert>
+      );
+    } else if (errorCode) {
+      return (
+        <Alert
+          variant={AlertVariant.danger}
+          aria-live='polite'
+          isInline
+          title={t('common.something_went_wrong')}
+        >
+          {t('onwer_transfer_failed_message')}
+        </Alert>
+      );
+    }
+    return <></>;
   };
 
   return (
@@ -138,7 +165,7 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
           variant='primary'
           onClick={onSubmitTransferOwnership}
           isLoading={loading}
-          isDisabled={!selection?.trim()}
+          isDisabled={!selection?.trim() || loading}
         >
           {t('common.change_owner')}
         </Button>,
@@ -148,6 +175,7 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
       ]}
     >
       <Form>
+        {renderAlert()}
         <FormGroup fieldId='Current-owner-name' label={t('current_owner_name')}>
           {kafka?.owner}
         </FormGroup>
