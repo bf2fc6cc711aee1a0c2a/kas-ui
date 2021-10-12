@@ -101,7 +101,7 @@
     "@rhoas/app-services-ui-components": "1.1.1",
     "@rhoas/app-services-ui-shared": "0.15.2",
     "@rhoas/kafka-management-sdk": "0.12.3",
-    "axios": "0.22.0",
+    "axios": "0.23.0",
     "byte-size": "8.1.0",
     "date-fns": "2.25.0",
     "dayjs": "1.10.7",
