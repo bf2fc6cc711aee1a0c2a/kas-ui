@@ -173,6 +173,8 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
       case 2:
         return 'owner';
       case 3:
+        return 'description';
+      case 4:
         return 'created_at';
       default:
         return '';
@@ -187,8 +189,10 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
         return 1;
       case 'owner':
         return 2;
-      case 'created_at':
+      case 'description':
         return 3;
+      case 'created_at':
+        return 4;
       default:
         return undefined;
     }

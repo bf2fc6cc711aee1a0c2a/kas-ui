@@ -41,6 +41,7 @@ import {
   useConfig,
   useModal,
 } from '@rhoas/app-services-ui-shared';
+import { useFederated } from '@app/contexts';
 
 export type FilterValue = {
   value: string;
@@ -100,8 +101,12 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
   const searchParams = new URLSearchParams(location.search);
   const history = useHistory();
   const { addAlert } = useAlert() || {};
+  const { setKafkaInstance } = useFederated() || {};
 
-  const { showModal, hideModal } = useModal<ModalType.KasDeleteInstance>();
+  const { showModal, hideModal } = useModal<
+    ModalType.KasDeleteInstance | ModalType.KasTransferOwnership
+  >();
+  //states
   const [selectedInstance, setSelectedInstance] = useState<
     KafkaRequest | undefined
   >({});
@@ -275,6 +280,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     } else if (selectedOption === 'connect-instance') {
       onViewConnection(originalData);
       setActiveRow(originalData?.name);
+    } else if (selectedOption === 'change-owner') {
+      onChangeOwner(originalData);
     } else if (selectedOption === 'delete-instance') {
       onSelectDeleteInstance(originalData);
     }
@@ -299,7 +306,7 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     }
     const isUserSameAsLoggedIn =
       originalData.owner === loggedInUser || isOrgAdmin;
-    let additionalProps: any;
+    let additionalProps;
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
@@ -335,6 +342,19 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         tooltipProps: {
           position: 'left',
           content: t('no_permission_to_connect_kafka'),
+        },
+      },
+      {
+        title: t('change_owner'),
+        id: 'change-owner',
+        ['data-testid']: 'tableStreams-actionChangeOwner',
+        onClick: (event: any) =>
+          isUserSameAsLoggedIn &&
+          onSelectKebabDropdownOption(event, originalData, 'change-owner'),
+        ...additionalProps,
+        tooltipProps: {
+          position: 'left',
+          content: t('no_permission_to_change_owner'),
         },
       },
       {
@@ -417,8 +437,17 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     return getActionResolver(rowData);
   };
 
+  const onChangeOwner = async (instance: KafkaRequest) => {
+    setKafkaInstance && setKafkaInstance(instance);
+    setSelectedInstance(instance);
+    showModal(ModalType.KasTransferOwnership, {
+      kafka: instance,
+      refreshKafkas: refresh,
+    });
+  };
+
   const onSelectDeleteInstance = (instance: KafkaRequest) => {
-    const { status, name } = instance;
+    const { status } = instance;
     setSelectedInstance(instance);
     if (status === InstanceStatus.FAILED) {
       onDeleteInstance(instance);

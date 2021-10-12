@@ -121,11 +121,7 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
   const [currentUserKafkas, setCurrentUserKafkas] = useState<
     KafkaRequest[] | undefined
   >();
-
   const { activeTab, instanceDetail } = selectedInstance || {};
-  const hasUserTrialKafka = currentUserKafkas?.some(
-    (k) => k?.instance_type === InstanceType?.eval
-  );
 
   const updateSelectedKafkaInstance = () => {
     if (kafkaInstanceItems && kafkaInstanceItems?.length > 0) {

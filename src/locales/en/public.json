@@ -105,6 +105,7 @@
   "no_permission_to_delete_kafka": "Organization administrators and the Kafka instance owner can delete this instance.",
   "no_permission_to_view_kafka": "Ask the Kafka instance owner for the details.",
   "no_permission_to_connect_kafka": "Ask the Kafka instance owner for connection information.",
+  "no_permission_to_change_owner": "Organization administrators and the Kafka instance owner can change the owner of an instance.",
   "view_details": "Details",
   "view_connection_information": "Connection",
   "ago": "ago",
@@ -245,6 +246,9 @@
   "the_name_already_exists_please_enter_a_unique_name": "{{name}} already exists. Try a different name.",
   "clear_all_filters": "Clear all filters",
   "delete_instance": "Delete",
+  "change_owner": "Change owner",
+  "current_owner_name": "Current owner",
+  "new_owner_name": "New Owner",
   "to_access_kafka_instances_contact_your_organization_administrators": "To access Kafka Instances, contact your organization administrators.",
   "access_the_quick_start_guide": "Access the quick start guide",
   "take_a_tour": "Take a tour",
@@ -264,6 +268,13 @@
   "trial_kafka_creation_failed_alert_message": "Kafka instances are no longer available. Try again in a few hours.",
   "deploy_one_instance_alert_message": "You can deploy 1 instance at a time. To deploy a new instance, delete your existing one first.",
   "trial_quota_kafka_title": "Your instance will expire after 48 hours.",
+  "owner_change_sucess_title": "Kafka instance owner changed",
+  "owner_change_sucess_message": "{{newOwner}} is now the owner of the {{name}} Kafka instance.",
+  "new_owner_does_not_exist_title": "New owner doesn’t exist",
+  "new_owner_does_not_exist_message": "A user with the user ID {{newOwner}} doesn’t exist in your organization.",
+  "can_not_change_owner_title": "Cannot change owner",
+  "onwer_transfer_failed_message": "We're unable to change the owner of {{name}} at this time. Try again later.",
+  "select_user_account": "Select user account",
   "kafkaInstance": {
     "availabilty_zones_tooltip_message": "At this time, only multi availability zones are available."
   },
@@ -311,7 +322,9 @@
     "recommended": "Recommended",
     "token_endpoint_url": "Token endpoint URL",
     "sasl_plain": "SASL/PLAIN",
-    "48_hours_duration": "48 hours duration"
+    "48_hours_duration": "48 hours duration",
+    "change_owner": "Change owner",
+    "use": "Use"
   },
   "serviceAccount": {
     "service_accounts": "Service Accounts",

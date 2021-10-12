@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 import { MemoryRouter } from 'react-router-dom';
 import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
-import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { ModalContext } from '@rhoas/app-services-ui-shared';
 import { KasModalLoader } from '@app/modals';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
@@ -51,7 +51,13 @@ const setup = (
 ) => {
   return render(
     <MemoryRouter>
-      <ModalProvider>
+      <ModalContext.Provider
+        value={{
+          registerModals: () => '',
+          showModal: () => '',
+          hideModal: () => '',
+        }}
+      >
         <Drawer isExpanded={true} onExpand={onExpand}>
           <DrawerContent
             panelContent={
@@ -74,7 +80,7 @@ const setup = (
           />
         </Drawer>
         <KasModalLoader />
-      </ModalProvider>
+      </ModalContext.Provider>
     </MemoryRouter>
   );
 };

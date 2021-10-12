@@ -14,11 +14,23 @@ import { KasModalLoader } from '@app/modals';
 type OpenshiftStreamsFederatedProps = OpenShiftStreamsProps & FederatedProps;
 
 const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederatedProps> =
-  ({ preCreateInstance, shouldOpenCreateModal, tokenEndPointUrl }) => {
+  ({
+    preCreateInstance,
+    shouldOpenCreateModal,
+    tokenEndPointUrl,
+    setKafkaInstance,
+    getAllUserAccounts,
+  }) => {
     return (
       <I18nextProvider i18n={initI18N()}>
         <FederatedContext.Provider
-          value={{ tokenEndPointUrl, preCreateInstance, shouldOpenCreateModal }}
+          value={{
+            tokenEndPointUrl,
+            preCreateInstance,
+            shouldOpenCreateModal,
+            setKafkaInstance,
+            getAllUserAccounts,
+          }}
         >
           <ModalProvider>
             <PaginationProvider>
