@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@redhat-cloud-services/frontend-components-config": "4.3.9",
-    "@rhoas/api-mock": "0.12.3",
+    "@rhoas/api-mock": "0.15.0",
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "12.1.2",
     "@testing-library/user-event": "13.3.0",
@@ -100,7 +100,7 @@
     "@redhat-cloud-services/frontend-components": "3.4.8",
     "@rhoas/app-services-ui-components": "1.1.1",
     "@rhoas/app-services-ui-shared": "0.15.2",
-    "@rhoas/kafka-management-sdk": "0.12.3",
+    "@rhoas/kafka-management-sdk": "0.15.0",
     "axios": "0.23.0",
     "byte-size": "8.1.0",
     "date-fns": "2.25.0",
