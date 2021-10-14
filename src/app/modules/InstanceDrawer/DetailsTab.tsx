@@ -35,7 +35,7 @@ export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({
       <TextContent>
         <TextList component={TextListVariants.dl}>
           {renderTextListItem(t('cloud_provider'), t('amazon_web_services'))}
-          {renderTextListItem(t('region'), t('us_east_north_virginia'))}
+          {renderTextListItem(t('region'), t(instanceDetail?.region || ''))}
           {renderTextListItem(t('id'), id)}
           {renderTextListItem(t('owner'), owner)}
           {renderTextListItem(t('created'), dayjs(created_at).format('LLLL'))}

@@ -60,6 +60,7 @@ const getCloudProviderDisplayName = (value: string): string => {
 
 const cloudRegionOptions: KeyValueOptions[] = [
   { value: 'us-east-1', label: 'US East, N. Virginia' },
+  { value: 'eu-west-1', label: 'EU, Ireland' },
 
   // Only us-east is supported for now
   // { value: 'ap-northeast-1', label: 'Asia Pacific, Tokyo' },
@@ -70,7 +71,6 @@ const cloudRegionOptions: KeyValueOptions[] = [
   // { value: 'ca-central-1', label: 'Canada, Central' },
   // { value: 'eu-central-1', label: 'EU, Frankfurt' },
   // { value: 'eu-north-1', label: 'EU, Stockholm' },
-  // { value: 'eu-west-1', label: 'EU, Ireland' },
   // { value: 'eu-west-2', label: 'EU, London' },
   // { value: 'eu-west-3', label: 'EU, Paris' },
   // { value: 'me-south-1', label: 'Middle East, Bahrain' },
