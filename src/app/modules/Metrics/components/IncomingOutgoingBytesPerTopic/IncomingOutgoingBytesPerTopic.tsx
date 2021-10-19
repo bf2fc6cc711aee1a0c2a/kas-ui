@@ -9,6 +9,7 @@ import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color
 import {
   getLargestByteSize,
   convertToSpecifiedByte,
+  getTimeValue,
 } from '@app/modules/Metrics/utils';
 import {
   Bullseye,
@@ -284,45 +285,14 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
             incomingTopicArray.sortedData[0].timestamp -
             (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time =
-            timeDuration >= 24
-              ? date.getHours() +
-                ':' +
-                (date.getMinutes() < 10 ? '0' : '') +
-                date.getMinutes() +
-                '\n' +
-                date.getUTCDate() +
-                '/' +
-                date.getUTCMonth() +
-                '/' +
-                date.getUTCFullYear()
-              : date.getHours() +
-                ':' +
-                (date.getMinutes() < 10 ? '0' : '') +
-                date.getMinutes();
+          const time = getTimeValue(timeDuration, date);
           line.push({ name: incomingTopicArray.name, x: time, y: 0 });
         }
       }
 
       incomingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time =
-          timeDuration >= 24
-            ? date.getHours() +
-              ':' +
-              (date.getMinutes() < 10 ? '0' : '') +
-              date.getMinutes() +
-              '\n' +
-              date.getUTCDate() +
-              '/' +
-              date.getUTCMonth() +
-              '/' +
-              date.getUTCFullYear()
-            : date.getHours() +
-              ':' +
-              (date.getMinutes() < 10 ? '0' : '') +
-              date.getMinutes();
-
+        const time = getTimeValue(timeDuration, date);
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);
@@ -362,45 +332,14 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
             outgoingTopicArray.sortedData[0].timestamp -
             (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time =
-            timeDuration >= 24
-              ? date.getHours() +
-                ':' +
-                (date.getMinutes() < 10 ? '0' : '') +
-                date.getMinutes() +
-                '\n' +
-                date.getUTCDate() +
-                '/' +
-                date.getUTCMonth() +
-                '/' +
-                date.getUTCFullYear()
-              : date.getHours() +
-                ':' +
-                (date.getMinutes() < 10 ? '0' : '') +
-                date.getMinutes();
+          const time = getTimeValue(timeDuration, date);
           line.push({ name: outgoingTopicArray.name, x: time, y: 0 });
         }
       }
 
       outgoingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time =
-          timeDuration >= 24
-            ? date.getHours() +
-              ':' +
-              (date.getMinutes() < 10 ? '0' : '') +
-              date.getMinutes() +
-              '\n' +
-              date.getUTCDate() +
-              '/' +
-              date.getUTCMonth() +
-              '/' +
-              date.getUTCFullYear()
-            : date.getHours() +
-              ':' +
-              (date.getMinutes() < 10 ? '0' : '') +
-              date.getMinutes();
-
+        const time = getTimeValue(timeDuration, date);
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);

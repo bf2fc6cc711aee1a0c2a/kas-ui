@@ -27,7 +27,9 @@ import { ChartEmptyState, ChartPopover } from '@app/modules/Metrics/components';
 import {
   getLargestByteSize,
   convertToSpecifiedByte,
+  getTimeValue,
 } from '@app/modules/Metrics/utils';
+import { getTime } from 'date-fns';
 
 export type Partition = {
   name: string;
@@ -216,44 +218,14 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
             partition.data[0].timestamp -
             (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newtimestamp);
-          const time =
-            timeDuration >= 24
-              ? date.getHours() +
-                ':' +
-                (date.getMinutes() < 10 ? '0' : '') +
-                date.getMinutes() +
-                '\n' +
-                date.getUTCDate() +
-                '/' +
-                date.getUTCMonth() +
-                '/' +
-                date.getUTCFullYear()
-              : date.getHours() +
-                ':' +
-                (date.getMinutes() < 10 ? '0' : '') +
-                date.getMinutes();
+          const time = getTimeValue(timeDuration, date);
           area.push({ name: partition.name, x: time, y: 0 });
         }
       }
 
       partition.data.map((value) => {
         const date = new Date(value.timestamp);
-        const time =
-          timeDuration >= 24
-            ? date.getHours() +
-              ':' +
-              (date.getMinutes() < 10 ? '0' : '') +
-              date.getMinutes() +
-              '\n' +
-              date.getUTCDate() +
-              '/' +
-              date.getUTCMonth() +
-              '/' +
-              date.getUTCFullYear()
-            : date.getHours() +
-              ':' +
-              (date.getMinutes() < 10 ? '0' : '') +
-              date.getMinutes();
+        const time = getTimeValue(timeDuration, date);
         const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
         area.push({ name: value.name, x: time, y: bytes });
       });

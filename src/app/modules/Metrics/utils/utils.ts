@@ -77,6 +77,29 @@ export const convertToSpecifiedByte = (bytes, largestByteSize) => {
   return;
 };
 
+export const getTimeValue = (timeDuration, date) => {
+  if (timeDuration >= 24) {
+    return (
+      date.getHours() +
+      ':' +
+      (date.getMinutes() < 10 ? '0' : '') +
+      date.getMinutes() +
+      '\n' +
+      date.getUTCDate() +
+      '/' +
+      date.getUTCMonth() +
+      '/' +
+      date.getUTCFullYear()
+    );
+  } else {
+    return (
+      date.getHours() +
+      ':' +
+      (date.getMinutes() < 10 ? '0' : '') +
+      date.getMinutes()
+    );
+  }
+};
 export const getMaxValueOfArray = (data) => {
   const max = data.reduce(function (prev, current) {
     return prev.bytes > current.bytes ? prev : current;
