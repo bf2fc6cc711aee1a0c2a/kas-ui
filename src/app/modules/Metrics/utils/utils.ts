@@ -78,26 +78,11 @@ export const convertToSpecifiedByte = (bytes, largestByteSize) => {
 };
 
 export const getTimeValue = (timeDuration, date) => {
+  const [dateValue, timeValue] = date.toISOString().split('T');
   if (timeDuration >= 24) {
-    return (
-      date.getHours() +
-      ':' +
-      (date.getMinutes() < 10 ? '0' : '') +
-      date.getMinutes() +
-      '\n' +
-      date.getUTCDate() +
-      '/' +
-      date.getUTCMonth() +
-      '/' +
-      date.getUTCFullYear()
-    );
+    return timeValue.slice(0, 5) + '\n' + dateValue;
   } else {
-    return (
-      date.getHours() +
-      ':' +
-      (date.getMinutes() < 10 ? '0' : '') +
-      date.getMinutes()
-    );
+    return timeValue.slice(0, 5);
   }
 };
 export const getMaxValueOfArray = (data) => {
