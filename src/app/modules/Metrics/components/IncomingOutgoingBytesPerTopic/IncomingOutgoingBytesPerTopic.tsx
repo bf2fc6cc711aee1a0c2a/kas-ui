@@ -9,7 +9,8 @@ import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color
 import {
   getLargestByteSize,
   convertToSpecifiedByte,
-  getTimeValue,
+  dateToChartValue,
+  shouldShowDate,
 } from '@app/modules/Metrics/utils';
 import {
   Bullseye,
@@ -285,14 +286,18 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
             incomingTopicArray.sortedData[0].timestamp -
             (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = getTimeValue(timeDuration, date);
+          const time = dateToChartValue(date, {
+            showDate: shouldShowDate(timeDuration),
+          });
           line.push({ name: incomingTopicArray.name, x: time, y: 0 });
         }
       }
 
       incomingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = getTimeValue(timeDuration, date);
+        const time = dateToChartValue(date, {
+          showDate: shouldShowDate(timeDuration),
+        });
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);
@@ -332,14 +337,18 @@ export const IncomingOutgoingBytesPerTopic: React.FC<KafkaInstanceProps> = ({
             outgoingTopicArray.sortedData[0].timestamp -
             (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newTimestamp);
-          const time = getTimeValue(timeDuration, date);
+          const time = dateToChartValue(date, {
+            showDate: shouldShowDate(timeDuration),
+          });
           line.push({ name: outgoingTopicArray.name, x: time, y: 0 });
         }
       }
 
       outgoingTopicArray.sortedData.map((value) => {
         const date = new Date(value.timestamp);
-        const time = getTimeValue(timeDuration, date);
+        const time = dateToChartValue(date, {
+          showDate: shouldShowDate(timeDuration),
+        });
         const aggregateBytes = value.bytes.reduce(function (a, b) {
           return a + b;
         }, 0);

@@ -27,7 +27,8 @@ import { ChartEmptyState, ChartPopover } from '@app/modules/Metrics/components';
 import {
   getLargestByteSize,
   convertToSpecifiedByte,
-  getTimeValue,
+  dateToChartValue,
+  shouldShowDate,
 } from '@app/modules/Metrics/utils';
 import { getTime } from 'date-fns';
 
@@ -218,14 +219,18 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
             partition.data[0].timestamp -
             (lengthOfDataPer5Mins - i) * (5 * 60000);
           const date = new Date(newtimestamp);
-          const time = getTimeValue(timeDuration, date);
+          const time = dateToChartValue(date, {
+            showDate: shouldShowDate(timeDuration),
+          });
           area.push({ name: partition.name, x: time, y: 0 });
         }
       }
 
       partition.data.map((value) => {
         const date = new Date(value.timestamp);
-        const time = getTimeValue(timeDuration, date);
+        const time = dateToChartValue(date, {
+          showDate: shouldShowDate(timeDuration),
+        });
         const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
         area.push({ name: value.name, x: time, y: bytes });
       });

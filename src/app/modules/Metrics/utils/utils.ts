@@ -77,13 +77,15 @@ export const convertToSpecifiedByte = (bytes, largestByteSize) => {
   return;
 };
 
-export const getTimeValue = (timeDuration, date) => {
+export const shouldShowDate = (timeDuration) => {
+  return timeDuration >= 24 ? true : false;
+};
+
+export const dateToChartValue = (date, { showDate }) => {
   const [dateValue, timeValue] = date.toISOString().split('T');
-  if (timeDuration >= 24) {
-    return timeValue.slice(0, 5) + '\n' + dateValue;
-  } else {
-    return timeValue.slice(0, 5);
-  }
+  return showDate
+    ? timeValue.slice(0, 5) + '\n' + dateValue
+    : timeValue.slice(0, 5);
 };
 export const getMaxValueOfArray = (data) => {
   const max = data.reduce(function (prev, current) {
