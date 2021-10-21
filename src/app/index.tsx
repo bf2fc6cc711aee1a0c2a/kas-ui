@@ -2,7 +2,7 @@ import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Config, ConfigContext } from '@rhoas/app-services-ui-shared';
-import '@patternfly/patternfly/patternfly.min.css';
+import '@patternfly/patternfly/patternfly.css';
 import '@patternfly/patternfly/utilities/Accessibility/accessibility.css';
 import '@patternfly/patternfly/utilities/Sizing/sizing.css';
 import '@patternfly/patternfly/utilities/Spacing/spacing.css';

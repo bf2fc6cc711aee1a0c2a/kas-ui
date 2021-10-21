@@ -27,7 +27,6 @@ import { useTimeout } from '@app/hooks/useTimeout';
 import {
   ErrorCodes,
   InstanceStatus,
-  InstanceType,
   isMobileTablet,
   isServiceApiError,
   MAX_POLL_INTERVAL,
@@ -60,6 +59,7 @@ import {
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 import { useFederated } from '@app/contexts';
 import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
+import '@app/modules/styles.css';
 
 export type OpenShiftStreamsProps = Pick<
   InstanceDrawerProps,
