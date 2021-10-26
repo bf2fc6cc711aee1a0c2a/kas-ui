@@ -97,7 +97,7 @@
     "@patternfly/react-icons": "4.11.14",
     "@patternfly/react-styles": "4.11.13",
     "@patternfly/react-table": "4.29.58",
-    "@redhat-cloud-services/frontend-components": "3.4.9",
+    "@redhat-cloud-services/frontend-components": "3.4.11",
     "@rhoas/app-services-ui-components": "1.1.1",
     "@rhoas/app-services-ui-shared": "0.15.2",
     "@rhoas/kafka-management-sdk": "0.14.0",
