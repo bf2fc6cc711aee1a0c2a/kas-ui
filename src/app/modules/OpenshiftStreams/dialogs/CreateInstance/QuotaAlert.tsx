@@ -21,6 +21,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
   if (quota === undefined || quota.loading) {
     return (
       <Alert
+        id='mk-create-instance-quota-alert'
         className='pf-u-mb-md'
         variant={AlertVariant.info}
         title={t('instance_checking_message')}
@@ -109,6 +110,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
 
   return (
     <Alert
+      id='mk-create-instance-quota-alert'
       className='pf-u-mb-md'
       variant={alertProps.variant}
       title={t(alertProps.titleKey)}
