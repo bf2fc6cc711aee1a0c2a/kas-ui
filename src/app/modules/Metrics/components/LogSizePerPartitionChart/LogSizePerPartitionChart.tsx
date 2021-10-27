@@ -113,7 +113,7 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
           data.data.items?.forEach((item, i) => {
             const topicName = item?.metric?.topic;
             const labels = item.metric;
-            if (labels === undefined) {
+            if (item.metric === undefined) {
               throw new Error('item.metric cannot be undefined');
             }
             if (item.values === undefined) {
