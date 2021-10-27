@@ -112,6 +112,13 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
           setMetricsDataUnavailable(false);
           data.data.items?.forEach((item, i) => {
             const topicName = item?.metric?.topic;
+            const labels = item.metric;
+            if (labels === undefined) {
+              throw new Error('item.metric cannot be undefined');
+            }
+            if (item.values === undefined) {
+              throw new Error('item.values cannot be undefined');
+            }
 
             const topic = {
               name: topicName,
@@ -122,27 +129,29 @@ export const LogSizePerPartitionChart: React.FC<KafkaInstanceProps> = ({
               (topic) => topic.name === topicName
             );
 
-            item.values?.forEach((value) => {
-              if (value.timestamp == undefined) {
-                throw new Error('timestamp cannot be undefined');
-              }
+            if (labels['__name__'] === 'kafka_topic:kafka_log_log_size:sum') {
+              item.values?.forEach((value) => {
+                if (value.timestamp == undefined) {
+                  throw new Error('timestamp cannot be undefined');
+                }
 
-              if (isTopicInArray) {
-                partitionArray.map((topic: Partition) => {
-                  if (topic.name === topicName) {
-                    topic.data.forEach((datum) => {
-                      datum.bytes = datum.bytes + value.value;
-                    });
-                  }
-                });
-              } else {
-                topic.data.push({
-                  name: topicName || '',
-                  timestamp: value.timestamp,
-                  bytes: value.value,
-                });
-              }
-            });
+                if (isTopicInArray) {
+                  partitionArray.forEach((topic: Partition) => {
+                    if (topic.name === topicName) {
+                      topic.data.forEach(
+                        (datum) => (datum.bytes = datum.bytes + value.value)
+                      );
+                    }
+                  });
+                } else {
+                  topic.data.push({
+                    name: topicName || '',
+                    timestamp: value.timestamp,
+                    bytes: value.value,
+                  });
+                }
+              });
+            }
 
             if (!isTopicInArray) {
               partitionArray.push(topic);
