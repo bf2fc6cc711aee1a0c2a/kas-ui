@@ -90,7 +90,7 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
           <Link
             to={{
               pathname: `${basename}/${instanceId}`,
-              state: { activeTab: 4 },
+              search: '?activeTab=4',
             }}
           >
             {t('serviceAccount.access_tab')}
