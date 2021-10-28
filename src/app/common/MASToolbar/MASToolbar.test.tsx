@@ -73,7 +73,7 @@ describe('<MASToolbar/>', () => {
           categoryName={'Name'}
         >
           <ToolbarItem>
-            <InputGroup className='mk--filter-instances__toolbar--text-input'>
+            <InputGroup>
               <TextInput
                 name='name'
                 id='filterText'
