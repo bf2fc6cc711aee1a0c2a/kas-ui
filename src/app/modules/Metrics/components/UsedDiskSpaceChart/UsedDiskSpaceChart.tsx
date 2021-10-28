@@ -24,7 +24,11 @@ import {
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
 import { ChartEmptyState, ChartToolbar } from '@app/modules/Metrics/components';
-import { convertToSpecifiedByte } from '@app/modules/Metrics/utils';
+import {
+  convertToSpecifiedByte,
+  dateToChartValue,
+  shouldShowDate,
+} from '@app/modules/Metrics/utils';
 import { ChartPopover } from '../ChartPopover';
 
 type Broker = {
@@ -210,7 +214,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
           avgBroker.data[0].timestamp -
           (lengthOfDataPer5Mins - i) * (5 * 60000);
         const date = new Date(newTimestamp);
-        const time = date.getHours() + ':' + date.getMinutes();
+        const time = dateToChartValue(date, {
+          showDate: shouldShowDate(timeDuration),
+        });
         area.push({ name: avgBroker.name, x: time, y: 0 });
         softLimit.push({ name: 'Limit', x: time, y: usageLimit });
       }
@@ -218,7 +224,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
     avgBroker.data.map((value) => {
       const date = new Date(value.timestamp);
-      const time = date.getHours() + ':' + date.getMinutes();
+      const time = dateToChartValue(date, {
+        showDate: shouldShowDate(timeDuration),
+      });
       const aggregateBytes = value.usedSpaceAvg.reduce(function (a, b) {
         return a + b;
       }, 0);
@@ -291,7 +299,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                   minDomain={{ y: 0 }}
                   legendAllowWrap={true}
                 >
-                  <ChartAxis label={'Time'} tickCount={6} />
+                  <ChartAxis label={'\n' + 'Time'} tickCount={6} />
                   <ChartAxis
                     dependentAxis
                     tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
