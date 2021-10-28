@@ -11,10 +11,13 @@ import {
   Text,
   TextContent,
   TextVariants,
-  
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
-import { useBasename, ModalType, useModal } from '@rhoas/app-services-ui-shared';
+import {
+  useBasename,
+  ModalType,
+  useModal,
+} from '@rhoas/app-services-ui-shared';
 
 export type ConnectionTabProps = {
   externalServer?: string;
@@ -83,12 +86,17 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
       </Button>
       <TextContent className='pf-u-pt-sm'>
         <Text component={TextVariants.small}>
-        {t('serviceAccount.current_instance')}{' '}
-        <Link to={{pathname: `${basename}/${instanceId}`, state: {activeTab:4} }}>
-        {t('serviceAccount.access_tab')}
-      </Link>{' '}
+          {t('serviceAccount.current_instance')}{' '}
+          <Link
+            to={{
+              pathname: `${basename}/${instanceId}`,
+              state: { activeTab: 4 },
+            }}
+          >
+            {t('serviceAccount.access_tab')}
+          </Link>{' '}
           {t('serviceAccount.alter_allow')}.
-          </Text>
+        </Text>
       </TextContent>
       <TextContent className='pf-u-pb-sm'>
         <Text component={TextVariants.h3} className='pf-u-mt-xl'>
