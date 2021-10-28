@@ -12,6 +12,7 @@ import {
   ToolbarChip,
   ToolbarFilter,
   ToolbarGroup,
+  ToolbarItem,
   Tooltip,
   ValidatedOptions,
 } from '@patternfly/react-core';
@@ -403,24 +404,26 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   const toggleGroupItems = (
     <>
       <ToolbarGroup variant='filter-group'>
-        <Select
-          variant={SelectVariant.single}
-          aria-label='Select filter'
-          onToggle={onFilterToggle}
-          selections={filterSelected}
-          isOpen={isFilterExpanded}
-          onSelect={onChangeSelect}
-        >
-          {mainFilterOptions.map((option, index) => (
-            <SelectOption
-              isDisabled={option.disabled}
-              key={index}
-              value={option.value}
-            >
-              {option.label}
-            </SelectOption>
-          ))}
-        </Select>
+        <ToolbarItem>
+          <Select
+            variant={SelectVariant.single}
+            aria-label='Select filter'
+            onToggle={onFilterToggle}
+            selections={filterSelected}
+            isOpen={isFilterExpanded}
+            onSelect={onChangeSelect}
+          >
+            {mainFilterOptions.map((option, index) => (
+              <SelectOption
+                isDisabled={option.disabled}
+                key={index}
+                value={option.value}
+              >
+                {option.label}
+              </SelectOption>
+            ))}
+          </Select>
+        </ToolbarItem>
         <ToolbarFilter
           chips={getSelectionForFilter('name')}
           deleteChip={(_category, chip) => onDeleteChip('name', chip)}
@@ -429,7 +432,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           showToolbarItem={filterSelected?.toLowerCase() === 'name'}
         >
           {filterSelected?.toLowerCase() === 'name' && (
-            <InputGroup className='mk--filter-instances__toolbar--text-input'>
+            <InputGroup>
               <TextInput
                 name='name'
                 id='filterText'
@@ -568,7 +571,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
           showToolbarItem={filterSelected?.toLowerCase() === 'owner'}
         >
           {filterSelected.toLowerCase() === 'owner' && (
-            <InputGroup className='mk--filter-instances__toolbar--text-input'>
+            <InputGroup>
               <TextInput
                 name='owner'
                 id='filterOwners'

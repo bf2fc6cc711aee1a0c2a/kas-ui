@@ -261,7 +261,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         >
           {filterSelected?.toLowerCase() === 'name' && (
             <ToolbarItem>
-              <InputGroup className='mk--filter-instances__toolbar--text-input'>
+              <InputGroup>
                 <TextInput
                   name='name'
                   id='name-input'
@@ -305,7 +305,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
         >
           {filterSelected?.toLowerCase() === 'owner' && (
             <ToolbarItem>
-              <InputGroup className='mk--filter-instances__toolbar--text-input'>
+              <InputGroup>
                 <TextInput
                   name='owner'
                   id='owner-input'
