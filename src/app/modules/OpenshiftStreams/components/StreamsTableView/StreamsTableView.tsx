@@ -583,6 +583,50 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
     }
   };
 
+  const StreamsTableEmptyState: React.FunctionComponent = () => {
+    if (kafkaInstanceItems.length < 1 && kafkaDataLoaded) {
+      return (
+        <MASEmptyState
+          emptyStateProps={{
+            variant: MASEmptyStateVariant.NoResult,
+          }}
+          titleProps={{
+            title: t('no_results_found'),
+          }}
+          emptyStateBodyProps={{
+            body: t('adjust_your_filters_and_try_again'),
+          }}
+        />
+      );
+    }
+    return <></>;
+  };
+
+  const Pagination: React.FunctionComponent = () => {
+    if (total > 0) {
+      return (
+        <MASPagination
+          widgetId='pagination-cloudProviderOptions-menu-bottom'
+          itemCount={total}
+          variant={PaginationVariant.bottom}
+          page={page}
+          perPage={perPage}
+          titles={{
+            paginationTitle: t('full_pagination'),
+            perPageSuffix: t('per_page_suffix'),
+            toFirstPage: t('to_first_page'),
+            toPreviousPage: t('to_previous_page'),
+            toLastPage: t('to_last_page'),
+            toNextPage: t('to_next_page'),
+            optionsToggle: t('options_toggle'),
+            currPage: t('curr_page'),
+          }}
+        />
+      );
+    }
+    return <></>;
+  };
+
   return (
     <>
       <StreamsToolbar
@@ -612,38 +656,8 @@ const StreamsTableView: React.FunctionComponent<StreamsTableProps> = ({
         rowDataTestId='tableStreams-row'
         loggedInUser={loggedInUser}
       />
-      {kafkaInstanceItems.length < 1 && kafkaDataLoaded && (
-        <MASEmptyState
-          emptyStateProps={{
-            variant: MASEmptyStateVariant.NoResult,
-          }}
-          titleProps={{
-            title: t('no_results_found'),
-          }}
-          emptyStateBodyProps={{
-            body: t('adjust_your_filters_and_try_again'),
-          }}
-        />
-      )}
-      {total > 0 && (
-        <MASPagination
-          widgetId='pagination-options-menu-bottom'
-          itemCount={total}
-          variant={PaginationVariant.bottom}
-          page={page}
-          perPage={perPage}
-          titles={{
-            paginationTitle: t('full_pagination'),
-            perPageSuffix: t('per_page_suffix'),
-            toFirstPage: t('to_first_page'),
-            toPreviousPage: t('to_previous_page'),
-            toLastPage: t('to_last_page'),
-            toNextPage: t('to_next_page'),
-            optionsToggle: t('options_toggle'),
-            currPage: t('curr_page'),
-          }}
-        />
-      )}
+      <StreamsTableEmptyState />
+      <Pagination />
     </>
   );
 };

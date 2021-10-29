@@ -10,7 +10,7 @@ function accessibleRouteChangeHandler(): number {
   }, 50);
 }
 
-type KeyValueOptions = {
+export type KeyValueOptions = {
   value: string;
   label: string;
 };
