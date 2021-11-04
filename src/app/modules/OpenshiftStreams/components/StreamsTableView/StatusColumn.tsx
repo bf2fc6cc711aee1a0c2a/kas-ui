@@ -18,7 +18,7 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const getStatus = () => {
+  const Status: React.FunctionComponent = () => {
     const filteredstatus = statusOptions.filter(
       (st) => st.value === status?.toLowerCase()
     );
@@ -27,6 +27,14 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
     } else {
       return t('creation_pending');
     }
+  };
+
+  const StatusIcon: React.FunctionComponent = () => {
+    const statusIcon = getStatusIcon();
+    if (statusIcon) {
+      return <FlexItem spacer={{ default: 'spacerSm' }}>{statusIcon}</FlexItem>;
+    }
+    return <></>;
   };
 
   const getStatusIcon = () => {
@@ -58,14 +66,12 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
     }
   };
 
-  const statusIcon = getStatusIcon();
-
   return (
     <Flex>
-      {statusIcon && (
-        <FlexItem spacer={{ default: 'spacerSm' }}>{statusIcon}</FlexItem>
-      )}
-      <FlexItem>{getStatus()}</FlexItem>
+      <StatusIcon />
+      <FlexItem>
+        <Status />
+      </FlexItem>
     </Flex>
   );
 };
