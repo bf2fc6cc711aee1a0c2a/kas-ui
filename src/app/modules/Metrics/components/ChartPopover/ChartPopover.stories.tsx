@@ -1,14 +1,14 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import React from "react";
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 
-import { ChartPopover } from "./ChartPopover";
+import { ChartPopover } from './ChartPopover';
 
 export default {
-  title: "Metrics/ChartPopover",
+  title: 'Metrics/ChartPopover',
   component: ChartPopover,
   args: {
-    title: "Sample title",
-    description: "lorem dolor ipsum",
+    title: 'Sample title',
+    description: 'lorem dolor ipsum',
   },
 } as ComponentMeta<typeof ChartPopover>;
 

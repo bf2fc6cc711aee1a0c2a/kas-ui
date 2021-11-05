@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   CardTitle,
@@ -7,10 +7,10 @@ import {
   LevelItem,
   Toolbar,
   ToolbarContent,
-} from "@patternfly/react-core";
-import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
-import { FilterByTopic } from "./FilterByTopic";
-import { FilterByTime } from "./FilterByTime";
+} from '@patternfly/react-core';
+import SyncIcon from '@patternfly/react-icons/dist/js/icons/sync-icon';
+import { FilterByTopic } from './FilterByTopic';
+import { FilterByTime } from './FilterByTime';
 
 type ChartToolbarProps = {
   title: string;
@@ -44,7 +44,7 @@ export const ChartToolbar = ({
     <>
       <Level>
         <LevelItem>
-          <CardTitle component="h2">{title}</CardTitle>
+          <CardTitle component='h2'>{title}</CardTitle>
         </LevelItem>
         <LevelItem>
           {showTopicFilter ? (
@@ -61,11 +61,11 @@ export const ChartToolbar = ({
                   setTimeDuration={setTimeDuration}
                   setTimeInterval={setTimeInterval}
                   disableToolbar={!showTopicToolbar}
-                  keyText={"topic-metrics-time-filter"}
+                  keyText={'topic-metrics-time-filter'}
                 />
                 <Button
-                  variant="plain"
-                  aria-label="sync"
+                  variant='plain'
+                  aria-label='sync'
                   onClick={onRefreshTopicToolbar}
                 >
                   <SyncIcon />
@@ -78,12 +78,12 @@ export const ChartToolbar = ({
                 <FilterByTime
                   setTimeDuration={setTimeDuration}
                   setTimeInterval={setTimeInterval}
-                  keyText={"kafka-metrics-time-filter"}
+                  keyText={'kafka-metrics-time-filter'}
                   disableToolbar={!showKafkaToolbar}
                 />
                 <Button
-                  variant="plain"
-                  aria-label="sync"
+                  variant='plain'
+                  aria-label='sync'
                   onClick={onRefreshKafkaToolbar}
                 >
                   <SyncIcon />

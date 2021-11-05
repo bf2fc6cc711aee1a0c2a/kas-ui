@@ -20,7 +20,7 @@
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "lint": "npm-run-all 'lint:src -- .' 'lint:format -- .'",
-    "lint:src": "eslint --config ./linting/eslint.config.js --fix --max-warnings 54 --ignore-path ./linting/.eslintignore",
+    "lint:src": "eslint --config ./linting/eslint.config.js --fix --max-warnings 50 --ignore-path ./linting/.eslintignore",
     "lint:styling": "stylelint --config ./linting/stylelint.config.js --fix --max-warnings 5",
     "lint:format": "prettier --config ./linting/prettier.config.js --write",
     "type-check": "tsc --noEmit",

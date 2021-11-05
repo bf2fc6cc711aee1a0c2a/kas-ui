@@ -1,16 +1,14 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import React from "react";
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 
-import { FilterByTopic } from "./FilterByTopic";
+import { FilterByTopic } from './FilterByTopic';
 
 export default {
-  title: "Metrics/FilterByTopic",
+  title: 'Metrics/FilterByTopic',
   component: FilterByTopic,
   args: {
-    setSelectedTopic: (value: string | boolean) => false,
     selectedTopic: undefined,
-    topicList: ["lorem", "dolor", "ipsum"],
-    setIsFilterApplied: (value: boolean) => false,
+    topicList: ['lorem', 'dolor', 'ipsum'],
     disableToolbar: false,
   },
 } as ComponentMeta<typeof FilterByTopic>;

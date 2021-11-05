@@ -1,10 +1,10 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import React from "react";
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 
-import { UsedDiskSpaceChart } from "./UsedDiskSpaceChart";
+import { UsedDiskSpaceChart } from './UsedDiskSpaceChart';
 
 export default {
-  title: "Metrics/UsedDiskSpaceChart",
+  title: 'Metrics/UsedDiskSpaceChart',
   component: UsedDiskSpaceChart,
   args: {},
 } as ComponentMeta<typeof UsedDiskSpaceChart>;

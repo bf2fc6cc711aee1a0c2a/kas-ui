@@ -1,22 +1,18 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import React from "react";
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 
-import { ChartToolbar } from "./ChartToolbar";
+import { ChartToolbar } from './ChartToolbar';
 
 export default {
-  title: "Metrics/ChartToolbar",
+  title: 'Metrics/ChartToolbar',
   component: ChartToolbar,
   controls: {},
   args: {
-    title: "Sample title",
-    setTimeDuration: (value: number) => false,
-    setTimeInterval: (value: number) => false,
-    setSelectedTopic: (value: string | boolean) => false,
+    title: 'Sample title',
     selectedTopic: undefined,
     onRefreshKafkaToolbar: () => false,
     onRefreshTopicToolbar: () => false,
-    topicList: ["lorem", "dolor", "ipsum"],
-    setIsFilterApplied: (value: boolean) => false,
+    topicList: ['lorem', 'dolor', 'ipsum'],
   },
 } as ComponentMeta<typeof ChartToolbar>;
 

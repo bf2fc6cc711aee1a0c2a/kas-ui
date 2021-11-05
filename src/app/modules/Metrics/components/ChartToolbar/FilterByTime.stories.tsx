@@ -1,15 +1,13 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import React from "react";
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 
-import { FilterByTime } from "./FilterByTime";
+import { FilterByTime } from './FilterByTime';
 
 export default {
-  title: "Metrics/FilterByTime",
+  title: 'Metrics/FilterByTime',
   component: FilterByTime,
   args: {
-    setTimeDuration: (value: number) => false,
-    setTimeInterval: (value: number) => false,
-    keyText: "string",
+    keyText: 'string',
     disableToolbar: false,
   },
 } as ComponentMeta<typeof FilterByTime>;
