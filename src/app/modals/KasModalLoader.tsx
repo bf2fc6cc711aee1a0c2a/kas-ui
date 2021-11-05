@@ -49,7 +49,8 @@ export const useKasModals = (): ModalRegistry => {
       ) as React.LazyExoticComponent<
         React.FunctionComponent<TransferOwnershipProps>
       >,
-      variant: 'small',
+      variant: 'medium',
+      title: t('change_owner'),
     },
     [ModalType.KasCreateServiceAccount]: {
       lazyComponent: React.lazy(

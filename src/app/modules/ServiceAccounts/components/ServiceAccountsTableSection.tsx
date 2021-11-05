@@ -3,7 +3,6 @@ import { usePagination } from '@app/common';
 import React, { useState } from 'react';
 import { Card, PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
-import { FilterType } from '@app/modules/OpenshiftStreams/components';
 import { ServiceAccountsTableView } from '@app/modules/ServiceAccounts/components/ServiceAccountsTableView';
 import { ModalType, useModal } from '@rhoas/app-services-ui-shared';
 

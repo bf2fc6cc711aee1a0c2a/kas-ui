@@ -13,33 +13,23 @@ import {
 import { FederatedProps } from '@app/contexts';
 import { ModalProvider } from '@rhoas/app-services-ui-components';
 import { KasModalLoader } from '@app/modals';
+import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 
 export type InstanceDrawerFederatedProps = InstanceDrawerProps & FederatedProps;
 
 const InstanceDrawerFederated: React.FunctionComponent<InstanceDrawerFederatedProps> =
-  ({
-    isExpanded,
-    initialTab,
-    onClose,
-    'data-ouia-app-id': dataOuiaAppId,
-    tokenEndPointUrl,
-    children,
-    instanceDetail,
-  }) => {
+  ({ 'data-ouia-app-id': dataOuiaAppId, tokenEndPointUrl, children }) => {
     return (
       <I18nextProvider i18n={initI18N()}>
         <ModalProvider>
-          <InstanceDrawer
-            isExpanded={isExpanded}
-            initialTab={initialTab}
-            onClose={onClose}
-            data-ouia-app-id={dataOuiaAppId}
-            tokenEndPointUrl={tokenEndPointUrl}
-            isLoading={instanceDetail === undefined}
-            instanceDetail={instanceDetail}
-          >
-            {children}
-          </InstanceDrawer>
+          <InstanceDrawerContextProvider>
+            <InstanceDrawer
+              data-ouia-app-id={dataOuiaAppId}
+              tokenEndPointUrl={tokenEndPointUrl}
+            >
+              {children}
+            </InstanceDrawer>
+          </InstanceDrawerContextProvider>
           <KasModalLoader />
         </ModalProvider>
       </I18nextProvider>

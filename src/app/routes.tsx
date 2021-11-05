@@ -8,7 +8,7 @@ import {
   LastLocationProvider,
   useLastLocation,
 } from 'react-router-last-location';
-import { OpenshiftStreamsConnected } from '@app/modules/OpenshiftStreams';
+import { OpenshiftStreamsStandalone } from '@app/modules/OpenshiftStreams';
 import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
 import { MetricsConnected } from '@app/modules/Metrics';
 
@@ -37,7 +37,7 @@ export type AppRouteConfig = IAppRoute | IAppRouteGroup;
 
 const routes: AppRouteConfig[] = [
   {
-    component: OpenshiftStreamsConnected,
+    component: OpenshiftStreamsStandalone,
     exact: true,
     // t('kafka_instances')
     label: 'Kafka Instances',

@@ -1,20 +1,20 @@
-import React, { FunctionComponent } from 'react';
+import React, { ReactElement } from 'react';
 import {
-  TableHeader,
+  HeaderProps,
   Table as PFTable,
   TableBody,
-  TableProps as PFTableProps,
-  HeaderProps,
   TableBodyProps,
+  TableHeader,
+  TableProps as PFTableProps,
 } from '@patternfly/react-table';
 import { css } from '@patternfly/react-styles';
 import {
   CustomRowWrapper,
-  CustomRowWrapperProvider,
   CustomRowWrapperContextProps,
+  CustomRowWrapperProvider,
 } from './CustomRowWrapper';
 
-export type MASTableProps = CustomRowWrapperContextProps & {
+export type MASTableProps<T> = CustomRowWrapperContextProps<T> & {
   tableProps: Omit<PFTableProps, 'children'> & {
     hasDefaultCustomRowWrapper?: boolean;
   };
@@ -23,7 +23,7 @@ export type MASTableProps = CustomRowWrapperContextProps & {
   children?: React.ReactNode;
 };
 
-const MASTable: FunctionComponent<MASTableProps> = ({
+const MASTable = <T,>({
   tableProps,
   tableHeaderProps,
   tableBodyProps,
@@ -32,7 +32,7 @@ const MASTable: FunctionComponent<MASTableProps> = ({
   onRowClick,
   rowDataTestId,
   loggedInUser,
-}) => {
+}: MASTableProps<T>): ReactElement<any, any> => {
   const {
     cells,
     rows,
