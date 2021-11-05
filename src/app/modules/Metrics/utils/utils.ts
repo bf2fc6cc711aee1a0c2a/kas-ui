@@ -61,7 +61,10 @@ export const getLargestByteSize = (data1, data2) => {
   return currentByteSize;
 };
 
-export const convertToSpecifiedByte = (bytes, largestByteSize) => {
+export const convertToSpecifiedByte = (
+  bytes: number,
+  largestByteSize: 'B' | 'kiB' | 'MiB' | 'GiB'
+): number => {
   if (largestByteSize === 'B') {
     return Math.round(bytes * 10) / 10;
   }
@@ -74,7 +77,7 @@ export const convertToSpecifiedByte = (bytes, largestByteSize) => {
   if (largestByteSize === 'GiB') {
     return Math.round((bytes / 1024 / 1024 / 1024) * 10) / 10;
   }
-  return;
+  return bytes;
 };
 
 export const shouldShowDate = (timeDuration) => {

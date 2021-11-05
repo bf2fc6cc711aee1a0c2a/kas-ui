@@ -68,17 +68,17 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   metricsDataUnavailable,
   setMetricsDataUnavailable,
 }: KafkaInstanceProps) => {
-  const containerRef = useRef();
+  const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
   const { addAlert } = useAlert() || {};
-  const [width, setWidth] = useState();
-  const [legend, setLegend] = useState();
+  const [width, setWidth] = useState<number>();
+  const [legend, setLegend] = useState<LegendData[]>();
   const [chartData, setChartData] = useState<ChartData[]>();
   const [chartDataLoading, setChartDataLoading] = useState(true);
-  const [largestByteSize, setLargestByteSize] = useState();
+  const [largestByteSize, setLargestByteSize] = useState<string>();
   const [timeDuration, setTimeDuration] = useState(6);
   const [timeInterval, setTimeInterval] = useState(60);
   const usageLimit = 60; // Replace with limit from API
@@ -313,7 +313,8 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                         interpolation='monotoneX'
                         style={{
                           data: {
-                            stroke: value.color,
+                            // TODO: check if this is needed
+                            // stroke: value.color,
                           },
                         }}
                       />

@@ -1,0 +1,45 @@
+# Workflow name
+name: 'Chromatic Deployment'
+
+# Event for the workflow
+on: push
+
+# List of jobs
+jobs:
+  test:
+    # Operating System
+    runs-on: ubuntu-latest
+    # Job steps
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Cache node modules
+        id: npm-cache
+        uses: actions/cache@v2
+        env:
+            cache-name: cache-node-modules-v2
+        with:
+            path: |
+                ~/.npm
+                ~/.cache/Cypress
+                node_modules
+                */*/node_modules
+            key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+                ${{ runner.os }}-build-${{ env.cache-name }}-
+                ${{ runner.os }}-build-
+                ${{ runner.os }}-
+
+      - name: Install dependencies if needed.
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+        #👇 Adds Chromatic as a step in the workflow
+      - uses: chromaui/action@v1
+        # Options required for Chromatic's GitHub Action
+        with:
+          #👇 Chromatic projectToken, see https://storybook.js.org/tutorials/intro-to-storybook/react/en/deploy/ to obtain it
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}

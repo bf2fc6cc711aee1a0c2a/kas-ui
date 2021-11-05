@@ -16,9 +16,9 @@ type ChartToolbarProps = {
   title: string;
   showTopicFilter: boolean;
   setTimeDuration: (value: number) => void;
-  setTimeInterval: (value: number) => void;
   showTopicToolbar?: boolean;
   showKafkaToolbar?: boolean;
+  setTimeInterval: (value: number) => void;
   setSelectedTopic?: (value: string | boolean) => void;
   selectedTopic?: string | boolean;
   onRefreshKafkaToolbar?: () => void;
