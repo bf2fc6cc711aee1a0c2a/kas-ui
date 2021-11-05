@@ -4,7 +4,7 @@ import React from 'react';
 import { FilterByTopic } from './FilterByTopic';
 
 export default {
-  title: 'Metrics/FilterByTopic',
+  title: 'Metrics/Components/FilterByTopic',
   component: FilterByTopic,
   args: {
     selectedTopic: undefined,

@@ -4,7 +4,7 @@ import React from 'react';
 import { ChartPopover } from './ChartPopover';
 
 export default {
-  title: 'Metrics/ChartPopover',
+  title: 'Metrics/Components/ChartPopover',
   component: ChartPopover,
   args: {
     title: 'Sample title',

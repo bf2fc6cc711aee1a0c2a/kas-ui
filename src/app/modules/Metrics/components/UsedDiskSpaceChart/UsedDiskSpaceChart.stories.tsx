@@ -4,7 +4,7 @@ import React from 'react';
 import { UsedDiskSpaceChart } from './UsedDiskSpaceChart';
 
 export default {
-  title: 'Metrics/UsedDiskSpaceChart',
+  title: 'Metrics/Components/UsedDiskSpaceChart',
   component: UsedDiskSpaceChart,
   args: {},
 } as ComponentMeta<typeof UsedDiskSpaceChart>;

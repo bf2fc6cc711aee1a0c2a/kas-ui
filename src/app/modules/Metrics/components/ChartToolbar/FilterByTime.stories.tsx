@@ -4,7 +4,7 @@ import React from 'react';
 import { FilterByTime } from './FilterByTime';
 
 export default {
-  title: 'Metrics/FilterByTime',
+  title: 'Metrics/Components/FilterByTime',
   component: FilterByTime,
   args: {
     keyText: 'string',

@@ -4,7 +4,7 @@ import React from 'react';
 import { ChartToolbar } from './ChartToolbar';
 
 export default {
-  title: 'Metrics/ChartToolbar',
+  title: 'Metrics/Components/ChartToolbar',
   component: ChartToolbar,
   controls: {},
   args: {
