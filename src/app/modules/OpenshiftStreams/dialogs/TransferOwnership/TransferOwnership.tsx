@@ -162,7 +162,7 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
       position='top'
       actions={[
         <Button
-          id='confirm__button',
+          id='confirm__button'
           key='changeowner'
           variant='primary'
           onClick={onSubmitTransferOwnership}
@@ -171,10 +171,10 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
         >
           {t('common.change_owner')}
         </Button>,
-        <Button 
-          id='cancel__button', 
-          key='cancel' 
-          variant='link' 
+        <Button
+          id='cancel__button'
+          key='cancel'
+          variant='link'
           onClick={onCloseModal}
         >
           {t('cancel')}
