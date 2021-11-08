@@ -1,7 +1,11 @@
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Config, ConfigContext } from '@rhoas/app-services-ui-shared';
+import {
+  BasenameContext,
+  Config,
+  ConfigContext,
+} from '@rhoas/app-services-ui-shared';
 import '@patternfly/patternfly/patternfly.css';
 import '@patternfly/patternfly/utilities/Accessibility/accessibility.css';
 import '@patternfly/patternfly/utilities/Sizing/sizing.css';
@@ -44,43 +48,45 @@ const App: React.FunctionComponent = () => {
   if (!initialized) return <MASLoading />;
 
   return (
-    <ConfigContext.Provider
-      value={
-        {
-          kas: {
-            apiBasePath: __BASE_PATH__,
-          },
-          ams: {
-            apiBasePath: __BASE_PATH__,
-          },
-        } as Config
-      }
-    >
-      <I18nextProvider i18n={initI18N()}>
-        <KeycloakContext.Provider
-          value={{ keycloak, profile: keycloak?.profile }}
-        >
-          <KeycloakAuthProvider>
-            <AlertProvider>
-              <Router>
-                <React.Suspense fallback={<MASLoading />}>
-                  <MASErrorBoundary>
-                    <PaginationProvider>
-                      <ModalProvider>
-                        <AppLayout>
-                          <AppRoutes />
-                        </AppLayout>
-                        <KasModalLoader />
-                      </ModalProvider>
-                    </PaginationProvider>
-                  </MASErrorBoundary>
-                </React.Suspense>
-              </Router>
-            </AlertProvider>
-          </KeycloakAuthProvider>
-        </KeycloakContext.Provider>
-      </I18nextProvider>
-    </ConfigContext.Provider>
+    <BasenameContext.Provider value={{ getBasename: () => '' }}>
+      <ConfigContext.Provider
+        value={
+          {
+            kas: {
+              apiBasePath: __BASE_PATH__,
+            },
+            ams: {
+              apiBasePath: __BASE_PATH__,
+            },
+          } as Config
+        }
+      >
+        <I18nextProvider i18n={initI18N()}>
+          <KeycloakContext.Provider
+            value={{ keycloak, profile: keycloak?.profile }}
+          >
+            <KeycloakAuthProvider>
+              <AlertProvider>
+                <Router>
+                  <React.Suspense fallback={<MASLoading />}>
+                    <MASErrorBoundary>
+                      <PaginationProvider>
+                        <ModalProvider>
+                          <AppLayout>
+                            <AppRoutes />
+                          </AppLayout>
+                          <KasModalLoader />
+                        </ModalProvider>
+                      </PaginationProvider>
+                    </MASErrorBoundary>
+                  </React.Suspense>
+                </Router>
+              </AlertProvider>
+            </KeycloakAuthProvider>
+          </KeycloakContext.Provider>
+        </I18nextProvider>
+      </ConfigContext.Provider>
+    </BasenameContext.Provider>
   );
 };
 export { App };
