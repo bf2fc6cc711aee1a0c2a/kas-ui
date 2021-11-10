@@ -1,7 +1,9 @@
 import byteSize from 'byte-size';
 
-export const getLargestByteSize = (data1, data2) => {
-  let currentByteSize = 'B';
+export type SupportedSizes = 'B' | 'kiB' | 'MiB' | 'GiB';
+
+export const getLargestByteSize = (data1, data2): SupportedSizes => {
+  let currentByteSize: SupportedSizes = 'B';
 
   data1 = data1 && (data1.sortedData ? data1.sortedData : data1.data);
   data2 = data2 && (data2.sortedData ? data2.sortedData : data2.data);
@@ -63,7 +65,7 @@ export const getLargestByteSize = (data1, data2) => {
 
 export const convertToSpecifiedByte = (
   bytes: number,
-  largestByteSize: 'B' | 'kiB' | 'MiB' | 'GiB'
+  largestByteSize: SupportedSizes
 ): number => {
   if (largestByteSize === 'B') {
     return Math.round(bytes * 10) / 10;
