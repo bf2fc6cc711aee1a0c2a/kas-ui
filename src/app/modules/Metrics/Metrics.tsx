@@ -21,7 +21,9 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
   const [metricsDataUnavailable, setMetricsDataUnavailable] = useState(false);
 
   const { t } = useTranslation();
-  const [selectedTopic, setSelectedTopic] = useState<string | boolean>(false);
+  const [selectedTopic, setSelectedTopic] = useState<string | undefined>(
+    undefined
+  );
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [topicList, setTopicList] = useState<string[]>([]);
   const [timeDuration, setTimeDuration] = useState(6);
@@ -39,8 +41,7 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
     setChartDataLoading(true);
     const { incomingTopics, outgoingTopics, topicList } = await fetchBytesData({
       kafkaID: kafkaId,
-      selectedTopic:
-        selectedTopic === false ? undefined : (selectedTopic as string),
+      selectedTopic,
       timeDuration,
       timeInterval,
       accessToken: auth?.kas.getToken(),

@@ -9,20 +9,23 @@ import {
 } from '../../utils';
 import { TopicDataArray } from './fetchBytesData';
 
-type ChartData = {
+export type ChartData = {
   color: string;
   line: TopicChartData[];
 };
 
-type TopicChartData = {
+export type TopicChartData = {
   name: string;
   x: string;
   y: number;
 };
 
-type LegendData = {
+export type LegendData = {
   name: string;
-  symbol: unknown;
+  symbol: {
+    fill: string;
+    type?: string;
+  };
 };
 
 export function useBytesDataChart() {

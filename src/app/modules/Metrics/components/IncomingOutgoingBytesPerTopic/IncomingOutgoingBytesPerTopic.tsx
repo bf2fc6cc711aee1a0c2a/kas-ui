@@ -21,10 +21,12 @@ import {
   Divider,
   Spinner,
 } from '@patternfly/react-core';
+import { FunctionComponent } from 'enzyme';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SupportedSizes } from '../../utils';
 import { TopicDataArray } from './fetchBytesData';
-import { useBytesDataChart } from './useBytesDataChart';
+import { ChartData, LegendData, useBytesDataChart } from './useBytesDataChart';
 
 type IncomingOutgoingBytesPerTopicProps = {
   kafkaID: string;
@@ -106,73 +108,54 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
         <CardBody>
           <div ref={containerRef}>
             <div>
-              {!isLoading ? (
-                !metricsDataUnavailable ? (
-                  !noTopics ? (
-                    chartData &&
-                    legendData &&
-                    largestByteSize && (
+              {(() => {
+                switch (true) {
+                  case isLoading:
+                    return (
+                      <Bullseye>
+                        <Spinner isSVG />
+                      </Bullseye>
+                    );
+
+                  case metricsDataUnavailable:
+                    return (
+                      <ChartEmptyState
+                        title={t('metrics.empty_state_no_data_title')}
+                        body={t('metrics.empty_state_no_data_body')}
+                        noData
+                      />
+                    );
+
+                  case noTopics:
+                    return (
+                      <ChartEmptyState
+                        title={t('metrics.empty_state_no_topics_title')}
+                        body={t('metrics.empty_state_no_topics_body')}
+                        noTopics
+                        onCreateTopic={onCreateTopic}
+                      />
+                    );
+
+                  default:
+                    return (
                       <>
-                        <Chart
-                          ariaTitle={t('metrics.total_bytes')}
-                          containerComponent={
-                            <ChartVoronoiContainer
-                              labels={({ datum }) =>
-                                `${datum.name}: ${datum.y}`
-                              }
-                              constrainToVisibleArea
-                            />
-                          }
-                          legendAllowWrap={true}
-                          legendPosition='bottom-left'
-                          legendComponent={
-                            <ChartLegend
-                              data={legendData}
-                              itemsPerRow={itemsPerRow}
-                            />
-                          }
-                          height={300}
-                          padding={{
-                            bottom: 110,
-                            left: 90,
-                            right: 30,
-                            top: 25,
-                          }}
-                          themeColor={ChartThemeColor.multiUnordered}
-                          width={width}
-                        >
-                          <ChartAxis label={'\n' + 'Time'} tickCount={6} />
-                          <ChartAxis
-                            dependentAxis
-                            tickFormat={(t) =>
-                              `${Math.round(t)} ${largestByteSize}`
-                            }
-                            tickCount={4}
-                            minDomain={{ y: 0 }}
-                          />
-                          <ChartGroup>
-                            {chartData.map((value, index) => (
-                              <ChartLine
-                                key={`chart-line-${index}`}
-                                data={value.line}
-                                style={{
-                                  data: {
-                                    stroke: value.color,
-                                  },
-                                }}
-                              />
-                            ))}
-                          </ChartGroup>
-                        </Chart>
+                        <TotalBytesChart
+                          chartData={chartData}
+                          legendData={legendData}
+                          largestByteSize={largestByteSize}
+                          itemsPerRow={itemsPerRow}
+                          width={width || 0}
+                        />
 
                         <Divider />
-                        {selectedTopic ? (
+                        {selectedTopic && (
                           <LogSizePerPartitionChart
                             kafkaID={kafkaID}
                             timeDuration={timeDuration}
                             timeInterval={timeInterval}
                           />
-                        ) : (
+                        )}
+                        {!selectedTopic && (
                           <Card>
                             <CardTitle component='h2'>
                               {t('metrics.topic_partition_size')}
@@ -182,35 +165,81 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                                 title={t('metrics.empty_state_no_filter_title')}
                                 body={t('metrics.empty_state_no_filter_body')}
                                 noFilter
-                              />{' '}
+                              />
                             </CardBody>
                           </Card>
                         )}
                       </>
-                    )
-                  ) : (
-                    <ChartEmptyState
-                      title={t('metrics.empty_state_no_topics_title')}
-                      body={t('metrics.empty_state_no_topics_body')}
-                      noTopics
-                      onCreateTopic={onCreateTopic}
-                    />
-                  )
-                ) : (
-                  <ChartEmptyState
-                    title={t('metrics.empty_state_no_data_title')}
-                    body={t('metrics.empty_state_no_data_body')}
-                    noData
-                  />
-                )
-              ) : (
-                <Bullseye>
-                  <Spinner isSVG />
-                </Bullseye>
-              )}
+                    );
+                }
+              })()}
             </div>
           </div>
         </CardBody>
       </Card>
     );
   };
+
+type TotalBytesChartProps = {
+  chartData: ChartData[];
+  legendData: LegendData[];
+  largestByteSize: SupportedSizes;
+  itemsPerRow: number;
+  width: number;
+};
+const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
+  chartData,
+  legendData,
+  itemsPerRow,
+  width,
+  largestByteSize,
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Chart
+      ariaTitle={t('metrics.total_bytes')}
+      containerComponent={
+        <ChartVoronoiContainer
+          labels={({ datum }) => `${datum.name}: ${datum.y}`}
+          constrainToVisibleArea
+        />
+      }
+      legendAllowWrap={true}
+      legendPosition='bottom-left'
+      legendComponent={
+        <ChartLegend data={legendData} itemsPerRow={itemsPerRow} />
+      }
+      height={300}
+      padding={{
+        bottom: 110,
+        left: 90,
+        right: 30,
+        top: 25,
+      }}
+      themeColor={ChartThemeColor.multiUnordered}
+      width={width}
+    >
+      <ChartAxis label={'\n' + 'Time'} tickCount={6} />
+      <ChartAxis
+        dependentAxis
+        tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+        tickCount={4}
+        minDomain={{ y: 0 }}
+      />
+      <ChartGroup>
+        {chartData.map((value, index) => (
+          <ChartLine
+            key={`chart-line-${index}`}
+            data={value.line}
+            style={{
+              data: {
+                stroke: value.color,
+              },
+            }}
+          />
+        ))}
+      </ChartGroup>
+    </Chart>
+  );
+};
