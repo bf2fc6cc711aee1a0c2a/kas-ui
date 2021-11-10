@@ -52,9 +52,9 @@ export const ChartToolbar = ({
               <ToolbarContent>
                 <FilterByTopic
                   selectedTopic={selectedTopic}
-                  setSelectedTopic={setSelectedTopic}
+                  onSetSelectedTopic={setSelectedTopic}
                   topicList={topicList}
-                  setIsFilterApplied={setIsFilterApplied}
+                  onSetIsFilterApplied={setIsFilterApplied}
                   disableToolbar={!showTopicToolbar}
                 />
                 <FilterByTime

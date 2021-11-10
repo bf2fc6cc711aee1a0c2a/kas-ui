@@ -17,5 +17,20 @@ const Template: ComponentStory<typeof FilterByTopic> = (args) => (
   <FilterByTopic {...args} />
 );
 
-export const Story = Template.bind({});
-Story.args = {};
+export const Default = Template.bind({});
+Default.args = {};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  disableToolbar: true,
+};
+
+export const NoTopics = Template.bind({});
+NoTopics.args = {
+  topicList: undefined,
+};
+
+export const MultipleTopicsWithCommonWords = Template.bind({});
+MultipleTopicsWithCommonWords.args = {
+  topicList: ['lorem dolor', 'lorem ipsum', 'lorem foo', 'dolor', 'ipsum'],
+};

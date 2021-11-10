@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ToolbarItem,
   Select,
@@ -8,44 +8,48 @@ import {
 } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 
+const widths = {
+  default: '100px',
+  sm: '80px',
+  md: '150px',
+  lg: '200px',
+  xl: '250px',
+  '2xl': '300px',
+};
+
 type FilterByTopicProps = {
-  setSelectedTopic?: (value: string | boolean) => void;
   selectedTopic?: string | boolean;
   topicList?: string[];
-  setIsFilterApplied?: (value: boolean) => void;
   disableToolbar: boolean;
+  onSetIsFilterApplied?: (value: boolean) => void;
+  onSetSelectedTopic?: (value: string | boolean) => void;
 };
 
 export const FilterByTopic = ({
   selectedTopic,
-  setSelectedTopic,
-  topicList,
-  setIsFilterApplied,
+  topicList = [],
   disableToolbar,
+  onSetSelectedTopic,
+  onSetIsFilterApplied,
 }: FilterByTopicProps) => {
   const [isTopicSelectOpen, setIsTopicSelectOpen] = useState<boolean>(false);
-  const [topicListFinal, setTopicListFinal] = useState<string[]>();
-
-  useEffect(() => {
-    topicList && setTopicListFinal(topicList);
-  }, [topicList]);
 
   const onTopicToggle = (isTopicSelectOpen) => {
     setIsTopicSelectOpen(isTopicSelectOpen);
   };
 
   const onTopicSelect = (_, selection) => {
-    setSelectedTopic && setSelectedTopic(selection);
-    setIsFilterApplied &&
+    onSetSelectedTopic && onSetSelectedTopic(selection);
+    onSetIsFilterApplied &&
       (selection !== 'All topics'
-        ? setIsFilterApplied(true)
-        : setIsFilterApplied(false));
+        ? onSetIsFilterApplied(true)
+        : onSetIsFilterApplied(false));
     setIsTopicSelectOpen(false);
   };
 
   const onTopicFilter = (_, textInput) => {
     const filteredTopics =
-      topicListFinal?.filter((topic) => topic.indexOf(textInput) != -1) || [];
+      topicList?.filter((topic) => topic.indexOf(textInput) != -1) || [];
     return topicOptions(filteredTopics);
   };
 
@@ -58,14 +62,7 @@ export const FilterByTopic = ({
     </SelectGroup>,
   ];
 
-  const widths = {
-    default: '100px',
-    sm: '80px',
-    md: '150px',
-    lg: '200px',
-    xl: '250px',
-    '2xl': '300px',
-  };
+  const isDisabled = disableToolbar || topicList.length === 0;
 
   return (
     <ToolbarItem widths={widths}>
@@ -84,10 +81,10 @@ export const FilterByTopic = ({
         onFilter={onTopicFilter}
         isGrouped
         hasInlineFilter
-        isDisabled={disableToolbar}
+        isDisabled={isDisabled}
         style={{ width: '100%' }}
       >
-        {topicOptions(topicListFinal)}
+        {topicOptions(topicList)}
       </Select>
     </ToolbarItem>
   );
