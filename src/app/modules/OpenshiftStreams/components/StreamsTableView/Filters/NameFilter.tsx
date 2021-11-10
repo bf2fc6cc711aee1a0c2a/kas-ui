@@ -57,7 +57,7 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
     }
   };
 
-  const NameInput: React.FunctionComponent = () => {
+  const renderNameInput = () => {
     const v = !valid || isMaxFilter;
     const FilterTooltip: React.FunctionComponent = () => {
       if (v) {
@@ -110,7 +110,7 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
       categoryName={t('name')}
       showToolbarItem={filterSelected?.toLowerCase() === 'name'}
     >
-      <NameInput />
+      {renderNameInput()}
     </ToolbarFilter>
   );
 };
