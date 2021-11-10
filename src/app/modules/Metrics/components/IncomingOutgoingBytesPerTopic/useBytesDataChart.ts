@@ -1,15 +1,13 @@
-import { useState } from 'react';
-import {
-  SupportedSizes,
-  getLargestByteSize,
-  dateToChartValue,
-  shouldShowDate,
-  convertToSpecifiedByte,
-} from '../../utils';
-import { TopicDataArray } from './fetchBytesData';
 import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 import { useTranslation } from 'react-i18next';
+import {
+  convertToSpecifiedByte,
+  dateToChartValue,
+  getLargestByteSize,
+  shouldShowDate,
+} from '../../utils';
+import { TopicDataArray } from './fetchBytesData';
 
 type ChartData = {
   color: string;
@@ -24,7 +22,7 @@ type TopicChartData = {
 
 type LegendData = {
   name: string;
-  symbol: any;
+  symbol: unknown;
 };
 
 export function useBytesDataChart() {

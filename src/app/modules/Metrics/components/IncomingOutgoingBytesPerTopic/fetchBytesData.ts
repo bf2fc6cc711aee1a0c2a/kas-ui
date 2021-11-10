@@ -49,7 +49,7 @@ export async function fetchBytesData({
     ]
   );
 
-  data.data.items?.forEach((item, index) => {
+  data.data.items?.forEach((item) => {
     const labels = item.metric;
     if (labels === undefined) {
       throw new Error('item.metric cannot be undefined');

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   CardTitle,
@@ -7,11 +7,11 @@ import {
   LevelItem,
   Toolbar,
   ToolbarContent,
-} from "@patternfly/react-core";
-import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
-import { FilterByTopic } from "./FilterByTopic";
-import { FilterByTime } from "./FilterByTime";
-import { FunctionComponent } from "enzyme";
+} from '@patternfly/react-core';
+import SyncIcon from '@patternfly/react-icons/dist/js/icons/sync-icon';
+import { FilterByTopic } from './FilterByTopic';
+import { FilterByTime } from './FilterByTime';
+import { FunctionComponent } from 'enzyme';
 
 type UsedDiskSpaceToolbarProps = {
   title: string;
@@ -26,7 +26,7 @@ export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> 
       <>
         <Level>
           <LevelItem>
-            <CardTitle component="h2">{title}</CardTitle>
+            <CardTitle component='h2'>{title}</CardTitle>
           </LevelItem>
           <LevelItem>
             <Toolbar>
@@ -34,10 +34,10 @@ export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> 
                 <FilterByTime
                   setTimeDuration={onSetTimeDuration}
                   setTimeInterval={onSetTimeInterval}
-                  keyText={"kafka-metrics-time-filter"}
+                  keyText={'kafka-metrics-time-filter'}
                   disableToolbar={isDisabled}
                 />
-                <Button variant="plain" aria-label="sync" onClick={onRefresh}>
+                <Button variant='plain' aria-label='sync' onClick={onRefresh}>
                   <SyncIcon />
                 </Button>
               </ToolbarContent>

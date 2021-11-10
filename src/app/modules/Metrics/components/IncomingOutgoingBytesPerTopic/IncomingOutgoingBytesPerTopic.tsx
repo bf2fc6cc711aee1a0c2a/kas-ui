@@ -3,7 +3,7 @@ import {
   ChartPopover,
   TopicMetricsToolbar,
   LogSizePerPartitionChart,
-} from "@app/modules/Metrics/components";
+} from '@app/modules/Metrics/components';
 import {
   Chart,
   ChartAxis,
@@ -12,7 +12,7 @@ import {
   ChartLine,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from "@patternfly/react-charts";
+} from '@patternfly/react-charts';
 import {
   Bullseye,
   Card,
@@ -20,11 +20,11 @@ import {
   CardTitle,
   Divider,
   Spinner,
-} from "@patternfly/react-core";
-import React, { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { TopicDataArray } from "./fetchBytesData";
-import { useBytesDataChart } from "./useBytesDataChart";
+} from '@patternfly/react-core';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { TopicDataArray } from './fetchBytesData';
+import { useBytesDataChart } from './useBytesDataChart';
 
 type IncomingOutgoingBytesPerTopicProps = {
   kafkaID: string;
@@ -71,7 +71,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
 
     useEffect(() => {
       handleResize();
-      window.addEventListener("resize", handleResize);
+      window.addEventListener('resize', handleResize);
     }, [width]);
 
     const { getChartData } = useBytesDataChart();
@@ -87,7 +87,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
     return (
       <Card>
         <TopicMetricsToolbar
-          title={t("metrics.topic_metrics")}
+          title={t('metrics.topic_metrics')}
           onSetTimeDuration={onTimeDuration}
           onSetTimeInterval={onTimeInterval}
           isDisabled={noTopics || metricsDataUnavailable}
@@ -96,11 +96,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
           onRefresh={onRefresh}
           topicList={topicList}
         />
-        <CardTitle component="h2">
-          {t("metrics.total_bytes")}{" "}
+        <CardTitle component='h2'>
+          {t('metrics.total_bytes')}{' '}
           <ChartPopover
-            title={t("metrics.total_bytes")}
-            description={t("metrics.topic_metrics_help_text")}
+            title={t('metrics.total_bytes')}
+            description={t('metrics.topic_metrics_help_text')}
           />
         </CardTitle>
         <CardBody>
@@ -114,7 +114,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                     largestByteSize && (
                       <>
                         <Chart
-                          ariaTitle={t("metrics.total_bytes")}
+                          ariaTitle={t('metrics.total_bytes')}
                           containerComponent={
                             <ChartVoronoiContainer
                               labels={({ datum }) =>
@@ -124,7 +124,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                             />
                           }
                           legendAllowWrap={true}
-                          legendPosition="bottom-left"
+                          legendPosition='bottom-left'
                           legendComponent={
                             <ChartLegend
                               data={legendData}
@@ -141,7 +141,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                           themeColor={ChartThemeColor.multiUnordered}
                           width={width}
                         >
-                          <ChartAxis label={"\n" + "Time"} tickCount={6} />
+                          <ChartAxis label={'\n' + 'Time'} tickCount={6} />
                           <ChartAxis
                             dependentAxis
                             tickFormat={(t) =>
@@ -174,15 +174,15 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                           />
                         ) : (
                           <Card>
-                            <CardTitle component="h2">
-                              {t("metrics.topic_partition_size")}
+                            <CardTitle component='h2'>
+                              {t('metrics.topic_partition_size')}
                             </CardTitle>
                             <CardBody>
                               <ChartEmptyState
-                                title={t("metrics.empty_state_no_filter_title")}
-                                body={t("metrics.empty_state_no_filter_body")}
+                                title={t('metrics.empty_state_no_filter_title')}
+                                body={t('metrics.empty_state_no_filter_body')}
                                 noFilter
-                              />{" "}
+                              />{' '}
                             </CardBody>
                           </Card>
                         )}
@@ -190,16 +190,16 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                     )
                   ) : (
                     <ChartEmptyState
-                      title={t("metrics.empty_state_no_topics_title")}
-                      body={t("metrics.empty_state_no_topics_body")}
+                      title={t('metrics.empty_state_no_topics_title')}
+                      body={t('metrics.empty_state_no_topics_body')}
                       noTopics
                       onCreateTopic={onCreateTopic}
                     />
                   )
                 ) : (
                   <ChartEmptyState
-                    title={t("metrics.empty_state_no_data_title")}
-                    body={t("metrics.empty_state_no_data_body")}
+                    title={t('metrics.empty_state_no_data_title')}
+                    body={t('metrics.empty_state_no_data_body')}
                     noData
                   />
                 )

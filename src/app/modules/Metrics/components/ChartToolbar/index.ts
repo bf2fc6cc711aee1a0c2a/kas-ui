@@ -1,2 +1,2 @@
-export * from "./TopicMetricsToolbar";
-export * from "./UsedDiskSpaceToolbar";
+export * from './TopicMetricsToolbar';
+export * from './UsedDiskSpaceToolbar';
