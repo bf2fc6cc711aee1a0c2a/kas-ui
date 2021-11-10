@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/hooks';
-import { cloudRegionOptions } from '@app/utils';
+import { cloudRegionOptions, KeyValueOptions } from '@app/utils';
 
 export type RegionFilterProps = FilterProps;
 
@@ -25,12 +25,56 @@ export const RegionFilter: React.FunctionComponent<RegionFilterProps> = ({
   updateFilter,
 }) => {
   const { t } = useTranslation();
-  const selectRef = useRef<Select>(null);
-  const tooltipContent = useTooltipContent(isMaxFilter);
-
   const options = cloudRegionOptions.map((region) => {
     return { label: t(region.value), value: region.value, disabled: false };
   });
+
+  return (
+    <ToolbarFilter
+      chips={getSelectionForFilter('region')?.map((val) => t(val))}
+      deleteChip={(_category, chip) => onDeleteChip('region', chip, options)}
+      deleteChipGroup={() => onDeleteChipGroup('region')}
+      categoryName={t('region')}
+      showToolbarItem={filterSelected === 'region'}
+    >
+      <RegionSelect
+        updateFilter={updateFilter}
+        isMaxFilter={isMaxFilter}
+        removeFilterValue={removeFilterValue}
+        isDisabledSelectOption={isDisabledSelectOption}
+        options={options}
+        getSelectionForFilter={getSelectionForFilter}
+        filterSelected={filterSelected}
+      />
+    </ToolbarFilter>
+  );
+};
+
+type RegionSelectProps = Pick<
+  FilterProps,
+  | 'updateFilter'
+  | 'isMaxFilter'
+  | 'removeFilterValue'
+  | 'isDisabledSelectOption'
+  | 'getSelectionForFilter'
+  | 'filterSelected'
+> & {
+  options: KeyValueOptions[];
+};
+
+const RegionSelect: React.FunctionComponent<RegionSelectProps> = ({
+  updateFilter,
+  isMaxFilter,
+  removeFilterValue,
+  isDisabledSelectOption,
+  options,
+  getSelectionForFilter,
+  filterSelected,
+}) => {
+  const { t } = useTranslation();
+  const selectRef = useRef<Select>(null);
+  const tooltipContent = useTooltipContent(isMaxFilter);
+  const [expanded, setExpanded] = useState(false);
 
   const FilterTooltip: React.FunctionComponent = () => {
     if (isMaxFilter) {
@@ -45,83 +89,65 @@ export const RegionFilter: React.FunctionComponent<RegionFilterProps> = ({
     return <></>;
   };
 
-  const RegionSelect: React.FunctionComponent = () => {
-    const [expanded, setExpanded] = useState(false);
-
-    const onToggle = () => {
-      setExpanded(!expanded);
-    };
-
-    const onSelect = (
-      _event:
-        | React.MouseEvent<Element, MouseEvent>
-        | React.ChangeEvent<Element>,
-      selection: string | SelectOptionObject,
-      isPlaceholder?: boolean | undefined
-    ) => {
-      if (isPlaceholder) clear();
-      updateFilter(
-        'region',
-        { value: selection.toString(), isExact: true },
-        true
-      );
-      options.length < 2 && setExpanded(false);
-    };
-
-    const clear = () => {
-      removeFilterValue('region');
-      setExpanded(false);
-    };
-
-    if (filterSelected === 'region') {
-      return (
-        <Select
-          id='region-select'
-          variant={SelectVariant.checkbox}
-          aria-label='Select region'
-          onToggle={onToggle}
-          selections={getSelectionForFilter('region')}
-          isOpen={expanded}
-          onSelect={onSelect}
-          placeholderText={t('filter_by_region')}
-          className='select-custom-width'
-          ref={selectRef}
-        >
-          {options.map((option, index) => {
-            const isDisabled = () => {
-              if (option.disabled) {
-                return true;
-              }
-              return (
-                isMaxFilter && isDisabledSelectOption('region', option.value)
-              );
-            };
-            return (
-              <SelectOption
-                isDisabled={isDisabled()}
-                key={index}
-                value={option.value}
-              >
-                <FilterTooltip />
-                {option.label}
-              </SelectOption>
-            );
-          })}
-        </Select>
-      );
-    }
-    return <></>;
+  const onToggle = () => {
+    setExpanded(!expanded);
   };
 
-  return (
-    <ToolbarFilter
-      chips={getSelectionForFilter('region')?.map((val) => t(val))}
-      deleteChip={(_category, chip) => onDeleteChip('region', chip, options)}
-      deleteChipGroup={() => onDeleteChipGroup('region')}
-      categoryName={t('region')}
-      showToolbarItem={filterSelected === 'region'}
-    >
-      <RegionSelect />
-    </ToolbarFilter>
-  );
+  const onSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
+    selection: string | SelectOptionObject,
+    isPlaceholder?: boolean | undefined
+  ) => {
+    if (isPlaceholder) clear();
+    updateFilter(
+      'region',
+      { value: selection.toString(), isExact: true },
+      true
+    );
+    options.length < 2 && setExpanded(false);
+  };
+
+  const clear = () => {
+    removeFilterValue('region');
+    setExpanded(false);
+  };
+
+  if (filterSelected === 'region') {
+    return (
+      <Select
+        id='region-select'
+        variant={SelectVariant.checkbox}
+        aria-label='Select region'
+        onToggle={onToggle}
+        selections={getSelectionForFilter('region')}
+        isOpen={expanded}
+        onSelect={onSelect}
+        placeholderText={t('filter_by_region')}
+        className='select-custom-width'
+        ref={selectRef}
+      >
+        {options.map((option, index) => {
+          const isDisabled = () => {
+            if (option.disabled) {
+              return true;
+            }
+            return (
+              isMaxFilter && isDisabledSelectOption('region', option.value)
+            );
+          };
+          return (
+            <SelectOption
+              isDisabled={isDisabled()}
+              key={index}
+              value={option.value}
+            >
+              <FilterTooltip />
+              {option.label}
+            </SelectOption>
+          );
+        })}
+      </Select>
+    );
+  }
+  return <></>;
 };

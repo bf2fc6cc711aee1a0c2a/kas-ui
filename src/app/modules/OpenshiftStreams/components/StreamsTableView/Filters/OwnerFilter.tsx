@@ -57,7 +57,7 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
     !valid && setValid(true);
   };
 
-  const OwnerInput: React.FunctionComponent = () => {
+  const renderOwnerInput = () => {
     if (filterSelected?.toLowerCase() === 'owner') {
       const v = !valid || isMaxFilter;
 
@@ -111,7 +111,7 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
       categoryName={t('owner')}
       showToolbarItem={filterSelected?.toLowerCase() === 'owner'}
     >
-      <OwnerInput />
+      {renderOwnerInput()}
     </ToolbarFilter>
   );
 };

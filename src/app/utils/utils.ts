@@ -13,6 +13,7 @@ function accessibleRouteChangeHandler(): number {
 export type KeyValueOptions = {
   value: string;
   label: string;
+  disabled: boolean;
 };
 
 enum InstanceStatus {
