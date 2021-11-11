@@ -55,6 +55,15 @@ export const TransferOwnership: React.FC<
   const [loading, setLoading] = useState<boolean>();
   const [errorCode, setErrorCode] = useState<string | undefined>();
 
+  const options = userAccounts?.map((userAccount: Principal) => {
+    const { id, displayName } = userAccount;
+    return (
+      <SelectOption key={id} value={id} description={displayName}>
+        {id}
+      </SelectOption>
+    );
+  });
+
   const onCloseModal = () => {
     hideModal();
     onClose && onClose();
@@ -79,6 +88,18 @@ export const TransferOwnership: React.FC<
     }
     setSelection(selection.toString());
     setIsOpen(false);
+  };
+
+  const customFilter = (_, value: string) => {
+    if (!value) {
+      return options;
+    }
+    const input = new RegExp(value, 'i');
+    return options?.filter(
+      (userAccount) =>
+        input.test(userAccount.props.value) ||
+        input.test(userAccount.props.description)
+    );
   };
 
   const onSubmitTransferOwnership = async () => {
@@ -196,15 +217,9 @@ export const TransferOwnership: React.FC<
             onSelect={onSelect}
             selections={selection}
             isCreatable
+            onFilter={customFilter}
           >
-            {userAccounts?.map((userAccount: Principal) => {
-              const { id, displayName } = userAccount;
-              return (
-                <SelectOption key={id} value={id} description={displayName}>
-                  {id}
-                </SelectOption>
-              );
-            })}
+            {options}
           </Select>
         </FormGroup>
       </Form>
