@@ -1,26 +1,36 @@
-import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
-import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import { useTranslation } from 'react-i18next';
+import { TopicDataArray } from "@app/modules/Metrics/Metrics.api";
 import {
   convertToSpecifiedByte,
   dateToChartValue,
   getLargestByteSize,
   shouldShowDate,
-} from '../../utils';
-import { TopicDataArray } from './fetchBytesData';
+} from "@app/modules/Metrics/utils";
+import {
+  Chart,
+  ChartAxis,
+  ChartGroup,
+  ChartLegend,
+  ChartLine,
+  ChartThemeColor,
+  ChartVoronoiContainer,
+} from "@patternfly/react-charts";
+import chart_color_blue_300 from "@patternfly/react-tokens/dist/js/chart_color_blue_300";
+import chart_color_orange_300 from "@patternfly/react-tokens/dist/js/chart_color_orange_300";
+import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 
-export type ChartData = {
+type ChartData = {
   color: string;
   line: TopicChartData[];
 };
 
-export type TopicChartData = {
+type TopicChartData = {
   name: string;
   x: string;
   y: number;
 };
 
-export type LegendData = {
+type LegendData = {
   name: string;
   symbol: {
     fill: string;
@@ -28,31 +38,79 @@ export type LegendData = {
   };
 };
 
-export function useBytesDataChart() {
+type TotalBytesChartProps = {
+  incomingTopicsData: TopicDataArray;
+  outgoingTopicsData: TopicDataArray;
+  timeDuration: number;
+  itemsPerRow: number;
+  width: number;
+};
+export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
+  incomingTopicsData,
+  outgoingTopicsData,
+  timeDuration,
+  itemsPerRow,
+  width,
+}) => {
   const { t } = useTranslation();
-  const incomingTopicArrayName = t('Total incoming bytes'); // name: "Total incoming bytes",
-  const outgoingTopicArrayName = t('Total outgoing bytes'); // name: "Total outgoing bytes",
 
-  function getChartData(
-    incomingTopicArray: TopicDataArray,
-    outgoingTopicArray: TopicDataArray,
-    timeDuration: number
-  ) {
-    return getChartProps(
-      incomingTopicArray,
-      outgoingTopicArray,
-      timeDuration,
-      incomingTopicArrayName,
-      outgoingTopicArrayName
-    );
-  }
+  const { chartData, legendData, largestByteSize } = getBytesChartData(
+    incomingTopicsData,
+    outgoingTopicsData,
+    timeDuration,
+    t("Total incoming bytes"),
+    t("Total outgoing bytes")
+  );
 
-  return {
-    getChartData,
-  };
-}
+  return (
+    <Chart
+      ariaTitle={t("metrics.total_bytes")}
+      containerComponent={
+        <ChartVoronoiContainer
+          labels={({ datum }) => `${datum.name}: ${datum.y}`}
+          constrainToVisibleArea
+        />
+      }
+      legendAllowWrap={true}
+      legendPosition="bottom-left"
+      legendComponent={
+        <ChartLegend data={legendData} itemsPerRow={itemsPerRow} />
+      }
+      height={300}
+      padding={{
+        bottom: 110,
+        left: 90,
+        right: 30,
+        top: 25,
+      }}
+      themeColor={ChartThemeColor.multiUnordered}
+      width={width}
+    >
+      <ChartAxis label={"\n" + "Time"} tickCount={6} />
+      <ChartAxis
+        dependentAxis
+        tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
+        tickCount={4}
+        minDomain={{ y: 0 }}
+      />
+      <ChartGroup>
+        {chartData.map((value, index) => (
+          <ChartLine
+            key={`chart-line-${index}`}
+            data={value.line}
+            style={{
+              data: {
+                stroke: value.color,
+              },
+            }}
+          />
+        ))}
+      </ChartGroup>
+    </Chart>
+  );
+};
 
-function getChartProps(
+export function getBytesChartData(
   incomingTopicArray: TopicDataArray,
   outgoingTopicArray: TopicDataArray,
   timeDuration: number,
