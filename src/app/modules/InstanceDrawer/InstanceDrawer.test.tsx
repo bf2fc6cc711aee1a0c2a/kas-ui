@@ -7,9 +7,10 @@ import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 import { MemoryRouter } from 'react-router-dom';
-import { InstanceDrawerTabs } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
 import { ModalContext } from '@rhoas/app-services-ui-shared';
 import { KasModalLoader } from '@app/modals';
+import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
+import { InstanceDrawerTab } from '@app/modules/InstanceDrawer/tabs';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
@@ -46,7 +47,7 @@ const setup = (
   isExpanded: boolean,
   mainToggle: boolean,
   onClose: () => void,
-  activeTab: InstanceDrawerTabs,
+  activeTab: InstanceDrawerTab,
   instance?: KafkaRequest
 ) => {
   return render(
@@ -61,21 +62,21 @@ const setup = (
         <Drawer isExpanded={true} onExpand={onExpand}>
           <DrawerContent
             panelContent={
-              <InstanceDrawer
-                isExpanded={isExpanded}
-                onClose={onClose}
+              <InstanceDrawerContextProvider
                 initialTab={activeTab}
-                instanceDetail={instance || instanceDetail}
-                isLoading={instanceDetail === undefined}
-                data-ouia-app-id='controlPlane-streams'
-                data-testId='mk--instance__drawer'
-                tokenEndPointUrl={
-                  'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
-                }
-                notRequiredDrawerContentBackground={true}
+                initialInstance={instance || instanceDetail}
+                initialNoInstances={true}
               >
-                <></>
-              </InstanceDrawer>
+                <InstanceDrawer
+                  data-ouia-app-id='controlPlane-streams'
+                  data-testId='mk--instance__drawer'
+                  tokenEndPointUrl={
+                    'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
+                  }
+                >
+                  <></>
+                </InstanceDrawer>
+              </InstanceDrawerContextProvider>
             }
           />
         </Drawer>
@@ -91,7 +92,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.DETAILS
+      InstanceDrawerTab.DETAILS
     );
     await waitFor(() =>
       expect(getByTestId('mk--instance__drawer')).toBeInTheDocument()
@@ -99,23 +100,24 @@ describe('Instance Drawer', () => {
   });
 
   it('should render loading if no instance is available', () => {
-    const instanceDetail = undefined;
     const { getByTestId, getByRole } = render(
       <MemoryRouter>
         <Drawer isExpanded={true} onExpand={jest.fn()}>
           <DrawerContent
             panelContent={
-              <InstanceDrawer
-                tokenEndPointUrl={
-                  'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
-                }
-                isExpanded={true}
-                isLoading={instanceDetail === undefined}
-                onClose={jest.fn()}
-                initialTab={InstanceDrawerTabs.DETAILS}
+              <InstanceDrawerContextProvider
+                initialTab={InstanceDrawerTab.DETAILS}
+                initialInstance={undefined}
+                initialNoInstances={false}
               >
-                <></>
-              </InstanceDrawer>
+                <InstanceDrawer
+                  tokenEndPointUrl={
+                    'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
+                  }
+                >
+                  <></>
+                </InstanceDrawer>
+              </InstanceDrawerContextProvider>
             }
           />
         </Drawer>
@@ -131,7 +133,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.DETAILS
+      InstanceDrawerTab.DETAILS
     );
 
     expect(getByTestId('mk--instance__drawer')).toBeInTheDocument();
@@ -145,7 +147,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.DETAILS
+      InstanceDrawerTab.DETAILS
     );
 
     const detailsButton = getByRole('button', { name: /Details/i });
@@ -167,7 +169,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.CONNECTION
+      InstanceDrawerTab.CONNECTION
     );
 
     const detailsButton = getByRole('button', { name: /Details/i });
@@ -188,7 +190,7 @@ describe('Instance Drawer', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.CONNECTION
+      InstanceDrawerTab.CONNECTION
     );
 
     const detailsButton = getByRole('button', { name: /Details/i });
@@ -215,7 +217,7 @@ describe('Drawer Details Tab', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.DETAILS
+      InstanceDrawerTab.DETAILS
     );
 
     expect(getByText('cloud_provider')).toBeInTheDocument();
@@ -238,7 +240,7 @@ describe('Drawer Connection Tab', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.CONNECTION
+      InstanceDrawerTab.CONNECTION
     );
     expect(
       getByText('drawer_resource_tab_body_description_1')
@@ -256,7 +258,7 @@ describe('Drawer Connection Tab', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.CONNECTION
+      InstanceDrawerTab.CONNECTION
     );
 
     const clipboardInput = getByRole('textbox', {
@@ -275,7 +277,7 @@ describe('Drawer Connection Tab', () => {
       true,
       false,
       jest.fn(),
-      InstanceDrawerTabs.CONNECTION,
+      InstanceDrawerTab.CONNECTION,
       instance
     );
     const clipboardInput = getByRole('textbox', {

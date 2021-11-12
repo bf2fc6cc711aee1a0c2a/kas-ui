@@ -4,53 +4,54 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import '@patternfly/react-styles/css/utilities/Spacing/spacing.css';
 import '@patternfly/react-styles/css/utilities/Alignment/alignment.css';
-import { MASDrawerProps, MASDrawer } from '@app/common';
-import { DetailsTabProps } from './DetailsTab';
+import { MASDrawer, MASDrawerProps } from '@app/common';
 import './InstanceDrawer.css';
 import {
   InstanceDrawerContent,
   InstanceDrawerContentProps,
 } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
+import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 
 export type InstanceDrawerProps = Omit<
   MASDrawerProps,
-  'drawerHeaderProps' | 'panelBodyContent' | '[data-ouia-app-id]'
+  | 'drawerHeaderProps'
+  | 'panelBodyContent'
+  | '[data-ouia-app-id]'
+  | 'isExpanded'
+  | 'isLoading'
+  | 'onClose'
+  | 'notRequiredDrawerContentBackground'
 > &
-  DetailsTabProps &
   InstanceDrawerContentProps;
 
 const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
-  initialTab,
-  onClose,
-  instanceDetail,
-  isExpanded,
-  isLoading,
   children,
   'data-ouia-app-id': dataOuiaAppId,
   tokenEndPointUrl,
-  notRequiredDrawerContentBackground,
 }) => {
   dayjs.extend(localizedFormat);
   const { t } = useTranslation();
+  const {
+    isInstanceDrawerOpen,
+    instanceDrawerInstance,
+    closeInstanceDrawer,
+    noInstances,
+  } = useInstanceDrawer();
 
   return (
     <MASDrawer
-      isExpanded={isExpanded}
-      isLoading={isLoading}
-      onClose={onClose}
+      isExpanded={isInstanceDrawerOpen}
+      isLoading={instanceDrawerInstance === undefined}
+      onClose={closeInstanceDrawer}
       panelBodyContent={
-        <InstanceDrawerContent
-          initialTab={initialTab}
-          instanceDetail={instanceDetail}
-          tokenEndPointUrl={tokenEndPointUrl}
-        />
+        <InstanceDrawerContent tokenEndPointUrl={tokenEndPointUrl} />
       }
       drawerHeaderProps={{
         text: { label: t('instance_name') },
-        title: { value: instanceDetail?.name, headingLevel: 'h1' },
+        title: { value: instanceDrawerInstance?.name, headingLevel: 'h1' },
       }}
       data-ouia-app-id={dataOuiaAppId}
-      notRequiredDrawerContentBackground={notRequiredDrawerContentBackground}
+      notRequiredDrawerContentBackground={noInstances}
     >
       {children}
     </MASDrawer>

@@ -1,8 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { StreamsTableView } from './StreamsTableView';
-import { render, screen, act } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import i18nForTest from '../../../../../../test-utils/i18n';
 import {
@@ -14,6 +13,8 @@ import {
   ModalContext,
 } from '@rhoas/app-services-ui-shared';
 import { KasModalLoader } from '@app/modals';
+import { StreamsTable } from '@app/modules/OpenshiftStreams/components';
+import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 
 const kafkaInstanceItems = [
   {
@@ -44,7 +45,7 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
   };
 });
 
-describe('<StreamsTableView/>', () => {
+describe('<StreamsTable/>', () => {
   const setup = (
     args: any,
     authValue = {
@@ -82,7 +83,9 @@ describe('<StreamsTableView/>', () => {
                     },
                   }}
                 >
-                  <StreamsTableView {...args} />
+                  <InstanceDrawerContextProvider>
+                    <StreamsTable {...args} />
+                  </InstanceDrawerContextProvider>
                 </AlertContext.Provider>
               </AuthContext.Provider>
             </ConfigContext.Provider>

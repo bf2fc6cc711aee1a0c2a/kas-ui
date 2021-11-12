@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { InstanceDrawer, InstanceDrawerProps } from './InstanceDrawer';
-import { useRootModalContext, KAFKA_MODAL_TYPES } from '@app/common';
+import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
+import { ModalType, useModal } from '@rhoas/app-services-ui-shared';
 
 export type InstanceDrawerConnectedProps = InstanceDrawerProps & {
   isOpenDeleteInstanceModal: boolean;
@@ -9,25 +10,23 @@ export type InstanceDrawerConnectedProps = InstanceDrawerProps & {
 };
 
 const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
-  isExpanded,
-  initialTab,
-  onClose,
   'data-ouia-app-id': dataOuiaAppId,
   tokenEndPointUrl,
   children,
-  instanceDetail,
-  isLoading,
   isOpenDeleteInstanceModal,
   setIsOpenDeleteInstanceModal,
   onDeleteInstance,
 }) => {
-  const { showModal } = useRootModalContext();
+  const { showModal } = useModal();
+  const { instanceDrawerInstance } = useInstanceDrawer();
 
   const showDeleteInstanceModal = () => {
-    showModal(KAFKA_MODAL_TYPES.DELETE_KAFKA_EXTERNALLY, {
-      selectedItemData: instanceDetail,
-      setIsOpenDeleteInstanceModal,
-      onDeleteInstance,
+    if (instanceDrawerInstance === undefined) {
+      throw new Error('instanceDrawerInstance is not set');
+    }
+    showModal(ModalType.KasDeleteInstance, {
+      kafka: instanceDrawerInstance,
+      onDelete: onDeleteInstance,
     });
   };
 
@@ -39,13 +38,8 @@ const InstanceDrawerConnected: React.FC<InstanceDrawerConnectedProps> = ({
 
   return (
     <InstanceDrawer
-      isExpanded={isExpanded}
-      initialTab={initialTab}
-      onClose={onClose}
       data-ouia-app-id={dataOuiaAppId}
       tokenEndPointUrl={tokenEndPointUrl}
-      isLoading={isLoading}
-      instanceDetail={instanceDetail}
     >
       {children}
     </InstanceDrawer>

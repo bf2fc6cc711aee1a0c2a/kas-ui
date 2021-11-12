@@ -8,9 +8,9 @@ import {
   ToolbarFilter,
   Tooltip,
 } from '@patternfly/react-core';
+import { FilterProps } from '@app/modules/OpenshiftStreams/components/TableFilters/types';
 import { cloudProviderOptions, KeyValueOptions } from '@app/utils';
-import { FilterProps } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/types';
-import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/hooks';
+import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/TableFilters/hooks';
 
 export type CloudProviderFilterProps = FilterProps;
 

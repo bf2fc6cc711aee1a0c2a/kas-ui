@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Alert,
+  AlertVariant,
+  Button,
   Form,
   FormGroup,
-  Select,
-  SelectVariant,
   Modal,
-  Button,
+  Select,
   SelectOption,
   SelectOptionObject,
-  AlertVariant,
-  ModalVariant,
-  Alert,
+  SelectVariant,
 } from '@patternfly/react-core';
 import {
-  KafkaRequest,
   Configuration,
   DefaultApi,
+  KafkaRequest,
   KafkaUpdateRequest,
 } from '@rhoas/kafka-management-sdk';
 import {
+  BaseModalProps,
   Principal,
+  useAlert,
   useAuth,
   useConfig,
-  useAlert,
 } from '@rhoas/app-services-ui-shared';
-import { isServiceApiError, ErrorCodes } from '@app/utils/error';
+import { ErrorCodes, isServiceApiError } from '@app/utils/error';
 import { useFederated } from '@app/contexts';
 
 export type TransferOwnershipProps = {
@@ -35,12 +35,9 @@ export type TransferOwnershipProps = {
   hideModal: () => void;
 };
 
-export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
-  kafka,
-  onClose,
-  hideModal,
-  refreshKafkas,
-}) => {
+export const TransferOwnership: React.FC<
+  TransferOwnershipProps & BaseModalProps
+> = ({ kafka, onClose, hideModal, refreshKafkas, variant, title }) => {
   const { t } = useTranslation();
   const { getAllUserAccounts } = useFederated() || {
     getAllUserAccounts: () => [],
@@ -54,9 +51,9 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
 
   //states
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selection, SetSelection] = useState();
+  const [selection, setSelection] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>();
-  const [errorCode, setErrorCode] = useState();
+  const [errorCode, setErrorCode] = useState<string | undefined>();
 
   const onCloseModal = () => {
     hideModal();
@@ -68,11 +65,11 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
   };
 
   const clearSelection = () => {
-    SetSelection(undefined);
+    setSelection(undefined);
     setIsOpen(false);
   };
 
-  const onSlect = (
+  const onSelect = (
     _,
     selection: string | SelectOptionObject,
     isPlaceholder: boolean | undefined
@@ -80,7 +77,7 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
     if (isPlaceholder) {
       clearSelection();
     }
-    SetSelection(selection);
+    setSelection(selection.toString());
     setIsOpen(false);
   };
 
@@ -155,10 +152,10 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
   return (
     <Modal
       id='manage-permissions-modal'
-      title={t('change_owner')}
+      title={title}
       isOpen={true}
       onClose={onCloseModal}
-      variant={ModalVariant.medium}
+      variant={variant}
       position='top'
       actions={[
         <Button
@@ -196,7 +193,7 @@ export const TransferOwnership: React.FC<TransferOwnershipProps> = ({
             createText={t('common.use')}
             menuAppendTo='parent'
             maxHeight={400}
-            onSelect={onSlect}
+            onSelect={onSelect}
             selections={selection}
             isCreatable
           >

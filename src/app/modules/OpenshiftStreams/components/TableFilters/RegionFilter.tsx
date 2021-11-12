@@ -1,7 +1,6 @@
-import { FilterProps } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/types';
+import { FilterProps } from '@app/modules/OpenshiftStreams/components/TableFilters/types';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/hooks';
 import {
   Select,
   SelectOption,
@@ -10,48 +9,40 @@ import {
   ToolbarFilter,
   Tooltip,
 } from '@patternfly/react-core';
-import { InstanceStatus, statusOptions, KeyValueOptions } from '@app/utils';
+import { cloudRegionOptions, KeyValueOptions } from '@app/utils';
+import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/TableFilters/hooks';
 
-export type StatusFilter = FilterProps;
+export type RegionFilterProps = FilterProps;
 
-export const StatusFilter: React.FunctionComponent<StatusFilter> = ({
+export const RegionFilter: React.FunctionComponent<RegionFilterProps> = ({
   getSelectionForFilter,
   onDeleteChip,
   onDeleteChipGroup,
+  removeFilterValue,
+  isDisabledSelectOption,
   isMaxFilter,
   filterSelected,
   updateFilter,
-  removeFilterValue,
-  isDisabledSelectOption,
 }) => {
   const { t } = useTranslation();
-
-  const statusFilterOptions = statusOptions
-    .filter(
-      (s) =>
-        s.value !== InstanceStatus.PREPARING &&
-        s.value !== InstanceStatus.DELETED
-    )
-    .map((status) => {
-      return { label: t(status.value), value: status.value, disabled: false };
-    });
+  const options = cloudRegionOptions.map((region) => {
+    return { label: t(region.value), value: region.value, disabled: false };
+  });
 
   return (
     <ToolbarFilter
-      chips={getSelectionForFilter('status')?.map((val) => t(val))}
-      deleteChip={(_category, chip) =>
-        onDeleteChip('status', chip, statusFilterOptions)
-      }
-      deleteChipGroup={() => onDeleteChipGroup('status')}
-      categoryName={t('status')}
-      showToolbarItem={filterSelected === 'status'}
+      chips={getSelectionForFilter('region')?.map((val) => t(val))}
+      deleteChip={(_category, chip) => onDeleteChip('region', chip, options)}
+      deleteChipGroup={() => onDeleteChipGroup('region')}
+      categoryName={t('region')}
+      showToolbarItem={filterSelected === 'region'}
     >
-      <StatusSelect
+      <RegionSelect
         updateFilter={updateFilter}
         isMaxFilter={isMaxFilter}
         removeFilterValue={removeFilterValue}
         isDisabledSelectOption={isDisabledSelectOption}
-        statusFilterOptions={statusFilterOptions}
+        options={options}
         getSelectionForFilter={getSelectionForFilter}
         filterSelected={filterSelected}
       />
@@ -59,7 +50,7 @@ export const StatusFilter: React.FunctionComponent<StatusFilter> = ({
   );
 };
 
-type StatusSelectProps = Pick<
+type RegionSelectProps = Pick<
   FilterProps,
   | 'updateFilter'
   | 'isMaxFilter'
@@ -68,22 +59,21 @@ type StatusSelectProps = Pick<
   | 'getSelectionForFilter'
   | 'filterSelected'
 > & {
-  statusFilterOptions: KeyValueOptions[];
+  options: KeyValueOptions[];
 };
 
-const StatusSelect: React.FunctionComponent<StatusSelectProps> = ({
+const RegionSelect: React.FunctionComponent<RegionSelectProps> = ({
   updateFilter,
   isMaxFilter,
   removeFilterValue,
   isDisabledSelectOption,
-  statusFilterOptions,
+  options,
   getSelectionForFilter,
   filterSelected,
 }) => {
   const { t } = useTranslation();
-  const tooltipContent = useTooltipContent(isMaxFilter);
   const selectRef = useRef<Select>(null);
-
+  const tooltipContent = useTooltipContent(isMaxFilter);
   const [expanded, setExpanded] = useState(false);
 
   const FilterTooltip: React.FunctionComponent = () => {
@@ -110,40 +100,41 @@ const StatusSelect: React.FunctionComponent<StatusSelectProps> = ({
   ) => {
     if (isPlaceholder) clear();
     updateFilter(
-      'status',
+      'region',
       { value: selection.toString(), isExact: true },
       true
     );
+    options.length < 2 && setExpanded(false);
   };
 
   const clear = () => {
-    removeFilterValue('status');
+    removeFilterValue('region');
     setExpanded(false);
   };
-  if (filterSelected === 'status') {
+
+  if (filterSelected === 'region') {
     return (
       <Select
-        id='status-select'
+        id='region-select'
         variant={SelectVariant.checkbox}
-        aria-label='Select status'
+        aria-label='Select region'
         onToggle={onToggle}
-        selections={getSelectionForFilter('status')}
+        selections={getSelectionForFilter('region')}
         isOpen={expanded}
         onSelect={onSelect}
-        placeholderText={t('filter_by_status')}
+        placeholderText={t('filter_by_region')}
         className='select-custom-width'
         ref={selectRef}
       >
-        {statusFilterOptions.map((option, index) => {
+        {options.map((option, index) => {
           const isDisabled = () => {
             if (option.disabled) {
               return true;
             }
             return (
-              isMaxFilter && isDisabledSelectOption('status', option.value)
+              isMaxFilter && isDisabledSelectOption('region', option.value)
             );
           };
-
           return (
             <SelectOption
               isDisabled={isDisabled()}

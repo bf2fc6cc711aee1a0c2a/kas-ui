@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
-import { FilterType } from './StreamsTableView';
 import { InstanceStatus, MAX_FILTER_LIMIT } from '@app/utils';
 import './StreamsToolbar.css';
-import { StreamsFilterGroup } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/StreamsFilterGroup';
+import { StreamsFilterGroup } from '@app/modules/OpenshiftStreams/components/TableFilters/StreamsFilterGroup';
+import { FilterType } from '@app/modules/OpenshiftStreams/components';
 
 export type StreamsToolbarProps = {
   filterSelected?: string;
@@ -122,7 +122,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   return (
     <MASToolbar
       toolbarProps={{
-        id: 'instance-toolbar',
+        id: 'instanceDrawerInstance-toolbar',
         clearAllFilters: onClear,
         collapseListedFiltersBreakpoint: 'md',
         inset: { xl: 'insetLg' },

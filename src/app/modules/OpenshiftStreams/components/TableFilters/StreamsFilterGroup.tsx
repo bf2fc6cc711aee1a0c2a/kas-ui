@@ -1,16 +1,16 @@
+import React from 'react';
+import { ToolbarChip, ToolbarGroup } from '@patternfly/react-core';
+import { CloudProviderFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/CloudProviderFilter';
+import { NameFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/NameFilter';
+import { OwnerFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/OwnerFilter';
+import { RegionFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/RegionFilter';
+import { FilterSelect } from '@app/modules/OpenshiftStreams/components/TableFilters/FilterSelect';
+import { StatusFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/StatusFilter';
+import { KeyValueOptions } from '@app/utils';
 import {
   FilterType,
   FilterValue,
 } from '@app/modules/OpenshiftStreams/components';
-import React from 'react';
-import { ToolbarChip, ToolbarGroup } from '@patternfly/react-core';
-import { CloudProviderFilter } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/CloudProviderFilter';
-import { NameFilter } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/NameFilter';
-import { OwnerFilter } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/OwnerFilter';
-import { RegionFilter } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/RegionFilter';
-import { FilterSelect } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/FilterSelect';
-import { StatusFilter } from '@app/modules/OpenshiftStreams/components/StreamsTableView/Filters/StatusFilter';
-import { KeyValueOptions } from '@app/utils';
 
 export type StreamsFilterGroupProps = {
   isMaxFilter: boolean;

@@ -1,0 +1,60 @@
+import React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import {
+  QuickStartContext,
+  QuickStartContextValues,
+} from '@patternfly/quickstarts';
+import { Button, ButtonVariant, PageSection } from '@patternfly/react-core';
+import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
+
+export type KafkaEmptyStateProps = {
+  handleCreateInstanceModal: () => void;
+};
+export const KafkaEmptyState: React.FunctionComponent<KafkaEmptyStateProps> = ({
+  handleCreateInstanceModal,
+}) => {
+  const { t } = useTranslation();
+  const qsContext: QuickStartContextValues =
+    React.useContext(QuickStartContext);
+  return (
+    <PageSection padding={{ default: 'noPadding' }} isFilled>
+      <MASEmptyState
+        emptyStateProps={{
+          variant: MASEmptyStateVariant.NoItems,
+        }}
+        emptyStateBodyProps={{
+          body: (
+            <>
+              <Trans
+                i18nKey='create_a_kafka_instance_to_get_started'
+                components={[
+                  <Button
+                    variant={ButtonVariant.link}
+                    isSmall
+                    isInline
+                    key='btn-quick-start'
+                    onClick={() =>
+                      qsContext.setActiveQuickStart &&
+                      qsContext.setActiveQuickStart('getting-started')
+                    }
+                  />,
+                ]}
+              />
+            </>
+          ),
+        }}
+        titleProps={{ title: t('no_kafka_instances_yet') }}
+      >
+        <Button
+          data-testid='emptyStateStreams-buttonCreateKafka'
+          variant={ButtonVariant.primary}
+          onClick={() =>
+            handleCreateInstanceModal && handleCreateInstanceModal()
+          }
+        >
+          {t('create_kafka_instance')}
+        </Button>
+      </MASEmptyState>
+    </PageSection>
+  );
+};

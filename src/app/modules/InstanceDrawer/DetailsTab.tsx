@@ -10,17 +10,13 @@ import {
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import dayjs from 'dayjs';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
+import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 
-export type DetailsTabProps = {
-  instanceDetail?: KafkaRequest;
-};
-
-export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({
-  instanceDetail,
-}: DetailsTabProps) => {
+export const DetailsTab: React.FunctionComponent = () => {
+  const { instanceDrawerInstance } = useInstanceDrawer();
   dayjs.extend(localizedFormat);
   const { t } = useTranslation();
-  const { id, owner, created_at, updated_at } = instanceDetail || {};
+  const { id, owner, created_at, updated_at } = instanceDrawerInstance || {};
 
   const renderTextListItem = (title: string, value?: string) =>
     value && (
@@ -35,7 +31,10 @@ export const DetailsTab: React.FunctionComponent<DetailsTabProps> = ({
       <TextContent>
         <TextList component={TextListVariants.dl}>
           {renderTextListItem(t('cloud_provider'), t('amazon_web_services'))}
-          {renderTextListItem(t('region'), t(instanceDetail?.region || ''))}
+          {renderTextListItem(
+            t('region'),
+            t(instanceDrawerInstance?.region || '')
+          )}
           {renderTextListItem(t('id'), id)}
           {renderTextListItem(t('owner'), owner)}
           {renderTextListItem(t('created'), dayjs(created_at).format('LLLL'))}
