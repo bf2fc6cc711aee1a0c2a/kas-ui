@@ -477,7 +477,6 @@ const OpenshiftStreams: React.FunctionComponent<OpenShiftStreamsProps> = ({
               {t('create_kafka_instance')}
             </Button>
           </MASEmptyState>
-          )
         </PageSection>
       );
     } else if (kafkaInstanceItems && isDisplayKafkaEmptyState !== undefined) {
