@@ -155,6 +155,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                       <TotalBytesChart
                         incomingTopicsData={incomingTopicsData}
                         outgoingTopicsData={outgoingTopicsData}
+                        selectedTopic={selectedTopic}
                         timeDuration={timeDuration}
                         itemsPerRow={itemsPerRow}
                         width={width || 0}
@@ -191,6 +192,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                       <TotalBytesChart
                         incomingTopicsData={incomingTopicsData}
                         outgoingTopicsData={outgoingTopicsData}
+                        selectedTopic={selectedTopic}
                         timeDuration={timeDuration}
                         itemsPerRow={itemsPerRow}
                         width={width || 0}

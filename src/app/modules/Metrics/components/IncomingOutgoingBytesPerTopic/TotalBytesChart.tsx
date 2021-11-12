@@ -41,6 +41,7 @@ type LegendData = {
 type TotalBytesChartProps = {
   incomingTopicsData: TopicDataArray;
   outgoingTopicsData: TopicDataArray;
+  selectedTopic: string | undefined;
   timeDuration: number;
   itemsPerRow: number;
   width: number;
@@ -48,6 +49,7 @@ type TotalBytesChartProps = {
 export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
   incomingTopicsData,
   outgoingTopicsData,
+  selectedTopic,
   timeDuration,
   itemsPerRow,
   width,
@@ -58,8 +60,8 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
     incomingTopicsData,
     outgoingTopicsData,
     timeDuration,
-    t('Total incoming bytes'),
-    t('Total outgoing bytes')
+    t('{{topic}} incoming bytes', { topic: selectedTopic || t('Total') }),
+    t('{{topic}} outgoing bytes', { topic: selectedTopic || t('Total') })
   );
 
   return (
