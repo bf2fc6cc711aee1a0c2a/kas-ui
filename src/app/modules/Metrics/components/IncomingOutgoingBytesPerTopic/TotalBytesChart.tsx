@@ -1,10 +1,10 @@
-import { TopicDataArray } from "@app/modules/Metrics/Metrics.api";
+import { TopicDataArray } from '@app/modules/Metrics/Metrics.api';
 import {
   convertToSpecifiedByte,
   dateToChartValue,
   getLargestByteSize,
   shouldShowDate,
-} from "@app/modules/Metrics/utils";
+} from '@app/modules/Metrics/utils';
 import {
   Chart,
   ChartAxis,
@@ -13,11 +13,11 @@ import {
   ChartLine,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from "@patternfly/react-charts";
-import chart_color_blue_300 from "@patternfly/react-tokens/dist/js/chart_color_blue_300";
-import chart_color_orange_300 from "@patternfly/react-tokens/dist/js/chart_color_orange_300";
-import React, { FunctionComponent } from "react";
-import { useTranslation } from "react-i18next";
+} from '@patternfly/react-charts';
+import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
+import React, { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type ChartData = {
   color: string;
@@ -58,13 +58,13 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
     incomingTopicsData,
     outgoingTopicsData,
     timeDuration,
-    t("Total incoming bytes"),
-    t("Total outgoing bytes")
+    t('Total incoming bytes'),
+    t('Total outgoing bytes')
   );
 
   return (
     <Chart
-      ariaTitle={t("metrics.total_bytes")}
+      ariaTitle={t('metrics.total_bytes')}
       containerComponent={
         <ChartVoronoiContainer
           labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -72,7 +72,7 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
         />
       }
       legendAllowWrap={true}
-      legendPosition="bottom-left"
+      legendPosition='bottom-left'
       legendComponent={
         <ChartLegend data={legendData} itemsPerRow={itemsPerRow} />
       }
@@ -86,7 +86,7 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
       themeColor={ChartThemeColor.multiUnordered}
       width={width}
     >
-      <ChartAxis label={"\n" + "Time"} tickCount={6} />
+      <ChartAxis label={'\n' + 'Time'} tickCount={6} />
       <ChartAxis
         dependentAxis
         tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}

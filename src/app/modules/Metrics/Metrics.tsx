@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Grid, GridItem, PageSection } from "@patternfly/react-core";
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Grid, GridItem, PageSection } from '@patternfly/react-core';
 import {
   UsedDiskSpaceChart,
   IncomingOutgoingBytesPerTopic,
-} from "@app/modules/Metrics/components";
-import { ChartEmptyState } from "./components/ChartEmptyState";
-import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
-import { fetchBytesData, TopicDataArray } from "./Metrics.api";
+} from '@app/modules/Metrics/components';
+import { ChartEmptyState } from './components/ChartEmptyState';
+import { useAuth, useConfig } from '@rhoas/app-services-ui-shared';
+import { fetchBytesData, TopicDataArray } from './Metrics.api';
 
 export interface MetricsProps {
   kafkaId: string;
@@ -96,8 +96,8 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
         </Grid>
       ) : (
         <ChartEmptyState
-          title={t("metrics.empty_state_no_data_title")}
-          body={t("metrics.empty_state_no_data_body")}
+          title={t('metrics.empty_state_no_data_title')}
+          body={t('metrics.empty_state_no_data_body')}
           noData
         />
       )}
