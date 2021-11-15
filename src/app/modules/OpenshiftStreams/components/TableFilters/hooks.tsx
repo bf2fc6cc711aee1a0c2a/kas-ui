@@ -9,5 +9,8 @@ export const useTooltipContent = (
   if (isMaxFilter) {
     return <div>{t('max_filter_message')}</div>;
   }
+  if (fieldName === 'owner') {
+    return <div>{t('owner_field_invalid_message', { name: fieldName })}</div>;
+  }
   return <div>{t('input_field_invalid_message', { name: fieldName })}</div>;
 };
