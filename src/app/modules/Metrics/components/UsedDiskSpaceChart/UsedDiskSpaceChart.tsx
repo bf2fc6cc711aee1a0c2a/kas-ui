@@ -10,8 +10,6 @@ import {
   CardTitle,
   CardBody,
   Spinner,
-  CardHeader,
-  Divider,
 } from '@patternfly/react-core';
 import {
   Chart,

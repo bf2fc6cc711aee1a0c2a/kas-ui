@@ -5,8 +5,6 @@ import {
   CardHeader,
   CardTitle,
   Divider,
-  Level,
-  LevelItem,
   Toolbar,
   ToolbarContent,
 } from '@patternfly/react-core';
