@@ -62,7 +62,7 @@ export const InstanceDrawerContent: React.FunctionComponent<InstanceDrawerConten
               externalServer={getExternalServer()}
               isKafkaPending={isKafkaPending}
               tokenEndPointUrl={tokenEndPointUrl}
-              instanceId={instanceDetail?.id}
+              instanceId={instanceDrawerInstance?.id}
             />
           </Tab>
         </Tabs>

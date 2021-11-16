@@ -83,7 +83,7 @@ const setup = (
           </Drawer>
           <KasModalLoader />
         </ModalContext.Provider>
-      </BasenameContext.Provider> 
+      </BasenameContext.Provider>
     </MemoryRouter>
   );
 };
