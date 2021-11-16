@@ -122,6 +122,7 @@
   "curr_page": "Current page",
   "max_filter_message": "Maximum number of filters reached. Clear a filter before adding another.",
   "input_field_invalid_message": "Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).",
+  "owner_field_invalid_message": "Red Hat Login ID cannot contain spaces, national characters or the following special characters \" $ ^ < > | + % / ; : , * = ~ # ( )",
   "filter_by_name_lower": "Filter by name",
   "filter_by_cloud_provider": "Filter by cloud provider",
   "filter_by_region": "Filter by region",

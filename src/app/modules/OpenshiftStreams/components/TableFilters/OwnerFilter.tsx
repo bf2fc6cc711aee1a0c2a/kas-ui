@@ -30,9 +30,7 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
   const [valid, setValid] = useState<boolean>(true);
 
   const validate = (value?: string) => {
-    return value
-      ? /^([a-zA-Z0-9-_%]*[a-zA-Z0-9-_%])?$/.test(value.trim())
-      : true;
+    return value ? !/["$^<>|+%/;:,\s*=~#()]/.test(value.trim()) : true;
   };
 
   const onFilter = () => {
