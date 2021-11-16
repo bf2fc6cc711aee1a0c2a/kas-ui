@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { OwnerSelect } from './OwnerSelect';
+import { useGetAllUsers } from './FilterOwners';
 import {
-  Alert,
-  AlertVariant,
-  Button,
   Form,
   FormGroup,
+  Button,
+  AlertVariant,
+  Alert,
   Modal,
-  Select,
-  SelectOption,
-  SelectOptionObject,
-  SelectVariant,
 } from '@patternfly/react-core';
 import {
   Configuration,
@@ -20,13 +18,11 @@ import {
 } from '@rhoas/kafka-management-sdk';
 import {
   BaseModalProps,
-  Principal,
   useAlert,
   useAuth,
   useConfig,
 } from '@rhoas/app-services-ui-shared';
 import { ErrorCodes, isServiceApiError } from '@app/utils/error';
-import { useFederated } from '@app/contexts';
 
 export type TransferOwnershipProps = {
   kafka: KafkaRequest;
@@ -39,10 +35,6 @@ export const TransferOwnership: React.FC<
   TransferOwnershipProps & BaseModalProps
 > = ({ kafka, onClose, hideModal, refreshKafkas, variant, title }) => {
   const { t } = useTranslation();
-  const { getAllUserAccounts } = useFederated() || {
-    getAllUserAccounts: () => [],
-  };
-  const userAccounts = getAllUserAccounts && getAllUserAccounts();
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
@@ -50,7 +42,6 @@ export const TransferOwnership: React.FC<
   const { addAlert } = useAlert() || { addAlert: () => '' };
 
   //states
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selection, setSelection] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>();
   const [errorCode, setErrorCode] = useState<string | undefined>();
@@ -58,27 +49,6 @@ export const TransferOwnership: React.FC<
   const onCloseModal = () => {
     hideModal();
     onClose && onClose();
-  };
-
-  const onToggle = (isExpanded: boolean) => {
-    setIsOpen(isExpanded);
-  };
-
-  const clearSelection = () => {
-    setSelection(undefined);
-    setIsOpen(false);
-  };
-
-  const onSelect = (
-    _,
-    selection: string | SelectOptionObject,
-    isPlaceholder: boolean | undefined
-  ) => {
-    if (isPlaceholder) {
-      clearSelection();
-    }
-    setSelection(selection.toString());
-    setIsOpen(false);
   };
 
   const onSubmitTransferOwnership = async () => {
@@ -184,28 +154,11 @@ export const TransferOwnership: React.FC<
           {kafka?.owner}
         </FormGroup>
         <FormGroup fieldId='New-owner-name' label={t('new_owner_name')}>
-          <Select
-            id='manage-permissions-owner-select'
-            variant={SelectVariant.typeahead}
-            onToggle={onToggle}
-            isOpen={isOpen}
-            placeholderText={t('select_user_account')}
-            createText={t('common.use')}
-            menuAppendTo='parent'
-            maxHeight={400}
-            onSelect={onSelect}
-            selections={selection}
-            isCreatable
-          >
-            {userAccounts?.map((userAccount: Principal) => {
-              const { id, displayName } = userAccount;
-              return (
-                <SelectOption key={id} value={id} description={displayName}>
-                  {id}
-                </SelectOption>
-              );
-            })}
-          </Select>
+          <OwnerSelect
+            selection={selection}
+            setSelection={setSelection}
+            allUsers={useGetAllUsers()}
+          />
         </FormGroup>
       </Form>
     </Modal>
