@@ -1,6 +1,8 @@
 import React from 'react';
 import {
   Button,
+  CardActions,
+  CardHeader,
   CardTitle,
   Divider,
   Level,
@@ -24,11 +26,9 @@ export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> 
   ({ title, isDisabled, onSetTimeDuration, onSetTimeInterval, onRefresh }) => {
     return (
       <>
-        <Level>
-          <LevelItem>
-            <CardTitle component='h2'>{title}</CardTitle>
-          </LevelItem>
-          <LevelItem>
+        <CardHeader>
+          <CardTitle component='h2'>{title}</CardTitle>
+          <CardActions>
             <Toolbar>
               <ToolbarContent>
                 <FilterByTime
@@ -42,8 +42,8 @@ export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> 
                 </Button>
               </ToolbarContent>
             </Toolbar>
-          </LevelItem>
-        </Level>
+          </CardActions>
+        </CardHeader>
         <Divider />
       </>
     );

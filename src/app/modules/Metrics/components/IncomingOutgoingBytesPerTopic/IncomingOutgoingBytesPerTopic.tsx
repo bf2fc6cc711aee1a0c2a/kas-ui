@@ -92,7 +92,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             case isLoading:
               return (
                 <>
-                  <CardTitle component='h2'>
+                  <CardTitle component='h3'>
                     {t('metrics.total_bytes')}{' '}
                     <ChartPopover
                       title={t('metrics.total_bytes')}
@@ -106,7 +106,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                   </CardBody>
                   <Divider />
 
-                  <CardTitle component='h2'>
+                  <CardTitle component='h3'>
                     {t('metrics.topic_partition_size')}
                   </CardTitle>
                   <CardBody>
@@ -143,7 +143,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             case selectedTopic !== undefined:
               return (
                 <>
-                  <CardTitle component='h2'>
+                  <CardTitle component='h3'>
                     {t('metrics.total_bytes')}{' '}
                     <ChartPopover
                       title={t('metrics.total_bytes')}
@@ -163,7 +163,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                     </div>
                   </CardBody>
 
-                  <CardTitle component='h2'>
+                  <CardTitle component='h3'>
                     {t('metrics.topic_partition_size')}
                   </CardTitle>
                   <CardBody>
@@ -180,7 +180,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             default:
               return (
                 <>
-                  <CardTitle component='h2'>
+                  <CardTitle component='h3'>
                     {t('metrics.total_bytes')}{' '}
                     <ChartPopover
                       title={t('metrics.total_bytes')}
@@ -201,7 +201,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                     <Divider />
 
                     <Card>
-                      <CardTitle component='h2'>
+                      <CardTitle component='h3'>
                         {t('metrics.topic_partition_size')}
                       </CardTitle>
                       <CardBody>

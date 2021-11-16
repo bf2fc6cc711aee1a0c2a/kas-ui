@@ -1,6 +1,8 @@
 import React from 'react';
 import {
   Button,
+  CardActions,
+  CardHeader,
   CardTitle,
   Divider,
   Level,
@@ -36,11 +38,9 @@ export const TopicMetricsToolbar: FunctionComponent<TopicMetricsToolbarProps> =
   }) => {
     return (
       <>
-        <Level>
-          <LevelItem>
-            <CardTitle component='h2'>{title}</CardTitle>
-          </LevelItem>
-          <LevelItem>
+        <CardHeader>
+          <CardTitle component='h2'>{title}</CardTitle>
+          <CardActions>
             <Toolbar>
               <ToolbarContent>
                 <FilterByTopic
@@ -60,8 +60,8 @@ export const TopicMetricsToolbar: FunctionComponent<TopicMetricsToolbarProps> =
                 </Button>
               </ToolbarContent>
             </Toolbar>
-          </LevelItem>
-        </Level>
+          </CardActions>
+        </CardHeader>
         <Divider />
       </>
     );

@@ -10,6 +10,8 @@ import {
   CardTitle,
   CardBody,
   Spinner,
+  CardHeader,
+  Divider,
 } from '@patternfly/react-core';
 import {
   Chart,
@@ -259,7 +261,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         isDisabled={metricsDataUnavailable}
         onRefresh={onRefreshKafkaToolbar}
       />
-      <CardTitle component='h2'>
+      <CardTitle component='h3'>
         {t('metrics.used_disk_space')}{' '}
         <ChartPopover
           title={t('metrics.used_disk_space')}
