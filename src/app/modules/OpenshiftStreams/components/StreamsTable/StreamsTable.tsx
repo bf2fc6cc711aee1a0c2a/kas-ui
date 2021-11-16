@@ -211,7 +211,6 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         id: 'view-instanceDrawerInstance',
         ['data-testid']: 'tableStreams-actionDetails',
         onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
-          isUserSameAsLoggedIn &&
           onSelectKebabDropdownOption(
             event,
             originalData,
@@ -228,7 +227,6 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         id: 'connect-instanceDrawerInstance',
         ['data-testid']: 'tableStreams-actionConnection',
         onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
-          isUserSameAsLoggedIn &&
           onSelectKebabDropdownOption(
             event,
             originalData,

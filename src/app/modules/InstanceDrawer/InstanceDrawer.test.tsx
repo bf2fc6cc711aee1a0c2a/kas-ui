@@ -7,7 +7,7 @@ import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 import { MemoryRouter } from 'react-router-dom';
-import { ModalContext } from '@rhoas/app-services-ui-shared';
+import { ModalContext, BasenameContext } from '@rhoas/app-services-ui-shared';
 import { KasModalLoader } from '@app/modals';
 import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 import { InstanceDrawerTab } from '@app/modules/InstanceDrawer/tabs';
@@ -52,36 +52,38 @@ const setup = (
 ) => {
   return render(
     <MemoryRouter>
-      <ModalContext.Provider
-        value={{
-          registerModals: () => '',
-          showModal: () => '',
-          hideModal: () => '',
-        }}
-      >
-        <Drawer isExpanded={true} onExpand={onExpand}>
-          <DrawerContent
-            panelContent={
-              <InstanceDrawerContextProvider
-                initialTab={activeTab}
-                initialInstance={instance || instanceDetail}
-                initialNoInstances={true}
-              >
-                <InstanceDrawer
-                  data-ouia-app-id='controlPlane-streams'
-                  data-testId='mk--instance__drawer'
-                  tokenEndPointUrl={
-                    'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
-                  }
+      <BasenameContext.Provider value={{ getBasename: () => '' }}>
+        <ModalContext.Provider
+          value={{
+            registerModals: () => '',
+            showModal: () => '',
+            hideModal: () => '',
+          }}
+        >
+          <Drawer isExpanded={true} onExpand={onExpand}>
+            <DrawerContent
+              panelContent={
+                <InstanceDrawerContextProvider
+                  initialTab={activeTab}
+                  initialInstance={instance || instanceDetail}
+                  initialNoInstances={true}
                 >
-                  <></>
-                </InstanceDrawer>
-              </InstanceDrawerContextProvider>
-            }
-          />
-        </Drawer>
-        <KasModalLoader />
-      </ModalContext.Provider>
+                  <InstanceDrawer
+                    data-ouia-app-id='controlPlane-streams'
+                    data-testId='mk--instance__drawer'
+                    tokenEndPointUrl={
+                      'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
+                    }
+                  >
+                    <></>
+                  </InstanceDrawer>
+                </InstanceDrawerContextProvider>
+              }
+            />
+          </Drawer>
+          <KasModalLoader />
+        </ModalContext.Provider>
+      </BasenameContext.Provider>
     </MemoryRouter>
   );
 };

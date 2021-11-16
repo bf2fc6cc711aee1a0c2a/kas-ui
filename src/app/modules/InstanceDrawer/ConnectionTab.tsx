@@ -13,18 +13,24 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
-import { ModalType, useModal } from '@rhoas/app-services-ui-shared';
+import {
+  useBasename,
+  ModalType,
+  useModal,
+} from '@rhoas/app-services-ui-shared';
 
 export type ConnectionTabProps = {
   externalServer?: string;
   isKafkaPending?: boolean;
   tokenEndPointUrl: string;
+  instanceId: string | undefined;
 };
 
 export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   externalServer,
   isKafkaPending,
   tokenEndPointUrl,
+  instanceId,
 }: ConnectionTabProps) => {
   const { t } = useTranslation();
   const { showModal } = useModal<ModalType.KasCreateServiceAccount>();
@@ -32,6 +38,8 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   const handleCreateServiceAccountModal = () => {
     showModal(ModalType.KasCreateServiceAccount, {});
   };
+  const { getBasename } = useBasename() || {};
+  const basename = getBasename && getBasename();
 
   return (
     <div className='mas--details__drawer--tab-content'>
@@ -76,6 +84,20 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
       >
         {t('serviceAccount.create_service_account')}
       </Button>
+      <TextContent className='pf-u-pt-sm'>
+        <Text component={TextVariants.small}>
+          {t('serviceAccount.current_instance')}{' '}
+          <Link
+            to={{
+              pathname: `${basename}/${instanceId}`,
+              search: '?activeTab=4',
+            }}
+          >
+            {t('serviceAccount.access_tab')}
+          </Link>{' '}
+          {t('serviceAccount.alter_allow')}.
+        </Text>
+      </TextContent>
       <TextContent className='pf-u-pb-sm'>
         <Text component={TextVariants.h3} className='pf-u-mt-xl'>
           {t('common.authentication_method')}
