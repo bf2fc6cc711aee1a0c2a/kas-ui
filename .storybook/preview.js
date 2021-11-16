@@ -27,6 +27,19 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  backgrounds: {
+    default: 'Background color 200',
+    values: [
+      {
+        name: 'Background color 100',
+        value: '#ffffff',
+      },
+      {
+        name: 'Background color 200',
+        value: 'var(--pf-global--BackgroundColor--200)',
+      },
+    ],
+  },
 };
 
 export const decorators = [

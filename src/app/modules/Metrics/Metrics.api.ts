@@ -1,37 +1,84 @@
+import { TopicsApi } from "@rhoas/kafka-instance-sdk";
 import {
   Configuration,
   ConfigurationParameters,
   DefaultApi,
-} from '@rhoas/kafka-management-sdk';
+  RangeQuery,
+} from "@rhoas/kafka-management-sdk";
 
-export type TopicDataArray = { timestamp: number; bytes: number[] }[];
+export type BasicApiConfigurationParameters = Pick<
+  ConfigurationParameters,
+  "accessToken" | "basePath"
+>;
 
-type FetchBytesDataProps = {
+type FetchMetricsAndTopicsProps = FetchMetricsProps;
+
+export const fetchMetricsAndTopics = async (
+  props: FetchMetricsAndTopicsProps
+) => {
+  const [kafkaTopics, metrics] = await Promise.all([
+    fetchKafkaTopis(props),
+    fetchMetrics(props),
+  ]);
+  const {
+    topics: metricsTopics,
+    bytesIncoming,
+    bytesOutgoing,
+    bytesPerPartition,
+  } = metrics;
+  return {
+    kafkaTopics,
+    metricsTopics,
+    bytesIncoming,
+    bytesOutgoing,
+    bytesPerPartition,
+  };
+};
+
+export const fetchKafkaTopis = async ({
+  accessToken,
+  basePath,
+}: BasicApiConfigurationParameters): Promise<string[]> => {
+  const api = new TopicsApi(
+    new Configuration({
+      accessToken,
+      basePath,
+    })
+  );
+  const response = await api.getTopics(
+    undefined,
+    100,
+    100,
+    undefined,
+    undefined,
+    undefined,
+    undefined
+  );
+  return (response.data.items || []).map((t) => t.name!);
+};
+
+export type TotalBytesMetrics = Map<string, number>;
+export type PartitionBytesMetric = Map<string, TotalBytesMetrics>;
+type FetchMetricsProps = {
   kafkaID: string;
   timeDuration: number;
   timeInterval: number;
   selectedTopic: string | undefined;
-} & Pick<ConfigurationParameters, 'accessToken' | 'basePath'>;
-
-type FetchBytesDataReturnValue = {
-  topicList: string[];
-  outgoingTopics: TopicDataArray;
-  incomingTopics: TopicDataArray;
+} & BasicApiConfigurationParameters;
+type FetchMetricsReturnValue = {
+  topics: string[];
+  bytesOutgoing: TotalBytesMetrics;
+  bytesIncoming: TotalBytesMetrics;
+  bytesPerPartition: PartitionBytesMetric;
 };
-
-export async function fetchBytesData({
+export async function fetchMetrics({
   accessToken,
   basePath,
   kafkaID,
   timeDuration,
   timeInterval,
   selectedTopic,
-}: FetchBytesDataProps): Promise<FetchBytesDataReturnValue> {
-  const topicList = new Set<string>();
-  const incomingTopics = new Map<number, number[]>();
-  const outgoingTopics = new Map<number, number[]>();
-
-  // try {
+}: FetchMetricsProps): Promise<FetchMetricsReturnValue> {
   const apisService = new DefaultApi(
     new Configuration({
       accessToken,
@@ -39,185 +86,81 @@ export async function fetchBytesData({
     })
   );
 
-  const data = await apisService.getMetricsByRangeQuery(
+  const response = await apisService.getMetricsByRangeQuery(
     kafkaID,
     timeDuration * 60,
     timeInterval * 60,
     [
-      'kafka_server_brokertopicmetrics_bytes_in_total',
-      'kafka_server_brokertopicmetrics_bytes_out_total',
+      "kafka_server_brokertopicmetrics_bytes_in_total",
+      "kafka_server_brokertopicmetrics_bytes_out_total",
+      "kafka_log_log_size",
     ]
   );
 
-  data.data.items?.forEach((item) => {
-    const labels = item.metric;
-    if (labels === undefined) {
-      throw new Error('item.metric cannot be undefined');
-    }
-    if (item.values === undefined) {
-      throw new Error('item.values cannot be undefined');
-    }
-
-    if (
-      labels['topic'] !== '__strimzi_canary' &&
-      labels['topic'] !== '__consumer_offsets' &&
-      labels['topic']
-    ) {
-      topicList.add(labels['topic']);
-    }
-
-    const isSelectedItem =
-      selectedTopic !== undefined
-        ? labels['topic'] !== '__strimzi_canary' &&
-          labels['topic'] !== '__consumer_offsets' &&
-          selectedTopic === labels['topic']
-        : labels['topic'] !== '__strimzi_canary' &&
-          labels['topic'] !== '__consumer_offsets';
-
-    if (isSelectedItem) {
-      if (
-        labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_in_total'
-      ) {
-        item.values?.forEach((value) => {
-          if (value.timestamp == undefined) {
-            throw new Error('timestamp cannot be undefined');
-          }
-          if (incomingTopics.has(value.timestamp)) {
-            incomingTopics.get(value.timestamp)?.push(value.value);
-          } else {
-            incomingTopics.set(value.timestamp, [value.value] as number[]);
-          }
-        });
-      }
-      if (
-        labels['__name__'] === 'kafka_server_brokertopicmetrics_bytes_out_total'
-      ) {
-        item.values?.forEach((value) => {
-          if (value.timestamp == undefined) {
-            throw new Error('timestamp cannot be undefined');
-          }
-          if (outgoingTopics.has(value.timestamp)) {
-            outgoingTopics.get(value.timestamp)?.push(value.value);
-          } else {
-            outgoingTopics.set(value.timestamp, [value.value] as number[]);
-          }
-        });
-      }
-    }
-  });
-
-  // } catch (error) {
-  //   let reason: string | undefined;
-  //   if (isServiceApiError(error)) {
-  //     reason = error.response?.data.reason;
-  //   }
-  // }
-  return {
-    topicList: Array.from(topicList),
-    incomingTopics: convertAndSortData(incomingTopics),
-    outgoingTopics: convertAndSortData(outgoingTopics),
+  type NoUndefinedField<T> = {
+    [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>;
   };
-}
+  type SafeRangeQuery = NoUndefinedField<RangeQuery>;
 
-function convertAndSortData(data: Map<number, number[]>): TopicDataArray {
-  const convertedData = [] as TopicDataArray;
-  data.forEach((value, key) =>
-    convertedData.push({ timestamp: key, bytes: value })
-  );
-  convertedData.sort((a, b) => a.timestamp - b.timestamp);
-  return [...convertedData];
-}
+  // Remove all results with no data. Not sure this can really  happen but since
+  // the types allow for undefined we need to do a bit of defensive programming.
+  const safeMetrics: SafeRangeQuery[] = (response.data.items || []).filter(
+    (m) =>
+      // defensive programming
+      !(m.values && m.metric && m.metric.topic && m.metric.name)
+  ) as SafeRangeQuery[];
 
-export type Partition = {
-  name: string;
-  data: {
-    timestamp: number;
-    bytes: number;
-    name: string;
-  }[];
-};
-
-type FetchLogSizePerPartitionProps = {
-  kafkaID: string;
-  timeDuration: number;
-  timeInterval: number;
-  selectedTopic: string;
-} & Pick<ConfigurationParameters, 'accessToken' | 'basePath'>;
-
-type FetchLogSizePerPartitionReturnValue = Partition[];
-
-export async function fetchLogSizePerPartition({
-  accessToken,
-  basePath,
-  kafkaID,
-  timeDuration,
-  timeInterval,
-  selectedTopic,
-}: FetchLogSizePerPartitionProps): Promise<FetchLogSizePerPartitionReturnValue> {
-  const apisService = new DefaultApi(
-    new Configuration({
-      accessToken,
-      basePath,
-    })
-  );
-  const data = await apisService.getMetricsByRangeQuery(
-    kafkaID,
-    timeDuration * 60,
-    timeInterval * 60,
-    ['kafka_log_log_size']
+  // Also filter for metrics about the selectedTopic, if specified
+  const filteredMetrics = safeMetrics.filter((m) =>
+    // filter for metrics for the selectedTopic, if needed
+    selectedTopic !== undefined ? m.metric?.topic === selectedTopic : true
   );
 
-  const partitionArray: Partition[] = [];
+  // get the unique topics we have metrics for in the selected time range
+  const topics = Array.from(new Set(safeMetrics.map((m) => m.metric!.topic!)));
 
-  data.data.items?.forEach((item, i) => {
-    const topicName = item?.metric?.topic;
-    const labels = item.metric;
-    if (labels === undefined) {
-      throw new Error('item.metric cannot be undefined');
-    }
-    if (item.values === undefined) {
-      throw new Error('item.values cannot be undefined');
-    }
+  const bytesIncoming: TotalBytesMetrics = new Map<string, number>();
+  const bytesOutgoing: TotalBytesMetrics = new Map<string, number>();
+  const bytesPerPartition: PartitionBytesMetric = new Map<
+    string,
+    Map<string, number>
+  >();
 
-    const topic = {
-      name: topicName,
-      data: [],
-    } as Partition;
+  filteredMetrics.forEach((m) => {
+    const { name, topic, timestamp } = m.metric;
 
-    const isTopicInArray = partitionArray.some(
-      (topic) => topic.name === topicName
-    );
-
-    if (labels['__name__'] === 'kafka_topic:kafka_log_log_size:sum') {
-      item.values?.forEach((value) => {
-        if (value.timestamp == undefined) {
-          throw new Error('timestamp cannot be undefined');
-        }
-
-        if (isTopicInArray) {
-          partitionArray.forEach((topic: Partition) => {
-            if (topic.name === topicName) {
-              topic.data.forEach(
-                (datum) => (datum.bytes = datum.bytes + value.value)
-              );
-            }
-          });
-        } else {
-          topic.data.push({
-            name: topicName || '',
-            timestamp: value.timestamp,
-            bytes: value.value,
-          });
-        }
-      });
+    function addAggregatedTotalBytesTo(metric: TotalBytesMetrics) {
+      const aggregatedBytes = m.values.reduce((total, v) => v.value + total, 0);
+      const bytesForTimestamp = metric.get(timestamp) || 0;
+      metric.set(timestamp, bytesForTimestamp + aggregatedBytes);
     }
 
-    if (!isTopicInArray) {
-      partitionArray.push(topic);
+    function addAggregatePartitionBytes() {
+      const aggregatedBytes = m.values.reduce((total, v) => v.value + total, 0);
+      const partition =
+        bytesPerPartition.get(topic) || new Map<string, number>();
+      const bytesForTimestamp = partition.get(timestamp) || 0;
+      partition.set(timestamp, bytesForTimestamp + aggregatedBytes);
+      bytesPerPartition.set(topic, partition);
+    }
+
+    switch (name) {
+      case "kafka_server_brokertopicmetrics_bytes_in_total":
+        addAggregatedTotalBytesTo(bytesIncoming);
+        break;
+      case "kafka_server_brokertopicmetrics_bytes_out_total":
+        addAggregatedTotalBytesTo(bytesOutgoing);
+        break;
+      case "kafka_topic:kafka_log_log_size:sum":
+        addAggregatePartitionBytes();
+        break;
     }
   });
-  return partitionArray.filter(
-    (topic) =>
-      topic.name !== '__strimzi_canary' && topic.name !== '__consumer_offsets'
-  );
+
+  return {
+    topics,
+    bytesOutgoing,
+    bytesIncoming,
+    bytesPerPartition,
+  };
 }

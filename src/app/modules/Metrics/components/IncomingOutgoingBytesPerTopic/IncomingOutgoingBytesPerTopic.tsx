@@ -4,8 +4,11 @@ import {
   LogSizePerPartitionChart,
   TopicMetricsToolbar,
   TotalBytesChart,
-} from '@app/modules/Metrics/components';
-import { Partition, TopicDataArray } from '@app/modules/Metrics/Metrics.api';
+} from "@app/modules/Metrics/components";
+import {
+  PartitionBytesMetric,
+  TotalBytesMetrics,
+} from "@app/modules/Metrics/Metrics.api";
 import {
   Bullseye,
   Card,
@@ -13,15 +16,15 @@ import {
   CardTitle,
   Divider,
   Spinner,
-} from '@patternfly/react-core';
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@patternfly/react-core";
+import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type IncomingOutgoingBytesPerTopicProps = {
-  topicList: string[];
-  incomingTopicsData: TopicDataArray;
-  outgoingTopicsData: TopicDataArray;
-  partitions: Partition[];
+  topics: string[];
+  incomingTopicsData: TotalBytesMetrics;
+  outgoingTopicsData: TotalBytesMetrics;
+  partitions: PartitionBytesMetric;
   timeDuration: number;
   metricsDataUnavailable: boolean;
   isLoading: boolean;
@@ -30,12 +33,11 @@ type IncomingOutgoingBytesPerTopicProps = {
   onRefresh: () => void;
   onSelectedTopic: (topic: string | undefined) => void;
   onTimeDuration: (duration: number) => void;
-  onTimeInterval: (interval: number) => void;
 };
 
 export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTopicProps> =
   ({
-    topicList,
+    topics,
     incomingTopicsData,
     outgoingTopicsData,
     selectedTopic,
@@ -47,7 +49,6 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
     onRefresh,
     onSelectedTopic,
     onTimeDuration,
-    onTimeInterval,
   }) => {
     const { t } = useTranslation();
     // const { addAlert } = useAlert() || {};
@@ -60,22 +61,21 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
 
     useEffect(() => {
       handleResize();
-      window.addEventListener('resize', handleResize);
+      window.addEventListener("resize", handleResize);
     }, [width]);
 
-    const noTopics = topicList.length === 0;
+    const noTopics = topics.length === 0;
 
     return (
       <Card>
         <TopicMetricsToolbar
-          title={t('metrics.topic_metrics')}
+          title={t("metrics.topic_metrics")}
           onSetTimeDuration={onTimeDuration}
-          onSetTimeInterval={onTimeInterval}
           isDisabled={noTopics || metricsDataUnavailable}
           selectedTopic={selectedTopic}
           onSetSelectedTopic={onSelectedTopic}
           onRefresh={onRefresh}
-          topicList={topicList}
+          topicList={topics}
         />
         {(() => {
           switch (true) {
@@ -92,11 +92,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <>
                   <CardBody>
-                    <CardTitle component='h3'>
-                      {t('metrics.total_bytes')}{' '}
+                    <CardTitle component="h3">
+                      {t("metrics.total_bytes")}{" "}
                       <ChartPopover
-                        title={t('metrics.total_bytes')}
-                        description={t('metrics.topic_metrics_help_text')}
+                        title={t("metrics.total_bytes")}
+                        description={t("metrics.topic_metrics_help_text")}
                       />
                     </CardTitle>
                     <Bullseye>
@@ -106,8 +106,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                   <Divider />
 
                   <CardBody>
-                    <CardTitle component='h3'>
-                      {t('metrics.topic_partition_size')}
+                    <CardTitle component="h3">
+                      {t("metrics.topic_partition_size")}
                     </CardTitle>
                     <Bullseye>
                       <Spinner isSVG />
@@ -120,8 +120,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <CardBody>
                   <ChartEmptyState
-                    title={t('metrics.empty_state_no_data_title')}
-                    body={t('metrics.empty_state_no_data_body')}
+                    title={t("metrics.empty_state_no_data_title")}
+                    body={t("metrics.empty_state_no_data_body")}
                     noData
                   />
                 </CardBody>
@@ -131,8 +131,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <CardBody>
                   <ChartEmptyState
-                    title={t('metrics.empty_state_no_topics_title')}
-                    body={t('metrics.empty_state_no_topics_body')}
+                    title={t("metrics.empty_state_no_topics_title")}
+                    body={t("metrics.empty_state_no_topics_body")}
                     noTopics
                     onCreateTopic={onCreateTopic}
                   />
@@ -143,11 +143,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <>
                   <CardBody>
-                    <CardTitle component='h3'>
-                      {t('metrics.total_bytes')}{' '}
+                    <CardTitle component="h3">
+                      {t("metrics.total_bytes")}{" "}
                       <ChartPopover
-                        title={t('metrics.total_bytes')}
-                        description={t('metrics.topic_metrics_help_text')}
+                        title={t("metrics.total_bytes")}
+                        description={t("metrics.topic_metrics_help_text")}
                       />
                     </CardTitle>
                     <div ref={containerRef}>
@@ -163,8 +163,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                   </CardBody>
 
                   <CardBody>
-                    <CardTitle component='h3'>
-                      {t('metrics.topic_partition_size')}
+                    <CardTitle component="h3">
+                      {t("metrics.topic_partition_size")}
                     </CardTitle>
                     <LogSizePerPartitionChart
                       partitions={partitions}
@@ -180,11 +180,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <>
                   <CardBody>
-                    <CardTitle component='h3'>
-                      {t('metrics.total_bytes')}{' '}
+                    <CardTitle component="h3">
+                      {t("metrics.total_bytes")}{" "}
                       <ChartPopover
-                        title={t('metrics.total_bytes')}
-                        description={t('metrics.topic_metrics_help_text')}
+                        title={t("metrics.total_bytes")}
+                        description={t("metrics.topic_metrics_help_text")}
                       />
                     </CardTitle>
                     <div ref={containerRef}>
@@ -201,12 +201,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
 
                     <Card>
                       <CardBody>
-                        <CardTitle component='h3'>
-                          {t('metrics.topic_partition_size')}
+                        <CardTitle component="h3">
+                          {t("metrics.topic_partition_size")}
                         </CardTitle>
                         <ChartEmptyState
-                          title={t('metrics.empty_state_no_filter_title')}
-                          body={t('metrics.empty_state_no_filter_body')}
+                          title={t("metrics.empty_state_no_filter_title")}
+                          body={t("metrics.empty_state_no_filter_body")}
                           noFilter
                         />
                       </CardBody>

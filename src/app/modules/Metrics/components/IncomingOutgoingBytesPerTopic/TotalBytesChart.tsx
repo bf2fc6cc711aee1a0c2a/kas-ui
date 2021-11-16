@@ -1,10 +1,10 @@
-import { TopicDataArray } from '@app/modules/Metrics/Metrics.api';
+import { TotalBytesMetrics } from "@app/modules/Metrics/Metrics.api";
 import {
   convertToSpecifiedByte,
   dateToChartValue,
   getLargestByteSize,
   shouldShowDate,
-} from '@app/modules/Metrics/utils';
+} from "@app/modules/Metrics/utils";
 import {
   Chart,
   ChartAxis,
@@ -13,11 +13,11 @@ import {
   ChartLine,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
-import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
-import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import React, { FunctionComponent } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@patternfly/react-charts";
+import chart_color_blue_300 from "@patternfly/react-tokens/dist/js/chart_color_blue_300";
+import chart_color_orange_300 from "@patternfly/react-tokens/dist/js/chart_color_orange_300";
+import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 
 type ChartData = {
   color: string;
@@ -39,8 +39,8 @@ type LegendData = {
 };
 
 type TotalBytesChartProps = {
-  incomingTopicsData: TopicDataArray;
-  outgoingTopicsData: TopicDataArray;
+  incomingTopicsData: TotalBytesMetrics;
+  outgoingTopicsData: TotalBytesMetrics;
   selectedTopic: string | undefined;
   timeDuration: number;
   itemsPerRow: number;
@@ -60,13 +60,13 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
     incomingTopicsData,
     outgoingTopicsData,
     timeDuration,
-    t('{{topic}} incoming bytes', { topic: selectedTopic || t('Total') }),
-    t('{{topic}} outgoing bytes', { topic: selectedTopic || t('Total') })
+    t("{{topic}} incoming bytes", { topic: selectedTopic || t("Total") }),
+    t("{{topic}} outgoing bytes", { topic: selectedTopic || t("Total") })
   );
 
   return (
     <Chart
-      ariaTitle={t('metrics.total_bytes')}
+      ariaTitle={t("metrics.total_bytes")}
       containerComponent={
         <ChartVoronoiContainer
           labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -74,7 +74,7 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
         />
       }
       legendAllowWrap={true}
-      legendPosition='bottom-left'
+      legendPosition="bottom-left"
       legendComponent={
         <ChartLegend data={legendData} itemsPerRow={itemsPerRow} />
       }
@@ -88,7 +88,7 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
       themeColor={ChartThemeColor.multiUnordered}
       width={width}
     >
-      <ChartAxis label={'\n' + 'Time'} tickCount={6} />
+      <ChartAxis label={"\n" + "Time"} tickCount={6} />
       <ChartAxis
         dependentAxis
         tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
@@ -113,8 +113,8 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
 };
 
 export function getBytesChartData(
-  incomingTopicArray: TopicDataArray,
-  outgoingTopicArray: TopicDataArray,
+  incomingTopicArray: TotalBytesMetrics,
+  outgoingTopicArray: TotalBytesMetrics,
   timeDuration: number,
   incomingTopicArrayName: string,
   outgoingTopicArrayName: string
@@ -159,10 +159,7 @@ export function getBytesChartData(
       const time = dateToChartValue(date, {
         showDate: shouldShowDate(timeDuration),
       });
-      const aggregateBytes = value.bytes.reduce(function (a, b) {
-        return a + b;
-      }, 0);
-      const bytes = convertToSpecifiedByte(aggregateBytes, largestByteSize);
+      const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
       line.push({ name: incomingTopicArrayName, x: time, y: bytes });
     });
 
@@ -209,10 +206,7 @@ export function getBytesChartData(
       const time = dateToChartValue(date, {
         showDate: shouldShowDate(timeDuration),
       });
-      const aggregateBytes = value.bytes.reduce(function (a, b) {
-        return a + b;
-      }, 0);
-      const bytes = convertToSpecifiedByte(aggregateBytes, largestByteSize);
+      const bytes = convertToSpecifiedByte(value.bytes, largestByteSize);
       line.push({ name: outgoingTopicArrayName, x: time, y: bytes });
     });
     chartData.push({ color, line });

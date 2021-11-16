@@ -7,7 +7,8 @@ module.exports = {
   ],
   "addons": [
     "@storybook/addon-links",
-    "@storybook/addon-essentials"
+    "@storybook/addon-essentials",
+    "storybook-xstate-addon/preset"
   ],
   webpackFinal: (config) => {
     config.resolve.plugins = [
