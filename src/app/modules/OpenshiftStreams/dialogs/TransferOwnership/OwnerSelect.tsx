@@ -1,32 +1,41 @@
 import React, { useState } from 'react';
-import { Select, SelectOption, SelectOptionObject, SelectVariant } from '@patternfly/react-core';
+import {
+  Select,
+  SelectOption,
+  SelectOptionObject,
+  SelectVariant,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {filterUsers} from './FilterOwners';
-export type allUsersType={
-  id:string,
-  displayName:string|undefined
-}[]|undefined
-export type OwnerSelectProps={
-    selection:string|undefined
-    setSelection:(value:string|undefined)=>void
-    allUsers:allUsersType
-}
+import { filterUsers } from './FilterOwners';
+export type allUsersType =
+  | {
+      id: string;
+      displayName: string | undefined;
+    }[]
+  | undefined;
+export type OwnerSelectProps = {
+  selection: string | undefined;
+  setSelection: (value: string | undefined) => void;
+  allUsers: allUsersType;
+};
 
-export const OwnerSelect: React.FC <OwnerSelectProps>= ({
+export const OwnerSelect: React.FC<OwnerSelectProps> = ({
   selection,
   setSelection,
-  allUsers
+  allUsers,
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const options = allUsers && allUsers?.map((userAccount:{id,displayName}) => {
-    const { id, displayName } = userAccount;
-    return (
-      <SelectOption key={id} value={id} description={displayName}>
-        {id}
-      </SelectOption>
-    );
-  });
+  const options =
+    allUsers &&
+    allUsers?.map((userAccount: { id; displayName }) => {
+      const { id, displayName } = userAccount;
+      return (
+        <SelectOption key={id} value={id} description={displayName}>
+          {id}
+        </SelectOption>
+      );
+    });
   const onToggle = (isExpanded: boolean) => {
     setIsOpen(isExpanded);
   };
@@ -46,10 +55,9 @@ export const OwnerSelect: React.FC <OwnerSelectProps>= ({
     setIsOpen(false);
   };
   const customFilter = (_, value: string) => {
-    return filterUsers(value,options);
-    
+    return filterUsers(value, options);
   };
-  return(
+  return (
     <Select
       id='manage-permissions-owner-select'
       variant={SelectVariant.typeahead}

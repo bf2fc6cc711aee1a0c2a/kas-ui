@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OwnerSelect } from './OwnerSelect';
-import {useGetAllUsers} from './FilterOwners'
+import { useGetAllUsers } from './FilterOwners';
 import {
   Form,
   FormGroup,
   Button,
   AlertVariant,
   Alert,
-  Modal
+  Modal,
 } from '@patternfly/react-core';
 import {
   Configuration,
@@ -50,9 +50,6 @@ export const TransferOwnership: React.FC<
     hideModal();
     onClose && onClose();
   };
-
-
-  
 
   const onSubmitTransferOwnership = async () => {
     const accessToken = await auth?.kas.getToken();
@@ -156,9 +153,12 @@ export const TransferOwnership: React.FC<
         <FormGroup fieldId='Current-owner-name' label={t('current_owner_name')}>
           {kafka?.owner}
         </FormGroup>
-        <FormGroup fieldId='New-owner-name' label={t('new_owner_name')} >
-          <OwnerSelect selection={selection} setSelection={setSelection} allUsers={useGetAllUsers()}/>
-        
+        <FormGroup fieldId='New-owner-name' label={t('new_owner_name')}>
+          <OwnerSelect
+            selection={selection}
+            setSelection={setSelection}
+            allUsers={useGetAllUsers()}
+          />
         </FormGroup>
       </Form>
     </Modal>
