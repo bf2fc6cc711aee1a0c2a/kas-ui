@@ -45,6 +45,52 @@ export const parameters = {
       },
     ],
   },
+  viewport: {
+    viewports: {
+      xs: {
+        name: 'Breakpoint: xs',
+        styles: {
+          width: "400px",
+          height: '100%'
+        }
+      },
+      sm: {
+        name: 'Breakpoint: sm',
+        styles: {
+          width: "576px",
+          height: '100%'
+        }
+      },
+      md: {
+        name: 'Breakpoint: md',
+        styles: {
+          width: "768px",
+          height: '100%'
+        }
+      },
+      lg: {
+        name: 'Breakpoint: lg',
+        styles: {
+          width: "992px",
+          height: '100%'
+        }
+      },
+      xl: {
+        name: 'Breakpoint: xl',
+        styles: {
+          width: "1200px",
+          height: '100%'
+        }
+      },
+      '2xl': {
+        name: '2Breakpoint: xl',
+        styles: {
+          width: "1450px",
+          height: '100%'
+        }
+      },
+    }
+  }
 };
 
 export const decorators = [

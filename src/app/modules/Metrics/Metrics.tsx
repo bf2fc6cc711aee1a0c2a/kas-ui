@@ -36,14 +36,14 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
     <PageSection>
       {!isFailed ? (
         <Grid hasGutter>
-          <GridItem>
+          <GridItem lg={6}>
             <UsedDiskSpaceChart
               kafkaID={kafkaId}
               metricsDataUnavailable={isDataUnavailable}
               setMetricsDataUnavailable={() => false}
             />
           </GridItem>
-          <GridItem>
+          <GridItem lg={6}>
             <IncomingOutgoingBytesPerTopic
               metricsDataUnavailable={false}
               onCreateTopic={onCreateTopic}
