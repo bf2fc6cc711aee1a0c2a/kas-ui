@@ -91,24 +91,24 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             case isLoading:
               return (
                 <>
+                  <CardTitle component='h3'>
+                    {t('metrics.total_bytes')}{' '}
+                    <ChartPopover
+                      title={t('metrics.total_bytes')}
+                      description={t('metrics.topic_metrics_help_text')}
+                    />
+                  </CardTitle>
                   <CardBody>
-                    <CardTitle component="h3">
-                      {t("metrics.total_bytes")}{" "}
-                      <ChartPopover
-                        title={t("metrics.total_bytes")}
-                        description={t("metrics.topic_metrics_help_text")}
-                      />
-                    </CardTitle>
                     <Bullseye>
                       <Spinner isSVG />
                     </Bullseye>
                   </CardBody>
                   <Divider />
 
+                  <CardTitle component='h3'>
+                    {t('metrics.topic_partition_size')}
+                  </CardTitle>
                   <CardBody>
-                    <CardTitle component="h3">
-                      {t("metrics.topic_partition_size")}
-                    </CardTitle>
                     <Bullseye>
                       <Spinner isSVG />
                     </Bullseye>
@@ -120,8 +120,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <CardBody>
                   <ChartEmptyState
-                    title={t("metrics.empty_state_no_data_title")}
-                    body={t("metrics.empty_state_no_data_body")}
+                    title={t('metrics.empty_state_no_data_title')}
+                    body={t('metrics.empty_state_no_data_body')}
                     noData
                   />
                 </CardBody>
@@ -131,8 +131,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <CardBody>
                   <ChartEmptyState
-                    title={t("metrics.empty_state_no_topics_title")}
-                    body={t("metrics.empty_state_no_topics_body")}
+                    title={t('metrics.empty_state_no_topics_title')}
+                    body={t('metrics.empty_state_no_topics_body')}
                     noTopics
                     onCreateTopic={onCreateTopic}
                   />
@@ -142,14 +142,14 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             case selectedTopic !== undefined:
               return (
                 <>
+                  <CardTitle component='h3'>
+                    {t('metrics.total_bytes')}{' '}
+                    <ChartPopover
+                      title={t('metrics.total_bytes')}
+                      description={t('metrics.topic_metrics_help_text')}
+                    />
+                  </CardTitle>
                   <CardBody>
-                    <CardTitle component="h3">
-                      {t("metrics.total_bytes")}{" "}
-                      <ChartPopover
-                        title={t("metrics.total_bytes")}
-                        description={t("metrics.topic_metrics_help_text")}
-                      />
-                    </CardTitle>
                     <div ref={containerRef}>
                       <TotalBytesChart
                         incomingTopicsData={incomingTopicsData}
@@ -161,11 +161,12 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                       />
                     </div>
                   </CardBody>
+                  <Divider />
 
+                  <CardTitle component='h3'>
+                    {t('metrics.topic_partition_size')}
+                  </CardTitle>
                   <CardBody>
-                    <CardTitle component="h3">
-                      {t("metrics.topic_partition_size")}
-                    </CardTitle>
                     <LogSizePerPartitionChart
                       partitions={partitions}
                       timeDuration={timeDuration}
@@ -179,14 +180,14 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             default:
               return (
                 <>
+                  <CardTitle component='h3'>
+                    {t('metrics.total_bytes')}{' '}
+                    <ChartPopover
+                      title={t('metrics.total_bytes')}
+                      description={t('metrics.topic_metrics_help_text')}
+                    />
+                  </CardTitle>
                   <CardBody>
-                    <CardTitle component="h3">
-                      {t("metrics.total_bytes")}{" "}
-                      <ChartPopover
-                        title={t("metrics.total_bytes")}
-                        description={t("metrics.topic_metrics_help_text")}
-                      />
-                    </CardTitle>
                     <div ref={containerRef}>
                       <TotalBytesChart
                         incomingTopicsData={incomingTopicsData}
@@ -200,13 +201,13 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                     <Divider />
 
                     <Card>
+                      <CardTitle component='h3'>
+                        {t('metrics.topic_partition_size')}
+                      </CardTitle>
                       <CardBody>
-                        <CardTitle component="h3">
-                          {t("metrics.topic_partition_size")}
-                        </CardTitle>
                         <ChartEmptyState
-                          title={t("metrics.empty_state_no_filter_title")}
-                          body={t("metrics.empty_state_no_filter_body")}
+                          title={t('metrics.empty_state_no_filter_title')}
+                          body={t('metrics.empty_state_no_filter_body')}
                           noFilter
                         />
                       </CardBody>
