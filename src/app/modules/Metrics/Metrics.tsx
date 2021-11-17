@@ -7,7 +7,7 @@ import {
 } from "@app/modules/Metrics/components";
 import { ChartEmptyState } from "./components/ChartEmptyState";
 import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
-import { useTopics } from "./topicMetricsMachine";
+import { useTopics } from "./MetricsMachine";
 
 export interface MetricsProps {
   kafkaId: string;

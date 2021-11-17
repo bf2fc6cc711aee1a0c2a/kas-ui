@@ -30,8 +30,8 @@
     "clean": "rimraf dist",
     "i18n": "i18next 'src/**/**/*.{ts,tsx}' [-oc] -c './i18next-parser.config.js' -o './src/locales/$LOCALE/$NAMESPACE.json'",
     "prepare": "husky install",
-    "storybook": "start-storybook -p 6006 -s ./src",
-    "build-storybook": "build-storybook -s ./src",
+    "storybook": "start-storybook -p 6006 -s ./src,./msw-support",
+    "build-storybook": "build-storybook -s ./src,./msw-support",
     "chromatic": "npx chromatic"
   },
   "devDependencies": {
@@ -73,6 +73,8 @@
     "imagemin": "8.0.1",
     "jest": "27.3.1",
     "mini-css-extract-plugin": "2.4.5",
+    "msw": "^0.35.0",
+    "msw-storybook-addon": "^1.4.1",
     "npm-run-all": "4.1.5",
     "null-loader": "4.0.1",
     "prettier": "2.4.1",
@@ -139,5 +141,8 @@
     "*.js": "eslint --cache --fix",
     "*.{tsx,ts}": "prettier --write",
     "*.tsx": "eslint --ext .tsx"
+  },
+  "msw": {
+    "workerDirectory": "msw-support"
   }
 }

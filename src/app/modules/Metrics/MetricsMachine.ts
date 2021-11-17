@@ -19,15 +19,10 @@ type FetchSuccessProps = {
   bytesPerPartition: PartitionBytesMetric;
 };
 
-type ApiService = (
-  onSuccess: (response: FetchSuccessProps) => void,
-  onFailure: () => void
-) => () => void | void;
-
 const model = createModel(
   {
     // context that needs to be provided by the consumer of the machine
-    kafkaID: undefined as unknown as string,
+    kafkaId: undefined as unknown as string,
     accessToken: undefined as BasicApiConfigurationParameters["accessToken"],
     basePath: undefined as BasicApiConfigurationParameters["basePath"],
 
@@ -38,13 +33,9 @@ const model = createModel(
     // from the api
     kafkaTopics: [] as string[],
     metricsTopics: [] as string[],
-    topicPartitions: [] as string[], // Partition.id
-    bytesOutgoing: new Map<string, number>() as TotalBytesMetrics,
-    bytesIncoming: new Map<string, number>() as TotalBytesMetrics,
-    bytesPerPartition: new Map<
-      string,
-      Map<string, number>
-    >() as PartitionBytesMetric,
+    bytesOutgoing: {} as TotalBytesMetrics,
+    bytesIncoming: {} as TotalBytesMetrics,
+    bytesPerPartition: {} as PartitionBytesMetric,
 
     // how many time did we try a fetch (that combines more api)
     fetchFailures: 0 as number,
@@ -118,7 +109,7 @@ const topicsMachine = model.createMachine(
         states: {
           loading: {
             invoke: {
-              src: "callApiSrv",
+              src: "api",
             },
             on: {
               fetchSuccess: {
@@ -178,7 +169,7 @@ const topicsMachine = model.createMachine(
       },
       refreshing: {
         invoke: {
-          src: "fetchAll",
+          src: "api",
         },
         on: {
           fetchSuccess: {
@@ -196,12 +187,14 @@ const topicsMachine = model.createMachine(
   {
     guards: {
       canRetryFetching: (context) => context.fetchFailures < MAX_RETRIES,
+      hasTopics: (context) =>
+        context.kafkaTopics.length > 0 || context.metricsTopics.length > 0,
     },
     services: {
-      callApiSrv: (context) => {
+      api: (context) => {
         return (callback) => {
           fetchMetricsAndTopics({
-            kafkaID: context.kafkaID,
+            kafkaId: context.kafkaId,
             selectedTopic: context.selectedTopic,
             timeDuration: context.timeDuration,
             timeInterval: 60, // TODO: fix this
@@ -209,7 +202,10 @@ const topicsMachine = model.createMachine(
             basePath: context.basePath,
           })
             .then((results) => callback(model.events.fetchSuccess(results)))
-            .catch(() => callback(model.events.fetchFail()));
+            .catch((e) => {
+              console.error("Failed fetching data", e);
+              callback(model.events.fetchFail());
+            });
         };
       },
     },
@@ -226,6 +222,7 @@ export function useTopics(kafkaId: string) {
       ...model.initialContext,
       accessToken: auth.kas.getToken(),
       basePath,
+      kafkaId,
     }),
     {
       devTools: true,
@@ -237,7 +234,6 @@ export function useTopics(kafkaId: string) {
     timeDuration,
     kafkaTopics,
     metricsTopics,
-    topicPartitions,
     bytesIncoming,
     bytesOutgoing,
     bytesPerPartition,
@@ -256,7 +252,9 @@ export function useTopics(kafkaId: string) {
   const onRefresh = useCallback(() => send(model.events.refresh()), [send]);
 
   const mergedTopics = useMemo((): string[] => {
-    let topics = Array.from(new Set<string>(...kafkaTopics, ...metricsTopics));
+    let topics = Array.from(
+      new Set<string>([...kafkaTopics, ...metricsTopics])
+    );
     topics.sort((a, b) => a.localeCompare(b));
     return topics;
   }, [kafkaTopics, metricsTopics]);

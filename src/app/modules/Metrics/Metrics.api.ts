@@ -57,10 +57,10 @@ export const fetchKafkaTopis = async ({
   return (response.data.items || []).map((t) => t.name!);
 };
 
-export type TotalBytesMetrics = Map<string, number>;
-export type PartitionBytesMetric = Map<string, TotalBytesMetrics>;
+export type TotalBytesMetrics = { [timestamp: string]: number };
+export type PartitionBytesMetric = { [partition: string]: TotalBytesMetrics };
 type FetchMetricsProps = {
-  kafkaID: string;
+  kafkaId: string;
   timeDuration: number;
   timeInterval: number;
   selectedTopic: string | undefined;
@@ -74,11 +74,13 @@ type FetchMetricsReturnValue = {
 export async function fetchMetrics({
   accessToken,
   basePath,
-  kafkaID,
+  kafkaId,
   timeDuration,
   timeInterval,
   selectedTopic,
 }: FetchMetricsProps): Promise<FetchMetricsReturnValue> {
+  const privateTopics = ["__consumer_offsets", "__strimzi_canary"];
+
   const apisService = new DefaultApi(
     new Configuration({
       accessToken,
@@ -87,9 +89,9 @@ export async function fetchMetrics({
   );
 
   const response = await apisService.getMetricsByRangeQuery(
-    kafkaID,
-    timeDuration * 60,
-    timeInterval * 60,
+    kafkaId,
+    timeDuration,
+    timeInterval,
     [
       "kafka_server_brokertopicmetrics_bytes_in_total",
       "kafka_server_brokertopicmetrics_bytes_out_total",
@@ -107,7 +109,8 @@ export async function fetchMetrics({
   const safeMetrics: SafeRangeQuery[] = (response.data.items || []).filter(
     (m) =>
       // defensive programming
-      !(m.values && m.metric && m.metric.topic && m.metric.name)
+      !(m.values && m.metric && m.metric.topic && m.metric.name) &&
+      !privateTopics.includes(m.metric?.topic || "")
   ) as SafeRangeQuery[];
 
   // Also filter for metrics about the selectedTopic, if specified
@@ -119,29 +122,27 @@ export async function fetchMetrics({
   // get the unique topics we have metrics for in the selected time range
   const topics = Array.from(new Set(safeMetrics.map((m) => m.metric!.topic!)));
 
-  const bytesIncoming: TotalBytesMetrics = new Map<string, number>();
-  const bytesOutgoing: TotalBytesMetrics = new Map<string, number>();
-  const bytesPerPartition: PartitionBytesMetric = new Map<
-    string,
-    Map<string, number>
-  >();
+  const bytesIncoming: TotalBytesMetrics = {};
+  const bytesOutgoing: TotalBytesMetrics = {};
+  const bytesPerPartition: PartitionBytesMetric = {};
 
   filteredMetrics.forEach((m) => {
-    const { name, topic, timestamp } = m.metric;
+    const { __name__: name, topic } = m.metric;
 
     function addAggregatedTotalBytesTo(metric: TotalBytesMetrics) {
-      const aggregatedBytes = m.values.reduce((total, v) => v.value + total, 0);
-      const bytesForTimestamp = metric.get(timestamp) || 0;
-      metric.set(timestamp, bytesForTimestamp + aggregatedBytes);
+      m.values.forEach(
+        ({ value, timestamp }) =>
+          (metric[timestamp] = value + (metric[timestamp] || 0))
+      );
     }
 
     function addAggregatePartitionBytes() {
-      const aggregatedBytes = m.values.reduce((total, v) => v.value + total, 0);
-      const partition =
-        bytesPerPartition.get(topic) || new Map<string, number>();
-      const bytesForTimestamp = partition.get(timestamp) || 0;
-      partition.set(timestamp, bytesForTimestamp + aggregatedBytes);
-      bytesPerPartition.set(topic, partition);
+      const partition = bytesPerPartition[topic] || {};
+      m.values.forEach(
+        ({ value, timestamp }) =>
+          (partition[timestamp] = value + (partition[timestamp] || 0))
+      );
+      bytesPerPartition[topic] = partition;
     }
 
     switch (name) {
