@@ -9,8 +9,8 @@ import '@patternfly/patternfly/utilities/Spacing/spacing.css';
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { addDecorator } from '@storybook/react'
-import { initializeWorker, mswDecorator } from 'msw-storybook-addon'
+import { addDecorator } from '@storybook/react';
+import { initializeWorker, mswDecorator } from 'msw-storybook-addon';
 import {
   AlertContext,
   AuthContext,
@@ -18,8 +18,8 @@ import {
   QuotaContext,
 } from '@rhoas/app-services-ui-shared';
 
-initializeWorker()
-addDecorator(mswDecorator)
+initializeWorker();
+addDecorator(mswDecorator);
 
 import { initI18N } from '../src/i18n/i18n';
 const i18n = initI18N();

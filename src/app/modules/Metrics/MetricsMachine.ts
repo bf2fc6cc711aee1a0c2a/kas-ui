@@ -1,13 +1,13 @@
-import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
-import { useMachine } from "@xstate/react";
-import { useCallback, useMemo } from "react";
-import { createModel } from "xstate/lib/model";
+import { useAuth, useConfig } from '@rhoas/app-services-ui-shared';
+import { useMachine } from '@xstate/react';
+import { useCallback, useMemo } from 'react';
+import { createModel } from 'xstate/lib/model';
 import {
   BasicApiConfigurationParameters,
   fetchMetricsAndTopics,
   PartitionBytesMetric,
   TotalBytesMetrics,
-} from "./Metrics.api";
+} from './Metrics.api';
 
 const MAX_RETRIES = 3;
 
@@ -23,8 +23,8 @@ const model = createModel(
   {
     // context that needs to be provided by the consumer of the machine
     kafkaId: undefined as unknown as string,
-    accessToken: undefined as BasicApiConfigurationParameters["accessToken"],
-    basePath: undefined as BasicApiConfigurationParameters["basePath"],
+    accessToken: undefined as BasicApiConfigurationParameters['accessToken'],
+    basePath: undefined as BasicApiConfigurationParameters['basePath'],
 
     // from the UI elements
     selectedTopic: undefined as string | undefined,
@@ -74,111 +74,111 @@ const setTopics = model.assign((_, event) => {
     bytesPerPartition: partitionsBytes,
     bytesOutgoing: totalBytes,
   };
-}, "fetchSuccess");
+}, 'fetchSuccess');
 
 const incrementRetries = model.assign(
   {
     fetchFailures: (context) => context.fetchFailures + 1,
   },
-  "fetchFail"
+  'fetchFail'
 );
 
 const resetRetries = model.assign(
   {
-    fetchFailures: (context) => 0,
+    fetchFailures: () => 0,
   },
-  "refresh"
+  'refresh'
 );
 
 const setTopic = model.assign(
   {
     selectedTopic: (_, event) => event.selectedTopic,
   },
-  "selectTopic"
+  'selectTopic'
 );
 
 const topicsMachine = model.createMachine(
   {
-    id: "topics",
+    id: 'topics',
     context: model.initialContext,
-    initial: "callApi",
+    initial: 'callApi',
     states: {
       callApi: {
-        tags: "loading",
-        initial: "loading",
+        tags: 'loading',
+        initial: 'loading',
         states: {
           loading: {
             invoke: {
-              src: "api",
+              src: 'api',
             },
             on: {
               fetchSuccess: {
                 actions: setTopics,
-                target: "#topics.verifyData",
+                target: '#topics.verifyData',
               },
               fetchFail: {
                 actions: incrementRetries,
-                target: "failure",
+                target: 'failure',
               },
             },
           },
           failure: {
             after: {
               1000: [
-                { cond: "canRetryFetching", target: "loading" },
-                { target: "#topics.criticalFail" },
+                { cond: 'canRetryFetching', target: 'loading' },
+                { target: '#topics.criticalFail' },
               ],
             },
           },
         },
       },
       criticalFail: {
-        tags: "failed",
+        tags: 'failed',
         on: {
           refresh: {
             actions: resetRetries,
-            target: "callApi",
+            target: 'callApi',
           },
         },
       },
       verifyData: {
         always: [
-          { cond: "hasTopics", target: "withTopics" },
-          { target: "noData" },
+          { cond: 'hasTopics', target: 'withTopics' },
+          { target: 'noData' },
         ],
       },
       noData: {
-        tags: "no-data",
+        tags: 'no-data',
         on: {
           refresh: {
             actions: resetRetries,
-            target: "callApi",
+            target: 'callApi',
           },
         },
       },
       withTopics: {
         on: {
           refresh: {
-            target: "refreshing",
+            target: 'refreshing',
           },
           selectTopic: {
             actions: setTopic,
-            target: "callApi",
+            target: 'callApi',
           },
         },
       },
       refreshing: {
         invoke: {
-          src: "api",
+          src: 'api',
         },
         on: {
           fetchSuccess: {
             actions: setTopics,
-            target: "withTopics",
+            target: 'withTopics',
           },
           fetchFail: {
             // 👀 we silently ignore this happened and go back to withTopics state
-            target: "withTopics",
+            target: 'withTopics',
           },
         },
       },
@@ -203,7 +203,7 @@ const topicsMachine = model.createMachine(
           })
             .then((results) => callback(model.events.fetchSuccess(results)))
             .catch((e) => {
-              console.error("Failed fetching data", e);
+              console.error('Failed fetching data', e);
               callback(model.events.fetchFail());
             });
         };
@@ -252,7 +252,7 @@ export function useTopics(kafkaId: string) {
   const onRefresh = useCallback(() => send(model.events.refresh()), [send]);
 
   const mergedTopics = useMemo((): string[] => {
-    let topics = Array.from(
+    const topics = Array.from(
       new Set<string>([...kafkaTopics, ...metricsTopics])
     );
     topics.sort((a, b) => a.localeCompare(b));
@@ -260,9 +260,9 @@ export function useTopics(kafkaId: string) {
   }, [kafkaTopics, metricsTopics]);
 
   return {
-    isLoading: state.hasTag("loading"),
-    isFailed: state.hasTag("failed"),
-    isDataUnavailable: state.hasTag("no-data"),
+    isLoading: state.hasTag('loading'),
+    isFailed: state.hasTag('failed'),
+    isDataUnavailable: state.hasTag('no-data'),
     topics: mergedTopics,
     selectedTopic,
     timeDuration,

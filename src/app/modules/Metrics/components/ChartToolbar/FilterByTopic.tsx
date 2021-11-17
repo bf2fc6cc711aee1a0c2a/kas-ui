@@ -1,21 +1,21 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   ToolbarItem,
   Select,
   SelectVariant,
   SelectGroup,
   SelectOption,
-} from "@patternfly/react-core";
-import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
-import { useTranslation } from "react-i18next";
+} from '@patternfly/react-core';
+import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
+import { useTranslation } from 'react-i18next';
 
 const widths = {
-  default: "100px",
-  sm: "80px",
-  md: "150px",
-  lg: "200px",
-  xl: "250px",
-  "2xl": "300px",
+  default: '100px',
+  sm: '80px',
+  md: '150px',
+  lg: '200px',
+  xl: '250px',
+  '2xl': '300px',
 };
 
 type FilterByTopicProps = {
@@ -34,14 +34,14 @@ export const FilterByTopic = ({
   const { t } = useTranslation();
   const [isTopicSelectOpen, setIsTopicSelectOpen] = useState<boolean>(false);
 
-  const allTopicsLabel = t("All topics");
+  const allTopicsLabel = t('All topics');
 
   const onTopicToggle = (isTopicSelectOpen) => {
     setIsTopicSelectOpen(isTopicSelectOpen);
   };
 
   const onTopicSelect = (_, selection) => {
-    selection !== "All topics"
+    selection !== 'All topics'
       ? onSetSelectedTopic(selection)
       : onSetSelectedTopic(undefined);
   };
@@ -53,8 +53,8 @@ export const FilterByTopic = ({
   };
 
   const topicOptions = (topicList) => [
-    <SelectOption key={"topic-filter-0"} value={allTopicsLabel} />,
-    <SelectGroup label="Filter by topic" key="topic-filter-group">
+    <SelectOption key={'topic-filter-0'} value={allTopicsLabel} />,
+    <SelectGroup label='Filter by topic' key='topic-filter-group'>
       {topicList.map((topic, index) => (
         <SelectOption key={`topic-filter-${index + 1}`} value={topic} />
       ))}
@@ -76,12 +76,12 @@ export const FilterByTopic = ({
             <FilterIcon /> All topics
           </>
         }
-        aria-label={t("Select a topic")}
+        aria-label={t('Select a topic')}
         onFilter={onTopicFilter}
         isGrouped
         hasInlineFilter
         isDisabled={isDisabled}
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
       >
         {topicOptions(topicList)}
       </Select>

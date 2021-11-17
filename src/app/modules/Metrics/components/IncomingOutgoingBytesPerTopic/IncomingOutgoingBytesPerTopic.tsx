@@ -4,11 +4,11 @@ import {
   LogSizePerPartitionChart,
   TopicMetricsToolbar,
   TotalBytesChart,
-} from "@app/modules/Metrics/components";
+} from '@app/modules/Metrics/components';
 import {
   PartitionBytesMetric,
   TotalBytesMetrics,
-} from "@app/modules/Metrics/Metrics.api";
+} from '@app/modules/Metrics/Metrics.api';
 import {
   Bullseye,
   Card,
@@ -16,9 +16,9 @@ import {
   CardTitle,
   Divider,
   Spinner,
-} from "@patternfly/react-core";
-import React, { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+} from '@patternfly/react-core';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 type IncomingOutgoingBytesPerTopicProps = {
   topics: string[];
@@ -57,7 +57,7 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
     return (
       <Card>
         <TopicMetricsToolbar
-          title={t("metrics.topic_metrics")}
+          title={t('metrics.topic_metrics')}
           onSetTimeDuration={onTimeDuration}
           isDisabled={noTopics || metricsDataUnavailable}
           selectedTopic={selectedTopic}
@@ -79,11 +79,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             case isLoading:
               return (
                 <>
-                  <CardTitle component="h3">
-                    {t("metrics.total_bytes")}{" "}
+                  <CardTitle component='h3'>
+                    {t('metrics.total_bytes')}{' '}
                     <ChartPopover
-                      title={t("metrics.total_bytes")}
-                      description={t("metrics.topic_metrics_help_text")}
+                      title={t('metrics.total_bytes')}
+                      description={t('metrics.topic_metrics_help_text')}
                     />
                   </CardTitle>
                   <CardBody>
@@ -93,8 +93,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                   </CardBody>
                   <Divider />
 
-                  <CardTitle component="h3">
-                    {t("metrics.topic_partition_size")}
+                  <CardTitle component='h3'>
+                    {t('metrics.topic_partition_size')}
                   </CardTitle>
                   <CardBody>
                     <Bullseye>
@@ -108,8 +108,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <CardBody>
                   <ChartEmptyState
-                    title={t("metrics.empty_state_no_data_title")}
-                    body={t("metrics.empty_state_no_data_body")}
+                    title={t('metrics.empty_state_no_data_title')}
+                    body={t('metrics.empty_state_no_data_body')}
                     noData
                   />
                 </CardBody>
@@ -119,8 +119,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
               return (
                 <CardBody>
                   <ChartEmptyState
-                    title={t("metrics.empty_state_no_topics_title")}
-                    body={t("metrics.empty_state_no_topics_body")}
+                    title={t('metrics.empty_state_no_topics_title')}
+                    body={t('metrics.empty_state_no_topics_body')}
                     noTopics
                     onCreateTopic={onCreateTopic}
                   />
@@ -130,11 +130,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             case selectedTopic !== undefined:
               return (
                 <>
-                  <CardTitle component="h3">
-                    {t("metrics.total_bytes")}{" "}
+                  <CardTitle component='h3'>
+                    {t('metrics.total_bytes')}{' '}
                     <ChartPopover
-                      title={t("metrics.total_bytes")}
-                      description={t("metrics.topic_metrics_help_text")}
+                      title={t('metrics.total_bytes')}
+                      description={t('metrics.topic_metrics_help_text')}
                     />
                   </CardTitle>
                   <CardBody>
@@ -147,8 +147,8 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                   </CardBody>
                   <Divider />
 
-                  <CardTitle component="h3">
-                    {t("metrics.topic_partition_size")}
+                  <CardTitle component='h3'>
+                    {t('metrics.topic_partition_size')}
                   </CardTitle>
                   <CardBody>
                     <LogSizePerPartitionChart
@@ -162,11 +162,11 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
             default:
               return (
                 <>
-                  <CardTitle component="h3">
-                    {t("metrics.total_bytes")}{" "}
+                  <CardTitle component='h3'>
+                    {t('metrics.total_bytes')}{' '}
                     <ChartPopover
-                      title={t("metrics.total_bytes")}
-                      description={t("metrics.topic_metrics_help_text")}
+                      title={t('metrics.total_bytes')}
+                      description={t('metrics.topic_metrics_help_text')}
                     />
                   </CardTitle>
                   <CardBody>
@@ -179,13 +179,13 @@ export const IncomingOutgoingBytesPerTopic: React.FC<IncomingOutgoingBytesPerTop
                     <Divider />
 
                     <Card>
-                      <CardTitle component="h3">
-                        {t("metrics.topic_partition_size")}
+                      <CardTitle component='h3'>
+                        {t('metrics.topic_partition_size')}
                       </CardTitle>
                       <CardBody>
                         <ChartEmptyState
-                          title={t("metrics.empty_state_no_filter_title")}
-                          body={t("metrics.empty_state_no_filter_body")}
+                          title={t('metrics.empty_state_no_filter_title')}
+                          body={t('metrics.empty_state_no_filter_body')}
                           noFilter
                         />
                       </CardBody>

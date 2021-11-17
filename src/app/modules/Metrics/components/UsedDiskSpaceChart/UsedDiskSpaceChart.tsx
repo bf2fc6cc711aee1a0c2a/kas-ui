@@ -57,7 +57,10 @@ type BrokerChartData = {
 
 type LegendData = {
   name: string;
-  symbol: any;
+  symbol?: {
+    fill?: string;
+    type?: string;
+  };
 };
 
 type KafkaInstanceProps = {

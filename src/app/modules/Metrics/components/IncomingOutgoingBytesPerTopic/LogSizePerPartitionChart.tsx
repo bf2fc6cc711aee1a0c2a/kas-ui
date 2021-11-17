@@ -1,10 +1,10 @@
-import { PartitionBytesMetric } from "@app/modules/Metrics/Metrics.api";
+import { PartitionBytesMetric } from '@app/modules/Metrics/Metrics.api';
 import {
   convertToSpecifiedByte,
   dateToChartValue,
   getLargestByteSize,
   shouldShowDate,
-} from "@app/modules/Metrics/utils";
+} from '@app/modules/Metrics/utils';
 import {
   Chart,
   ChartArea,
@@ -13,11 +13,11 @@ import {
   ChartLegend,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from "@patternfly/react-charts";
-import chart_color_blue_300 from "@patternfly/react-tokens/dist/js/chart_color_blue_300";
-import chart_color_green_300 from "@patternfly/react-tokens/dist/js/chart_color_green_300";
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+} from '@patternfly/react-charts';
+import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import chart_color_green_300 from '@patternfly/react-tokens/dist/js/chart_color_green_300';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const colors = [chart_color_green_300.value, chart_color_blue_300.value];
 
@@ -53,7 +53,7 @@ export const LogSizePerPartitionChart: FunctionComponent<LogSizePerPartitionChar
 
     useEffect(() => {
       handleResize();
-      window.addEventListener("resize", handleResize);
+      window.addEventListener('resize', handleResize);
     }, [width]);
 
     const { chartData, largestByteSize, legendData } =
@@ -62,14 +62,14 @@ export const LogSizePerPartitionChart: FunctionComponent<LogSizePerPartitionChar
     return (
       <div ref={containerRef}>
         <Chart
-          ariaTitle={t("metrics.log_size_per_partition")}
+          ariaTitle={t('metrics.log_size_per_partition')}
           containerComponent={
             <ChartVoronoiContainer
               labels={({ datum }) => `${datum.name}: ${datum.y}`}
               constrainToVisibleArea
             />
           }
-          legendPosition="bottom-left"
+          legendPosition='bottom-left'
           legendComponent={
             <ChartLegend data={legendData} itemsPerRow={itemsPerRow} />
           }
@@ -84,7 +84,7 @@ export const LogSizePerPartitionChart: FunctionComponent<LogSizePerPartitionChar
           width={width}
           legendAllowWrap={true}
         >
-          <ChartAxis label={"\n" + "Time"} tickCount={6} />
+          <ChartAxis label={'\n' + 'Time'} tickCount={6} />
           <ChartAxis
             dependentAxis
             tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
@@ -94,7 +94,7 @@ export const LogSizePerPartitionChart: FunctionComponent<LogSizePerPartitionChar
               <ChartArea
                 key={`chart-area-${index}`}
                 data={value.area}
-                interpolation="monotoneX"
+                interpolation='monotoneX'
               />
             ))}
           </ChartGroup>
@@ -112,7 +112,6 @@ export function getLogSizePerPartitionChartData(
   const largestByteSize = getLargestByteSize(partitions, undefined);
   Object.entries(partitions).map(([name, dataMap], index) => {
     const timestamps = Object.keys(dataMap).map((s) => parseInt(s, 10));
-    const data = Object.values(dataMap);
     const color = colors[index];
     legendData.push({
       name,
