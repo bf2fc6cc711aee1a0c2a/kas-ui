@@ -1,8 +1,8 @@
-import { useSelector } from "@xstate/react";
-import { useCallback, useContext, useMemo } from "react";
-import { DurationOptions } from "./components/FilterByTime";
-import { DiskSpaceMetricsModel } from "./machines";
-import { MetricsContext } from "./MetricsProvider";
+import { useSelector } from '@xstate/react';
+import { useCallback, useContext, useMemo } from 'react';
+import { DurationOptions } from './components/FilterByTime';
+import { DiskSpaceMetricsModel } from './machines';
+import { MetricsContext } from './MetricsProvider';
 
 export function useDiskSpace() {
   const { diskSpaceMetricsMachineService: service } =
@@ -11,10 +11,10 @@ export function useDiskSpace() {
   const selector = useCallback(
     (state: typeof service.state) => ({
       ...state.context,
-      isRefreshing: state.hasTag("refreshing"),
-      isLoading: state.hasTag("loading"),
-      isFailed: state.hasTag("failed"),
-      isDataUnavailable: state.hasTag("no-data"),
+      isRefreshing: state.hasTag('refreshing'),
+      isLoading: state.hasTag('loading'),
+      isFailed: state.hasTag('failed'),
+      isDataUnavailable: state.hasTag('no-data'),
     }),
     []
   );

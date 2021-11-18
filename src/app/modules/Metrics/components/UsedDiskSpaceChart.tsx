@@ -2,7 +2,7 @@ import {
   convertToSpecifiedByte,
   dateToChartValue,
   shouldShowDate,
-} from "@app/modules/Metrics/utils";
+} from '@app/modules/Metrics/utils';
 import {
   Chart,
   ChartArea,
@@ -12,13 +12,13 @@ import {
   ChartThemeColor,
   ChartThreshold,
   ChartVoronoiContainer,
-} from "@patternfly/react-charts";
-import chart_color_black_500 from "@patternfly/react-tokens/dist/js/chart_color_black_500";
-import chart_color_blue_300 from "@patternfly/react-tokens/dist/js/chart_color_blue_300";
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { TotalBytesMetrics } from "..";
-import { DurationOptions } from "./FilterByTime";
+} from '@patternfly/react-charts';
+import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
+import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { TotalBytesMetrics } from '..';
+import { DurationOptions } from './FilterByTime';
 
 type ChartData = {
   areaColor: string;
@@ -61,29 +61,29 @@ export const UsedDiskSpaceChart: FunctionComponent<UsedDiskSpaceProps> = ({
 
   useEffect(() => {
     handleResize();
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
   }, [width]);
   const { chartData, legendData, largestByteSize } = getChartData(
     metrics,
     timeDuration,
     usageLimit,
-    t("Used disk space")
+    t('Used disk space')
   );
 
   return (
     <div ref={containerRef}>
       <Chart
-        ariaTitle={t("metrics.used_disk_space")}
+        ariaTitle={t('metrics.used_disk_space')}
         containerComponent={
           <ChartVoronoiContainer
             labels={({ datum }) => `${datum.name}: ${datum.y}`}
             constrainToVisibleArea
           />
         }
-        legendPosition="bottom-left"
+        legendPosition='bottom-left'
         legendComponent={
           <ChartLegend
-            orientation={"horizontal"}
+            orientation={'horizontal'}
             data={legendData}
             itemsPerRow={itemsPerRow}
           />
@@ -100,7 +100,7 @@ export const UsedDiskSpaceChart: FunctionComponent<UsedDiskSpaceProps> = ({
         minDomain={{ y: 0 }}
         legendAllowWrap={true}
       >
-        <ChartAxis label={"\n" + "Time"} tickCount={6} />
+        <ChartAxis label={'\n' + 'Time'} tickCount={6} />
         <ChartAxis
           dependentAxis
           tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
@@ -111,7 +111,7 @@ export const UsedDiskSpaceChart: FunctionComponent<UsedDiskSpaceProps> = ({
             <ChartArea
               key={`chart-area-${index}`}
               data={value.area}
-              interpolation="monotoneX"
+              interpolation='monotoneX'
               style={{
                 data: {
                   // TODO: check if this is needed
@@ -143,8 +143,8 @@ const getChartData = (
 ) => {
   const legendData: Array<LegendData> = [
     {
-      name: "Limit",
-      symbol: { fill: chart_color_black_500.value, type: "threshold" },
+      name: 'Limit',
+      symbol: { fill: chart_color_black_500.value, type: 'threshold' },
     },
     { name: label, symbol: { fill: chart_color_blue_300.value } },
   ];
@@ -154,7 +154,7 @@ const getChartData = (
   const chartData: Array<ChartData> = [];
   const area: Array<BrokerChartData> = [];
   const softLimit: Array<BrokerChartData> = [];
-  const largestByteSize = "GiB"; // Hard code GiB as the largest byte size because there will always be a 20 GiB limit.
+  const largestByteSize = 'GiB'; // Hard code GiB as the largest byte size because there will always be a 20 GiB limit.
 
   const timestamps = Object.keys(metrics).map((ts) => parseInt(ts, 10));
   const currentLengthOfData = (() => {
@@ -174,7 +174,7 @@ const getChartData = (
         showDate: shouldShowDate(timeDuration),
       });
       area.push({ name: label, x: time, y: 0 });
-      softLimit.push({ name: "Limit", x: time, y: usageLimit });
+      softLimit.push({ name: 'Limit', x: time, y: usageLimit });
     }
   }
 
@@ -186,7 +186,7 @@ const getChartData = (
 
     const convertedBytes = convertToSpecifiedByte(bytes, largestByteSize);
     area.push({ name: label, x: time, y: convertedBytes });
-    softLimit.push({ name: "Limit", x: time, y: usageLimit });
+    softLimit.push({ name: 'Limit', x: time, y: usageLimit });
   });
   chartData.push({ areaColor, softLimitColor, area, softLimit });
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   CardActions,
@@ -10,11 +10,11 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-} from "@patternfly/react-core";
-import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
-import { FilterByTopic } from "./FilterByTopic";
-import { DurationOptions, FilterByTime } from "./FilterByTime";
-import { FunctionComponent } from "enzyme";
+} from '@patternfly/react-core';
+import SyncIcon from '@patternfly/react-icons/dist/js/icons/sync-icon';
+import { FilterByTopic } from './FilterByTopic';
+import { DurationOptions, FilterByTime } from './FilterByTime';
+import { FunctionComponent } from 'enzyme';
 
 type TopicMetricsToolbarProps = {
   title: string;
@@ -42,7 +42,7 @@ export const TopicMetricsToolbar: FunctionComponent<TopicMetricsToolbarProps> =
     return (
       <>
         <CardHeader>
-          <CardTitle component="h2">{title}</CardTitle>
+          <CardTitle component='h2'>{title}</CardTitle>
           <CardActions>
             <Toolbar>
               <ToolbarContent>
@@ -56,13 +56,13 @@ export const TopicMetricsToolbar: FunctionComponent<TopicMetricsToolbarProps> =
                   timeDuration={timeDuration}
                   onDurationChange={onSetTimeDuration}
                   disableToolbar={isDisabled}
-                  keyText={"topic-metrics-time-filter"}
+                  keyText={'topic-metrics-time-filter'}
                 />
                 <ToolbarItem>
                   <Button
                     isLoading={isRefreshing}
-                    variant="plain"
-                    aria-label="sync"
+                    variant='plain'
+                    aria-label='sync'
                     onClick={onRefresh}
                   >
                     {!isRefreshing && <SyncIcon />}

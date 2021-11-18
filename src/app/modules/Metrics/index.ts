@@ -1,2 +1,2 @@
-export * from "./Metrics";
-export * from "./MetricsApi";
+export * from './Metrics';
+export * from './MetricsApi';

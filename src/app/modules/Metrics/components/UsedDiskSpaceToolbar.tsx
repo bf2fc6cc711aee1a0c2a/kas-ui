@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   CardActions,
@@ -8,11 +8,11 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-} from "@patternfly/react-core";
-import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
-import { FilterByTopic } from "./FilterByTopic";
-import { DurationOptions, FilterByTime } from "./FilterByTime";
-import { FunctionComponent } from "enzyme";
+} from '@patternfly/react-core';
+import SyncIcon from '@patternfly/react-icons/dist/js/icons/sync-icon';
+import { FilterByTopic } from './FilterByTopic';
+import { DurationOptions, FilterByTime } from './FilterByTime';
+import { FunctionComponent } from 'enzyme';
 
 type UsedDiskSpaceToolbarProps = {
   title: string;
@@ -34,21 +34,21 @@ export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> 
     return (
       <>
         <CardHeader>
-          <CardTitle component="h2">{title}</CardTitle>
+          <CardTitle component='h2'>{title}</CardTitle>
           <CardActions>
             <Toolbar>
               <ToolbarContent>
                 <FilterByTime
                   timeDuration={timeDuration}
                   onDurationChange={onSetTimeDuration}
-                  keyText={"kafka-metrics-time-filter"}
+                  keyText={'kafka-metrics-time-filter'}
                   disableToolbar={isDisabled}
                 />
                 <ToolbarItem>
                   <Button
                     isLoading={isRefreshing}
-                    variant="plain"
-                    aria-label="sync"
+                    variant='plain'
+                    aria-label='sync'
                     onClick={onRefresh}
                   >
                     {!isRefreshing && <SyncIcon />}

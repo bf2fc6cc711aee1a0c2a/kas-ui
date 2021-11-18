@@ -1,7 +1,7 @@
-import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
-import { useInterpret } from "@xstate/react";
-import React, { createContext, FunctionComponent } from "react";
-import { InterpreterFrom } from "xstate";
+import { useAuth, useConfig } from '@rhoas/app-services-ui-shared';
+import { useInterpret } from '@xstate/react';
+import React, { createContext, FunctionComponent } from 'react';
+import { InterpreterFrom } from 'xstate';
 import {
   DiskSpaceMetricsMachine,
   TopicsMetricsMachineType,
@@ -9,8 +9,8 @@ import {
   TopicsMetricsModel,
   DiskSpaceMachineType,
   DiskSpaceMetricsModel,
-} from "./machines";
-import { fetchDiskSpaceMetrics, fetchTopicsMetrics } from "./MetricsApi";
+} from './machines';
+import { fetchDiskSpaceMetrics, fetchTopicsMetrics } from './MetricsApi';
 
 type MetricsContextProps = {
   kafkaId: string;
@@ -65,7 +65,7 @@ function useTopicsMetricsMachineService(kafkaId: string) {
                 callback(TopicsMetricsModel.events.fetchSuccess(results))
               )
               .catch((e) => {
-                console.error("Failed fetching data", e);
+                console.error('Failed fetching data', e);
                 callback(TopicsMetricsModel.events.fetchFail());
               });
           };
@@ -102,7 +102,7 @@ function useDiskSpaceMetricsMachineService(kafkaId: string) {
                 )
               )
               .catch((e) => {
-                console.error("Failed fetching data", e);
+                console.error('Failed fetching data', e);
                 callback(DiskSpaceMetricsModel.events.fetchFail());
               });
           };

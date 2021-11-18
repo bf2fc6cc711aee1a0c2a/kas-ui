@@ -1,5 +1,5 @@
-import { Grid, GridItem, PageSection } from "@patternfly/react-core";
-import React, { ReactNode, FunctionComponent } from "react";
+import { Grid, GridItem, PageSection } from '@patternfly/react-core';
+import React, { ReactNode, FunctionComponent } from 'react';
 
 type MetricsLayoutProps = {
   diskSpaceMetrics: ReactNode;

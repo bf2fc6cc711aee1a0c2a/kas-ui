@@ -1,19 +1,19 @@
-import * as React from "react";
-import { Route, RouteComponentProps, Switch } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { accessibleRouteChangeHandler } from "@app/utils/utils";
-import { MASPageNotFound } from "@app/common/MASPageNotFound/MASPageNotFound";
-import { useDocumentTitle } from "@app/utils/useDocumentTitle";
+import * as React from 'react';
+import { Route, RouteComponentProps, Switch } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { accessibleRouteChangeHandler } from '@app/utils/utils';
+import { MASPageNotFound } from '@app/common/MASPageNotFound/MASPageNotFound';
+import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import {
   LastLocationProvider,
   useLastLocation,
-} from "react-router-last-location";
-import { OpenshiftStreamsStandalone } from "@app/modules/OpenshiftStreams";
-import { ServiceAccountsConnected } from "@app/modules/ServiceAccounts";
-import { Metrics } from "@app/modules/Metrics";
+} from 'react-router-last-location';
+import { OpenshiftStreamsStandalone } from '@app/modules/OpenshiftStreams';
+import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
+import { Metrics } from '@app/modules/Metrics';
 
 export const SampleMetrics = () => {
-  const kafkaId = "1vX09n2EKVPBDr9Cu9rE47gj67y";
+  const kafkaId = '1vX09n2EKVPBDr9Cu9rE47gj67y';
   const onCreateTopic = () => {
     return;
   };
@@ -48,23 +48,23 @@ const routes: AppRouteConfig[] = [
     component: OpenshiftStreamsStandalone,
     exact: true,
     // t('kafka_instances')
-    label: "Kafka Instances",
-    path: "/",
-    title: "Kafka Instances",
+    label: 'Kafka Instances',
+    path: '/',
+    title: 'Kafka Instances',
   },
   {
     component: ServiceAccountsConnected,
     exact: true,
-    label: "Service Accounts",
-    path: "/service-accounts",
-    title: "Service Accounts",
+    label: 'Service Accounts',
+    path: '/service-accounts',
+    title: 'Service Accounts',
   },
   {
     component: SampleMetrics,
     exact: true,
-    label: "Metrics",
-    path: "/metrics",
-    title: "Metrics",
+    label: 'Metrics',
+    path: '/metrics',
+    title: 'Metrics',
   },
 ];
 
@@ -129,7 +129,7 @@ const AppRoutes = (): React.ReactElement => {
             />
           )
         )}
-        <PageNotFound title={t("404_page_does_not_exist")} />
+        <PageNotFound title={t('404_page_does_not_exist')} />
       </Switch>
     </LastLocationProvider>
   );

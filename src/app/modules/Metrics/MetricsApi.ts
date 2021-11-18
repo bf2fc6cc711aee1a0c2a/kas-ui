@@ -1,10 +1,10 @@
-import { TopicsApi } from "@rhoas/kafka-instance-sdk";
+import { TopicsApi } from '@rhoas/kafka-instance-sdk';
 import {
   Configuration,
   ConfigurationParameters,
   DefaultApi,
   RangeQuery,
-} from "@rhoas/kafka-management-sdk";
+} from '@rhoas/kafka-management-sdk';
 
 type NoUndefinedField<T> = {
   [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>;
@@ -15,7 +15,7 @@ export type PartitionBytesMetric = { [partition: string]: TotalBytesMetrics };
 
 export type BasicApiConfigurationParameters = Pick<
   ConfigurationParameters,
-  "accessToken" | "basePath"
+  'accessToken' | 'basePath'
 >;
 
 type FetchDiskSpaceMetricsProps = {
@@ -41,7 +41,7 @@ export const fetchDiskSpaceMetrics = async ({
     kafkaId,
     timeDuration,
     timeInterval,
-    ["kubelet_volume_stats_used_bytes"]
+    ['kubelet_volume_stats_used_bytes']
   );
 
   // Remove all results with no data. Not sure this can really  happen but since
@@ -55,7 +55,7 @@ export const fetchDiskSpaceMetrics = async ({
         m.metric.topic &&
         m.metric.name &&
         m.metric.persistentvolumeclaim &&
-        m.metric.persistentvolumeclaim.includes("zookeeper")
+        m.metric.persistentvolumeclaim.includes('zookeeper')
       )
   ) as SafeRangeQuery[];
 
@@ -133,7 +133,7 @@ export async function fetchRawTopicMetrics({
   timeInterval,
   selectedTopic,
 }: FetchRawTopicsMetricsProps): Promise<FetchRawTopicsMetricsReturnValue> {
-  const privateTopics = ["__consumer_offsets", "__strimzi_canary"];
+  const privateTopics = ['__consumer_offsets', '__strimzi_canary'];
 
   const apisService = new DefaultApi(
     new Configuration({
@@ -147,9 +147,9 @@ export async function fetchRawTopicMetrics({
     timeDuration,
     timeInterval,
     [
-      "kafka_server_brokertopicmetrics_bytes_in_total",
-      "kafka_server_brokertopicmetrics_bytes_out_total",
-      "kafka_topic:kafka_log_log_size:sum",
+      'kafka_server_brokertopicmetrics_bytes_in_total',
+      'kafka_server_brokertopicmetrics_bytes_out_total',
+      'kafka_topic:kafka_log_log_size:sum',
     ]
   );
 
@@ -159,7 +159,7 @@ export async function fetchRawTopicMetrics({
     (m) =>
       // defensive programming
       !(m.values && m.metric && m.metric.topic && m.metric.name) &&
-      !privateTopics.includes(m.metric?.topic || "")
+      !privateTopics.includes(m.metric?.topic || '')
   ) as SafeRangeQuery[];
 
   // Also filter for metrics about the selectedTopic, if specified
@@ -195,13 +195,13 @@ export async function fetchRawTopicMetrics({
     }
 
     switch (name) {
-      case "kafka_server_brokertopicmetrics_bytes_in_total":
+      case 'kafka_server_brokertopicmetrics_bytes_in_total':
         addAggregatedTotalBytesTo(bytesIncoming);
         break;
-      case "kafka_server_brokertopicmetrics_bytes_out_total":
+      case 'kafka_server_brokertopicmetrics_bytes_out_total':
         addAggregatedTotalBytesTo(bytesOutgoing);
         break;
-      case "kafka_topic:kafka_log_log_size:sum":
+      case 'kafka_topic:kafka_log_log_size:sum':
         addAggregatePartitionBytes();
         break;
     }

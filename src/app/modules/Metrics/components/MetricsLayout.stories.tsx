@@ -1,8 +1,8 @@
-import { Card, CardBody, CardTitle, TextContent } from "@patternfly/react-core";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import React from "react";
+import { Card, CardBody, CardTitle, TextContent } from '@patternfly/react-core';
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 
-import { MetricsLayout } from "./MetricsLayout";
+import { MetricsLayout } from './MetricsLayout';
 
 const SampleCard = (
   <Card>
@@ -21,7 +21,7 @@ const SampleCard = (
 );
 
 export default {
-  title: "Metrics/Components/MetricsLayout",
+  title: 'Metrics/Components/MetricsLayout',
   component: MetricsLayout,
   args: {},
 } as ComponentMeta<typeof MetricsLayout>;
