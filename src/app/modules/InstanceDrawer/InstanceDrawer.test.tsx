@@ -40,6 +40,8 @@ const instanceDetail: KafkaRequest = {
   owner: 'test_owner',
   bootstrap_server_host:
     'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org',
+  multi_az: true,
+  reauthentication_enabled: false,
 };
 
 const setup = (
