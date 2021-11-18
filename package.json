@@ -98,7 +98,6 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@cloudmosaic/quickstarts": "0.0.24",
     "@patternfly/patternfly": "4.132.2",
     "@patternfly/quickstarts": "1.2.2",
     "@patternfly/react-charts": "6.15.20",
