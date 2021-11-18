@@ -1,15 +1,15 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
-import { IncomingOutgoingBytesPerTopic } from './IncomingOutgoingBytesPerTopic';
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import React from "react";
+import { IncomingOutgoingBytesPerTopic } from "./IncomingOutgoingBytesPerTopic";
 
 export default {
-  title: 'Metrics/Components/IncomingOutgoingBytesPerTopic',
+  title: "Metrics/Components/IncomingOutgoingBytesPerTopic",
   component: IncomingOutgoingBytesPerTopic,
   args: {
     topics: [],
-    incomingTopicsData: [],
-    outgoingTopicsData: [],
-    partitions: [],
+    incomingTopicsData: {},
+    outgoingTopicsData: {},
+    partitions: {},
     timeDuration: 3,
     metricsDataUnavailable: false,
     isLoading: false,
@@ -51,27 +51,27 @@ const sampleOutgoingData = [
 
 export const SampleData = Template.bind({});
 SampleData.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
+  topics: ["lorem", "dolor", "ipsum"],
   incomingTopicsData: sampleIncomingData,
   outgoingTopicsData: sampleOutgoingData,
 };
 
 export const LoadingSelectedTopic = Template.bind({});
 LoadingSelectedTopic.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
-  selectedTopic: 'lorem',
+  topics: ["lorem", "dolor", "ipsum"],
+  selectedTopic: "lorem",
   isLoading: true,
 };
 
 export const SampleDataWithSelectedTopic = Template.bind({});
 SampleDataWithSelectedTopic.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
-  selectedTopic: 'lorem',
+  topics: ["lorem", "dolor", "ipsum"],
+  selectedTopic: "lorem",
   incomingTopicsData: sampleIncomingData,
   outgoingTopicsData: sampleOutgoingData,
   partitions: [
     {
-      name: 'dolor partition 1',
+      name: "dolor partition 1",
       data: [
         { timestamp: 1636546066048, bytes: 3 },
         { timestamp: 1636546166048, bytes: 1 },
@@ -80,7 +80,7 @@ SampleDataWithSelectedTopic.args = {
       ],
     },
     {
-      name: 'dolor partition 2',
+      name: "dolor partition 2",
       data: [
         { timestamp: 1636546066048, bytes: 7 },
         { timestamp: 1636546166048, bytes: 4 },
@@ -89,7 +89,7 @@ SampleDataWithSelectedTopic.args = {
       ],
     },
     {
-      name: 'dolor partition 3',
+      name: "dolor partition 3",
       data: [
         { timestamp: 1636546066048, bytes: 2 },
         { timestamp: 1636546166048, bytes: 6 },

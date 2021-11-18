@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   EmptyState,
   EmptyStateVariant,
@@ -6,10 +6,11 @@ import {
   EmptyStateIcon,
   Title,
   Button,
-} from '@patternfly/react-core';
-import TachometerAltIcon from '@patternfly/react-icons/dist/js/icons/tachometer-alt-icon';
-import WrenchIcon from '@patternfly/react-icons/dist/js/icons/wrench-icon';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
+} from "@patternfly/react-core";
+import TachometerAltIcon from "@patternfly/react-icons/dist/js/icons/tachometer-alt-icon";
+import WrenchIcon from "@patternfly/react-icons/dist/js/icons/wrench-icon";
+import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
+import { SpinnerIcon } from "@patternfly/react-icons";
 
 type ChartEmptyState = {
   title: string;
@@ -17,6 +18,7 @@ type ChartEmptyState = {
   noData?: boolean;
   noTopics?: boolean;
   noFilter?: boolean;
+  isLoading?: boolean;
   onCreateTopic?: () => void;
 };
 
@@ -26,6 +28,7 @@ export const ChartEmptyState = ({
   noData,
   noTopics,
   noFilter,
+  isLoading,
   onCreateTopic,
 }: ChartEmptyState) => {
   const getIcon = () => {
@@ -35,6 +38,8 @@ export const ChartEmptyState = ({
       return WrenchIcon;
     } else if (noFilter) {
       return FilterIcon;
+    } else if (isLoading) {
+      return SpinnerIcon;
     }
     return;
   };
@@ -42,7 +47,7 @@ export const ChartEmptyState = ({
   return (
     <EmptyState variant={EmptyStateVariant.xs}>
       <EmptyStateIcon icon={getIcon()} />
-      <Title headingLevel='h3' size='lg'>
+      <Title headingLevel="h3" size="lg">
         {title}
       </Title>
       <EmptyStateBody>
@@ -50,7 +55,7 @@ export const ChartEmptyState = ({
         <br />
         <br />
         {noTopics && (
-          <Button variant='primary' onClick={onCreateTopic}>
+          <Button variant="primary" onClick={onCreateTopic}>
             Create topic
           </Button>
         )}

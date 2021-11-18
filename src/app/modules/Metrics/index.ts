@@ -1,3 +1,2 @@
-export * from './Metrics';
-export * from './Metrics.api';
-export * from './MetricsConnected';
+export * from "./Metrics";
+export * from "./MetricsApi";

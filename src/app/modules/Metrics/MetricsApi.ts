@@ -1,14 +1,14 @@
-import { TopicsApi } from '@rhoas/kafka-instance-sdk';
+import { TopicsApi } from "@rhoas/kafka-instance-sdk";
 import {
   Configuration,
   ConfigurationParameters,
   DefaultApi,
   RangeQuery,
-} from '@rhoas/kafka-management-sdk';
+} from "@rhoas/kafka-management-sdk";
 
 export type BasicApiConfigurationParameters = Pick<
   ConfigurationParameters,
-  'accessToken' | 'basePath'
+  "accessToken" | "basePath"
 >;
 
 type FetchMetricsAndTopicsProps = FetchMetricsProps;
@@ -79,7 +79,7 @@ export async function fetchMetrics({
   timeInterval,
   selectedTopic,
 }: FetchMetricsProps): Promise<FetchMetricsReturnValue> {
-  const privateTopics = ['__consumer_offsets', '__strimzi_canary'];
+  const privateTopics = ["__consumer_offsets", "__strimzi_canary"];
 
   const apisService = new DefaultApi(
     new Configuration({
@@ -93,9 +93,9 @@ export async function fetchMetrics({
     timeDuration,
     timeInterval,
     [
-      'kafka_server_brokertopicmetrics_bytes_in_total',
-      'kafka_server_brokertopicmetrics_bytes_out_total',
-      'kafka_log_log_size',
+      "kafka_server_brokertopicmetrics_bytes_in_total",
+      "kafka_server_brokertopicmetrics_bytes_out_total",
+      "kafka_topic:kafka_log_log_size:sum",
     ]
   );
 
@@ -110,7 +110,7 @@ export async function fetchMetrics({
     (m) =>
       // defensive programming
       !(m.values && m.metric && m.metric.topic && m.metric.name) &&
-      !privateTopics.includes(m.metric?.topic || '')
+      !privateTopics.includes(m.metric?.topic || "")
   ) as SafeRangeQuery[];
 
   // Also filter for metrics about the selectedTopic, if specified
@@ -146,13 +146,13 @@ export async function fetchMetrics({
     }
 
     switch (name) {
-      case 'kafka_server_brokertopicmetrics_bytes_in_total':
+      case "kafka_server_brokertopicmetrics_bytes_in_total":
         addAggregatedTotalBytesTo(bytesIncoming);
         break;
-      case 'kafka_server_brokertopicmetrics_bytes_out_total':
+      case "kafka_server_brokertopicmetrics_bytes_out_total":
         addAggregatedTotalBytesTo(bytesOutgoing);
         break;
-      case 'kafka_topic:kafka_log_log_size:sum':
+      case "kafka_topic:kafka_log_log_size:sum":
         addAggregatePartitionBytes();
         break;
     }

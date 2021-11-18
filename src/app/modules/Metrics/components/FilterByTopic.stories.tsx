@@ -1,14 +1,14 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import React from 'react';
+import { ComponentStory, ComponentMeta } from "@storybook/react";
+import React from "react";
 
-import { FilterByTopic } from './FilterByTopic';
+import { FilterByTopic } from "./FilterByTopic";
 
 export default {
-  title: 'Metrics/Components/FilterByTopic',
+  title: "Metrics/Components/FilterByTopic",
   component: FilterByTopic,
   args: {
     selectedTopic: undefined,
-    topicList: ['lorem', 'dolor', 'ipsum'],
+    topicList: ["lorem", "dolor", "ipsum"],
     disableToolbar: false,
   },
 } as ComponentMeta<typeof FilterByTopic>;
@@ -32,5 +32,5 @@ NoTopics.args = {
 
 export const MultipleTopicsWithCommonWords = Template.bind({});
 MultipleTopicsWithCommonWords.args = {
-  topicList: ['lorem dolor', 'lorem ipsum', 'lorem foo', 'dolor', 'ipsum'],
+  topicList: ["lorem dolor", "lorem ipsum", "lorem foo", "dolor", "ipsum"],
 };

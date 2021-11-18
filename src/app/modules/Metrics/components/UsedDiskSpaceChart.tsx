@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
-import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
-import { isServiceApiError } from '@app/utils';
+import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
+import { useAlert, useAuth, useConfig } from "@rhoas/app-services-ui-shared";
+import { isServiceApiError } from "@app/utils";
 import {
   AlertVariant,
   Bullseye,
@@ -10,7 +10,7 @@ import {
   CardTitle,
   CardBody,
   Spinner,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 import {
   Chart,
   ChartArea,
@@ -20,19 +20,20 @@ import {
   ChartThemeColor,
   ChartThreshold,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
-import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
-import chart_color_black_500 from '@patternfly/react-tokens/dist/js/chart_color_black_500';
+} from "@patternfly/react-charts";
+import chart_color_blue_300 from "@patternfly/react-tokens/dist/js/chart_color_blue_300";
+import chart_color_black_500 from "@patternfly/react-tokens/dist/js/chart_color_black_500";
 import {
   ChartEmptyState,
   ChartPopover,
   UsedDiskSpaceToolbar,
-} from '@app/modules/Metrics/components';
+} from "@app/modules/Metrics/components";
 import {
   convertToSpecifiedByte,
   dateToChartValue,
   shouldShowDate,
-} from '@app/modules/Metrics/utils';
+} from "@app/modules/Metrics/utils";
+import { DurationOptions } from "../ChartToolbar/FilterByTime";
 
 type Broker = {
   name: string;
@@ -85,7 +86,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   const [chartData, setChartData] = useState<ChartData[]>();
   const [chartDataLoading, setChartDataLoading] = useState(true);
   const [largestByteSize, setLargestByteSize] = useState<string>();
-  const [timeDuration, setTimeDuration] = useState(6);
+  const [timeDuration, setTimeDuration] = useState<DurationOptions>(60);
   const [timeInterval, setTimeInterval] = useState(60);
   const usageLimit = 1000; // Replace with limit from API
 
@@ -95,7 +96,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
   const fetchUsedDiskSpaceMetrics = async () => {
     const accessToken = await auth?.kas.getToken();
-    if (accessToken !== undefined && accessToken !== '') {
+    if (accessToken !== undefined && accessToken !== "") {
       try {
         const apisService = new DefaultApi(
           new Configuration({
@@ -109,9 +110,9 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
         const data = await apisService.getMetricsByRangeQuery(
           kafkaID,
-          timeDuration * 60,
-          timeInterval * 60,
-          ['kubelet_volume_stats_used_bytes']
+          timeDuration,
+          timeInterval,
+          ["kubelet_volume_stats_used_bytes"]
         );
 
         const avgBroker = {
@@ -125,18 +126,18 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
             const labels = item.metric;
 
             if (labels === undefined) {
-              throw new Error('item.metric cannot be undefined');
+              throw new Error("item.metric cannot be undefined");
             }
             if (item.values === undefined) {
-              throw new Error('item.values cannot be undefined');
+              throw new Error("item.values cannot be undefined");
             }
-            if (labels['__name__'] === 'kubelet_volume_stats_used_bytes') {
-              const pvcName = labels['persistentvolumeclaim'];
+            if (labels["__name__"] === "kubelet_volume_stats_used_bytes") {
+              const pvcName = labels["persistentvolumeclaim"];
 
-              if (!pvcName.includes('zookeeper')) {
+              if (!pvcName.includes("zookeeper")) {
                 item.values?.forEach((value, indexJ) => {
                   if (value.timestamp == undefined) {
-                    throw new Error('timestamp cannot be undefined');
+                    throw new Error("timestamp cannot be undefined");
                   }
 
                   if (index > 0) {
@@ -168,7 +169,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
         addAlert &&
           addAlert({
             variant: AlertVariant.danger,
-            title: t('common.something_went_wrong'),
+            title: t("common.something_went_wrong"),
             description: reason,
           });
       }
@@ -184,14 +185,14 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
   useEffect(() => {
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
   }, [width]);
 
   const getChartData = (avgBroker) => {
     const legendData: Array<LegendData> = [
       {
-        name: 'Limit',
-        symbol: { fill: chart_color_black_500.value, type: 'threshold' },
+        name: "Limit",
+        symbol: { fill: chart_color_black_500.value, type: "threshold" },
       },
       { name: avgBroker.name, symbol: { fill: chart_color_blue_300.value } },
     ];
@@ -201,7 +202,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
     const chartData: Array<ChartData> = [];
     const area: Array<BrokerChartData> = [];
     const softLimit: Array<BrokerChartData> = [];
-    const largestByteSize = 'GiB'; // Hard code GiB as the largest byte size because there will always be a 20 GiB limit.
+    const largestByteSize = "GiB"; // Hard code GiB as the largest byte size because there will always be a 20 GiB limit.
 
     const getCurrentLengthOfData = () => {
       const timestampDiff =
@@ -224,7 +225,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
           showDate: shouldShowDate(timeDuration),
         });
         area.push({ name: avgBroker.name, x: time, y: 0 });
-        softLimit.push({ name: 'Limit', x: time, y: usageLimit });
+        softLimit.push({ name: "Limit", x: time, y: usageLimit });
       }
     }
 
@@ -239,7 +240,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
 
       const bytes = convertToSpecifiedByte(aggregateBytes, largestByteSize);
       area.push({ name: avgBroker.name, x: time, y: bytes });
-      softLimit.push({ name: 'Limit', x: time, y: usageLimit });
+      softLimit.push({ name: "Limit", x: time, y: usageLimit });
     });
     chartData.push({ areaColor, softLimitColor, area, softLimit });
 
@@ -256,17 +257,17 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
   return (
     <Card>
       <UsedDiskSpaceToolbar
-        title={t('metrics.kafka_instance_metrics')}
+        title={t("metrics.kafka_instance_metrics")}
+        timeDuration={timeDuration}
         onSetTimeDuration={setTimeDuration}
-        onSetTimeInterval={setTimeInterval}
         isDisabled={metricsDataUnavailable}
         onRefresh={onRefreshKafkaToolbar}
       />
-      <CardTitle component='h3'>
-        {t('metrics.used_disk_space')}{' '}
+      <CardTitle component="h3">
+        {t("metrics.used_disk_space")}{" "}
         <ChartPopover
-          title={t('metrics.used_disk_space')}
-          description={t('metrics.used_disk_space_help_text')}
+          title={t("metrics.used_disk_space")}
+          description={t("metrics.used_disk_space_help_text")}
         />
       </CardTitle>
       <CardBody>
@@ -277,17 +278,17 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
               legend &&
               largestByteSize && (
                 <Chart
-                  ariaTitle={t('metrics.used_disk_space')}
+                  ariaTitle={t("metrics.used_disk_space")}
                   containerComponent={
                     <ChartVoronoiContainer
                       labels={({ datum }) => `${datum.name}: ${datum.y}`}
                       constrainToVisibleArea
                     />
                   }
-                  legendPosition='bottom-left'
+                  legendPosition="bottom-left"
                   legendComponent={
                     <ChartLegend
-                      orientation={'horizontal'}
+                      orientation={"horizontal"}
                       data={legend}
                       itemsPerRow={itemsPerRow}
                     />
@@ -304,7 +305,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                   minDomain={{ y: 0 }}
                   legendAllowWrap={true}
                 >
-                  <ChartAxis label={'\n' + 'Time'} tickCount={6} />
+                  <ChartAxis label={"\n" + "Time"} tickCount={6} />
                   <ChartAxis
                     dependentAxis
                     tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
@@ -315,7 +316,7 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
                       <ChartArea
                         key={`chart-area-${index}`}
                         data={value.area}
-                        interpolation='monotoneX'
+                        interpolation="monotoneX"
                         style={{
                           data: {
                             // TODO: check if this is needed
@@ -338,8 +339,8 @@ export const UsedDiskSpaceChart: React.FC<KafkaInstanceProps> = ({
               )
             ) : (
               <ChartEmptyState
-                title={t('metrics.empty_state_no_data_title')}
-                body={t('metrics.empty_state_no_data_body')}
+                title={t("metrics.empty_state_no_data_title")}
+                body={t("metrics.empty_state_no_data_body")}
                 noData
               />
             )

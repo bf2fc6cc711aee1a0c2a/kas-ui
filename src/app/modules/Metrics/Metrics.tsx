@@ -1,12 +1,10 @@
 import {
   IncomingOutgoingBytesPerTopic,
   UsedDiskSpaceChart,
-} from '@app/modules/Metrics/components';
-import { Grid, GridItem, PageSection } from '@patternfly/react-core';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { ChartEmptyState } from './components/ChartEmptyState';
-import { useTopics } from './MetricsMachine';
+} from "@app/modules/Metrics/components";
+import React, { FunctionComponent } from "react";
+import { MetricsLayout } from "./components";
+import { MetricsProvider, useTopics } from "./MetricsProvider";
 
 export interface MetricsProps {
   kafkaId: string;
@@ -14,8 +12,27 @@ export interface MetricsProps {
 }
 
 export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
-  const { t } = useTranslation();
+  return (
+    <MetricsProvider kafkaId={kafkaId} onCreateTopic={onCreateTopic}>
+      <MetricsLayout
+        diskSpaceMetrics={<ConnectedDiskMetrics />}
+        topicMetrics={<ConnectedTopicsMetrics />}
+      />
+    </MetricsProvider>
+  );
+};
 
+const ConnectedDiskMetrics: FunctionComponent = () => {
+  return (
+    <UsedDiskSpaceChart
+      kafkaID={"kafkaId"}
+      metricsDataUnavailable={false}
+      setMetricsDataUnavailable={() => false}
+    />
+  );
+};
+
+const ConnectedTopicsMetrics: FunctionComponent = () => {
   const {
     isLoading,
     isDataUnavailable,
@@ -29,43 +46,22 @@ export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
     onDurationChange,
     onTopicChange,
     onRefresh,
-  } = useTopics(kafkaId);
+  } = useTopics();
 
   return (
-    <PageSection>
-      {!isFailed ? (
-        <Grid hasGutter>
-          <GridItem lg={6}>
-            <UsedDiskSpaceChart
-              kafkaID={kafkaId}
-              metricsDataUnavailable={isDataUnavailable}
-              setMetricsDataUnavailable={() => false}
-            />
-          </GridItem>
-          <GridItem lg={6}>
-            <IncomingOutgoingBytesPerTopic
-              metricsDataUnavailable={false}
-              onCreateTopic={onCreateTopic}
-              topics={topics}
-              incomingTopicsData={bytesIncoming}
-              outgoingTopicsData={bytesOutgoing}
-              partitions={bytesPerPartition}
-              timeDuration={timeDuration}
-              isLoading={isLoading}
-              selectedTopic={selectedTopic}
-              onRefresh={onRefresh}
-              onSelectedTopic={onTopicChange}
-              onTimeDuration={onDurationChange}
-            />
-          </GridItem>
-        </Grid>
-      ) : (
-        <ChartEmptyState
-          title={t('metrics.empty_state_no_data_title')}
-          body={t('metrics.empty_state_no_data_body')}
-          noData
-        />
-      )}
-    </PageSection>
+    <IncomingOutgoingBytesPerTopic
+      metricsDataUnavailable={isDataUnavailable}
+      topics={topics}
+      incomingTopicsData={bytesIncoming}
+      outgoingTopicsData={bytesOutgoing}
+      partitions={bytesPerPartition}
+      timeDuration={timeDuration}
+      isLoading={isLoading}
+      selectedTopic={selectedTopic}
+      onRefresh={onRefresh}
+      onSelectedTopic={onTopicChange}
+      onTimeDuration={onDurationChange}
+      onCreateTopic={() => false}
+    />
   );
 };
