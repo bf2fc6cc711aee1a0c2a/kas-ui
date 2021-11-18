@@ -1,1 +1,2 @@
-export * from './TopicMetricsMachine';
+export * from './DiskSpaceMetricsMachine';
+export * from './TopicsMetricsMachine';

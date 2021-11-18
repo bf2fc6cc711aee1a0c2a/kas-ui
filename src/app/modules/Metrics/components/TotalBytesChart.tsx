@@ -182,13 +182,12 @@ function metricsToLine(
 ) {
   const timestamps = Object.keys(metrics).map((ts) => parseInt(ts, 10));
   if (timestamps.length > 0) {
+    const line: Array<TopicChartData> = [];
     const currentLengthOfData = (() => {
       const timestampDiff = timestamps[timestamps.length - 1] - timestamps[0];
       const minutes = timestampDiff / 1000 / 60;
       return minutes;
     })();
-    const line: Array<TopicChartData> = [];
-
     const lengthOfData = 6 * 60 - currentLengthOfData;
     const lengthOfDataPer5Mins = (6 * 60 - currentLengthOfData) / 5;
 

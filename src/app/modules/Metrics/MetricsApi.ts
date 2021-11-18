@@ -6,19 +6,75 @@ import {
   RangeQuery,
 } from "@rhoas/kafka-management-sdk";
 
+type NoUndefinedField<T> = {
+  [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>;
+};
+type SafeRangeQuery = NoUndefinedField<RangeQuery>;
+export type TotalBytesMetrics = { [timestamp: string]: number };
+export type PartitionBytesMetric = { [partition: string]: TotalBytesMetrics };
+
 export type BasicApiConfigurationParameters = Pick<
   ConfigurationParameters,
   "accessToken" | "basePath"
 >;
 
-type FetchMetricsAndTopicsProps = FetchMetricsProps;
+type FetchDiskSpaceMetricsProps = {
+  kafkaId: string;
+  timeDuration: number;
+  timeInterval: number;
+} & BasicApiConfigurationParameters;
+export const fetchDiskSpaceMetrics = async ({
+  kafkaId,
+  timeDuration,
+  timeInterval,
+  accessToken,
+  basePath,
+}: FetchDiskSpaceMetricsProps) => {
+  const apisService = new DefaultApi(
+    new Configuration({
+      accessToken,
+      basePath,
+    })
+  );
 
-export const fetchMetricsAndTopics = async (
-  props: FetchMetricsAndTopicsProps
-) => {
+  const response = await apisService.getMetricsByRangeQuery(
+    kafkaId,
+    timeDuration,
+    timeInterval,
+    ["kubelet_volume_stats_used_bytes"]
+  );
+
+  // Remove all results with no data. Not sure this can really  happen but since
+  // the types allow for undefined we need to do a bit of defensive programming.
+  const safeMetrics: SafeRangeQuery[] = (response.data.items || []).filter(
+    (m) =>
+      // defensive programming
+      !(
+        m.values &&
+        m.metric &&
+        m.metric.topic &&
+        m.metric.name &&
+        m.metric.persistentvolumeclaim &&
+        m.metric.persistentvolumeclaim.includes("zookeeper")
+      )
+  ) as SafeRangeQuery[];
+
+  const aggregatedData: TotalBytesMetrics = {};
+
+  safeMetrics.forEach((m) => {
+    m.values.forEach(
+      ({ value, timestamp }) =>
+        (aggregatedData[timestamp] = value + (aggregatedData[timestamp] || 0))
+    );
+  });
+  return aggregatedData;
+};
+
+type FetchTopicsMetricsProps = FetchRawTopicsMetricsProps;
+export const fetchTopicsMetrics = async (props: FetchTopicsMetricsProps) => {
   const [kafkaTopics, metrics] = await Promise.all([
     fetchKafkaTopis(props),
-    fetchMetrics(props),
+    fetchRawTopicMetrics(props),
   ]);
   const {
     topics: metricsTopics,
@@ -57,28 +113,26 @@ export const fetchKafkaTopis = async ({
   return (response.data.items || []).map((t) => t.name as string);
 };
 
-export type TotalBytesMetrics = { [timestamp: string]: number };
-export type PartitionBytesMetric = { [partition: string]: TotalBytesMetrics };
-type FetchMetricsProps = {
+type FetchRawTopicsMetricsProps = {
   kafkaId: string;
   timeDuration: number;
   timeInterval: number;
   selectedTopic: string | undefined;
 } & BasicApiConfigurationParameters;
-type FetchMetricsReturnValue = {
+type FetchRawTopicsMetricsReturnValue = {
   topics: string[];
   bytesOutgoing: TotalBytesMetrics;
   bytesIncoming: TotalBytesMetrics;
   bytesPerPartition: PartitionBytesMetric;
 };
-export async function fetchMetrics({
+export async function fetchRawTopicMetrics({
   accessToken,
   basePath,
   kafkaId,
   timeDuration,
   timeInterval,
   selectedTopic,
-}: FetchMetricsProps): Promise<FetchMetricsReturnValue> {
+}: FetchRawTopicsMetricsProps): Promise<FetchRawTopicsMetricsReturnValue> {
   const privateTopics = ["__consumer_offsets", "__strimzi_canary"];
 
   const apisService = new DefaultApi(
@@ -98,11 +152,6 @@ export async function fetchMetrics({
       "kafka_topic:kafka_log_log_size:sum",
     ]
   );
-
-  type NoUndefinedField<T> = {
-    [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>;
-  };
-  type SafeRangeQuery = NoUndefinedField<RangeQuery>;
 
   // Remove all results with no data. Not sure this can really  happen but since
   // the types allow for undefined we need to do a bit of defensive programming.

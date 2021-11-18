@@ -1,16 +1,17 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import React from 'react';
+import { ComponentStory, ComponentMeta } from "@storybook/react";
+import React from "react";
 
-import { TopicMetricsToolbar } from './TopicMetricsToolbar';
+import { TopicMetricsToolbar } from "./TopicMetricsToolbar";
 
 export default {
-  title: 'Metrics/Components/TopicMetricsToolbar',
+  title: "Metrics/Components/TopicMetricsToolbar",
   component: TopicMetricsToolbar,
   controls: {},
   args: {
-    title: 'Sample title',
-    topicList: ['lorem', 'dolor', 'ipsum'],
+    title: "Sample title",
+    topicList: ["lorem", "dolor", "ipsum"],
     isDisabled: false,
+    isRefreshing: false,
   },
 } as ComponentMeta<typeof TopicMetricsToolbar>;
 

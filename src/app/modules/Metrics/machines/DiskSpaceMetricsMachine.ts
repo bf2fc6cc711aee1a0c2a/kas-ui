@@ -1,34 +1,20 @@
+import { TotalBytesMetrics } from "@app/modules/Metrics";
 import { createModel } from "xstate/lib/model";
-import { DurationOptions } from "../components/ChartToolbar/FilterByTime";
-import {
-  fetchMetricsAndTopics,
-  PartitionBytesMetric,
-  TotalBytesMetrics,
-} from "../MetricsApi";
+import { DurationOptions } from "../components/FilterByTime";
 
 const MAX_RETRIES = 3;
 
 type FetchSuccessProps = {
-  kafkaTopics: string[];
-  metricsTopics: string[];
-  bytesOutgoing: TotalBytesMetrics;
-  bytesIncoming: TotalBytesMetrics;
-  bytesPerPartition: PartitionBytesMetric;
+  metrics: TotalBytesMetrics;
 };
 
-export const TopicsMetricsModel = createModel(
+export const DiskSpaceMetricsModel = createModel(
   {
     // from the UI elements
-    selectedTopic: undefined as string | undefined,
     timeDuration: 60 as DurationOptions,
 
     // from the api
-    kafkaTopics: [] as string[],
-    metricsTopics: [] as string[],
-    bytesOutgoing: {} as TotalBytesMetrics,
-    bytesIncoming: {} as TotalBytesMetrics,
-    bytesPerPartition: {} as PartitionBytesMetric,
-
+    metrics: {} as TotalBytesMetrics,
     // how many time did we try a fetch (that combines more api)
     fetchFailures: 0 as number,
   },
@@ -53,53 +39,38 @@ export const TopicsMetricsModel = createModel(
   }
 );
 
-const setTopics = TopicsMetricsModel.assign((_, event) => {
-  const {
-    kafkaTopics,
-    metricsTopics,
-    bytesPerPartition: partitionsBytes,
-    bytesOutgoing: totalBytes,
-  } = event;
+const setMetrics = DiskSpaceMetricsModel.assign((_, event) => {
+  const { metrics } = event;
   return {
-    kafkaTopics,
-    metricsTopics,
-    bytesPerPartition: partitionsBytes,
-    bytesOutgoing: totalBytes,
+    metrics,
   };
 }, "fetchSuccess");
 
-const incrementRetries = TopicsMetricsModel.assign(
+const incrementRetries = DiskSpaceMetricsModel.assign(
   {
     fetchFailures: (context) => context.fetchFailures + 1,
   },
   "fetchFail"
 );
 
-const resetRetries = TopicsMetricsModel.assign(
+const resetRetries = DiskSpaceMetricsModel.assign(
   {
     fetchFailures: () => 0,
   },
   "refresh"
 );
 
-const setTopic = TopicsMetricsModel.assign(
-  {
-    selectedTopic: (_, event) => event.selectedTopic,
-  },
-  "selectTopic"
-);
-
-const setDuration = TopicsMetricsModel.assign(
+const setDuration = DiskSpaceMetricsModel.assign(
   {
     timeDuration: (_, event) => event.timeDuration,
   },
   "selectDuration"
 );
 
-export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
+export const DiskSpaceMetricsMachine = DiskSpaceMetricsModel.createMachine(
   {
-    id: "topics",
-    context: TopicsMetricsModel.initialContext,
+    id: "diskSpace",
+    context: DiskSpaceMetricsModel.initialContext,
     initial: "callApi",
     states: {
       callApi: {
@@ -112,8 +83,8 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
             },
             on: {
               fetchSuccess: {
-                actions: setTopics,
-                target: "#topics.verifyData",
+                actions: setMetrics,
+                target: "#diskSpace.verifyData",
               },
               fetchFail: {
                 actions: incrementRetries,
@@ -125,7 +96,7 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
             after: {
               1000: [
                 { cond: "canRetryFetching", target: "loading" },
-                { target: "#topics.criticalFail" },
+                { target: "#diskSpace.criticalFail" },
               ],
             },
           },
@@ -142,7 +113,7 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
       },
       verifyData: {
         always: [
-          { cond: "hasTopics", target: "withTopics" },
+          { cond: "hasMetrics", target: "withMetrics" },
           { target: "noData" },
         ],
       },
@@ -155,33 +126,30 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
           },
         },
       },
-      withTopics: {
+      withMetrics: {
         on: {
           refresh: {
             target: "refreshing",
           },
-          selectTopic: {
-            actions: setTopic,
-            target: "callApi",
-          },
           selectDuration: {
             actions: setDuration,
-            target: "callApi",
+            target: "refreshing",
           },
         },
       },
       refreshing: {
+        tags: "refreshing",
         invoke: {
           src: "api",
         },
         on: {
           fetchSuccess: {
-            actions: setTopics,
-            target: "withTopics",
+            actions: setMetrics,
+            target: "withMetrics",
           },
           fetchFail: {
-            // 👀 we silently ignore this happened and go back to withTopics state
-            target: "withTopics",
+            // 👀 we silently ignore this happened and go back to withMetrics state
+            target: "withMetrics",
           },
         },
       },
@@ -190,10 +158,9 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
   {
     guards: {
       canRetryFetching: (context) => context.fetchFailures < MAX_RETRIES,
-      hasTopics: (context) =>
-        context.kafkaTopics.length > 0 || context.metricsTopics.length > 0,
+      hasMetrics: (context) => Object.keys(context.metrics).length > 0,
     },
   }
 );
 
-export type TopicMetricsMachineType = typeof TopicsMetricsMachine;
+export type DiskSpaceMachineType = typeof DiskSpaceMetricsMachine;

@@ -1,10 +1,15 @@
 import {
-  IncomingOutgoingBytesPerTopic,
+  TopicsMetricsCard,
+  InitialLoadingEmptyState,
+  MetricsUnavailableEmptyState,
   UsedDiskSpaceChart,
 } from "@app/modules/Metrics/components";
 import React, { FunctionComponent } from "react";
 import { MetricsLayout } from "./components";
-import { MetricsProvider, useTopics } from "./MetricsProvider";
+import { UsedDiskSpaceCard } from "./components/UsedDiskSpaceCard";
+import { MetricsProvider } from "./MetricsProvider";
+import { useDiskSpace } from "./useDiskSpace";
+import { useTopics } from "./useTopics";
 
 export interface MetricsProps {
   kafkaId: string;
@@ -14,20 +19,49 @@ export interface MetricsProps {
 export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
   return (
     <MetricsProvider kafkaId={kafkaId} onCreateTopic={onCreateTopic}>
-      <MetricsLayout
-        diskSpaceMetrics={<ConnectedDiskMetrics />}
-        topicMetrics={<ConnectedTopicsMetrics />}
-      />
+      <ConnectedMetrics />
     </MetricsProvider>
   );
 };
 
-const ConnectedDiskMetrics: FunctionComponent = () => {
+const ConnectedMetrics: FunctionComponent = () => {
+  const { isLoading, isDataUnavailable } = useDiskSpace();
+
+  switch (true) {
+    case isLoading:
+      return <InitialLoadingEmptyState />;
+    case isDataUnavailable:
+      return <MetricsUnavailableEmptyState />;
+  }
   return (
-    <UsedDiskSpaceChart
-      kafkaID={"kafkaId"}
-      metricsDataUnavailable={false}
-      setMetricsDataUnavailable={() => false}
+    <MetricsLayout
+      diskSpaceMetrics={<ConnectedDiskMetrics />}
+      topicMetrics={<ConnectedTopicsMetrics />}
+    />
+  );
+};
+
+const ConnectedDiskMetrics: FunctionComponent = () => {
+  const {
+    isLoading,
+    isRefreshing,
+    isDataUnavailable,
+    isFailed,
+    timeDuration,
+    metrics,
+    onDurationChange,
+    onRefresh,
+  } = useDiskSpace();
+
+  return (
+    <UsedDiskSpaceCard
+      metrics={metrics}
+      timeDuration={timeDuration}
+      metricsDataUnavailable={isDataUnavailable || isFailed}
+      isLoading={isLoading}
+      isRefreshing={isRefreshing}
+      onRefresh={onRefresh}
+      onTimeDuration={onDurationChange}
     />
   );
 };
@@ -35,6 +69,7 @@ const ConnectedDiskMetrics: FunctionComponent = () => {
 const ConnectedTopicsMetrics: FunctionComponent = () => {
   const {
     isLoading,
+    isRefreshing,
     isDataUnavailable,
     isFailed,
     selectedTopic,
@@ -49,14 +84,15 @@ const ConnectedTopicsMetrics: FunctionComponent = () => {
   } = useTopics();
 
   return (
-    <IncomingOutgoingBytesPerTopic
-      metricsDataUnavailable={isDataUnavailable}
+    <TopicsMetricsCard
+      metricsDataUnavailable={isDataUnavailable || isFailed}
       topics={topics}
       incomingTopicsData={bytesIncoming}
       outgoingTopicsData={bytesOutgoing}
       partitions={bytesPerPartition}
       timeDuration={timeDuration}
       isLoading={isLoading}
+      isRefreshing={isRefreshing}
       selectedTopic={selectedTopic}
       onRefresh={onRefresh}
       onSelectedTopic={onTopicChange}

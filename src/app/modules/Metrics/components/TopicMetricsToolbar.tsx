@@ -9,6 +9,7 @@ import {
   LevelItem,
   Toolbar,
   ToolbarContent,
+  ToolbarItem,
 } from "@patternfly/react-core";
 import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
 import { FilterByTopic } from "./FilterByTopic";
@@ -21,6 +22,7 @@ type TopicMetricsToolbarProps = {
   topicList: string[];
   timeDuration: DurationOptions;
   isDisabled: boolean;
+  isRefreshing: boolean;
   onSetTimeDuration: (value: DurationOptions) => void;
   onSetSelectedTopic: (value: string | undefined) => void;
   onRefresh: () => void;
@@ -32,6 +34,7 @@ export const TopicMetricsToolbar: FunctionComponent<TopicMetricsToolbarProps> =
     topicList,
     timeDuration,
     isDisabled,
+    isRefreshing,
     onSetTimeDuration,
     onRefresh,
     onSetSelectedTopic,
@@ -55,9 +58,16 @@ export const TopicMetricsToolbar: FunctionComponent<TopicMetricsToolbarProps> =
                   disableToolbar={isDisabled}
                   keyText={"topic-metrics-time-filter"}
                 />
-                <Button variant="plain" aria-label="sync" onClick={onRefresh}>
-                  <SyncIcon />
-                </Button>
+                <ToolbarItem>
+                  <Button
+                    isLoading={isRefreshing}
+                    variant="plain"
+                    aria-label="sync"
+                    onClick={onRefresh}
+                  >
+                    {!isRefreshing && <SyncIcon />}
+                  </Button>
+                </ToolbarItem>
               </ToolbarContent>
             </Toolbar>
           </CardActions>

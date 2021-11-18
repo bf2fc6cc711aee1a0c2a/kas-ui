@@ -7,6 +7,7 @@ import {
   Divider,
   Toolbar,
   ToolbarContent,
+  ToolbarItem,
 } from "@patternfly/react-core";
 import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
 import { FilterByTopic } from "./FilterByTopic";
@@ -16,12 +17,20 @@ import { FunctionComponent } from "enzyme";
 type UsedDiskSpaceToolbarProps = {
   title: string;
   isDisabled: boolean;
+  isRefreshing: boolean;
   timeDuration: DurationOptions;
   onSetTimeDuration: (value: DurationOptions) => void;
   onRefresh: () => void;
 };
 export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> =
-  ({ title, isDisabled, timeDuration, onSetTimeDuration, onRefresh }) => {
+  ({
+    title,
+    isDisabled,
+    isRefreshing,
+    timeDuration,
+    onSetTimeDuration,
+    onRefresh,
+  }) => {
     return (
       <>
         <CardHeader>
@@ -35,9 +44,16 @@ export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> 
                   keyText={"kafka-metrics-time-filter"}
                   disableToolbar={isDisabled}
                 />
-                <Button variant="plain" aria-label="sync" onClick={onRefresh}>
-                  <SyncIcon />
-                </Button>
+                <ToolbarItem>
+                  <Button
+                    isLoading={isRefreshing}
+                    variant="plain"
+                    aria-label="sync"
+                    onClick={onRefresh}
+                  >
+                    {!isRefreshing && <SyncIcon />}
+                  </Button>
+                </ToolbarItem>
               </ToolbarContent>
             </Toolbar>
           </CardActions>
