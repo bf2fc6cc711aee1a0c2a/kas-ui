@@ -1,10 +1,10 @@
-import { MASLoading } from "@app/common";
+import { MASLoading } from '@app/common';
 import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-} from "@patternfly/react-core";
-import React from "react";
+} from '@patternfly/react-core';
+import React from 'react';
 
 export const EmptyStateInitialLoading = () => {
   return (

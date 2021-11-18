@@ -1,5 +1,5 @@
 import { useSelector } from '@xstate/react';
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext } from 'react';
 import { DurationOptions } from './components/FilterByTime';
 import { DiskSpaceMetricsModel } from './machines';
 import { MetricsContext } from './MetricsProvider';

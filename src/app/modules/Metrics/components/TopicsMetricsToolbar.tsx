@@ -1,20 +1,17 @@
-import React from "react";
 import {
   Button,
   CardActions,
   CardHeader,
   CardTitle,
   Divider,
-  Level,
-  LevelItem,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
 } from "@patternfly/react-core";
 import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
-import { FilterByTopic } from "./FilterByTopic";
+import React, { FunctionComponent } from "react";
 import { DurationOptions, FilterByTime } from "./FilterByTime";
-import { FunctionComponent } from "enzyme";
+import { FilterByTopic } from "./FilterByTopic";
 
 type TopicsMetricsToolbarProps = {
   title: string;

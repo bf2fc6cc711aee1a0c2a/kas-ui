@@ -44,7 +44,7 @@ export const FilterByTime = ({
 
   const onTimeSelect: SelectProps['onSelect'] = (_, selection) => {
     const mapping = Object.entries(DurationOptionsMap).find(
-      ([key, value]) => value === selection
+      ([_, value]) => value === selection
     );
     if (mapping) {
       onDurationChange(parseInt(mapping[0], 10) as DurationOptions);
