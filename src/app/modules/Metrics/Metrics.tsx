@@ -1,15 +1,15 @@
 import {
-  TopicsMetricsCard,
+  CardTopicsMetrics,
   EmptyStateInitialLoading,
   EmptyStateMetricsUnavailable,
-  UsedDiskSpaceChart,
-} from '@app/modules/Metrics/components';
-import React, { FunctionComponent } from 'react';
-import { MetricsLayout } from './components';
-import { UsedDiskSpaceCard } from './components/UsedDiskSpaceCard';
-import { MetricsProvider } from './MetricsProvider';
-import { useDiskSpace } from './useDiskSpace';
-import { useTopics } from './useTopics';
+  ChartUsedDiskSpace,
+} from "@app/modules/Metrics/components";
+import React, { FunctionComponent } from "react";
+import { MetricsLayout } from "./components";
+import { CardUsedDiskSpace } from "./components/CardUsedDiskSpace";
+import { MetricsProvider } from "./MetricsProvider";
+import { useDiskSpace } from "./useDiskSpace";
+import { useTopics } from "./useTopics";
 
 export interface MetricsProps {
   kafkaId: string;
@@ -62,7 +62,7 @@ const ConnectedDiskMetrics: FunctionComponent = () => {
   } = useDiskSpace();
 
   return (
-    <UsedDiskSpaceCard
+    <CardUsedDiskSpace
       metrics={metrics}
       timeDuration={timeDuration}
       metricsDataUnavailable={isDataUnavailable || isFailed}
@@ -96,7 +96,7 @@ const ConnectedTopicsMetrics: FunctionComponent<ConnectedTopicsMetricsProps> =
     } = useTopics();
 
     return (
-      <TopicsMetricsCard
+      <CardTopicsMetrics
         metricsDataUnavailable={isDataUnavailable || isFailed}
         topics={topics}
         incomingTopicsData={bytesIncoming}

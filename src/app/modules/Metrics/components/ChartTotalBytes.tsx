@@ -1,11 +1,11 @@
-import { TotalBytesMetrics } from '@app/modules/Metrics/MetricsApi';
+import { TotalBytesMetrics } from "@app/modules/Metrics/MetricsApi";
 import {
   convertToSpecifiedByte,
   dateToChartValue,
   getLargestByteSize,
   shouldShowDate,
   SupportedSizes,
-} from '@app/modules/Metrics/utils';
+} from "@app/modules/Metrics/utils";
 import {
   Chart,
   ChartAxis,
@@ -14,11 +14,11 @@ import {
   ChartLine,
   ChartThemeColor,
   ChartVoronoiContainer,
-} from '@patternfly/react-charts';
-import chart_color_blue_300 from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
-import chart_color_orange_300 from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@patternfly/react-charts";
+import chart_color_blue_300 from "@patternfly/react-tokens/dist/js/chart_color_blue_300";
+import chart_color_orange_300 from "@patternfly/react-tokens/dist/js/chart_color_orange_300";
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type ChartData = {
   color: string;
@@ -39,13 +39,13 @@ type LegendData = {
   };
 };
 
-type TotalBytesChartProps = {
+type ChartTotalBytesProps = {
   incomingTopicsData: TotalBytesMetrics;
   outgoingTopicsData: TotalBytesMetrics;
   selectedTopic: string | undefined;
   timeDuration: number;
 };
-export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
+export const ChartTotalBytes: FunctionComponent<ChartTotalBytesProps> = ({
   incomingTopicsData,
   outgoingTopicsData,
   selectedTopic,
@@ -62,21 +62,21 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
 
   useEffect(() => {
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
   }, [width]);
 
   const { chartData, legendData, largestByteSize } = getBytesChartData(
     incomingTopicsData,
     outgoingTopicsData,
     timeDuration,
-    t('{{topic}} incoming bytes', { topic: selectedTopic || t('Total') }),
-    t('{{topic}} outgoing bytes', { topic: selectedTopic || t('Total') })
+    t("{{topic}} incoming bytes", { topic: selectedTopic || t("Total") }),
+    t("{{topic}} outgoing bytes", { topic: selectedTopic || t("Total") })
   );
 
   return (
     <div ref={containerRef}>
       <Chart
-        ariaTitle={t('metrics.total_bytes')}
+        ariaTitle={t("metrics.total_bytes")}
         containerComponent={
           <ChartVoronoiContainer
             labels={({ datum }) => `${datum.name}: ${datum.y}`}
@@ -84,7 +84,7 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
           />
         }
         legendAllowWrap={true}
-        legendPosition='bottom-left'
+        legendPosition="bottom-left"
         legendComponent={
           <ChartLegend data={legendData} itemsPerRow={itemsPerRow} />
         }
@@ -98,7 +98,7 @@ export const TotalBytesChart: FunctionComponent<TotalBytesChartProps> = ({
         themeColor={ChartThemeColor.multiUnordered}
         width={width}
       >
-        <ChartAxis label={'\n' + 'Time'} tickCount={6} />
+        <ChartAxis label={"\n" + "Time"} tickCount={6} />
         <ChartAxis
           dependentAxis
           tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}

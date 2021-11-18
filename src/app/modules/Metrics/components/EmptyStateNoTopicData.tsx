@@ -1,23 +1,25 @@
 import {
   EmptyState,
-  EmptyStateVariant,
-  EmptyStateIcon,
-  Title,
   EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Title,
 } from "@patternfly/react-core";
-import { TachometerAltIcon } from "@patternfly/react-icons";
+import { SearchIcon } from "@patternfly/react-icons";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
-export const EmptyStateMetricsUnavailable: FunctionComponent = () => {
+export const EmptyStateNoTopicData: FunctionComponent = () => {
   const { t } = useTranslation();
   return (
     <EmptyState variant={EmptyStateVariant.xs}>
-      <EmptyStateIcon icon={TachometerAltIcon} />
+      <EmptyStateIcon icon={SearchIcon} />
       <Title headingLevel="h3" size="lg">
-        {t("metrics.empty_state_no_data_title")}
+        {t("metrics.empty_state_no_topic_data_title")}
       </Title>
-      <EmptyStateBody>{t("metrics.empty_state_no_data_body")}</EmptyStateBody>
+      <EmptyStateBody>
+        {t("metrics.empty_state_no_topic_data_body")}
+      </EmptyStateBody>
     </EmptyState>
   );
 };

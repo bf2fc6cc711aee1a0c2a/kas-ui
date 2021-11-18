@@ -1,10 +1,10 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
-import { TopicsMetricsCard } from './TopicsMetricsCard';
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import React from "react";
+import { CardTopicsMetrics } from "./CardTopicsMetrics";
 
 export default {
-  title: 'Metrics/Components/TopicsMetricsCard',
-  component: TopicsMetricsCard,
+  title: "Metrics/Components/CardTopicsMetrics",
+  component: CardTopicsMetrics,
   args: {
     topics: [],
     incomingTopicsData: {},
@@ -13,12 +13,13 @@ export default {
     timeDuration: 15,
     metricsDataUnavailable: false,
     isLoading: false,
+    isRefreshing: false,
     selectedTopic: undefined,
   },
-} as ComponentMeta<typeof TopicsMetricsCard>;
+} as ComponentMeta<typeof CardTopicsMetrics>;
 
-const Template: ComponentStory<typeof TopicsMetricsCard> = (args) => (
-  <TopicsMetricsCard {...args} />
+const Template: ComponentStory<typeof CardTopicsMetrics> = (args) => (
+  <CardTopicsMetrics {...args} />
 );
 
 export const NoData = Template.bind({});
@@ -51,38 +52,38 @@ const sampleOutgoingData = {
 
 export const SampleData = Template.bind({});
 SampleData.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
+  topics: ["lorem", "dolor", "ipsum"],
   incomingTopicsData: sampleIncomingData,
   outgoingTopicsData: sampleOutgoingData,
 };
 
 export const LoadingSelectedTopic = Template.bind({});
 LoadingSelectedTopic.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
-  selectedTopic: 'lorem',
+  topics: ["lorem", "dolor", "ipsum"],
+  selectedTopic: "lorem",
   isLoading: true,
 };
 
 export const SampleDataWithSelectedTopic = Template.bind({});
 SampleDataWithSelectedTopic.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
-  selectedTopic: 'lorem',
+  topics: ["lorem", "dolor", "ipsum"],
+  selectedTopic: "lorem",
   incomingTopicsData: sampleIncomingData,
   outgoingTopicsData: sampleOutgoingData,
   partitions: {
-    'dolor partition 1': {
+    "dolor partition 1": {
       1636546066048: 3,
       1636546166048: 1,
       1636546266048: 1,
       1636546366048: 9,
     },
-    'dolor partition 2': {
+    "dolor partition 2": {
       1636546066048: 7,
       1636546166048: 4,
       1636546266048: 8,
       1636546366048: 3,
     },
-    'dolor partition 3': {
+    "dolor partition 3": {
       1636546066048: 2,
       1636546166048: 6,
       1636546266048: 5,

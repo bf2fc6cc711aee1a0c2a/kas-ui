@@ -1,6 +1,6 @@
-import { TotalBytesMetrics } from '@app/modules/Metrics';
-import { createModel } from 'xstate/lib/model';
-import { DurationOptions } from '../components/FilterByTime';
+import { TotalBytesMetrics } from "@app/modules/Metrics";
+import { createModel } from "xstate/lib/model";
+import { DurationOptions } from "../components/FilterByTime";
 
 const MAX_RETRIES = 3;
 
@@ -44,112 +44,117 @@ const setMetrics = DiskSpaceMetricsModel.assign((_, event) => {
   return {
     metrics,
   };
-}, 'fetchSuccess');
+}, "fetchSuccess");
 
 const incrementRetries = DiskSpaceMetricsModel.assign(
   {
     fetchFailures: (context) => context.fetchFailures + 1,
   },
-  'fetchFail'
+  "fetchFail"
 );
 
 const resetRetries = DiskSpaceMetricsModel.assign(
   {
     fetchFailures: () => 0,
   },
-  'refresh'
+  "refresh"
 );
 
 const setDuration = DiskSpaceMetricsModel.assign(
   {
     timeDuration: (_, event) => event.timeDuration,
   },
-  'selectDuration'
+  "selectDuration"
 );
 
 export const DiskSpaceMetricsMachine = DiskSpaceMetricsModel.createMachine(
   {
-    id: 'diskSpace',
+    id: "diskSpace",
     context: DiskSpaceMetricsModel.initialContext,
-    initial: 'callApi',
+    initial: "callApi",
     states: {
       callApi: {
-        tags: 'loading',
-        initial: 'loading',
+        tags: "loading",
+        initial: "loading",
         states: {
           loading: {
             invoke: {
-              src: 'api',
+              src: "api",
             },
             on: {
               fetchSuccess: {
                 actions: setMetrics,
-                target: '#diskSpace.verifyData',
+                target: "#diskSpace.verifyData",
               },
               fetchFail: {
                 actions: incrementRetries,
-                target: 'failure',
+                target: "failure",
               },
             },
           },
           failure: {
             after: {
               1000: [
-                { cond: 'canRetryFetching', target: 'loading' },
-                { target: '#diskSpace.criticalFail' },
+                { cond: "canRetryFetching", target: "loading" },
+                { target: "#diskSpace.criticalFail" },
               ],
             },
           },
         },
       },
       criticalFail: {
-        tags: 'failed',
+        tags: "failed",
         on: {
           refresh: {
             actions: resetRetries,
-            target: 'callApi',
+            target: "callApi",
           },
         },
       },
       verifyData: {
         always: [
-          { cond: 'hasMetrics', target: 'withMetrics' },
-          { target: 'noData' },
+          { cond: "hasMetrics", target: "withMetrics" },
+          { target: "noData" },
         ],
       },
       noData: {
-        tags: 'no-data',
+        tags: "no-data",
         on: {
           refresh: {
             actions: resetRetries,
-            target: 'callApi',
+            target: "callApi",
+          },
+          selectDuration: {
+            actions: setDuration,
+            target: "refreshing",
           },
         },
       },
       withMetrics: {
         on: {
           refresh: {
-            target: 'refreshing',
+            target: "refreshing",
           },
           selectDuration: {
             actions: setDuration,
-            target: 'refreshing',
+            target: "refreshing",
           },
         },
       },
       refreshing: {
-        tags: 'refreshing',
+        tags: "refreshing",
         invoke: {
-          src: 'api',
+          src: "api",
         },
         on: {
           fetchSuccess: {
             actions: setMetrics,
-            target: 'withMetrics',
+            target: "verifyData",
           },
           fetchFail: {
-            // 👀 we silently ignore this happened and go back to withMetrics state
-            target: 'withMetrics',
+            // 👀 we silently ignore this happened and go back to the right
+            // state depending on the previous data
+            target: "verifyData",
           },
         },
       },
