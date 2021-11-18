@@ -1,7 +1,7 @@
 import {
   TopicsMetricsCard,
-  InitialLoadingEmptyState,
-  MetricsUnavailableEmptyState,
+  EmptyStateInitialLoading,
+  EmptyStateMetricsUnavailable,
   UsedDiskSpaceChart,
 } from "@app/modules/Metrics/components";
 import React, { FunctionComponent } from "react";
@@ -16,27 +16,35 @@ export interface MetricsProps {
   onCreateTopic: () => void;
 }
 
-export const Metrics: React.FC<MetricsProps> = ({ kafkaId, onCreateTopic }) => {
+export const Metrics: FunctionComponent<MetricsProps> = ({
+  kafkaId,
+  onCreateTopic,
+}) => {
   return (
-    <MetricsProvider kafkaId={kafkaId} onCreateTopic={onCreateTopic}>
-      <ConnectedMetrics />
+    <MetricsProvider kafkaId={kafkaId}>
+      <ConnectedMetrics onCreateTopic={onCreateTopic} />
     </MetricsProvider>
   );
 };
 
-const ConnectedMetrics: FunctionComponent = () => {
-  const { isLoading, isDataUnavailable } = useDiskSpace();
+type ConnectedMetricsProps = {
+  onCreateTopic: () => void;
+};
+const ConnectedMetrics: FunctionComponent<ConnectedMetricsProps> = ({
+  onCreateTopic,
+}) => {
+  const { isLoading, isFailed } = useDiskSpace();
 
   switch (true) {
     case isLoading:
-      return <InitialLoadingEmptyState />;
-    case isDataUnavailable:
-      return <MetricsUnavailableEmptyState />;
+      return <EmptyStateInitialLoading />;
+    case isFailed:
+      return <EmptyStateMetricsUnavailable />;
   }
   return (
     <MetricsLayout
       diskSpaceMetrics={<ConnectedDiskMetrics />}
-      topicMetrics={<ConnectedTopicsMetrics />}
+      topicMetrics={<ConnectedTopicsMetrics onCreateTopic={onCreateTopic} />}
     />
   );
 };
@@ -66,38 +74,42 @@ const ConnectedDiskMetrics: FunctionComponent = () => {
   );
 };
 
-const ConnectedTopicsMetrics: FunctionComponent = () => {
-  const {
-    isLoading,
-    isRefreshing,
-    isDataUnavailable,
-    isFailed,
-    selectedTopic,
-    timeDuration,
-    topics,
-    bytesIncoming,
-    bytesOutgoing,
-    bytesPerPartition,
-    onDurationChange,
-    onTopicChange,
-    onRefresh,
-  } = useTopics();
-
-  return (
-    <TopicsMetricsCard
-      metricsDataUnavailable={isDataUnavailable || isFailed}
-      topics={topics}
-      incomingTopicsData={bytesIncoming}
-      outgoingTopicsData={bytesOutgoing}
-      partitions={bytesPerPartition}
-      timeDuration={timeDuration}
-      isLoading={isLoading}
-      isRefreshing={isRefreshing}
-      selectedTopic={selectedTopic}
-      onRefresh={onRefresh}
-      onSelectedTopic={onTopicChange}
-      onTimeDuration={onDurationChange}
-      onCreateTopic={() => false}
-    />
-  );
+type ConnectedTopicsMetricsProps = {
+  onCreateTopic: () => void;
 };
+const ConnectedTopicsMetrics: FunctionComponent<ConnectedTopicsMetricsProps> =
+  ({ onCreateTopic }) => {
+    const {
+      isLoading,
+      isRefreshing,
+      isFailed,
+      isDataUnavailable,
+      selectedTopic,
+      timeDuration,
+      topics,
+      bytesIncoming,
+      bytesOutgoing,
+      bytesPerPartition,
+      onDurationChange,
+      onTopicChange,
+      onRefresh,
+    } = useTopics();
+
+    return (
+      <TopicsMetricsCard
+        metricsDataUnavailable={isDataUnavailable || isFailed}
+        topics={topics}
+        incomingTopicsData={bytesIncoming}
+        outgoingTopicsData={bytesOutgoing}
+        partitions={bytesPerPartition}
+        timeDuration={timeDuration}
+        isLoading={isLoading}
+        isRefreshing={isRefreshing}
+        selectedTopic={selectedTopic}
+        onRefresh={onRefresh}
+        onSelectedTopic={onTopicChange}
+        onTimeDuration={onDurationChange}
+        onCreateTopic={onCreateTopic}
+      />
+    );
+  };

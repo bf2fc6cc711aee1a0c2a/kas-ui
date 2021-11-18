@@ -8,8 +8,8 @@ import {
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ChartEmptyState,
   ChartPopover,
+  EmptyStateMetricsUnavailable,
   UsedDiskSpaceChart,
   UsedDiskSpaceToolbar,
 } from ".";
@@ -70,11 +70,7 @@ export const UsedDiskSpaceCard: FunctionComponent<UsedDiskSpaceCardProps> = ({
           case metricsDataUnavailable:
             return (
               <CardBody>
-                <ChartEmptyState
-                  title={t("metrics.empty_state_no_data_title")}
-                  body={t("metrics.empty_state_no_data_body")}
-                  noData
-                />
+                <EmptyStateMetricsUnavailable />
               </CardBody>
             );
 

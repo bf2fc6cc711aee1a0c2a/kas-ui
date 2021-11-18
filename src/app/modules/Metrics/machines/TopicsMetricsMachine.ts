@@ -138,7 +138,7 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
       },
       verifyData: {
         always: [
-          { cond: "hasTopics", target: "withTopics" },
+          { cond: "hasMetrics", target: "withTopics" },
           { target: "noData" },
         ],
       },
@@ -158,7 +158,7 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
           },
           selectTopic: {
             actions: setTopic,
-            target: "callApi",
+            target: "refreshing",
           },
           selectDuration: {
             actions: setDuration,
@@ -187,8 +187,10 @@ export const TopicsMetricsMachine = TopicsMetricsModel.createMachine(
   {
     guards: {
       canRetryFetching: (context) => context.fetchFailures < MAX_RETRIES,
-      hasTopics: (context) =>
-        context.kafkaTopics.length > 0 || context.metricsTopics.length > 0,
+      hasMetrics: (context) =>
+        (context.kafkaTopics.length > 0 || context.metricsTopics.length > 0) &&
+        (Object.keys(context.bytesIncoming).length > 0 ||
+          Object.keys(context.bytesOutgoing).length > 0),
     },
   }
 );

@@ -1,5 +1,5 @@
 import {
-  ChartEmptyState,
+  EmptyStateNoTopicSelected,
   ChartPopover,
   LogSizePerPartitionChart,
   TopicMetricsToolbar,
@@ -19,6 +19,8 @@ import {
 } from "@patternfly/react-core";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { EmptyStateMetricsUnavailable } from "./EmptyStateMetricsUnavailable";
+import { EmptyStateNoTopics } from "./EmptyStateNoTopics";
 import { DurationOptions } from "./FilterByTime";
 
 type TopicsMetricsCardProps = {
@@ -111,23 +113,14 @@ export const TopicsMetricsCard: FunctionComponent<TopicsMetricsCardProps> = ({
           case metricsDataUnavailable:
             return (
               <CardBody>
-                <ChartEmptyState
-                  title={t("metrics.empty_state_no_data_title")}
-                  body={t("metrics.empty_state_no_data_body")}
-                  noData
-                />
+                <EmptyStateMetricsUnavailable />
               </CardBody>
             );
 
           case noTopics:
             return (
               <CardBody>
-                <ChartEmptyState
-                  title={t("metrics.empty_state_no_topics_title")}
-                  body={t("metrics.empty_state_no_topics_body")}
-                  noTopics
-                  onCreateTopic={onCreateTopic}
-                />
+                <EmptyStateNoTopics onCreateTopic={onCreateTopic} />
               </CardBody>
             );
 
@@ -186,11 +179,7 @@ export const TopicsMetricsCard: FunctionComponent<TopicsMetricsCardProps> = ({
                   {t("metrics.topic_partition_size")}
                 </CardTitle>
                 <CardBody>
-                  <ChartEmptyState
-                    title={t("metrics.empty_state_no_filter_title")}
-                    body={t("metrics.empty_state_no_filter_body")}
-                    noFilter
-                  />
+                  <EmptyStateNoTopicSelected />
                 </CardBody>
               </>
             );

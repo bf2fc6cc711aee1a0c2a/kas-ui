@@ -1,15 +1,15 @@
 import {
   EmptyState,
-  EmptyStateVariant,
-  EmptyStateIcon,
-  Title,
   EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Title,
 } from "@patternfly/react-core";
 import { SpinnerIcon } from "@patternfly/react-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const InitialLoadingEmptyState = () => {
+export const EmptyStateInitialLoading = () => {
   const { t } = useTranslation();
   return (
     <EmptyState variant={EmptyStateVariant.xs}>

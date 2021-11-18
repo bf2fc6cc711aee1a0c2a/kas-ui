@@ -14,7 +14,6 @@ import { fetchDiskSpaceMetrics, fetchTopicsMetrics } from "./MetricsApi";
 
 type MetricsContextProps = {
   kafkaId: string;
-  onCreateTopic: () => void;
   topicsMetricsMachineService: InterpreterFrom<TopicsMetricsMachineType>;
   diskSpaceMetricsMachineService: InterpreterFrom<DiskSpaceMachineType>;
 };
@@ -22,12 +21,10 @@ export const MetricsContext = createContext<MetricsContextProps>(null!);
 
 type MetricsProviderProps = {
   kafkaId: string;
-  onCreateTopic: () => void;
 };
 
 export const MetricsProvider: FunctionComponent<MetricsProviderProps> = ({
   kafkaId,
-  onCreateTopic,
   children,
 }) => {
   const topicsMetricsMachineService = useTopicsMetricsMachineService(kafkaId);
@@ -39,7 +36,6 @@ export const MetricsProvider: FunctionComponent<MetricsProviderProps> = ({
         kafkaId,
         diskSpaceMetricsMachineService,
         topicsMetricsMachineService,
-        onCreateTopic,
       }}
     >
       {children}
