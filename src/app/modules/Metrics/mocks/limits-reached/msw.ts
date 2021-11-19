@@ -24,7 +24,7 @@ const metricsMapping = {
   "720": mock_720_minutes,
 };
 
-export const kafkaExists = [
+export const limitsReached = [
   rest.get("http://localhost/rest/topics", (req, res, ctx) => {
     return res(ctx.json(mock_topics));
   }),
