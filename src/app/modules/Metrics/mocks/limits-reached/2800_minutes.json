@@ -1,0 +1,316 @@
+{
+  "kind": "MetricsRangeQueryList",
+  "id": "c69vlnmvh546a4nioia0",
+  "items": [
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "__strimzi_canary"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 471959 },
+        { "timestamp": 1637132000000, "value": 1309730 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-offsets"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 204 },
+        { "timestamp": 1637132000000, "value": 204 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-status"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 900 },
+        { "timestamp": 1637132000000, "value": 900 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "my-cluster-source.foo"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 91 },
+        { "timestamp": 1637132000000, "value": 91 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-0",
+        "strimzi_io_cluster": "target",
+        "topic": "__strimzi_canary"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 472412 },
+        { "timestamp": 1637132000000, "value": 1309274 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-0",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-offsets"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 0 },
+        { "timestamp": 1637132000000, "value": 0 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-0",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-status"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 0 },
+        { "timestamp": 1637132000000, "value": 0 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-1",
+        "strimzi_io_cluster": "target",
+        "topic": "__strimzi_canary"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 472412 },
+        { "timestamp": 1637132000000, "value": 1309274 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-1",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-configs"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 6803 },
+        { "timestamp": 1637132000000, "value": 6803 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-1",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-offsets"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 0 },
+        { "timestamp": 1637132000000, "value": 0 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_out_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-1",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-status"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 1396 },
+        { "timestamp": 1637132000000, "value": 1396 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_topic:kafka_log_log_size:sum",
+        "topic": "__consumer_offsets"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 2870020 },
+        { "timestamp": 1637132000000, "value": 7917460 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_topic:kafka_log_log_size:sum",
+        "topic": "__strimzi_canary"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 286296 },
+        { "timestamp": 1637132000000, "value": 204744 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_topic:kafka_log_log_size:sum",
+        "topic": "mirrormaker2-cluster-configs"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 20409 },
+        { "timestamp": 1637132000000, "value": 20409 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_topic:kafka_log_log_size:sum",
+        "topic": "mirrormaker2-cluster-offsets"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 612 },
+        { "timestamp": 1637132000000, "value": 612 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_topic:kafka_log_log_size:sum",
+        "topic": "mirrormaker2-cluster-status"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 6888 },
+        { "timestamp": 1637132000000, "value": 6888 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_topic:kafka_log_log_size:sum",
+        "topic": "my-cluster-source.checkpoints.internal"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 0 },
+        { "timestamp": 1637132000000, "value": 0 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_topic:kafka_log_log_size:sum",
+        "topic": "my-cluster-source.foo"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 273 },
+        { "timestamp": 1637132000000, "value": 273 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "__consumer_offsets"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 955997 },
+        { "timestamp": 1637132000000, "value": 2640360 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "__strimzi_canary"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 471959 },
+        { "timestamp": 1637132000000, "value": 1309730 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-offsets"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 204 },
+        { "timestamp": 1637132000000, "value": 204 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-status"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 900 },
+        { "timestamp": 1637132000000, "value": 900 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-2",
+        "strimzi_io_cluster": "target",
+        "topic": "my-cluster-source.foo"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 91 },
+        { "timestamp": 1637132000000, "value": 91 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-0",
+        "strimzi_io_cluster": "target",
+        "topic": "__strimzi_canary"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 472261 },
+        { "timestamp": 1637132000000, "value": 1309122 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-1",
+        "strimzi_io_cluster": "target",
+        "topic": "__strimzi_canary"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 472412 },
+        { "timestamp": 1637132000000, "value": 1309274 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-1",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-configs"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 6803 },
+        { "timestamp": 1637132000000, "value": 6803 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kafka_server_brokertopicmetrics_bytes_in_total",
+        "statefulset_kubernetes_io_pod_name": "target-kafka-1",
+        "strimzi_io_cluster": "target",
+        "topic": "mirrormaker2-cluster-status"
+      },
+      "values": [
+        { "timestamp": 1637104000000, "value": 1396 },
+        { "timestamp": 1637132000000, "value": 1396 }
+      ]
+    }
+  ]
+}

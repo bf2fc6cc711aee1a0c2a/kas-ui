@@ -9,12 +9,17 @@ import '@patternfly/patternfly/utilities/Spacing/spacing.css';
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { addDecorator } from '@storybook/react';
+import { initializeWorker, mswDecorator } from 'msw-storybook-addon';
 import {
   AlertContext,
   AuthContext,
   ConfigContext,
   QuotaContext,
 } from '@rhoas/app-services-ui-shared';
+
+initializeWorker();
+addDecorator(mswDecorator);
 
 import { initI18N } from '../src/i18n/i18n';
 const i18n = initI18N();
@@ -27,6 +32,65 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  backgrounds: {
+    default: 'Background color 200',
+    values: [
+      {
+        name: 'Background color 100',
+        value: '#ffffff',
+      },
+      {
+        name: 'Background color 200',
+        value: 'var(--pf-global--BackgroundColor--200)',
+      },
+    ],
+  },
+  viewport: {
+    viewports: {
+      xs: {
+        name: 'Breakpoint: xs',
+        styles: {
+          width: "400px",
+          height: '100%'
+        }
+      },
+      sm: {
+        name: 'Breakpoint: sm',
+        styles: {
+          width: "576px",
+          height: '100%'
+        }
+      },
+      md: {
+        name: 'Breakpoint: md',
+        styles: {
+          width: "768px",
+          height: '100%'
+        }
+      },
+      lg: {
+        name: 'Breakpoint: lg',
+        styles: {
+          width: "992px",
+          height: '100%'
+        }
+      },
+      xl: {
+        name: 'Breakpoint: xl',
+        styles: {
+          width: "1200px",
+          height: '100%'
+        }
+      },
+      '2xl': {
+        name: '2Breakpoint: xl',
+        styles: {
+          width: "1450px",
+          height: '100%'
+        }
+      },
+    }
+  }
 };
 
 export const decorators = [

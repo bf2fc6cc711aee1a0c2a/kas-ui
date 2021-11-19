@@ -1,7 +1,11 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
-
 import { Metrics } from './Metrics';
+import { apiError } from './mocks/api-error/msw';
+import { instanceJustCreated } from './mocks/instance-just-created/msw';
+import { kafkaExists } from './mocks/kafka-exists-and-used/msw';
+import { topicsJustCreated } from './mocks/topics-just-created/msw';
+import { limitsReached } from './mocks/limits-reached/msw';
 
 export default {
   title: 'Metrics/Metrics',
@@ -9,28 +13,48 @@ export default {
   args: {
     kafkaId: 'abc',
   },
+  parameters: {
+    xstate: true,
+    // this option is passed to the devTools instance to use a different inspector
+    inspectUrl: 'https://stately.ai/viz?inspect',
+  },
 } as ComponentMeta<typeof Metrics>;
 
 const Template: ComponentStory<typeof Metrics> = (args) => (
   <Metrics {...args} />
 );
 
-export const Story1 = Template.bind({});
-Story1.args = {};
-Story1.storyName = 'Kafka just created';
+export const ApiError = Template.bind({});
+ApiError.args = {};
+ApiError.storyName = 'Kafka just created';
+ApiError.parameters = {
+  msw: apiError,
+};
 
-export const Story2 = Template.bind({});
-Story2.args = {};
-Story2.storyName = 'Kafka exists but no topics created';
+export const ApiEmpty = Template.bind({});
+ApiEmpty.args = {};
+ApiEmpty.storyName = 'Kafka exists but no topics created';
+ApiEmpty.parameters = {
+  msw: instanceJustCreated,
+};
 
-export const Story3 = Template.bind({});
-Story3.args = {};
-Story3.storyName = 'Topics just created';
+export const TopicsJustCreated = Template.bind({});
+TopicsJustCreated.args = {};
+TopicsJustCreated.storyName = 'Topics just created';
+TopicsJustCreated.parameters = {
+  msw: topicsJustCreated,
+};
 
 export const Story4 = Template.bind({});
 Story4.args = {};
 Story4.storyName = 'Kafka and topics exist and are in use';
+Story4.parameters = {
+  msw: kafkaExists,
+};
 
 export const Story5 = Template.bind({});
 Story5.args = {};
 Story5.storyName = 'Limits have been reached ';
+Story5.parameters = {
+  msw: limitsReached,
+};

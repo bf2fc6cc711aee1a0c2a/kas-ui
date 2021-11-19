@@ -1,0 +1,51 @@
+{
+  "kind": "MetricsRangeQueryList",
+  "id": "c69vlnmvh546a4nioia0",
+  "items": [
+    {
+      "metric": {
+        "__name__": "kubelet_volume_stats_used_bytes",
+        "persistentvolumeclaim": "data-0-target-kafka-1"
+      },
+      "values": [
+        { "timestamp": 1637125200000, "value": 74297344 },
+        { "timestamp": 1637128800000, "value": 74502144 },
+        { "timestamp": 1637132400000, "value": 74756096 },
+        { "timestamp": 1637136000000, "value": 74948608 },
+        { "timestamp": 1637139600000, "value": 75231232 },
+        { "timestamp": 1637143200000, "value": 75395072 },
+        { "timestamp": 1637146800000, "value": 75653120 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kubelet_volume_stats_used_bytes",
+        "persistentvolumeclaim": "data-0-target-kafka-0"
+      },
+      "values": [
+        { "timestamp": 1637125200000, "value": 74317824 },
+        { "timestamp": 1637128800000, "value": 74506240 },
+        { "timestamp": 1637132400000, "value": 74776576 },
+        { "timestamp": 1637136000000, "value": 74956800 },
+        { "timestamp": 1637139600000, "value": 75198464 },
+        { "timestamp": 1637143200000, "value": 75399168 },
+        { "timestamp": 1637146800000, "value": 75591680 }
+      ]
+    },
+    {
+      "metric": {
+        "__name__": "kubelet_volume_stats_used_bytes",
+        "persistentvolumeclaim": "data-0-target-kafka-2"
+      },
+      "values": [
+        { "timestamp": 1637125200000, "value": 74301440 },
+        { "timestamp": 1637128800000, "value": 74493952 },
+        { "timestamp": 1637132400000, "value": 74735616 },
+        { "timestamp": 1637136000000, "value": 74940416 },
+        { "timestamp": 1637139600000, "value": 75182080 },
+        { "timestamp": 1637143200000, "value": 75382784 },
+        { "timestamp": 1637146800000, "value": 75591680 }
+      ]
+    }
+  ]
+}

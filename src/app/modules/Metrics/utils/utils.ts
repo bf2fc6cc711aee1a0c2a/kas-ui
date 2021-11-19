@@ -1,7 +1,9 @@
 import byteSize from 'byte-size';
 
-export const getLargestByteSize = (data1, data2) => {
-  let currentByteSize = 'B';
+export type SupportedSizes = 'B' | 'kiB' | 'MiB' | 'GiB';
+
+export const getLargestByteSize = (data1, data2): SupportedSizes => {
+  let currentByteSize: SupportedSizes = 'B';
 
   data1 = data1 && (data1.sortedData ? data1.sortedData : data1.data);
   data2 = data2 && (data2.sortedData ? data2.sortedData : data2.data);
@@ -63,7 +65,7 @@ export const getLargestByteSize = (data1, data2) => {
 
 export const convertToSpecifiedByte = (
   bytes: number,
-  largestByteSize: 'B' | 'kiB' | 'MiB' | 'GiB'
+  largestByteSize: SupportedSizes
 ): number => {
   if (largestByteSize === 'B') {
     return Math.round(bytes * 10) / 10;
@@ -144,4 +146,17 @@ export const formatTime = (selection: string) => {
       break;
   }
   return { timeDuration, timeInterval };
+};
+
+export const timeIntervalsMapping = {
+  5: 1 * 60,
+  15: 3 * 60,
+  30: 5 * 60,
+  60: 10 * 60,
+  180: 30 * 60,
+  360: 1 * 60 * 60,
+  720: 2 * 60 * 60,
+  1400: 4 * 60 * 60,
+  2800: 8 * 60 * 60,
+  100080: 24 * 60 * 60,
 };

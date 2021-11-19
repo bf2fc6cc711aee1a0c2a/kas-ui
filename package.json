@@ -20,7 +20,7 @@
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "lint": "npm-run-all 'lint:src -- .' 'lint:format -- .'",
-    "lint:src": "eslint --config ./linting/eslint.config.js --fix --max-warnings 50 --ignore-path ./linting/.eslintignore",
+    "lint:src": "eslint --config ./linting/eslint.config.js --fix --max-warnings 44 --ignore-path ./linting/.eslintignore",
     "lint:styling": "stylelint --config ./linting/stylelint.config.js --fix --max-warnings 5",
     "lint:format": "prettier --config ./linting/prettier.config.js --write",
     "type-check": "tsc --noEmit",
@@ -30,8 +30,8 @@
     "clean": "rimraf dist",
     "i18n": "i18next 'src/**/**/*.{ts,tsx}' [-oc] -c './i18next-parser.config.js' -o './src/locales/$LOCALE/$NAMESPACE.json'",
     "prepare": "husky install",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
+    "storybook": "start-storybook -p 6006 -s ./src,./msw-support",
+    "build-storybook": "build-storybook -s ./src,./msw-support",
     "chromatic": "npx chromatic"
   },
   "devDependencies": {
@@ -73,6 +73,8 @@
     "imagemin": "8.0.1",
     "jest": "27.3.1",
     "mini-css-extract-plugin": "2.4.5",
+    "msw": "^0.35.0",
+    "msw-storybook-addon": "^1.4.1",
     "npm-run-all": "4.1.5",
     "null-loader": "4.0.1",
     "prettier": "2.4.1",
@@ -109,6 +111,9 @@
     "@rhoas/app-services-ui-components": "1.1.2",
     "@rhoas/app-services-ui-shared": "0.15.2",
     "@rhoas/kafka-management-sdk": "0.17.0",
+    "@rhoas/kafka-instance-sdk": "0.16.1",
+    "@xstate/inspect": "^0.5.1",
+    "@xstate/react": "^1.6.2",
     "axios": "0.24.0",
     "byte-size": "8.1.0",
     "date-fns": "2.26.0",
@@ -128,11 +133,16 @@
     "react-redux": "7.2.6",
     "react-router-dom": "5.2.1",
     "react-router-last-location": "2.0.1",
-    "redux": "4.1.2"
+    "redux": "4.1.2",
+    "storybook-xstate-addon": "^1.1.8",
+    "xstate": "^4.26.0"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{tsx,ts}": "prettier --write",
     "*.tsx": "eslint --ext .tsx"
+  },
+  "msw": {
+    "workerDirectory": "msw-support"
   }
 }

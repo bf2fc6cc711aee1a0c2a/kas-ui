@@ -1,0 +1,21 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
+
+import { FilterByTime } from './FilterByTime';
+
+export default {
+  title: 'Metrics/Components/FilterByTime',
+  component: FilterByTime,
+  args: {
+    keyText: 'string',
+    disableToolbar: false,
+    timeDuration: 60,
+  },
+} as ComponentMeta<typeof FilterByTime>;
+
+const Template: ComponentStory<typeof FilterByTime> = (args) => (
+  <FilterByTime {...args} />
+);
+
+export const Story = Template.bind({});
+Story.args = {};

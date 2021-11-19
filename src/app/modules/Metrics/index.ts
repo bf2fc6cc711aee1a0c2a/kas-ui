@@ -1,2 +1,2 @@
 export * from './Metrics';
-export * from './MetricsConnected';
+export * from './MetricsApi';
