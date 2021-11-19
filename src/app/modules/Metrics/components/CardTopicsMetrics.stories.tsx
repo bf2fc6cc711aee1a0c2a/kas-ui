@@ -1,9 +1,9 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
-import { CardTopicsMetrics } from './CardTopicsMetrics';
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import React from "react";
+import { CardTopicsMetrics } from "./CardTopicsMetrics";
 
 export default {
-  title: 'Metrics/Components/CardTopicsMetrics',
+  title: "Metrics/Components/CardTopicsMetrics",
   component: CardTopicsMetrics,
   args: {
     topics: [],
@@ -11,6 +11,7 @@ export default {
     outgoingTopicsData: {},
     partitions: {},
     timeDuration: 15,
+    backendUnavailable: false,
     metricsDataUnavailable: false,
     isLoading: false,
     isRefreshing: false,
@@ -22,16 +23,28 @@ const Template: ComponentStory<typeof CardTopicsMetrics> = (args) => (
   <CardTopicsMetrics {...args} />
 );
 
-export const NoData = Template.bind({});
-NoData.args = {};
-
 export const InitialLoading = Template.bind({});
 InitialLoading.args = {
   isLoading: true,
 };
 
-export const NoMetrics = Template.bind({});
-NoMetrics.args = {
+export const NoBackend = Template.bind({});
+NoBackend.args = {
+  backendUnavailable: true,
+};
+
+export const NoBackendWithTopics = Template.bind({});
+NoBackendWithTopics.args = {
+  topics: ["lorem"],
+  backendUnavailable: true,
+};
+
+export const NoTopics = Template.bind({});
+NoTopics.args = {};
+
+export const NoMetricsWithTopics = Template.bind({});
+NoMetricsWithTopics.args = {
+  topics: ["lorem"],
   metricsDataUnavailable: true,
 };
 
@@ -52,38 +65,38 @@ const sampleOutgoingData = {
 
 export const SampleData = Template.bind({});
 SampleData.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
+  topics: ["lorem", "dolor", "ipsum"],
   incomingTopicsData: sampleIncomingData,
   outgoingTopicsData: sampleOutgoingData,
 };
 
 export const LoadingSelectedTopic = Template.bind({});
 LoadingSelectedTopic.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
-  selectedTopic: 'lorem',
+  topics: ["lorem", "dolor", "ipsum"],
+  selectedTopic: "lorem",
   isLoading: true,
 };
 
 export const SampleDataWithSelectedTopic = Template.bind({});
 SampleDataWithSelectedTopic.args = {
-  topics: ['lorem', 'dolor', 'ipsum'],
-  selectedTopic: 'lorem',
+  topics: ["lorem", "dolor", "ipsum"],
+  selectedTopic: "lorem",
   incomingTopicsData: sampleIncomingData,
   outgoingTopicsData: sampleOutgoingData,
   partitions: {
-    'dolor partition 1': {
+    "dolor partition 1": {
       1636546066048: 3,
       1636546166048: 1,
       1636546266048: 1,
       1636546366048: 9,
     },
-    'dolor partition 2': {
+    "dolor partition 2": {
       1636546066048: 7,
       1636546166048: 4,
       1636546266048: 8,
       1636546366048: 3,
     },
-    'dolor partition 3': {
+    "dolor partition 3": {
       1636546066048: 2,
       1636546166048: 6,
       1636546266048: 5,

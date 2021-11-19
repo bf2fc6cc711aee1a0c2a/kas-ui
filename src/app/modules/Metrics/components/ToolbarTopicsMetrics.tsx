@@ -1,4 +1,3 @@
-import React, { FunctionComponent } from "react";
 import {
   Button,
   CardActions,
@@ -10,24 +9,32 @@ import {
   ToolbarItem,
 } from "@patternfly/react-core";
 import SyncIcon from "@patternfly/react-icons/dist/js/icons/sync-icon";
+import React, { FunctionComponent } from "react";
 import { DurationOptions, FilterByTime } from "./FilterByTime";
+import { FilterByTopic } from "./FilterByTopic";
 
-type UsedDiskSpaceToolbarProps = {
+type ToolbarTopicsMetricsProps = {
   title: string;
+  selectedTopic: string | undefined;
+  topicList: string[];
+  timeDuration: DurationOptions;
   isDisabled: boolean;
   isRefreshing: boolean;
-  timeDuration: DurationOptions;
   onSetTimeDuration: (value: DurationOptions) => void;
+  onSetSelectedTopic: (value: string | undefined) => void;
   onRefresh: () => void;
 };
-export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> =
+export const ToolbarTopicsMetrics: FunctionComponent<ToolbarTopicsMetricsProps> =
   ({
     title,
+    selectedTopic,
+    topicList,
+    timeDuration,
     isDisabled,
     isRefreshing,
-    timeDuration,
     onSetTimeDuration,
     onRefresh,
+    onSetSelectedTopic,
   }) => {
     return (
       <>
@@ -36,11 +43,17 @@ export const UsedDiskSpaceToolbar: FunctionComponent<UsedDiskSpaceToolbarProps> 
           <CardActions>
             <Toolbar>
               <ToolbarContent>
+                <FilterByTopic
+                  selectedTopic={selectedTopic}
+                  onSetSelectedTopic={onSetSelectedTopic}
+                  topicList={topicList}
+                  disableToolbar={isDisabled}
+                />
                 <FilterByTime
                   timeDuration={timeDuration}
                   onDurationChange={onSetTimeDuration}
-                  keyText={"kafka-metrics-time-filter"}
                   disableToolbar={isDisabled}
+                  keyText={"topic-metrics-time-filter"}
                 />
                 <ToolbarItem>
                   <Button

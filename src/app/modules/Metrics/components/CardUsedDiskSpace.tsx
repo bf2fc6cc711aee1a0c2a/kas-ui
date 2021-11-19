@@ -4,17 +4,17 @@ import {
   CardBody,
   CardTitle,
   Spinner,
-} from '@patternfly/react-core';
-import React, { FunctionComponent } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@patternfly/react-core";
+import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ChartPopover,
   EmptyStateMetricsUnavailable,
   ChartUsedDiskSpace,
-  UsedDiskSpaceToolbar,
-} from '.';
-import { TotalBytesMetrics } from '../MetricsApi';
-import { DurationOptions } from './FilterByTime';
+  ToolbarUsedDiskSpace,
+} from ".";
+import { TotalBytesMetrics } from "../MetricsApi";
+import { DurationOptions } from "./FilterByTime";
 
 type CardUsedDiskSpaceProps = {
   metrics: TotalBytesMetrics;
@@ -39,8 +39,8 @@ export const CardUsedDiskSpace: FunctionComponent<CardUsedDiskSpaceProps> = ({
 
   return (
     <Card>
-      <UsedDiskSpaceToolbar
-        title={t('metrics.kafka_instance_metrics')}
+      <ToolbarUsedDiskSpace
+        title={t("metrics.kafka_instance_metrics")}
         timeDuration={timeDuration}
         onSetTimeDuration={onTimeDuration}
         isDisabled={metricsDataUnavailable}
@@ -52,11 +52,11 @@ export const CardUsedDiskSpace: FunctionComponent<CardUsedDiskSpaceProps> = ({
           case isLoading:
             return (
               <>
-                <CardTitle component='h3'>
-                  {t('metrics.used_disk_space')}{' '}
+                <CardTitle component="h3">
+                  {t("metrics.used_disk_space")}{" "}
                   <ChartPopover
-                    title={t('metrics.used_disk_space')}
-                    description={t('metrics.used_disk_space_help_text')}
+                    title={t("metrics.used_disk_space")}
+                    description={t("metrics.used_disk_space_help_text")}
                   />
                 </CardTitle>
                 <CardBody>
@@ -77,11 +77,11 @@ export const CardUsedDiskSpace: FunctionComponent<CardUsedDiskSpaceProps> = ({
           default:
             return (
               <>
-                <CardTitle component='h3'>
-                  {t('metrics.used_disk_space')}{' '}
+                <CardTitle component="h3">
+                  {t("metrics.used_disk_space")}{" "}
                   <ChartPopover
-                    title={t('metrics.used_disk_space')}
-                    description={t('metrics.used_disk_space_help_text')}
+                    title={t("metrics.used_disk_space")}
+                    description={t("metrics.used_disk_space_help_text")}
                   />
                 </CardTitle>
                 <CardBody>

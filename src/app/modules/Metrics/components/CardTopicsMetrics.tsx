@@ -2,14 +2,14 @@ import {
   EmptyStateNoTopicSelected,
   ChartPopover,
   ChartLogSizePerPartition,
-  TopicsMetricsToolbar,
+  ToolbarTopicsMetrics,
   ChartTotalBytes,
   EmptyStateNoTopicData,
-} from '@app/modules/Metrics/components';
+} from "@app/modules/Metrics/components";
 import {
   PartitionBytesMetric,
   TotalBytesMetrics,
-} from '@app/modules/Metrics/MetricsApi';
+} from "@app/modules/Metrics/MetricsApi";
 import {
   Bullseye,
   Card,
@@ -17,12 +17,12 @@ import {
   CardTitle,
   Divider,
   Spinner,
-} from '@patternfly/react-core';
-import React, { FunctionComponent } from 'react';
-import { useTranslation } from 'react-i18next';
-import { EmptyStateMetricsUnavailable } from './EmptyStateMetricsUnavailable';
-import { EmptyStateNoTopics } from './EmptyStateNoTopics';
-import { DurationOptions } from './FilterByTime';
+} from "@patternfly/react-core";
+import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
+import { EmptyStateMetricsUnavailable } from "./EmptyStateMetricsUnavailable";
+import { EmptyStateNoTopics } from "./EmptyStateNoTopics";
+import { DurationOptions } from "./FilterByTime";
 
 type CardTopicsMetricsProps = {
   topics: string[];
@@ -30,6 +30,7 @@ type CardTopicsMetricsProps = {
   outgoingTopicsData: TotalBytesMetrics;
   partitions: PartitionBytesMetric;
   timeDuration: DurationOptions;
+  backendUnavailable: boolean;
   metricsDataUnavailable: boolean;
   isLoading: boolean;
   isRefreshing: boolean;
@@ -47,6 +48,7 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
   selectedTopic,
   timeDuration,
   partitions,
+  backendUnavailable,
   metricsDataUnavailable,
   isLoading,
   isRefreshing,
@@ -56,16 +58,15 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
   onTimeDuration,
 }) => {
   const { t } = useTranslation();
-  // const { addAlert } = useAlert() || {};
   const noTopics = topics.length === 0;
 
   return (
     <Card>
-      <TopicsMetricsToolbar
-        title={t('metrics.topic_metrics')}
+      <ToolbarTopicsMetrics
+        title={t("metrics.topic_metrics")}
         timeDuration={timeDuration}
         onSetTimeDuration={onTimeDuration}
-        isDisabled={noTopics}
+        isDisabled={backendUnavailable || noTopics}
         isRefreshing={isRefreshing}
         selectedTopic={selectedTopic}
         onSetSelectedTopic={onSelectedTopic}
@@ -86,11 +87,11 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
           case isLoading:
             return (
               <>
-                <CardTitle component='h3'>
-                  {t('metrics.total_bytes')}{' '}
+                <CardTitle component="h3">
+                  {t("metrics.total_bytes")}{" "}
                   <ChartPopover
-                    title={t('metrics.total_bytes')}
-                    description={t('metrics.topic_metrics_help_text')}
+                    title={t("metrics.total_bytes")}
+                    description={t("metrics.topic_metrics_help_text")}
                   />
                 </CardTitle>
                 <CardBody>
@@ -100,8 +101,8 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
                 </CardBody>
                 <Divider />
 
-                <CardTitle component='h3'>
-                  {t('metrics.topic_partition_size')}
+                <CardTitle component="h3">
+                  {t("metrics.topic_partition_size")}
                 </CardTitle>
                 <CardBody>
                   <Bullseye>
@@ -111,14 +112,14 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
               </>
             );
 
-          case metricsDataUnavailable && noTopics === true:
+          case backendUnavailable:
             return (
               <CardBody>
                 <EmptyStateMetricsUnavailable />
               </CardBody>
             );
 
-          case metricsDataUnavailable && noTopics == false:
+          case metricsDataUnavailable:
             return (
               <CardBody>
                 <EmptyStateNoTopicData />
@@ -135,11 +136,11 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
           case selectedTopic !== undefined:
             return (
               <>
-                <CardTitle component='h3'>
-                  {t('metrics.total_bytes')}{' '}
+                <CardTitle component="h3">
+                  {t("metrics.total_bytes")}{" "}
                   <ChartPopover
-                    title={t('metrics.total_bytes')}
-                    description={t('metrics.topic_metrics_help_text')}
+                    title={t("metrics.total_bytes")}
+                    description={t("metrics.topic_metrics_help_text")}
                   />
                 </CardTitle>
                 <CardBody>
@@ -152,8 +153,8 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
                 </CardBody>
                 <Divider />
 
-                <CardTitle component='h3'>
-                  {t('metrics.topic_partition_size')}
+                <CardTitle component="h3">
+                  {t("metrics.topic_partition_size")}
                 </CardTitle>
                 <CardBody>
                   <ChartLogSizePerPartition
@@ -167,11 +168,11 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
           default:
             return (
               <>
-                <CardTitle component='h3'>
-                  {t('metrics.total_bytes')}{' '}
+                <CardTitle component="h3">
+                  {t("metrics.total_bytes")}{" "}
                   <ChartPopover
-                    title={t('metrics.total_bytes')}
-                    description={t('metrics.topic_metrics_help_text')}
+                    title={t("metrics.total_bytes")}
+                    description={t("metrics.topic_metrics_help_text")}
                   />
                 </CardTitle>
                 <CardBody>
@@ -183,8 +184,8 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
                   />
                 </CardBody>
                 <Divider />
-                <CardTitle component='h3'>
-                  {t('metrics.topic_partition_size')}
+                <CardTitle component="h3">
+                  {t("metrics.topic_partition_size")}
                 </CardTitle>
                 <CardBody>
                   <EmptyStateNoTopicSelected />
