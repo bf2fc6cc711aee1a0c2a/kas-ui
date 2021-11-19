@@ -1,15 +1,15 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import React from "react";
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
 
-import { ToolbarUsedDiskSpace } from "./ToolbarUsedDiskSpace";
+import { ToolbarUsedDiskSpace } from './ToolbarUsedDiskSpace';
 
 export default {
-  title: "Metrics/Components/ToolbarUsedDiskSpace",
+  title: 'Metrics/Components/ToolbarUsedDiskSpace',
   component: ToolbarUsedDiskSpace,
   controls: {},
   args: {
-    title: "Sample title",
-    topicList: ["lorem", "dolor", "ipsum"],
+    title: 'Sample title',
+    topicList: ['lorem', 'dolor', 'ipsum'],
     isDisabled: false,
   },
 } as ComponentMeta<typeof ToolbarUsedDiskSpace>;
