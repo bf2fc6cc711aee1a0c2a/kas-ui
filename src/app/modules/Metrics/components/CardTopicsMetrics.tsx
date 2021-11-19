@@ -5,11 +5,11 @@ import {
   EmptyStateNoTopicData,
   EmptyStateNoTopicSelected,
   ToolbarTopicsMetrics,
-} from "@app/modules/Metrics/components";
+} from '@app/modules/Metrics/components';
 import {
   PartitionBytesMetric,
   TotalBytesMetrics,
-} from "@app/modules/Metrics/MetricsApi";
+} from '@app/modules/Metrics/MetricsApi';
 import {
   Bullseye,
   Card,
@@ -17,13 +17,13 @@ import {
   CardTitle,
   Divider,
   Spinner,
-} from "@patternfly/react-core";
-import React, { FunctionComponent } from "react";
-import { useTranslation } from "react-i18next";
-import { ChartLoading } from "./ChartLoading";
-import { EmptyStateMetricsUnavailable } from "./EmptyStateMetricsUnavailable";
-import { EmptyStateNoTopics } from "./EmptyStateNoTopics";
-import { DurationOptions } from "./FilterByTime";
+} from '@patternfly/react-core';
+import React, { FunctionComponent } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ChartLoading } from './ChartLoading';
+import { EmptyStateMetricsUnavailable } from './EmptyStateMetricsUnavailable';
+import { EmptyStateNoTopics } from './EmptyStateNoTopics';
+import { DurationOptions } from './FilterByTime';
 
 type CardTopicsMetricsProps = {
   topics: string[];
@@ -64,7 +64,7 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
   return (
     <Card>
       <ToolbarTopicsMetrics
-        title={t("metrics.topic_metrics")}
+        title={t('metrics.topic_metrics')}
         timeDuration={timeDuration}
         onSetTimeDuration={onTimeDuration}
         isDisabled={backendUnavailable || noTopics}
@@ -170,11 +170,11 @@ export const CardTopicsMetrics: FunctionComponent<CardTopicsMetricsProps> = ({
 const TotalBytesTitle: FunctionComponent = () => {
   const { t } = useTranslation();
   return (
-    <CardTitle component="h3">
-      {t("metrics.total_bytes")}{" "}
+    <CardTitle component='h3'>
+      {t('metrics.total_bytes')}{' '}
       <ChartPopover
-        title={t("metrics.total_bytes")}
-        description={t("metrics.topic_metrics_help_text")}
+        title={t('metrics.total_bytes')}
+        description={t('metrics.topic_metrics_help_text')}
       />
     </CardTitle>
   );
@@ -183,6 +183,6 @@ const TotalBytesTitle: FunctionComponent = () => {
 const PartitionSizeTitle: FunctionComponent = () => {
   const { t } = useTranslation();
   return (
-    <CardTitle component="h3">{t("metrics.topic_partition_size")}</CardTitle>
+    <CardTitle component='h3'>{t('metrics.topic_partition_size')}</CardTitle>
   );
 };

@@ -2,13 +2,13 @@ import {
   CardTopicsMetrics,
   EmptyStateInitialLoading,
   EmptyStateMetricsUnavailable,
-} from "@app/modules/Metrics/components";
-import React, { FunctionComponent } from "react";
-import { MetricsLayout } from "./components";
-import { CardUsedDiskSpace } from "./components/CardUsedDiskSpace";
-import { MetricsProvider } from "./MetricsProvider";
-import { useDiskSpace } from "./useDiskSpace";
-import { useTopicsMetrics } from "./useTopicsMetrics";
+} from '@app/modules/Metrics/components';
+import React, { FunctionComponent } from 'react';
+import { MetricsLayout } from './components';
+import { CardUsedDiskSpace } from './components/CardUsedDiskSpace';
+import { MetricsProvider } from './MetricsProvider';
+import { useDiskSpace } from './useDiskSpace';
+import { useTopicsMetrics } from './useTopicsMetrics';
 
 export interface MetricsProps {
   kafkaId: string;
