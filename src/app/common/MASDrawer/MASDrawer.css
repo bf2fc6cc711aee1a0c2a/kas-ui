@@ -1,0 +1,9 @@
+/* These styles override text content defaults */
+.mas-drawer ,
+.mas-drawer .pf-c-drawer__content,
+.mas-drawer .pf-c-drawer__main,
+.pf-c-drawer .mas-drawer
+{
+    overflow:visible 
+}
+  
