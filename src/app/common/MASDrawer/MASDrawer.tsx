@@ -106,7 +106,7 @@ export const MASDrawer: React.FC<MASDrawerProps> = ({
       onExpand={onExpand}
       data-ouia-app-id={dataOuiaAppId}
       data-testid='mk--instance__drawer'
-      className='mas-drawer'
+      className='kas-drawer'
     >
       <DrawerContent
         panelContent={panelContent}

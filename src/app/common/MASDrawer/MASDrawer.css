@@ -1,7 +1,7 @@
 /* These styles override text content defaults */
-.mas-drawer,
-.mas-drawer .pf-c-drawer__content,
-.mas-drawer .pf-c-drawer__main,
-.pf-c-drawer .mas-drawer {
+.kas-drawer,
+.kas-drawer .pf-c-drawer__content,
+.kas-drawer .pf-c-drawer__main,
+.pf-c-drawer .kas-drawer {
   overflow: visible;
 }
