@@ -73,7 +73,10 @@ export const fetchDiskSpaceMetrics = async ({
 type FetchTopicsMetricsProps = FetchRawTopicsMetricsProps;
 export const fetchTopicsMetrics = async (props: FetchTopicsMetricsProps) => {
   const [kafkaTopics, metrics] = await Promise.all([
-    fetchKafkaTopis(props),
+    fetchKafkaTopis({
+      basePath: props.kafkaApiPath,
+      accessToken: props.accessToken,
+    }),
     fetchRawTopicMetrics(props),
   ]);
   const {
@@ -115,6 +118,7 @@ export const fetchKafkaTopis = async ({
 
 type FetchRawTopicsMetricsProps = {
   kafkaId: string;
+  kafkaApiPath: string;
   timeDuration: number;
   timeInterval: number;
   selectedTopic: string | undefined;

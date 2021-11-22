@@ -12,15 +12,17 @@ import { useTopicsMetrics } from './useTopicsMetrics';
 
 export interface MetricsProps {
   kafkaId: string;
+  apiBasePath: string;
   onCreateTopic: () => void;
 }
 
 export const Metrics: FunctionComponent<MetricsProps> = ({
   kafkaId,
+  apiBasePath,
   onCreateTopic,
 }) => {
   return (
-    <MetricsProvider kafkaId={kafkaId}>
+    <MetricsProvider kafkaId={kafkaId} kafkaApiPath={apiBasePath}>
       <ConnectedMetrics onCreateTopic={onCreateTopic} />
     </MetricsProvider>
   );

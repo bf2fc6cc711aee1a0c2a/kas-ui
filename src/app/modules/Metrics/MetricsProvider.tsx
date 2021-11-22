@@ -15,6 +15,7 @@ import { timeIntervalsMapping } from './utils';
 
 type MetricsContextProps = {
   kafkaId: string;
+  kafkaApiPath: string;
   topicsMetricsMachineService: InterpreterFrom<TopicsMetricsMachineType>;
   diskSpaceMetricsMachineService: InterpreterFrom<DiskSpaceMachineType>;
 };
@@ -22,19 +23,25 @@ export const MetricsContext = createContext<MetricsContextProps>(null!);
 
 type MetricsProviderProps = {
   kafkaId: string;
+  kafkaApiPath: string;
 };
 
 export const MetricsProvider: FunctionComponent<MetricsProviderProps> = ({
   kafkaId,
+  kafkaApiPath,
   children,
 }) => {
-  const topicsMetricsMachineService = useTopicsMetricsMachineService(kafkaId);
+  const topicsMetricsMachineService = useTopicsMetricsMachineService(
+    kafkaId,
+    kafkaApiPath
+  );
   const diskSpaceMetricsMachineService =
     useDiskSpaceMetricsMachineService(kafkaId);
   return (
     <MetricsContext.Provider
       value={{
         kafkaId,
+        kafkaApiPath,
         diskSpaceMetricsMachineService,
         topicsMetricsMachineService,
       }}
@@ -44,7 +51,7 @@ export const MetricsProvider: FunctionComponent<MetricsProviderProps> = ({
   );
 };
 
-function useTopicsMetricsMachineService(kafkaId: string) {
+function useTopicsMetricsMachineService(kafkaId: string, kafkaApiPath: string) {
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
@@ -61,6 +68,7 @@ function useTopicsMetricsMachineService(kafkaId: string) {
               timeInterval: timeIntervalsMapping[context.timeDuration],
               accessToken: auth.kas.getToken(),
               basePath: basePath,
+              kafkaApiPath,
             })
               .then((results) =>
                 callback(TopicsMetricsModel.events.fetchSuccess(results))
