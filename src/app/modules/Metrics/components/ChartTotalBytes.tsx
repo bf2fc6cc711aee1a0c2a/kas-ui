@@ -183,25 +183,6 @@ function metricsToLine(
   const timestamps = Object.keys(metrics).map((ts) => parseInt(ts, 10));
   if (timestamps.length > 0) {
     const line: Array<TopicChartData> = [];
-    const currentLengthOfData = (() => {
-      const timestampDiff = timestamps[timestamps.length - 1] - timestamps[0];
-      const minutes = timestampDiff / 1000 / 60;
-      return minutes;
-    })();
-    const lengthOfData = 6 * 60 - currentLengthOfData;
-    const lengthOfDataPer5Mins = (6 * 60 - currentLengthOfData) / 5;
-
-    if (lengthOfData <= 360 && timeDuration >= 6) {
-      for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-        const newTimestamp =
-          timestamps[0] - (lengthOfDataPer5Mins - i) * (5 * 60000);
-        const date = new Date(newTimestamp);
-        const time = dateToChartValue(date, {
-          showDate: shouldShowDate(timeDuration),
-        });
-        line.push({ name, x: time, y: 0 });
-      }
-    }
 
     Object.entries(metrics).map(([timestamp, bytes]) => {
       const date = new Date(parseInt(timestamp, 10));

@@ -70,12 +70,15 @@ export const fetchDiskSpaceMetrics = async ({
   return aggregatedData;
 };
 
-type FetchTopicsMetricsProps = FetchRawTopicsMetricsProps;
+type FetchTopicsMetricsProps = {
+  kafkaAdminServerUrl: string;
+  kafkaAdminAccessToken: undefined | Promise<string>;
+} & FetchRawTopicsMetricsProps;
 export const fetchTopicsMetrics = async (props: FetchTopicsMetricsProps) => {
   const [kafkaTopics, metrics] = await Promise.all([
     fetchKafkaTopis({
-      basePath: props.kafkaApiPath,
-      accessToken: props.accessToken,
+      basePath: props.kafkaAdminServerUrl,
+      accessToken: props.kafkaAdminAccessToken,
     }),
     fetchRawTopicMetrics(props),
   ]);
@@ -118,7 +121,6 @@ export const fetchKafkaTopis = async ({
 
 type FetchRawTopicsMetricsProps = {
   kafkaId: string;
-  kafkaApiPath: string;
   timeDuration: number;
   timeInterval: number;
   selectedTopic: string | undefined;

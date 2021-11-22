@@ -159,28 +159,6 @@ const getChartData = (
   const softLimit: Array<BrokerChartData> = [];
   const largestByteSize = 'GiB'; // Hard code GiB as the largest byte size because there will always be a 20 GiB limit.
 
-  const timestamps = Object.keys(metrics).map((ts) => parseInt(ts, 10));
-  const currentLengthOfData = (() => {
-    const timestampDiff = timestamps[timestamps.length - 1] - timestamps[0];
-    const minutes = timestampDiff / 1000 / 60;
-    return minutes;
-  })();
-  const lengthOfData = 6 * 60 - currentLengthOfData;
-  const lengthOfDataPer5Mins = (6 * 60 - currentLengthOfData) / 5;
-
-  if (lengthOfData <= 360 && timeDuration >= 6) {
-    for (let i = 0; i < lengthOfDataPer5Mins; i = i + 1) {
-      const newTimestamp =
-        timestamps[0] - (lengthOfDataPer5Mins - i) * (5 * 60000);
-      const date = new Date(newTimestamp);
-      const time = dateToChartValue(date, {
-        showDate: shouldShowDate(timeDuration),
-      });
-      area.push({ name: lineLabel, x: time, y: 0 });
-      softLimit.push({ name: limitLabel, x: time, y: usageLimit });
-    }
-  }
-
   Object.entries(metrics).map(([timestamp, bytes]) => {
     const date = new Date(parseInt(timestamp));
     const time = dateToChartValue(date, {

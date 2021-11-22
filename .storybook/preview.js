@@ -113,6 +113,9 @@ export const decorators = [
                 kas: {
                   getToken: () => Promise.resolve('test-token'),
                 },
+                kafka: {
+                  getToken: () => Promise.resolve('test-token'),
+                },
                 getUsername: () => Promise.resolve('api_kafka_service'),
               }
             }
