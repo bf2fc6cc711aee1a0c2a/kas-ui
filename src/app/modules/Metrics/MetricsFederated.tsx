@@ -7,11 +7,16 @@ import { I18nextProvider } from 'react-i18next';
 
 const MetricsFederated: React.FunctionComponent<MetricsProps> = ({
   kafkaId,
+  apiBasePath,
   onCreateTopic,
 }) => {
   return (
     <I18nextProvider i18n={initI18N()}>
-      <Metrics kafkaId={kafkaId} onCreateTopic={onCreateTopic} />
+      <Metrics
+        kafkaId={kafkaId}
+        apiBasePath={apiBasePath}
+        onCreateTopic={onCreateTopic}
+      />
     </I18nextProvider>
   );
 };
