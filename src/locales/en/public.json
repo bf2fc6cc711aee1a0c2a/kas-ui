@@ -382,6 +382,7 @@
     "empty_state_no_topics_title": "No topic data",
     "empty_state_no_topics_create_topic": "Create topic",
     "empty_state_no_filter_body": "In the filter dropdown select a topic to see log size per topic partition.",
-    "empty_state_no_filter_title": "Filter by Topic"
+    "empty_state_no_filter_title": "Filter by Topic",
+    "client_connections": "Client connections"
   }
 }

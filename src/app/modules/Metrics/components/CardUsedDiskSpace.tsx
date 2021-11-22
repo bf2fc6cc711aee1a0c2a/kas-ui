@@ -1,4 +1,4 @@
-import { Card, CardBody, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardTitle, Divider } from '@patternfly/react-core';
 import React, { FunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TotalBytesMetrics } from '../MetricsApi';
@@ -8,6 +8,8 @@ import { ChartUsedDiskSpace } from './ChartUsedDiskSpace';
 import { EmptyStateMetricsUnavailable } from './EmptyStateMetricsUnavailable';
 import { DurationOptions } from './FilterByTime';
 import { ToolbarUsedDiskSpace } from './ToolbarUsedDiskSpace';
+import { ChartClientConnections } from './ChartClientConnections';
+
 
 type CardUsedDiskSpaceProps = {
   metrics: TotalBytesMetrics;
@@ -67,11 +69,16 @@ export const CardUsedDiskSpace: FunctionComponent<CardUsedDiskSpaceProps> = ({
                     timeDuration={timeDuration}
                   />
                 </CardBody>
+                <Divider />
+                <ClientConnectstitle />
+                <CardBody>
+                  <ChartClientConnections />
+                </CardBody>
               </>
             );
         }
       })()}
-    </Card>
+    </Card >
   );
 };
 
@@ -86,4 +93,13 @@ const UsedDiskSpaceTitle: FunctionComponent = () => {
       />
     </CardTitle>
   );
+};
+
+const ClientConnectstitle: FunctionComponent = () => {
+  const { t } = useTranslation();
+  return (
+    <CardTitle component='h3'>
+      {t('metrics.client_connections')}
+    </CardTitle>
+  )
 };
