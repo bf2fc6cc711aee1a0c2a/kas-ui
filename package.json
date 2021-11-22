@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.16.0",
-    "@redhat-cloud-services/frontend-components-config": "4.5.3",
+    "@redhat-cloud-services/frontend-components-config": "4.5.4",
     "@rhoas/api-mock": "0.17.0",
     "@storybook/addon-actions": "6.3.12",
     "@storybook/addon-essentials": "6.3.12",
