@@ -112,8 +112,8 @@
     "@rhoas/app-services-ui-shared": "0.15.2",
     "@rhoas/kafka-management-sdk": "0.17.0",
     "@rhoas/kafka-instance-sdk": "0.17.0",
-    "@xstate/inspect": "0.5.1",
-    "@xstate/react": "1.6.2",
+    "@xstate/inspect": "0.5.2",
+    "@xstate/react": "1.6.3",
     "axios": "0.24.0",
     "byte-size": "8.1.0",
     "date-fns": "2.26.0",
@@ -135,7 +135,7 @@
     "react-router-last-location": "2.0.1",
     "redux": "4.1.2",
     "storybook-xstate-addon": "1.1.8",
-    "xstate": "4.26.0"
+    "xstate": "4.26.1"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",
