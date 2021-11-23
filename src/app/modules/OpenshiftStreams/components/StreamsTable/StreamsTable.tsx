@@ -156,7 +156,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
               status !== InstanceStatus.READY ? (
                 name
               ) : (
-                <Link to={`kafkas/${row?.id}`}>{name}</Link>
+                <Link to={`kafkas/${row?.id}/dashboard`}>{name}</Link>
               ),
           },
           cloudProviderDisplayName,
