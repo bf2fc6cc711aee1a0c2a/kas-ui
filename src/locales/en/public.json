@@ -383,6 +383,7 @@
     "empty_state_no_topics_create_topic": "Create topic",
     "empty_state_no_filter_body": "In the filter dropdown select a topic to see log size per topic partition.",
     "empty_state_no_filter_title": "Filter by Topic",
-    "client_connections": "Client connections"
+    "client_connections": "Client connections",
+    "client_connections_help_text": "Client connections are the total connections across all clients over time. Clients can make multiple connections to multiple brokers in the Kafka instance. This metric enables you to review client activity in the instance and to assess available connections relative to the limit."
   }
 }

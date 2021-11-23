@@ -99,7 +99,11 @@ const ClientConnectstitle: FunctionComponent = () => {
   const { t } = useTranslation();
   return (
     <CardTitle component='h3'>
-      {t('metrics.client_connections')}
+      {t('metrics.client_connections')}{' '}
+      <ChartPopover
+        title={t('metrics.client_connections')}
+        description={t('metrics.client_connections_help_text')}
+      />
     </CardTitle>
   )
 };
