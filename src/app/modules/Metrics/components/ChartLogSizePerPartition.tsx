@@ -86,6 +86,7 @@ export const ChartLogSizePerPartition: FunctionComponent<ChartLogSizePerPartitio
         >
           <ChartAxis label={'\n' + 'Time'} tickCount={6} />
           <ChartAxis
+            label={'\n\n' + 'Bytes'}
             dependentAxis
             tickFormat={(t) => `${Math.round(t)} ${largestByteSize}`}
           />
