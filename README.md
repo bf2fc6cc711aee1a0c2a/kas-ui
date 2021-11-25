@@ -1,6 +1,6 @@
 # KAS-UI
 
-Welcome to the repository that hosts the UIs for Control Plane, Service Accounts, Service Registry, and Metrics.
+Welcome to the repository that hosts the UIs for Control Plane, Service Accounts, Service Registry.
 
 The lead developer is [Ajay Pratap](https://github.com/ajaypratap003) and the lead designer is [Jenn Giardino](https://github.com/jgiardino), please feel free to contact us!
 

@@ -10,15 +10,6 @@ import {
 } from 'react-router-last-location';
 import { OpenshiftStreamsStandalone } from '@app/modules/OpenshiftStreams';
 import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
-import { Metrics } from '@app/modules/Metrics';
-
-export const SampleMetrics = () => {
-  const kafkaId = '1vX09n2EKVPBDr9Cu9rE47gj67y';
-  const onCreateTopic = () => {
-    return;
-  };
-  return <Metrics kafkaId={kafkaId} onCreateTopic={onCreateTopic} />;
-};
 
 let routeFocusTimer: number;
 
@@ -58,13 +49,6 @@ const routes: AppRouteConfig[] = [
     label: 'Service Accounts',
     path: '/service-accounts',
     title: 'Service Accounts',
-  },
-  {
-    component: SampleMetrics,
-    exact: true,
-    label: 'Metrics',
-    path: '/metrics',
-    title: 'Metrics',
   },
 ];
 
