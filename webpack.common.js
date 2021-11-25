@@ -131,7 +131,6 @@ module.exports = (env, argv) => {
             './src/app/modules/ServiceAccounts/ServiceAccountsFederated',
           './InstanceDrawer':
             './src/app/modules/InstanceDrawer/InstanceDrawerFederated',
-          './Metrics': './src/app/modules/Metrics/MetricsFederated',
           './KasModalLoader': './src/app/modals/KasModalLoaderFederated',
         },
         shared: {
