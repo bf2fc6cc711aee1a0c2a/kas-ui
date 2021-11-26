@@ -87,12 +87,7 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
       <TextContent className='pf-u-pt-sm'>
         <Text component={TextVariants.small}>
           {t('serviceAccount.current_instance')}{' '}
-          <Link
-            to={{
-              pathname: `${basename}/${instanceId}`,
-              search: '?activeTab=4',
-            }}
-          >
+          <Link to={`${basename}/${instanceId}/acls`}>
             {t('serviceAccount.access_tab')}
           </Link>{' '}
           {t('serviceAccount.alter_allow')}.
