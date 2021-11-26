@@ -256,7 +256,7 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
             cloudRegions={cloudRegions}
           />
         </FormGroup>
-        <FormGroup label={t('availabilty_zones')} fieldId='availability-zones'>
+        <FormGroup label={t('availability_zones')} fieldId='availability-zones'>
           <ToggleGroup aria-label={t('availability_zone_selection')}>
             <Tooltip
               content={t('kafkaInstance.availabilty_zones_tooltip_message')}
