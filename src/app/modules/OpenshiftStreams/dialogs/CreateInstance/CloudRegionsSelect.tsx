@@ -8,17 +8,17 @@ export type CloudRegionProps = {
   kafkaRequest: NewKafkaRequestPayload;
   selectCloudRegion: (region: string) => void;
   cloudRegions: CloudRegion[] | undefined;
+  quotaLoading?: boolean;
 };
 
 export const CloudRegionSelect: React.FunctionComponent<CloudRegionProps> = ({
   kafkaRequest,
   selectCloudRegion,
   cloudRegions,
+  quotaLoading,
 }) => {
   const { t } = useTranslation();
-  if (cloudRegions === undefined) {
-    return <Skeleton fontSize='2xl' />;
-  }
+
   return (
     <FormSelect
       validated={kafkaRequest.region.validated}
@@ -26,14 +26,14 @@ export const CloudRegionSelect: React.FunctionComponent<CloudRegionProps> = ({
       onChange={selectCloudRegion}
       id='cloud-region-select'
       name='cloud-region'
-      aria-label={t('cloud_region')}
-      isDisabled={cloudRegions === undefined}
+      aria-label={t('select_region')}
+      isDisabled={cloudRegions === undefined || quotaLoading}
     >
       {[
         <FormSelectOption
           value=''
           key='placeholder'
-          label={t('please_select')}
+          label={t('select_region')}
         />,
         (cloudRegions || []).map(
           ({ id, display_name = '' }: CloudRegion, index) => {

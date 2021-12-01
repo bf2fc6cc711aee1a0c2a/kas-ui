@@ -88,7 +88,12 @@ const CreateInstance: React.FunctionComponent<
             basePath,
           })
         );
-        const regions = await apisService.getCloudProviderRegions(id);
+        const regions = await apisService.getCloudProviderRegions(
+          id,
+          undefined,
+          undefined,
+          isKasTrial ? 'eval' : 'standard'
+        );
         return regions.data.items?.filter((p) => p.enabled);
       } catch (error) {
         let reason: string | undefined;
@@ -315,6 +320,7 @@ const CreateInstance: React.FunctionComponent<
             cloudProviders={cloudProviders}
             getCloudRegions={fetchCloudRegions}
             id={FORM_ID}
+            quotaLoading={quota?.loading}
           />
         </FlexItem>
         <Divider isVertical />

@@ -22,6 +22,7 @@ import {
   CloudProvidersTileProps,
   CloudProvidersTiles,
 } from '@app/modules/OpenshiftStreams/dialogs/CreateInstance/CloudProviderTiles';
+import { Quota } from '@rhoas/app-services-ui-shared';
 
 export type CreateInstanceFormProps = Pick<
   CloudProvidersTileProps,
@@ -32,6 +33,7 @@ export type CreateInstanceFormProps = Pick<
   setKafkaRequest: React.Dispatch<React.SetStateAction<NewKafkaRequestPayload>>;
   getCloudRegions: (id: string) => Promise<CloudRegion[] | undefined>;
   id: string;
+  quotaLoading?: boolean;
 };
 
 export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps> =
@@ -42,6 +44,7 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
     cloudProviders,
     getCloudRegions: fetchCloudRegions,
     id,
+    quotaLoading,
   }) => {
     const { t } = useTranslation();
 
@@ -254,6 +257,7 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
             kafkaRequest={kafkaRequest}
             selectCloudRegion={selectCloudRegion}
             cloudRegions={cloudRegions}
+            quotaLoading={quotaLoading}
           />
         </FormGroup>
         <FormGroup label={t('availability_zones')} fieldId='availability-zones'>
