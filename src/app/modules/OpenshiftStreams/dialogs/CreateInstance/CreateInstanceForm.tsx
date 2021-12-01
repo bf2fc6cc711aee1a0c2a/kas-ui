@@ -22,7 +22,6 @@ import {
   CloudProvidersTileProps,
   CloudProvidersTiles,
 } from '@app/modules/OpenshiftStreams/dialogs/CreateInstance/CloudProviderTiles';
-import { Quota } from '@rhoas/app-services-ui-shared';
 
 export type CreateInstanceFormProps = Pick<
   CloudProvidersTileProps,
