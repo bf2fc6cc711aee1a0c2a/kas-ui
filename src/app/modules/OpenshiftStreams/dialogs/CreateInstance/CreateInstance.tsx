@@ -80,7 +80,7 @@ const CreateInstance: React.FunctionComponent<
   const fetchCloudRegions = async (id: string) => {
     const accessToken = await auth?.kas.getToken();
 
-    if (accessToken && id) {
+    if (accessToken && id && loadingQuota === false) {
       try {
         const apisService = new DefaultApi(
           new Configuration({
@@ -92,7 +92,7 @@ const CreateInstance: React.FunctionComponent<
           id,
           undefined,
           undefined,
-          isKasTrial ? 'eval' : 'standard'
+          isKasTrial ? InstanceType.eval : InstanceType.standard
         );
         return regions.data.items?.filter((p) => p.enabled);
       } catch (error) {

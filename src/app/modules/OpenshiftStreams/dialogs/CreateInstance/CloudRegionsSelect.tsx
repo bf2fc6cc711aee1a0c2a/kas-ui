@@ -27,7 +27,7 @@ export const CloudRegionSelect: React.FunctionComponent<CloudRegionProps> = ({
       id='cloud-region-select'
       name='cloud-region'
       aria-label={t('select_region')}
-      isDisabled={cloudRegions === undefined || quotaLoading}
+      isDisabled={cloudRegions === undefined}
     >
       {[
         <FormSelectOption
