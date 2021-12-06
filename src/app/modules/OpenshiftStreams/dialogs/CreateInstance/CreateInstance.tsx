@@ -320,7 +320,6 @@ const CreateInstance: React.FunctionComponent<
             cloudProviders={cloudProviders}
             getCloudRegions={fetchCloudRegions}
             id={FORM_ID}
-            quotaLoading={quota?.loading}
           />
         </FlexItem>
         <Divider isVertical />
