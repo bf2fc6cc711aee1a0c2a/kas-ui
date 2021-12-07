@@ -16,24 +16,21 @@ export const CloudRegionSelect: React.FunctionComponent<CloudRegionProps> = ({
   cloudRegions,
 }) => {
   const { t } = useTranslation();
-  if (cloudRegions === undefined) {
-    return <Skeleton fontSize='2xl' />;
-  }
+
   return (
     <FormSelect
       validated={kafkaRequest.region.validated}
       value={kafkaRequest.region.value}
       onChange={selectCloudRegion}
-      id='cloud-region-select'
+      id='form-cloud-region-option'
       name='cloud-region'
-      aria-label={t('cloud_region')}
       isDisabled={cloudRegions === undefined}
     >
       {[
         <FormSelectOption
           value=''
           key='placeholder'
-          label={t('please_select')}
+          label={t('select_region')}
         />,
         (cloudRegions || []).map(
           ({ id, display_name = '' }: CloudRegion, index) => {

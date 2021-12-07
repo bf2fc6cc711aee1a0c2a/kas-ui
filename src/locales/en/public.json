@@ -151,7 +151,7 @@
   "OCM-EX-103": "Synchronous action (creating kafka requests) is unsupported, use async=true parameter",
   "GATEWAY-404": "The requested resource doesn't exist",
   "KAFKAS-MGMT-4": "User {{user}} is not authorized to access the service.",
-  "please_select": "Please select",
+  "select_region": "Select region",
   "filter_by_status_lower": "Filter by status",
   "australiacentral": "Australia Central",
   "australiacentral2": "Australia Central 2",
