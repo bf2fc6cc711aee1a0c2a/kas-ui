@@ -51,6 +51,7 @@ export const KafkaEmptyState: React.FunctionComponent<KafkaEmptyStateProps> = ({
           onClick={() =>
             handleCreateInstanceModal && handleCreateInstanceModal()
           }
+          ouiaId='button-create'
         >
           {t('create_kafka_instance')}
         </Button>

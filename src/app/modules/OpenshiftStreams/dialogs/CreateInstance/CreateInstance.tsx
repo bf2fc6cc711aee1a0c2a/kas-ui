@@ -291,6 +291,7 @@ const CreateInstance: React.FunctionComponent<
           spinnerAriaValueText={t('submitting_request')}
           isLoading={isCreationInProgress}
           data-testid='modalCreateKafka-buttonSubmit'
+          ouiaId='button-create'
         >
           {t('create_instance')}
         </Button>,
