@@ -15,7 +15,7 @@ const ServiceAccounts: React.FC = () => {
     <>
       <PageSection
         variant={PageSectionVariants.light}
-        className='mk--main-page__page-section--table pf-m-padding-on-xl'
+        className='pf-m-padding-on-xl'
         padding={{ default: 'noPadding' }}
       >
         <TextContent>

@@ -7,7 +7,7 @@ import {
   ServiceAccountList,
   ServiceAccountListItem,
 } from '@rhoas/kafka-management-sdk';
-import { ErrorCodes, isServiceApiError, sortValues } from '@app/utils';
+import { ErrorCodes, isServiceApiError } from '@app/utils';
 import {
   AlertVariant,
   PageSection,
@@ -62,7 +62,11 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
           const serviceAccounts: ServiceAccountList = response?.data;
           const items = serviceAccounts?.items || [];
           const sortedServiceAccounts: ServiceAccountListItem[] | undefined =
-            sortValues<ServiceAccountListItem>(items, 'name', 'asc');
+            items?.sort((a, b) =>
+              a.created_at && b.created_at
+                ? b.created_at.localeCompare(a.created_at)
+                : -1
+            );
           setServiceAccountItems(sortedServiceAccounts);
         });
       } catch (error) {
