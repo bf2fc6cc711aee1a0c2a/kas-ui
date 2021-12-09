@@ -5,6 +5,7 @@ import { Card, PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { useLocation } from 'react-router-dom';
 import { ServiceAccountsTableView } from '@app/modules/ServiceAccounts/components/ServiceAccountsTableView';
 import { ModalType, useModal } from '@rhoas/app-services-ui-shared';
+import { FilterType } from '@app/modules/OpenshiftStreams/components';
 
 export type ServiceAccountTableSectionProps = {
   fetchServiceAccounts: () => Promise<void>;
