@@ -40,6 +40,7 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
         clearAllFilters={clearAllFilters}
         inset={inset}
         collapseListedFiltersBreakpoint={collapseListedFiltersBreakpoint}
+        ouiaId='toolbar'
         {...restToolbarProps}
       >
         <ToolbarContent>

@@ -85,7 +85,8 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
         <Button
           variant='primary'
           onClick={handleCreateInstanceModal}
-          data-testid={'tableStreams-buttonCreateKafka'}
+          data-testid='tableStreams-buttonCreateKafka'
+          ouiaId='button-create'
         >
           {t('create_kafka_instance')}
         </Button>

@@ -403,7 +403,7 @@ export const StreamsTableConnected: React.FunctionComponent<StreamsTableProps> =
           variant={PageSectionVariants.default}
           padding={{ default: 'noPadding' }}
         >
-          <Card>
+          <Card ouiaId='card-controlplane'>
             <StreamsTable
               onDeleteInstance={onDeleteInstance}
               onViewInstance={onViewInstance}

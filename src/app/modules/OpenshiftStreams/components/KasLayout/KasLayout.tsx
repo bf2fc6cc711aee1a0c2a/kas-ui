@@ -46,10 +46,7 @@ export const KasLayout: React.FunctionComponent<KasLayoutProps> = ({
 
   return (
     <>
-      <InstanceDrawer
-        data-ouia-app-id='controlPlane-streams'
-        tokenEndPointUrl={tokenEndPointUrl}
-      >
+      <InstanceDrawer tokenEndPointUrl={tokenEndPointUrl}>
         <main className='pf-c-page__main'>
           <PageSection variant={PageSectionVariants.light}>
             <Level>
