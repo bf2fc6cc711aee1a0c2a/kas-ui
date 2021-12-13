@@ -8,19 +8,13 @@ import {
   ServiceAccountListItem,
 } from '@rhoas/kafka-management-sdk';
 import { ErrorCodes, isServiceApiError } from '@app/utils';
-import {
-  AlertVariant,
-  PageSection,
-  PageSectionVariants,
-} from '@patternfly/react-core';
+import { PageSection, PageSectionVariants } from '@patternfly/react-core';
 import { UserUnauthorized } from '@app/modules/ServiceAccounts/components/UserUnauthorized';
 import { MASLoading } from '@app/common';
 import { ServiceAccountsEmpty } from '@app/modules/ServiceAccounts/components/ServiceAccountsEmpty';
 import { ServiceAccountsTableSection } from '@app/modules/ServiceAccounts/components/ServiceAccountsTableSection';
 
 export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
-  const { t } = useTranslation();
-  const { addAlert } = useAlert() || {};
   const auth = useAuth();
   const config = useConfig();
 
@@ -30,21 +24,12 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
   const handleServerError = (error: Error) => {
-    let reason: string | undefined;
     let errorCode: string | undefined;
     if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;
       errorCode = error.response?.data?.code;
     }
     if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
       setIsUserUnauthorized(true);
-    } else {
-      addAlert &&
-        addAlert({
-          variant: AlertVariant.danger,
-          title: t('common.something_went_wrong'),
-          description: reason,
-        });
     }
   };
 
