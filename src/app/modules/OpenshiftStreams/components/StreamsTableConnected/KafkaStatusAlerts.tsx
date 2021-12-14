@@ -7,11 +7,7 @@ import {
   KafkaRequest,
 } from '@rhoas/kafka-management-sdk';
 import { usePageVisibility } from '@app/hooks/usePageVisibility';
-import {
-  InstanceStatus,
-  isServiceApiError,
-  MAX_POLL_INTERVAL,
-} from '@app/utils';
+import { InstanceStatus, MAX_POLL_INTERVAL } from '@app/utils';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTimeout } from '@app/hooks/useTimeout';
 
@@ -35,37 +31,20 @@ export const KafkaStatusAlerts: React.FunctionComponent = () => {
     auth.getUsername()?.then((username) => setLoggedInUser(username));
   }, [auth]);
 
-  const handleServerError = (error: unknown) => {
-    let reason: string | undefined;
-    let errorCode: string | undefined;
-    if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;
-    }
-    addAlert({
-      variant: AlertVariant.danger,
-      title: t('common.something_went_wrong'),
-      description: reason,
-    });
-  };
-
   const fetchCurrentUserKafkas = async () => {
     const accessToken = await auth?.kas.getToken();
     const filter = `owner = ${loggedInUser}`;
     if (accessToken && isVisible) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
-        await apisService.getKafkas('', '', '', filter).then((res) => {
-          const kafkaInstances = res.data;
-          setCurrentUserKafkas(kafkaInstances.items);
-        });
-      } catch (error) {
-        handleServerError(error);
-      }
+      const apisService = new DefaultApi(
+        new Configuration({
+          accessToken,
+          basePath,
+        })
+      );
+      await apisService.getKafkas('', '', '', filter).then((res) => {
+        const kafkaInstances = res.data;
+        setCurrentUserKafkas(kafkaInstances.items);
+      });
     }
   };
 

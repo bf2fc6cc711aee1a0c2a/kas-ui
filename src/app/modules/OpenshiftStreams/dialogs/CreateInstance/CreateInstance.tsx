@@ -81,32 +81,19 @@ const CreateInstance: React.FunctionComponent<
     const accessToken = await auth?.kas.getToken();
 
     if (accessToken && id && loadingQuota === false) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
-        const regions = await apisService.getCloudProviderRegions(
-          id,
-          undefined,
-          undefined,
-          isKasTrial ? InstanceType.eval : InstanceType.standard
-        );
-        return regions.data.items?.filter((p) => p.enabled);
-      } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        addAlert &&
-          addAlert({
-            title: t('common.something_went_wrong'),
-            variant: AlertVariant.danger,
-            description: reason,
-          });
-      }
+      const apisService = new DefaultApi(
+        new Configuration({
+          accessToken,
+          basePath,
+        })
+      );
+      const regions = await apisService.getCloudProviderRegions(
+        id,
+        undefined,
+        undefined,
+        isKasTrial ? InstanceType.eval : InstanceType.standard
+      );
+      return regions.data.items?.filter((p) => p.enabled);
     }
     return undefined;
   };
@@ -125,33 +112,20 @@ const CreateInstance: React.FunctionComponent<
 
   const fetchCloudProviders = async () => {
     const accessToken = await auth?.kas.getToken();
-    if (accessToken) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
+    if (accessToken && basePath) {
+      const apisService = new DefaultApi(
+        new Configuration({
+          accessToken,
+          basePath,
+        })
+      );
+      await apisService.getCloudProviders().then((res) => {
+        const providers = res?.data?.items || [];
+        const enabledCloudProviders: CloudProvider[] = providers?.filter(
+          (p: CloudProvider) => p.enabled
         );
-        await apisService.getCloudProviders().then((res) => {
-          const providers = res?.data?.items || [];
-          const enabledCloudProviders: CloudProvider[] = providers?.filter(
-            (p: CloudProvider) => p.enabled
-          );
-          setCloudProviders(enabledCloudProviders);
-        });
-      } catch (error) {
-        let reason: string | undefined;
-        if (isServiceApiError(error)) {
-          reason = error.response?.data.reason;
-        }
-        addAlert &&
-          addAlert({
-            variant: AlertVariant.danger,
-            title: t('common.something_went_wrong'),
-            description: reason,
-          });
-      }
+        setCloudProviders(enabledCloudProviders);
+      });
     }
   };
 
@@ -189,10 +163,8 @@ const CreateInstance: React.FunctionComponent<
 
   const handleServerError = (error: unknown) => {
     let reason: string | undefined;
-    let errorCode: string | undefined;
     if (isServiceApiError(error)) {
       reason = error.response?.data.reason;
-      errorCode = error.response?.data?.code;
     }
     addAlert &&
       addAlert({

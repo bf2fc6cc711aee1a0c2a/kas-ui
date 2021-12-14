@@ -173,22 +173,13 @@ export const StreamsTableConnected: React.FunctionComponent<StreamsTableProps> =
     };
 
     const handleServerError = (error: unknown) => {
-      let reason: string | undefined;
       let errorCode: string | undefined;
       if (isServiceApiError(error)) {
-        reason = error.response?.data.reason;
         errorCode = error.response?.data?.code;
       }
       //check unauthorize user
       if (errorCode === ErrorCodes.UNAUTHORIZED_USER) {
         setIsUserUnauthorized(true);
-      } else {
-        addAlert &&
-          addAlert({
-            variant: AlertVariant.danger,
-            title: t('common.something_went_wrong'),
-            description: reason,
-          });
       }
     };
 
