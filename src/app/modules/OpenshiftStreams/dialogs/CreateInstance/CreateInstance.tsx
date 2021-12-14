@@ -164,7 +164,7 @@ const CreateInstance: React.FunctionComponent<
   const handleServerError = (error: unknown) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;    
+      reason = error.response?.data.reason;
     }
     addAlert &&
       addAlert({
