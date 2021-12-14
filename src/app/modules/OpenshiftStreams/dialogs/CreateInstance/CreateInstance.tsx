@@ -112,7 +112,7 @@ const CreateInstance: React.FunctionComponent<
 
   const fetchCloudProviders = async () => {
     const accessToken = await auth?.kas.getToken();
-    if (accessToken) {
+    if (accessToken && basePath) {
       const apisService = new DefaultApi(
         new Configuration({
           accessToken,
@@ -164,7 +164,7 @@ const CreateInstance: React.FunctionComponent<
   const handleServerError = (error: unknown) => {
     let reason: string | undefined;
     if (isServiceApiError(error)) {
-      reason = error.response?.data.reason;
+      reason = error.response?.data.reason;    
     }
     addAlert &&
       addAlert({
