@@ -35,7 +35,7 @@
     "chromatic": "npx chromatic"
   },
   "devDependencies": {
-    "@babel/core": "7.16.0",
+    "@babel/core": "7.16.5",
     "@redhat-cloud-services/frontend-components-config": "4.5.8",
     "@rhoas/api-mock": "0.18.0",
     "@storybook/addon-actions": "6.4.9",
