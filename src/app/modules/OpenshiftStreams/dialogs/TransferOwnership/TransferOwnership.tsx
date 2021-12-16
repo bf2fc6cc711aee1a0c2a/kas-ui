@@ -34,7 +34,7 @@ export type TransferOwnershipProps = {
 export const TransferOwnership: React.FC<
   TransferOwnershipProps & BaseModalProps
 > = ({ kafka, onClose, hideModal, refreshKafkas, variant, title }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },

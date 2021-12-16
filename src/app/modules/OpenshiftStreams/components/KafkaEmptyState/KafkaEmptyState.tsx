@@ -13,7 +13,7 @@ export type KafkaEmptyStateProps = {
 export const KafkaEmptyState: React.FunctionComponent<KafkaEmptyStateProps> = ({
   handleCreateInstanceModal,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const qsContext: QuickStartContextValues =
     React.useContext(QuickStartContext);
   return (
@@ -27,6 +27,7 @@ export const KafkaEmptyState: React.FunctionComponent<KafkaEmptyStateProps> = ({
             <>
               <Trans
                 i18nKey='create_a_kafka_instance_to_get_started'
+                ns={['kasTemporaryFixMe']}
                 components={[
                   <Button
                     variant={ButtonVariant.link}

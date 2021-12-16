@@ -43,7 +43,7 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
     getCloudRegions: fetchCloudRegions,
     id,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['kasTemporaryFixMe']);
 
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [cloudRegions, setCloudRegions] = useState<

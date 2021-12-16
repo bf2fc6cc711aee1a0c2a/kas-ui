@@ -17,7 +17,7 @@ export const FilterSelect: React.FunctionComponent<FilterSelectProps> = ({
   setFilterSelected,
   filterSelected,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
 
   const onToggle = () => {

@@ -48,7 +48,7 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   setFilteredValue,
   onCreateServiceAccount: onCreateServiceAccount,
 }: ServiceAccountsToolbarProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const nameInputRef = useRef<HTMLInputElement>();
   const ownerInputRef = useRef<HTMLInputElement>();
 

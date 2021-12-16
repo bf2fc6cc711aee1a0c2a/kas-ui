@@ -16,7 +16,7 @@ const DeleteInstanceConnected: React.FunctionComponent<
   DeleteInstanceProps & BaseModalProps
 > = ({ kafka, onDelete, hideModal }) => {
   const { addAlert } = useAlert() || {};
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};

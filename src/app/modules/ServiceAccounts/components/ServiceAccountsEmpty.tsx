@@ -17,7 +17,7 @@ export const ServiceAccountsEmpty: React.FunctionComponent<ServiceAccountsEmptyP
       });
     };
 
-    const { t } = useTranslation();
+    const { t } = useTranslation(['kasTemporaryFixMe']);
     return (
       <PageSection padding={{ default: 'noPadding' }} isFilled>
         <MASEmptyState

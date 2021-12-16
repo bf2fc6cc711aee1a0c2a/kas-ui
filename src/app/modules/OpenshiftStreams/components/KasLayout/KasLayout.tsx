@@ -23,7 +23,7 @@ export const KasLayout: React.FunctionComponent<KasLayoutProps> = ({
   children,
   tokenEndPointUrl,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
 
   useEffect(() => {

@@ -14,7 +14,7 @@ export type DeleteInstanceModalProps = {
 
 export const DeleteInstanceModal: React.FunctionComponent<DeleteInstanceModalProps> =
   ({ kafka, onClose, hideModal, onDelete, isLoading }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['kasTemporaryFixMe']);
     const selectedInstanceName = kafka?.name;
 
     const [instanceNameInput, setInstanceNameInput] = useState<string>();

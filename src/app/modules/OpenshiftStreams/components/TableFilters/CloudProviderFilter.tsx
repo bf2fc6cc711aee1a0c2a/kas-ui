@@ -25,7 +25,7 @@ export const CloudProviderFilter: React.FunctionComponent<CloudProviderFilterPro
     removeFilterValue,
     isDisabledSelectOption,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['kasTemporaryFixMe']);
 
     const options: KeyValueOptions[] = cloudProviderOptions.map(
       (cloudProvider) => {
@@ -84,7 +84,7 @@ const CloudProviderSelect: React.FunctionComponent<CloudProviderSelectProps> =
     getSelectionForFilter,
     filterSelected,
   }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['kasTemporaryFixMe']);
     const selectRef = useRef<Select>(null);
     const tooltipContent = useTooltipContent(isMaxFilter);
 

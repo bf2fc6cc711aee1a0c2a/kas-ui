@@ -7,7 +7,7 @@ import '@patternfly/patternfly/utilities/Sizing/sizing.css';
 import '@patternfly/patternfly/utilities/Spacing/spacing.css';
 
 import React from 'react';
-import { I18nextProvider } from 'react-i18next';
+import { I18nProvider } from '@rhoas/app-services-ui-components';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { addDecorator } from '@storybook/react';
 import { initializeWorker, mswDecorator } from 'msw-storybook-addon';
@@ -20,9 +20,6 @@ import {
 
 initializeWorker();
 addDecorator(mswDecorator);
-
-import { initI18N } from '../src/i18n/i18n';
-const i18n = initI18N();
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },
@@ -96,7 +93,32 @@ export const parameters = {
 export const decorators = [
   (Story) => (
     <Router>
-      <I18nextProvider i18n={i18n}>
+      <I18nProvider
+        lng='en'
+        resources={{
+          en: {
+            common: () =>
+              import(
+                '@rhoas/app-services-ui-components/locales/en/common.json'
+              ),
+            'create-kafka-instance': () =>
+              import(
+                '@rhoas/app-services-ui-components/locales/en/create-kafka-instance.json'
+              ),
+            kafka: () =>
+              import(
+                '@rhoas/app-services-ui-components/locales/en/kafka.json'
+              ),
+            metrics: () =>
+              import(
+                '@rhoas/app-services-ui-components/locales/en/metrics.json'
+              ),
+            kasTemporaryFixMe: () =>
+              import('../src/app/kas-ui-dont-modify-temporay.json'),
+          },
+        }}
+        debug={true}
+      >
         <ConfigContext.Provider
           value={
             {
@@ -142,7 +164,7 @@ export const decorators = [
             </AlertContext.Provider>
           </AuthContext.Provider>
         </ConfigContext.Provider>
-      </I18nextProvider>
+      </I18nProvider>
     </Router>
   ),
 ];

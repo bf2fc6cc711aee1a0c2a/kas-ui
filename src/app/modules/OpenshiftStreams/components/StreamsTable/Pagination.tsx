@@ -14,7 +14,7 @@ export const Pagination: React.FunctionComponent<PaginationProps> = ({
   page,
   perPage,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   if (total > 0) {
     return (
       <MASPagination

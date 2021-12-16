@@ -16,7 +16,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
   hasKafkaCreationFailed,
   userHasTrialInstance,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   if (quota === undefined || quota.loading) {
     return (

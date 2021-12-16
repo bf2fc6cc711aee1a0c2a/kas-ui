@@ -16,7 +16,7 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
   status,
   instanceName,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   const Status: React.FunctionComponent = () => {
     const filteredstatus = statusOptions.filter(

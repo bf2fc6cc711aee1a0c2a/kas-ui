@@ -17,7 +17,7 @@ export type InstanceDrawerContentProps = Pick<
 
 export const InstanceDrawerContent: React.FunctionComponent<InstanceDrawerContentProps> =
   ({ tokenEndPointUrl }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation(['kasTemporaryFixMe']);
 
     const { instanceDrawerTab, setInstanceDrawerTab, instanceDrawerInstance } =
       useInstanceDrawer();

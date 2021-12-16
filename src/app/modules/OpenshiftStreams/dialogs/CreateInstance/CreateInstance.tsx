@@ -44,7 +44,7 @@ const FORM_ID = 'create_instance_-form';
 const CreateInstance: React.FunctionComponent<
   CreateInstanceProps & BaseModalProps
 > = ({ onCreate, title, hideModal }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};

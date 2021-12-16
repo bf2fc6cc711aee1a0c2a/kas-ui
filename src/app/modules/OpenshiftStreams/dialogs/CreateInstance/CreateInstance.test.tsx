@@ -1,9 +1,7 @@
 import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { I18nextProvider } from 'react-i18next';
 import userEvent from '@testing-library/user-event';
 import { CreateInstance } from './CreateInstance';
-import i18nForTest from '../../../../../../test-utils/i18n';
 import {
   AlertContext,
   Auth,
@@ -44,56 +42,54 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
 
 const setupRender = () => {
   render(
-    <I18nextProvider i18n={i18nForTest}>
-      <ConfigContext.Provider
+    <ConfigContext.Provider
+      value={
+        {
+          kas: {
+            apiBasePath: '',
+          },
+          ams: { trialQuotaId: 'fake-quota-id' },
+        } as unknown as Config
+      }
+    >
+      <AuthContext.Provider
         value={
           {
             kas: {
-              apiBasePath: '',
+              getToken: () => Promise.resolve('test-token'),
             },
-            ams: { trialQuotaId: 'fake-quota-id' },
-          } as unknown as Config
+            getUsername: () => Promise.resolve('api_kafka_service'),
+          } as Auth
         }
       >
-        <AuthContext.Provider
-          value={
-            {
-              kas: {
-                getToken: () => Promise.resolve('test-token'),
-              },
-              getUsername: () => Promise.resolve('api_kafka_service'),
-            } as Auth
-          }
+        <AlertContext.Provider
+          value={{
+            addAlert: () => {
+              // No-op
+            },
+          }}
         >
-          <AlertContext.Provider
+          <QuotaContext.Provider
             value={{
-              addAlert: () => {
-                // No-op
+              getQuota: () => {
+                return Promise.resolve({
+                  loading: true,
+                  data: undefined,
+                  isServiceDown: false,
+                } as Quota);
               },
             }}
           >
-            <QuotaContext.Provider
-              value={{
-                getQuota: () => {
-                  return Promise.resolve({
-                    loading: true,
-                    data: undefined,
-                    isServiceDown: false,
-                  } as Quota);
-                },
+            <CreateInstance
+              title='Create a Kafka instance'
+              hideModal={() => {
+                //no-op
               }}
-            >
-              <CreateInstance
-                title='Create a Kafka instance'
-                hideModal={() => {
-                  //no-op
-                }}
-              />
-            </QuotaContext.Provider>
-          </AlertContext.Provider>
-        </AuthContext.Provider>
-      </ConfigContext.Provider>
-    </I18nextProvider>
+            />
+          </QuotaContext.Provider>
+        </AlertContext.Provider>
+      </AuthContext.Provider>
+    </ConfigContext.Provider>
   );
 };
 
@@ -123,12 +119,12 @@ describe('<CreateInstance/>', () => {
 
     //act
     const classList: string[] = screen
-      .getByRole('button', { name: /Create instance/i })
+      .getByRole('button', { name: /create_instance/i })
       .className.split(' ');
 
     //assert
     expect(
-      screen.getByRole('button', { name: /Create instance/i })
+      screen.getByRole('button', { name: /create_instance/i })
     ).toBeInTheDocument();
     expect(classList).toContain('pf-m-primary');
     expect(classList).toContain('pf-c-button');
@@ -140,7 +136,7 @@ describe('<CreateInstance/>', () => {
     setupRender();
 
     //act
-    const btn = screen.getByRole('button', { name: /Create instance/i });
+    const btn = screen.getByRole('button', { name: /create_instance/i });
     act(() => {
       userEvent.click(btn);
     });
@@ -148,16 +144,16 @@ describe('<CreateInstance/>', () => {
     //assert
     await waitFor(() => {
       const classList: string[] = screen
-        .getByRole('button', { name: /Create instance/i })
+        .getByRole('button', { name: /create_instance/i })
         .className.split(' ');
       expect(
-        screen.getByRole('button', { name: /Create instance/i })
+        screen.getByRole('button', { name: /create_instance/i })
       ).toBeInTheDocument();
       expect(classList).toContain('pf-m-primary');
       expect(classList).toContain('pf-c-button');
       expect(classList).toContain('pf-m-disabled');
       expect(
-        screen.getByRole('button', { name: /Create instance/i })
+        screen.getByRole('button', { name: /create_instance/i })
       ).toBeDisabled();
     });
   });
@@ -166,7 +162,7 @@ describe('<CreateInstance/>', () => {
     //arrange
     setupRender();
     const createInstanceButton = screen.getByRole('button', {
-      name: /Create instance/i,
+      name: /create_instance/i,
     });
 
     //act
@@ -182,15 +178,15 @@ describe('<CreateInstance/>', () => {
 
     //assert
     const classList: string[] = screen
-      .getByRole('button', { name: /Create instance/i })
+      .getByRole('button', { name: /create_instance/i })
       .className.split(' ');
     expect(
-      screen.getByRole('button', { name: /Create instance/i })
+      screen.getByRole('button', { name: /create_instance/i })
     ).toBeInTheDocument();
     expect(classList).toContain('pf-m-primary');
     expect(classList).toContain('pf-c-button');
     //expect(classList).not.toContain('pf-m-disabled');
-    //expect(screen.getByRole('button', { name: /Create instance/i })).toBeEnabled();
+    //expect(screen.getByRole('button', { name: /create_instance/i })).toBeEnabled();
     expect(instanceNameInput).toHaveValue('1');
   });
 
@@ -200,7 +196,7 @@ describe('<CreateInstance/>', () => {
 
     //act
     const createInstanceButton = screen.getByRole('button', {
-      name: /Create instance/i,
+      name: /create_instance/i,
     });
     act(() => {
       userEvent.click(createInstanceButton);
@@ -215,22 +211,20 @@ describe('<CreateInstance/>', () => {
     //assert
     await waitFor(() => {
       const classList: string[] = screen
-        .getByRole('button', { name: /Create instance/i })
+        .getByRole('button', { name: /create_instance/i })
         .className.split(' ');
       expect(
-        screen.getByRole('button', { name: /Create instance/i })
+        screen.getByRole('button', { name: /create_instance/i })
       ).toBeInTheDocument();
       expect(classList).toContain('pf-m-primary');
       expect(classList).toContain('pf-c-button');
       expect(classList).toContain('pf-m-disabled');
       expect(
-        screen.getByRole('button', { name: /Create instance/i })
+        screen.getByRole('button', { name: /create_instance/i })
       ).toBeDisabled();
       expect(instanceNameInput).toHaveValue('@');
       expect(
-        screen.getByText(
-          'Must start with a letter and end with a letter or number. Valid characters include lowercase letters from a to z, numbers from 0 to 9, and hyphens ( - ).'
-        )
+        screen.getByText('common.input_filed_invalid_helper_text')
       ).toBeInTheDocument();
     });
   });

@@ -25,7 +25,7 @@ enum Step {
 const ResetServiceAccountCredentials: React.FunctionComponent<
   ResetServiceAccountCredentialsProps & BaseModalProps
 > = ({ serviceAccount, onReset, variant, title, hideModal }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },

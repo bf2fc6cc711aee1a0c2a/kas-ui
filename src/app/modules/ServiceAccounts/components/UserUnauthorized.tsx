@@ -5,7 +5,7 @@ import { MASEmptyState } from '@app/common';
 import LockIcon from '@patternfly/react-icons/dist/js/icons/lock-icon';
 
 export const UserUnauthorized: React.FunctionComponent = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   return (
     <PageSection
       variant={PageSectionVariants.default}

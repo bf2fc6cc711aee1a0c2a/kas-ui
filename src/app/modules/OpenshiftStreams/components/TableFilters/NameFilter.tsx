@@ -23,7 +23,7 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
   isMaxFilter,
   updateFilter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const [valid, setValid] = useState<boolean>(true);
   const [value, setValue] = useState<string | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);

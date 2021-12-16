@@ -21,6 +21,7 @@ module.exports = {
       '<rootDir>/__mocks__/fileMock.js',
     '@app/(.*)': '<rootDir>/src/app/$1',
     '@i18n/(.*)': '<rootDir>/src/i18n/$1',
+    'react-i18next': `<rootDir>/test-utils/react-i18next.js`,
   },
 
   // A preset that is used as a base for Jest's configuration

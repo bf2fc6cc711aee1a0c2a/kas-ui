@@ -5,7 +5,7 @@ export const useTooltipContent = (
   isMaxFilter: boolean,
   fieldName?: string
 ): React.ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   if (isMaxFilter) {
     return <div>{t('max_filter_message')}</div>;
   }

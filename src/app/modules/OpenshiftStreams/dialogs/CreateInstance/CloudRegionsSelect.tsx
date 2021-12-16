@@ -15,7 +15,7 @@ export const CloudRegionSelect: React.FunctionComponent<CloudRegionProps> = ({
   selectCloudRegion,
   cloudRegions,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   return (
     <FormSelect

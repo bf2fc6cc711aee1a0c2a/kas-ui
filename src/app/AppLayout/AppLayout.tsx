@@ -35,7 +35,7 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
     setIsMobileView(props.mobileView);
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   function LogoImg() {
     const history = useHistory();
