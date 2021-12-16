@@ -24,7 +24,7 @@ export const RegionFilter: React.FunctionComponent<RegionFilterProps> = ({
   filterSelected,
   updateFilter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const options = cloudRegionOptions.map((region) => {
     return { label: t(region.value), value: region.value, disabled: false };
   });
@@ -71,7 +71,7 @@ const RegionSelect: React.FunctionComponent<RegionSelectProps> = ({
   getSelectionForFilter,
   filterSelected,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const selectRef = useRef<Select>(null);
   const tooltipContent = useTooltipContent(isMaxFilter);
   const [expanded, setExpanded] = useState(false);

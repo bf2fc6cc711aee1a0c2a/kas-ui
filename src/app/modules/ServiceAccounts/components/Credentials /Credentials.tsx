@@ -30,7 +30,7 @@ const Credentials: React.FunctionComponent<CredentialsProps> = ({
   serviceAccount,
   close,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   const [confirmationCheckbox, setConfirmationCheckbox] = useState(false);
 

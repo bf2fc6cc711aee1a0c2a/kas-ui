@@ -9,7 +9,7 @@ import {
 import CopyIcon from '@patternfly/react-icons/dist/js/icons/copy-icon';
 
 export const SampleCodeTab: React.FunctionComponent = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   return (
     <div className='mas--details__drawer--tab-content'>

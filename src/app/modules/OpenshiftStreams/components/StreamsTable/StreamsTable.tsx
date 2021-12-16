@@ -77,7 +77,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
   refresh,
   handleCreateInstanceModal,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const { instanceDrawerInstance } = useInstanceDrawer();
 
   const cells = [

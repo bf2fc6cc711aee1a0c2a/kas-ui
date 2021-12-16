@@ -15,7 +15,7 @@ import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/Instance
 export const DetailsTab: React.FunctionComponent = () => {
   const { instanceDrawerInstance } = useInstanceDrawer();
   dayjs.extend(localizedFormat);
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const { id, owner, created_at, updated_at } = instanceDrawerInstance || {};
 
   const renderTextListItem = (title: string, value?: string) =>

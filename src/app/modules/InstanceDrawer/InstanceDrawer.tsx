@@ -30,7 +30,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   tokenEndPointUrl,
 }) => {
   dayjs.extend(localizedFormat);
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const {
     isInstanceDrawerOpen,
     instanceDrawerInstance,

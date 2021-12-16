@@ -38,7 +38,7 @@ enum Step {
 const CreateServiceAccountConnected: React.FunctionComponent<
   CreateServiceAccountProps & BaseModalProps
 > = ({ onCreate, title, hideModal }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },

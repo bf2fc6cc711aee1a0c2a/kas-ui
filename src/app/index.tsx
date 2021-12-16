@@ -1,5 +1,4 @@
 import React from 'react';
-import { I18nextProvider } from 'react-i18next';
 import { BrowserRouter as Router } from 'react-router-dom';
 import {
   BasenameContext,
@@ -21,13 +20,12 @@ import {
   KeycloakAuthProvider,
   KeycloakContext,
 } from '@app/auth/keycloak/KeycloakContext';
-import { initI18N } from '@i18n/i18n';
 import {
   MASErrorBoundary,
   PaginationProvider,
   AlertProvider,
 } from '@app/common';
-import { ModalProvider } from '@rhoas/app-services-ui-components';
+import { I18nProvider, ModalProvider } from '@rhoas/app-services-ui-components';
 import { KasModalLoader } from '@app/modals';
 
 let keycloak: Keycloak.KeycloakInstance | undefined;
@@ -61,7 +59,33 @@ const App: React.FunctionComponent = () => {
           } as Config
         }
       >
-        <I18nextProvider i18n={initI18N()}>
+        <I18nProvider
+          lng='en'
+          resources={{
+            en: {
+              common: () =>
+                import(
+                  '@rhoas/app-services-ui-components/locales/en/common.json'
+                ),
+              'create-kafka-instance': () =>
+                import(
+                  '@rhoas/app-services-ui-components/locales/en/create-kafka-instance.json'
+                ),
+              kafka: () =>
+                import(
+                  '@rhoas/app-services-ui-components/locales/en/kafka.json'
+                ),
+              metrics: () =>
+                import(
+                  '@rhoas/app-services-ui-components/locales/en/metrics.json'
+                ),
+              kasTemporaryFixMe: () =>
+                import('./kas-ui-dont-modify-temporay.json'),
+            },
+          }}
+          debug={true}
+        >
+          {' '}
           <KeycloakContext.Provider
             value={{ keycloak, profile: keycloak?.profile }}
           >
@@ -84,7 +108,7 @@ const App: React.FunctionComponent = () => {
               </AlertProvider>
             </KeycloakAuthProvider>
           </KeycloakContext.Provider>
-        </I18nextProvider>
+        </I18nProvider>
       </ConfigContext.Provider>
     </BasenameContext.Provider>
   );

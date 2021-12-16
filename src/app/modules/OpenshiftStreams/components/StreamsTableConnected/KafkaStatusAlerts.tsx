@@ -12,7 +12,7 @@ import { AlertVariant } from '@patternfly/react-core';
 import { useTimeout } from '@app/hooks/useTimeout';
 
 export const KafkaStatusAlerts: React.FunctionComponent = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const { addAlert } = useAlert() || {};
   const auth = useAuth();
 

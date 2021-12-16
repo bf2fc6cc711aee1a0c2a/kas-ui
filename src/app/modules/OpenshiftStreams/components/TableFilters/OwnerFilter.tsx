@@ -22,7 +22,7 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
   isMaxFilter,
   updateFilter,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipContent = useTooltipContent(isMaxFilter, 'owner');
 

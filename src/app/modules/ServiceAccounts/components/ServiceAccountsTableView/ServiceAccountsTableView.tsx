@@ -51,7 +51,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   onCreateServiceAccount,
   mainToggle,
 }: ServiceAccountsTableViewProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
 
   const [loggedInUser, setLoggedInUser] = useState<string | undefined>(

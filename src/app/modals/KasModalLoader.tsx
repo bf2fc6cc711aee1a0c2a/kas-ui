@@ -15,7 +15,7 @@ import {
 } from '@rhoas/app-services-ui-shared';
 
 export const useKasModals = (): ModalRegistry => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   return {
     [ModalType.KasCreateInstance]: {
       lazyComponent: React.lazy(

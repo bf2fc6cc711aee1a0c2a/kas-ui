@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { accessibleRouteChangeHandler } from '@app/utils/utils';
 import { MASPageNotFound } from '@app/common/MASPageNotFound/MASPageNotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
-import {
-  LastLocationProvider,
-  useLastLocation,
-} from 'react-router-last-location';
+// import {
+//   LastLocationProvider,
+//   useLastLocation,
+// } from 'react-router-last-location';
 import { OpenshiftStreamsStandalone } from '@app/modules/OpenshiftStreams';
 import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
 
@@ -55,25 +55,28 @@ const routes: AppRouteConfig[] = [
 // a custom hook for sending focus to the primary content container
 // after a view has loaded so that subsequent press of tab key
 // sends focus directly to relevant content
-const useA11yRouteChange = (isAsync: boolean) => {
-  const lastNavigation = useLastLocation();
-  React.useEffect(() => {
-    if (!isAsync && lastNavigation !== null) {
-      routeFocusTimer = accessibleRouteChangeHandler();
-    }
-    return () => {
-      window.clearTimeout(routeFocusTimer);
-    };
-  }, [isAsync, lastNavigation]);
-};
+
+// TODO: restore when react-router-last-location officially supports react 17
+
+// const useA11yRouteChange = (isAsync: boolean) => {
+//   const lastNavigation = useLastLocation();
+//   React.useEffect(() => {
+//     if (!isAsync && lastNavigation !== null) {
+//       routeFocusTimer = accessibleRouteChangeHandler();
+//     }
+//     return () => {
+//       window.clearTimeout(routeFocusTimer);
+//     };
+//   }, [isAsync, lastNavigation]);
+// };
 
 const RouteWithTitleUpdates = ({
   component: Component,
-  isAsync = false,
+  // isAsync = false,
   title,
   ...rest
 }: IAppRoute) => {
-  useA11yRouteChange(isAsync);
+  // useA11yRouteChange(isAsync);
   useDocumentTitle(title);
 
   function routeWithTitle(routeProps: RouteComponentProps) {
@@ -97,25 +100,25 @@ const flattenedRoutes: IAppRoute[] = routes.reduce(
 );
 
 const AppRoutes = (): React.ReactElement => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   return (
-    <LastLocationProvider>
-      <Switch>
-        {flattenedRoutes.map(
-          ({ path, exact, component, title, isAsync }, idx) => (
-            <RouteWithTitleUpdates
-              path={path}
-              exact={exact}
-              component={component}
-              key={idx}
-              title={title}
-              isAsync={isAsync}
-            />
-          )
-        )}
-        <PageNotFound title={t('404_page_does_not_exist')} />
-      </Switch>
-    </LastLocationProvider>
+    // <LastLocationProvider>
+    <Switch>
+      {flattenedRoutes.map(
+        ({ path, exact, component, title, isAsync }, idx) => (
+          <RouteWithTitleUpdates
+            path={path}
+            exact={exact}
+            component={component}
+            key={idx}
+            title={title}
+            isAsync={isAsync}
+          />
+        )
+      )}
+      <PageNotFound title={t('404_page_does_not_exist')} />
+    </Switch>
+    // </LastLocationProvider>
   );
 };
 

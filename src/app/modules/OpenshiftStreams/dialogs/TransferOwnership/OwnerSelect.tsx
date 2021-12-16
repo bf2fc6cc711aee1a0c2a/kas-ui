@@ -24,7 +24,7 @@ export const OwnerSelect: React.FC<OwnerSelectProps> = ({
   setSelection,
   allUsers,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const options =
     allUsers &&

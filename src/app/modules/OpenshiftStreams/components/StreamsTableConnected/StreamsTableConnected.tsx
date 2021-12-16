@@ -60,7 +60,7 @@ export const StreamsTableConnected: React.FunctionComponent<StreamsTableProps> =
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const { page = 1, perPage = 10 } = usePagination() || {};
-    const { t } = useTranslation();
+    const { t } = useTranslation(['kasTemporaryFixMe']);
     const { addAlert } = useAlert() || {};
     const { showModal: showCreateModal } =
       useModal<ModalType.KasCreateInstance>();

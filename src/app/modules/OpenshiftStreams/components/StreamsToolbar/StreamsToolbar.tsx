@@ -31,7 +31,7 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   setFilteredValue,
   handleCreateInstanceModal,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
 
   useEffect(() => {

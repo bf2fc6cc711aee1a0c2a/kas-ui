@@ -10,7 +10,7 @@ import { ServiceAccountsTableConnected } from '@app/modules/ServiceAccounts/comp
 import '@app/modules/styles.css';
 
 const ServiceAccounts: React.FC = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   return (
     <>
       <PageSection

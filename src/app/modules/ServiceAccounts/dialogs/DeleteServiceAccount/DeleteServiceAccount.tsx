@@ -19,7 +19,7 @@ import {
 const DeleteServiceAccount: React.FunctionComponent<
   DeleteServiceAccountProps & BaseModalProps
 > = ({ onDelete, serviceAccount, title, hideModal }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },

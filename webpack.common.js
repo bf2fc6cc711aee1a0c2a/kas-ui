@@ -5,8 +5,11 @@ const CopyPlugin = require('copy-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const BG_IMAGES_DIRNAME = 'bgimages';
-const { dependencies, federatedModuleName } = require('./package.json');
-delete dependencies.serve; // Needed for nodeshift bug
+const {
+  dependencies,
+  peerDependencies,
+  federatedModuleName,
+} = require('./package.json');
 const webpack = require('webpack');
 const ChunkMapper = require('@redhat-cloud-services/frontend-components-config/chunk-mapper');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -101,9 +104,6 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [{ from: './src/favicon.png', to: 'images' }],
       }),
-      new CopyPlugin({
-        patterns: [{ from: './src/locales', to: 'locales' }],
-      }),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash:8].css',
         chunkFilename: '[contenthash:8].css',
@@ -135,6 +135,7 @@ module.exports = (env, argv) => {
         },
         shared: {
           ...dependencies,
+          ...peerDependencies,
           react: {
             eager: true,
             singleton: true,
@@ -145,13 +146,19 @@ module.exports = (env, argv) => {
             singleton: true,
             requiredVersion: dependencies['react-dom'],
           },
+          'react-i18next': {
+            singleton: true,
+            requiredVersion: dependencies['react-i18next'],
+          },
           'react-router-dom': {
             singleton: true,
-            eager: true,
             requiredVersion: dependencies['react-router-dom'],
           },
+          '@rhoas/app-services-ui-components': {
+            singleton: true,
+            requiredVersion: dependencies['@rhoas/app-services-ui-components'],
+          },
           '@rhoas/app-services-ui-shared': {
-            eager: true,
             singleton: true,
             requiredVersion: dependencies['@rhoas/app-services-ui-shared'],
           },

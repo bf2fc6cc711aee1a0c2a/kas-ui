@@ -10,7 +10,7 @@ export const NoResultsFound: React.FunctionComponent<NoResultsFoundProps> = ({
   count,
   dataLoaded,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   if (count < 1 && dataLoaded) {
     return (

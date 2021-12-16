@@ -23,7 +23,7 @@ export type InstanceInfoProps = {
 };
 
 const InstanceInfo: React.FC<InstanceInfoProps> = ({ isKasTrial }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const qsContext: QuickStartContextValues =
     React.useContext(QuickStartContext);
 

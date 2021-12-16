@@ -24,7 +24,7 @@ export const StatusFilter: React.FunctionComponent<StatusFilter> = ({
   removeFilterValue,
   isDisabledSelectOption,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   const statusFilterOptions = statusOptions
     .filter(
@@ -80,7 +80,7 @@ const StatusSelect: React.FunctionComponent<StatusSelectProps> = ({
   getSelectionForFilter,
   filterSelected,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const tooltipContent = useTooltipContent(isMaxFilter);
   const selectRef = useRef<Select>(null);
 

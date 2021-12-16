@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
 
 const MASPageNotFound: React.FunctionComponent = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
 
   function GoHomeBtn() {
     const history = useHistory();

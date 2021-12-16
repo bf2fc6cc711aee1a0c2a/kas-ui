@@ -32,7 +32,7 @@ export const ConnectionTab: React.FC<ConnectionTabProps> = ({
   tokenEndPointUrl,
   instanceId,
 }: ConnectionTabProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['kasTemporaryFixMe']);
   const { showModal } = useModal<ModalType.KasCreateServiceAccount>();
 
   const handleCreateServiceAccountModal = () => {

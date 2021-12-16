@@ -2,8 +2,6 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { act, render, screen } from '@testing-library/react';
-import { I18nextProvider } from 'react-i18next';
-import i18nForTest from '../../../../../../test-utils/i18n';
 import {
   AlertContext,
   Auth,
@@ -65,31 +63,29 @@ describe('<StreamsTable/>', () => {
             hideModal: () => '',
           }}
         >
-          <I18nextProvider i18n={i18nForTest}>
-            <ConfigContext.Provider
-              value={
-                {
-                  kas: {
-                    apiBasePath: '',
+          <ConfigContext.Provider
+            value={
+              {
+                kas: {
+                  apiBasePath: '',
+                },
+              } as Config
+            }
+          >
+            <AuthContext.Provider value={authValue}>
+              <AlertContext.Provider
+                value={{
+                  addAlert: () => {
+                    // No-op
                   },
-                } as Config
-              }
-            >
-              <AuthContext.Provider value={authValue}>
-                <AlertContext.Provider
-                  value={{
-                    addAlert: () => {
-                      // No-op
-                    },
-                  }}
-                >
-                  <InstanceDrawerContextProvider>
-                    <StreamsTable {...args} />
-                  </InstanceDrawerContextProvider>
-                </AlertContext.Provider>
-              </AuthContext.Provider>
-            </ConfigContext.Provider>
-          </I18nextProvider>
+                }}
+              >
+                <InstanceDrawerContextProvider>
+                  <StreamsTable {...args} />
+                </InstanceDrawerContextProvider>
+              </AlertContext.Provider>
+            </AuthContext.Provider>
+          </ConfigContext.Provider>
           <KasModalLoader />
         </ModalContext.Provider>
       </MemoryRouter>
@@ -122,7 +118,7 @@ describe('<StreamsTable/>', () => {
     setup(props);
 
     //assert
-    expect(screen.getByText('US East, N. Virginia')).toBeInTheDocument();
+    expect(screen.getByText('us-east-1')).toBeInTheDocument();
   });
 
   it('should disable the delete kebab button if the ower and loggedInUser are not the same', () => {
