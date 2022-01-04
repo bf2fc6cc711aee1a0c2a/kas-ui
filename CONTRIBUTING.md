@@ -42,12 +42,6 @@ npm run mock
 BASE_PATH=http://localhost:8000 npm run start:dev # start the UI
 ```
 
-## User testing URL
-
-To view the "mock" UI for user testing, add this query param: `/?user-testing` e.g. `https://prod.foo.redhat.com:1337/?user-testing`
-
-
-
 ## Development Scripts
 
 ```sh
