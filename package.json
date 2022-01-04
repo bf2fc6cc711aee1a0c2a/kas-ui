@@ -7,7 +7,7 @@
   "port": "1337",
   "repository": "https://github.com/bf2fc6cc711aee1a0c2a/mk-ui-frontend.git",
   "homepage": "https://cloud.redhat.com/application-services/openshift-streams",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "prebuild": "npm run clean",
