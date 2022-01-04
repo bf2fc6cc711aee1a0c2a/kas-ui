@@ -106,7 +106,11 @@ export const CreateInstanceForm: React.FunctionComponent<CreateInstanceFormProps
       setKafkaRequest({ ...validated });
 
       if (!isKafkaRequestInvalid(validated)) {
-        createInstance().then(() => resetForm());
+        createInstance().then(() => {
+          if (kafkaRequest.name.validated !== 'error') {
+            resetForm();
+          }
+        });
       }
     };
 
