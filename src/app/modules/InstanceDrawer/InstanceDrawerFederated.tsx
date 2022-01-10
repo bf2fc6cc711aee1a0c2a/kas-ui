@@ -11,21 +11,36 @@ import {
 import { FederatedProps } from '@app/contexts';
 import { ModalProvider } from '@rhoas/app-services-ui-components';
 import { KasModalLoader } from '@app/modals';
-import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
+import {
+  InstanceDrawerContextProvider,
+  InstanceDrawerContextProviderProps,
+} from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 
-export type InstanceDrawerFederatedProps = InstanceDrawerProps & FederatedProps;
+export type InstanceDrawerFederatedProps = InstanceDrawerProps &
+  FederatedProps &
+  InstanceDrawerContextProviderProps;
 
 const InstanceDrawerFederated: React.FunctionComponent<InstanceDrawerFederatedProps> =
-  ({ 'data-ouia-app-id': dataOuiaAppId, tokenEndPointUrl, children }) => {
+  ({
+    'data-ouia-app-id': dataOuiaAppId,
+    tokenEndPointUrl,
+    renderContent,
+    initialInstance,
+    initialNoInstances,
+    initialTab,
+  }) => {
     return (
       <ModalProvider>
-        <InstanceDrawerContextProvider>
+        <InstanceDrawerContextProvider
+          initialInstance={initialInstance}
+          initialNoInstances={initialNoInstances}
+          initialTab={initialTab}
+        >
           <InstanceDrawer
             data-ouia-app-id={dataOuiaAppId}
             tokenEndPointUrl={tokenEndPointUrl}
-          >
-            {children}
-          </InstanceDrawer>
+            renderContent={renderContent}
+          />
         </InstanceDrawerContextProvider>
         <KasModalLoader />
       </ModalProvider>
