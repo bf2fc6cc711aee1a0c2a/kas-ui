@@ -1,4 +1,4 @@
-import React, { ReactElement, VoidFunctionComponent } from 'react';
+import React, { ReactElement, useMemo, VoidFunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -48,6 +48,16 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
     noInstances,
   } = useInstanceDrawer();
 
+  const content = useMemo(
+    () =>
+      renderContent({
+        closeDrawer: closeInstanceDrawer,
+        openDrawer: openInstanceDrawer,
+        setInstance: setInstanceDrawerInstance,
+      }),
+    []
+  );
+
   return (
     <MASDrawer
       isExpanded={isInstanceDrawerOpen}
@@ -63,11 +73,7 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
       data-ouia-app-id={dataOuiaAppId}
       notRequiredDrawerContentBackground={noInstances}
     >
-      {renderContent({
-        closeDrawer: closeInstanceDrawer,
-        openDrawer: openInstanceDrawer,
-        setInstance: setInstanceDrawerInstance,
-      })}
+      {content}
     </MASDrawer>
   );
 };
