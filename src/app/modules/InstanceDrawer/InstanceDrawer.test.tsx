@@ -76,9 +76,8 @@ const setup = (
                     tokenEndPointUrl={
                       'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
                     }
-                  >
-                    <></>
-                  </InstanceDrawer>
+                    renderContent={() => <></>}
+                  />
                 </InstanceDrawerContextProvider>
               }
             />
@@ -118,9 +117,8 @@ describe('Instance Drawer', () => {
                   tokenEndPointUrl={
                     'kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
                   }
-                >
-                  <></>
-                </InstanceDrawer>
+                  renderContent={() => <></>}
+                />
               </InstanceDrawerContextProvider>
             }
           />

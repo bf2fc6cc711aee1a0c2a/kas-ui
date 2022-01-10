@@ -79,7 +79,6 @@ npm run i18n
 
 The individual UIs for Kafka Instances, Service Accounts, Data Plane, and Guides are exported as Federated Modules which are then imported into the Application Services UI, application-services-ui). This UI facilitates the integration between each of the individual UIs so that we can pass props and link between them. These individual UIs are then hosted as navigation items in [cloud.redhat.com](https://github.com/RedHatInsights).
 
-
 ## Code practices
 
 The Control Plane UI uses best practices based off the official [React TypeScript Cheat sheet](https://react-typescript-cheatsheet.netlify.app/), with modifications for this project. The React TypeScript Cheat sheet is maintained and used by developers through out the world, and is a place where developers can bring together lessons learned using TypeScript and React.

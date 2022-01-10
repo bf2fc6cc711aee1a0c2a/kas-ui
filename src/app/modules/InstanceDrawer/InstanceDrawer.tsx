@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement, useMemo, VoidFunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
@@ -11,6 +11,7 @@ import {
   InstanceDrawerContentProps,
 } from '@app/modules/InstanceDrawer/InstanceDrawerContent';
 import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
+import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 
 export type InstanceDrawerProps = Omit<
   MASDrawerProps,
@@ -21,11 +22,18 @@ export type InstanceDrawerProps = Omit<
   | 'isLoading'
   | 'onClose'
   | 'notRequiredDrawerContentBackground'
+  | 'children'
 > &
-  InstanceDrawerContentProps;
+  InstanceDrawerContentProps & {
+    renderContent: (props: {
+      openDrawer: () => void;
+      closeDrawer: () => void;
+      setInstance: (instance: KafkaRequest) => void;
+    }) => ReactElement;
+  };
 
-const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
-  children,
+const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
+  renderContent,
   'data-ouia-app-id': dataOuiaAppId,
   tokenEndPointUrl,
 }) => {
@@ -34,9 +42,21 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
   const {
     isInstanceDrawerOpen,
     instanceDrawerInstance,
+    openInstanceDrawer,
     closeInstanceDrawer,
+    setInstanceDrawerInstance,
     noInstances,
   } = useInstanceDrawer();
+
+  const content = useMemo(
+    () =>
+      renderContent({
+        closeDrawer: closeInstanceDrawer,
+        openDrawer: openInstanceDrawer,
+        setInstance: setInstanceDrawerInstance,
+      }),
+    []
+  );
 
   return (
     <MASDrawer
@@ -53,7 +73,7 @@ const InstanceDrawer: React.FunctionComponent<InstanceDrawerProps> = ({
       data-ouia-app-id={dataOuiaAppId}
       notRequiredDrawerContentBackground={noInstances}
     >
-      {children}
+      {content}
     </MASDrawer>
   );
 };

@@ -46,20 +46,23 @@ export const KasLayout: React.FunctionComponent<KasLayoutProps> = ({
 
   return (
     <>
-      <InstanceDrawer tokenEndPointUrl={tokenEndPointUrl}>
-        <main className='pf-c-page__main'>
-          <PageSection variant={PageSectionVariants.light}>
-            <Level>
-              <LevelItem>
-                <TextContent>
-                  <Text component='h1'>{t('kafka_instances')}</Text>
-                </TextContent>
-              </LevelItem>
-            </Level>
-          </PageSection>
-          {children}
-        </main>
-      </InstanceDrawer>
+      <InstanceDrawer
+        tokenEndPointUrl={tokenEndPointUrl}
+        renderContent={() => (
+          <main className='pf-c-page__main'>
+            <PageSection variant={PageSectionVariants.light}>
+              <Level>
+                <LevelItem>
+                  <TextContent>
+                    <Text component='h1'>{t('kafka_instances')}</Text>
+                  </TextContent>
+                </LevelItem>
+              </Level>
+            </PageSection>
+            {children}
+          </main>
+        )}
+      />
       <Modal
         variant={ModalVariant.small}
         title='Mobile experience'
