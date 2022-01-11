@@ -31,7 +31,8 @@ export const CustomRowWrapper = (rowWrapperProps): JSX.Element => {
   const { activeRow, onRowClick, rowDataTestId, loggedInUser } = useContext(
     CustomRowWrapperContext
   );
-  const { trRef, className, rowProps, row, ...props } = rowWrapperProps || {};
+  const { trRef, className, rowProps, row, onClick, ...props } =
+    rowWrapperProps || {};
   const isRowDeleted =
     row?.originalData?.status === InstanceStatus.DEPROVISION ||
     row?.originalData?.status === InstanceStatus.DELETED;
@@ -58,11 +59,12 @@ export const CustomRowWrapper = (rowWrapperProps): JSX.Element => {
           'pf-m-selected'
       )}
       hidden={row?.isExpanded !== undefined && !row?.isExpanded}
-      onClick={(event) =>
-        !isRowDisabled &&
-        onRowClick &&
-        onRowClick(event, rowProps?.rowIndex, row)
-      }
+      onClick={(event) => {
+        if (!isRowDeleted) {
+          onClick && onClick(event);
+          onRowClick && onRowClick(event, rowProps?.rowIndex, row);
+        }
+      }}
       {...props}
     />
   );
