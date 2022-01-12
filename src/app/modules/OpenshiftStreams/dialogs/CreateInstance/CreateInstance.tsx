@@ -277,15 +277,15 @@ const CreateInstance: React.FunctionComponent<
         </Button>,
       ]}
     >
-      <QuotaAlert
-        quota={quota}
-        hasKafkaCreationFailed={hasKafkaCreationFailed}
-        loadingQuota={loadingQuota}
-        userHasTrialInstance={userHasTrialInstance}
-        isKasTrial={isKasTrial}
-      />
       <Flex direction={{ default: 'column', lg: 'row' }}>
         <FlexItem flex={{ default: 'flex_2' }}>
+          <QuotaAlert
+            quota={quota}
+            hasKafkaCreationFailed={hasKafkaCreationFailed}
+            loadingQuota={loadingQuota}
+            userHasTrialInstance={userHasTrialInstance}
+            isKasTrial={isKasTrial}
+          />
           <CreateInstanceForm
             kafkaRequest={kafkaRequest}
             setKafkaRequest={setKafkaRequest}

@@ -50,7 +50,7 @@ export const QuotaAlert: React.FC<QuotaAlertProps> = ({
         variant: AlertVariant.danger,
         titleKey: 'kafka_creation_failed_alert_title',
         messageKey: kasQuota
-          ? 'standard_kafka_creation_failed_alert_message'
+          ? 'standard_kafka_alert_message'
           : 'trial_kafka_creation_failed_alert_message',
       };
     }
