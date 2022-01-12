@@ -44,7 +44,7 @@
     "@redhat-cloud-services/frontend-components": "3.5.1",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.5",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.6",
-    "@redhat-cloud-services/frontend-components-config": "4.5.8",
+    "@redhat-cloud-services/frontend-components-config": "4.5.9",
     "@rhoas/app-services-ui-components": "1.9.1",
     "@rhoas/app-services-ui-shared": "0.15.3",
     "@rhoas/api-mock": "0.18.0",
