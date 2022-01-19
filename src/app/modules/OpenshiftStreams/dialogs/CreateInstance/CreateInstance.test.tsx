@@ -1,7 +1,6 @@
 import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CreateInstance } from './CreateInstance';
 import {
   AlertContext,
   Auth,
@@ -11,10 +10,9 @@ import {
   Quota,
   QuotaContext,
 } from '@rhoas/app-services-ui-shared';
-import { CloudRegionList } from '@rhoas/kafka-management-sdk';
 import { AxiosResponse } from 'axios';
 
-const listCloudProviderRegions: AxiosResponse<CloudRegionList> = {
+const listCloudProviderRegions: AxiosResponse = {
   data: {
     items: [
       {
@@ -25,11 +23,15 @@ const listCloudProviderRegions: AxiosResponse<CloudRegionList> = {
       },
     ],
   },
-} as AxiosResponse<CloudRegionList>;
+} as AxiosResponse;
+
+const actualSDK = jest.requireActual('@rhoas/kafka-management-sdk');
+
+import { CreateInstance } from './CreateInstance';
 
 jest.mock('@rhoas/kafka-management-sdk', () => {
-  // Works and lets you check for constructor calls:
   return {
+    ...actualSDK,
     DefaultApi: jest.fn().mockImplementation(() => {
       return {
         listCloudProviderRegions: () => {
