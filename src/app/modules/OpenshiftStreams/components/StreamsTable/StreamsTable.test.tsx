@@ -11,7 +11,6 @@ import {
   ModalContext,
 } from '@rhoas/app-services-ui-shared';
 import { KasModalLoader } from '@app/modals';
-import { StreamsTable } from '@app/modules/OpenshiftStreams/components';
 import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 
 const kafkaInstanceItems = [
@@ -32,9 +31,11 @@ const kafkaInstanceItems = [
   },
 ];
 
+const actualSDK = jest.requireActual('@rhoas/kafka-management-sdk');
+
 jest.mock('@rhoas/kafka-management-sdk', () => {
-  // Works and lets you check for constructor calls:
   return {
+    ...actualSDK,
     DefaultApi: jest.fn().mockImplementation(() => {
       return {
         deleteKafkaById: () => Promise.resolve(),
@@ -42,6 +43,8 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
     }),
   };
 });
+
+import { StreamsTable } from '@app/modules/OpenshiftStreams/components';
 
 describe('<StreamsTable/>', () => {
   const setup = (

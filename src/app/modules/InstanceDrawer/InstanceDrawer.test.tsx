@@ -2,7 +2,6 @@ import React from 'react';
 
 import { render, waitFor } from '@testing-library/react';
 
-import { InstanceDrawer } from './InstanceDrawer';
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
@@ -12,9 +11,14 @@ import { KasModalLoader } from '@app/modals';
 import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
 import { InstanceDrawerTab } from '@app/modules/InstanceDrawer/tabs';
 
+const actualSDK = jest.requireActual('@rhoas/kafka-management-sdk');
+
+import { InstanceDrawer } from './InstanceDrawer';
+
 jest.mock('@rhoas/kafka-management-sdk', () => {
   // Works and lets you check for constructor calls:
   return {
+    ...actualSDK,
     DefaultApi: jest.fn().mockImplementation(() => {
       return {};
     }),
