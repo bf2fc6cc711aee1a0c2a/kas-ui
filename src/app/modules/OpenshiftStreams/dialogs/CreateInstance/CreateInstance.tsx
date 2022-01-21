@@ -245,6 +245,7 @@ const CreateInstance: React.FunctionComponent<
       isOpen={true}
       onClose={handleModalToggle}
       appendTo={getModalAppendTo}
+      ouiaId='modal-create-kafka'
       actions={[
         <Button
           key='submit'
