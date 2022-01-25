@@ -47,7 +47,7 @@
     "@redhat-cloud-services/frontend-components-config": "4.5.11",
     "@rhoas/app-services-ui-components": "1.11.9",
     "@rhoas/app-services-ui-shared": "0.15.4",
-    "@rhoas/api-mock": "0.22.0",
+    "@rhoas/api-mock": "0.23.0",
     "@storybook/addon-actions": "6.4.14",
     "@storybook/addon-essentials": "6.4.14",
     "@storybook/addon-links": "6.4.14",
@@ -115,7 +115,7 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/kafka-management-sdk": "0.22.0",
+    "@rhoas/kafka-management-sdk": "0.23.0",
     "date-fns": "2.26.0",
     "dayjs": "1.10.7",
     "path": "0.12.7",
