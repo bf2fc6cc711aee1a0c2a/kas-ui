@@ -13,36 +13,37 @@ import {
 // Version of OpenshiftStreams for federation
 type OpenshiftStreamsFederatedProps = StreamsTableProps & FederatedProps;
 
-const OpenshiftStreamsFederated: React.FunctionComponent<OpenshiftStreamsFederatedProps> =
-  ({
-    preCreateInstance,
-    shouldOpenCreateModal,
-    tokenEndPointUrl,
-    setKafkaInstance,
-    getAllUserAccounts,
-  }) => {
-    return (
-      <FederatedContext.Provider
-        value={{
-          tokenEndPointUrl,
-          preCreateInstance,
-          shouldOpenCreateModal,
-          setKafkaInstance,
-          getAllUserAccounts,
-        }}
-      >
-        <ModalProvider>
-          <InstanceDrawerContextProvider>
-            <PaginationProvider>
-              <KasLayout tokenEndPointUrl={tokenEndPointUrl}>
-                <StreamsTableConnected preCreateInstance={preCreateInstance} />
-              </KasLayout>
-            </PaginationProvider>
-            <KasModalLoader />
-          </InstanceDrawerContextProvider>
-        </ModalProvider>
-      </FederatedContext.Provider>
-    );
-  };
+const OpenshiftStreamsFederated: React.FunctionComponent<
+  OpenshiftStreamsFederatedProps
+> = ({
+  preCreateInstance,
+  shouldOpenCreateModal,
+  tokenEndPointUrl,
+  setKafkaInstance,
+  getAllUserAccounts,
+}) => {
+  return (
+    <FederatedContext.Provider
+      value={{
+        tokenEndPointUrl,
+        preCreateInstance,
+        shouldOpenCreateModal,
+        setKafkaInstance,
+        getAllUserAccounts,
+      }}
+    >
+      <ModalProvider>
+        <InstanceDrawerContextProvider>
+          <PaginationProvider>
+            <KasLayout tokenEndPointUrl={tokenEndPointUrl}>
+              <StreamsTableConnected preCreateInstance={preCreateInstance} />
+            </KasLayout>
+          </PaginationProvider>
+          <KasModalLoader />
+        </InstanceDrawerContextProvider>
+      </ModalProvider>
+    </FederatedContext.Provider>
+  );
+};
 
 export default OpenshiftStreamsFederated;

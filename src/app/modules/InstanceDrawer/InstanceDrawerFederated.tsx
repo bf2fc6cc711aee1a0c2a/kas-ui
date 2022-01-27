@@ -20,31 +20,32 @@ export type InstanceDrawerFederatedProps = InstanceDrawerProps &
   FederatedProps &
   InstanceDrawerContextProviderProps;
 
-const InstanceDrawerFederated: React.FunctionComponent<InstanceDrawerFederatedProps> =
-  ({
-    'data-ouia-app-id': dataOuiaAppId,
-    tokenEndPointUrl,
-    renderContent,
-    initialInstance,
-    initialNoInstances,
-    initialTab,
-  }) => {
-    return (
-      <ModalProvider>
-        <InstanceDrawerContextProvider
-          initialInstance={initialInstance}
-          initialNoInstances={initialNoInstances}
-          initialTab={initialTab}
-        >
-          <InstanceDrawer
-            data-ouia-app-id={dataOuiaAppId}
-            tokenEndPointUrl={tokenEndPointUrl}
-            renderContent={renderContent}
-          />
-        </InstanceDrawerContextProvider>
-        <KasModalLoader />
-      </ModalProvider>
-    );
-  };
+const InstanceDrawerFederated: React.FunctionComponent<
+  InstanceDrawerFederatedProps
+> = ({
+  'data-ouia-app-id': dataOuiaAppId,
+  tokenEndPointUrl,
+  renderContent,
+  initialInstance,
+  initialNoInstances,
+  initialTab,
+}) => {
+  return (
+    <ModalProvider>
+      <InstanceDrawerContextProvider
+        initialInstance={initialInstance}
+        initialNoInstances={initialNoInstances}
+        initialTab={initialTab}
+      >
+        <InstanceDrawer
+          data-ouia-app-id={dataOuiaAppId}
+          tokenEndPointUrl={tokenEndPointUrl}
+          renderContent={renderContent}
+        />
+      </InstanceDrawerContextProvider>
+      <KasModalLoader />
+    </ModalProvider>
+  );
+};
 
 export default InstanceDrawerFederated;

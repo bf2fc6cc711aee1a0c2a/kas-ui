@@ -32,41 +32,42 @@ export type InstanceDrawerContextProviderProps = {
   initialNoInstances?: boolean;
 };
 
-export const InstanceDrawerContextProvider: React.FunctionComponent<InstanceDrawerContextProviderProps> =
-  ({ initialTab, initialInstance, initialNoInstances = false, children }) => {
-    const defaultTab = InstanceDrawerTab.DETAILS;
-    const [instanceDrawerTab, setInstanceDrawerTab] = useState<
-      InstanceDrawerTab | undefined
-    >(initialTab);
-    const [instanceDrawerInstance, setInstanceDrawerInstance] = useState<
-      KafkaInstance | undefined
-    >(initialInstance);
-    const [noInstances, setNoInstances] = useState<boolean>(initialNoInstances);
-    return (
-      <InstanceDrawerContext.Provider
-        value={{
-          isInstanceDrawerOpen: instanceDrawerTab !== undefined,
-          instanceDrawerTab:
-            instanceDrawerTab === undefined ? defaultTab : instanceDrawerTab,
-          setInstanceDrawerTab,
-          instanceDrawerInstance,
-          setInstanceDrawerInstance,
-          setNoInstances,
-          noInstances,
-          openInstanceDrawer: (tab) => {
-            if (tab) {
-              setInstanceDrawerTab(tab);
-            } else {
-              setInstanceDrawerTab(defaultTab);
-            }
-          },
-          closeInstanceDrawer: () => {
-            setInstanceDrawerTab(undefined);
-            setInstanceDrawerInstance(undefined);
-          },
-        }}
-      >
-        {children}
-      </InstanceDrawerContext.Provider>
-    );
-  };
+export const InstanceDrawerContextProvider: React.FunctionComponent<
+  InstanceDrawerContextProviderProps
+> = ({ initialTab, initialInstance, initialNoInstances = false, children }) => {
+  const defaultTab = InstanceDrawerTab.DETAILS;
+  const [instanceDrawerTab, setInstanceDrawerTab] = useState<
+    InstanceDrawerTab | undefined
+  >(initialTab);
+  const [instanceDrawerInstance, setInstanceDrawerInstance] = useState<
+    KafkaInstance | undefined
+  >(initialInstance);
+  const [noInstances, setNoInstances] = useState<boolean>(initialNoInstances);
+  return (
+    <InstanceDrawerContext.Provider
+      value={{
+        isInstanceDrawerOpen: instanceDrawerTab !== undefined,
+        instanceDrawerTab:
+          instanceDrawerTab === undefined ? defaultTab : instanceDrawerTab,
+        setInstanceDrawerTab,
+        instanceDrawerInstance,
+        setInstanceDrawerInstance,
+        setNoInstances,
+        noInstances,
+        openInstanceDrawer: (tab) => {
+          if (tab) {
+            setInstanceDrawerTab(tab);
+          } else {
+            setInstanceDrawerTab(defaultTab);
+          }
+        },
+        closeInstanceDrawer: () => {
+          setInstanceDrawerTab(undefined);
+          setInstanceDrawerInstance(undefined);
+        },
+      }}
+    >
+      {children}
+    </InstanceDrawerContext.Provider>
+  );
+};
