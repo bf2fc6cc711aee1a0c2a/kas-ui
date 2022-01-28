@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Alert,
   TextContent,
   TextList,
   TextListItem,
@@ -11,6 +12,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import dayjs from 'dayjs';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
+import { getTimeLeft } from '@app/utils';
 
 export const DetailsTab: React.FunctionComponent = () => {
   const { instanceDrawerInstance } = useInstanceDrawer();
@@ -25,9 +27,22 @@ export const DetailsTab: React.FunctionComponent = () => {
         <TextListItem component={TextListItemVariants.dd}>{value}</TextListItem>
       </>
     );
+  const hours = created_at ? getTimeLeft(created_at, 'hours') : 48;
 
   return (
     <div className='mas--details__drawer--tab-content'>
+      <Alert
+        variant={
+          hours >= 24 ? 'info' : hours < 24 && hours >= 5 ? 'warning' : 'danger'
+        }
+        title={t('will_expire_in', {
+          time: created_at ? getTimeLeft(created_at) : '',
+        })}
+        aria-live='polite'
+        isInline
+        className='pf-u-mb-lg'
+      />
+
       <TextContent>
         <TextList component={TextListVariants.dl}>
           {renderTextListItem(t('cloud_provider'), t('amazon_web_services'))}

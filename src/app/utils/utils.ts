@@ -159,6 +159,32 @@ const getFormattedDate = (
   return formatDistance(date, new Date()) + ' ' + translatePostfix;
 };
 
+const getTimeLeft = (date: string | Date, kind?: string): string | number => {
+  date = typeof date === 'string' ? new Date(date) : date;
+  const timeOfExpiry = new Date(date);
+  timeOfExpiry.setDate(timeOfExpiry.getDate() + 2);
+  const currentDate = new Date();
+  const timeLeft = timeOfExpiry.getTime() - currentDate.getTime();
+  const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+  const minutes = Math.floor(
+    (timeLeft - hours * (60 * 60 * 1000)) / ((60 * 60 * 1000) / 60)
+  );
+  if (kind == 'hours') return hours;
+  else if (hours == 0)
+    return minutes + ' ' + (minutes > 1 ? 'minutes' : 'minute');
+  else if (minutes == 0) return hours + ' ' + (hours > 1 ? 'hours' : 'hour');
+  else
+    return (
+      hours +
+      ' ' +
+      (hours > 1 ? 'hours' : 'hour') +
+      ' ' +
+      minutes +
+      ' ' +
+      (minutes > 1 ? 'minutes' : 'minute')
+    );
+};
+
 const getModalAppendTo = (): HTMLElement =>
   (document.getElementById('chrome-app-render-root') as HTMLElement) ||
   document.body;
@@ -218,6 +244,7 @@ export {
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
   sortValues,
   getFormattedDate,
+  getTimeLeft,
   getModalAppendTo,
   isMobileTablet,
   getSkeletonForRows,

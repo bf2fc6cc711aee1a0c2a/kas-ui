@@ -12,6 +12,7 @@ import {
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';
 import {
   getFormattedDate,
+  getTimeLeft,
   getLoadingRowsCount,
   getSkeletonForRows,
   InstanceStatus,
@@ -170,7 +171,10 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
               <>
                 {getFormattedDate(created_at, t('ago'))}
                 <br />
-                {instance_type === InstanceType?.eval && '48 hours duration'}
+                {instance_type === InstanceType?.eval &&
+                  t('expires_in', {
+                    time: created_at ? getTimeLeft(created_at) : '',
+                  })}
               </>
             ),
           },
