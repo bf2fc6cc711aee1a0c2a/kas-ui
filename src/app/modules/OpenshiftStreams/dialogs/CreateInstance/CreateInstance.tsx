@@ -14,7 +14,7 @@ import { useAvailableProvidersAndDefault, useCreateInstance } from './api';
 
 const CreateInstance: React.FunctionComponent<
   CreateInstanceProps & BaseModalProps
-> = ({ hideModal }) => {
+> = ({ hideModal, onCreate }) => {
   const fetchAvailableProvidersAndDefault = useAvailableProvidersAndDefault();
   const createInstance = useCreateInstance();
   const qsContext = useContext(QuickStartContext);
@@ -24,15 +24,16 @@ const CreateInstance: React.FunctionComponent<
       qsContext.setActiveQuickStart('getting-started');
   }, []);
 
-  const onCreate = useCallback<OnCreateKafka>(
+  const handleCreate = useCallback<OnCreateKafka>(
     function (data, onSuccess, onError) {
       const handleOnSuccess = () => {
         onSuccess();
+        onCreate && onCreate();
         hideModal();
       };
       createInstance(data, handleOnSuccess, onError);
     },
-    [hideModal, createInstance]
+    [hideModal, onCreate, createInstance]
   );
 
   const getAvailableProvidersAndDefaults =
@@ -46,7 +47,7 @@ const CreateInstance: React.FunctionComponent<
       onClickQuickStart={onClickQuickStart}
       onCancel={hideModal}
       getAvailableProvidersAndDefaults={getAvailableProvidersAndDefaults}
-      onCreate={onCreate}
+      onCreate={handleCreate}
       appendTo={getModalAppendTo}
     />
   );
