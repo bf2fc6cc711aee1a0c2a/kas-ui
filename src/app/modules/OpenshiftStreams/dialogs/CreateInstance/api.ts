@@ -5,7 +5,6 @@ import {
 import {
   CreateKafkaInitializationData,
   InstanceAvailability,
-  InstanceType,
   OnCreateKafka,
   Provider,
   ProviderInfo,
@@ -23,7 +22,7 @@ import {
 } from '@rhoas/app-services-ui-shared';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { isServiceApiError } from '@app/utils/error';
-import { ErrorCodes } from '@app/utils';
+import { ErrorCodes, InstanceType } from '@app/utils';
 
 export const useAvailableProvidersAndDefault = () => {
   const auth = useAuth();
@@ -56,10 +55,28 @@ export const useAvailableProvidersAndDefault = () => {
   };
 
   // Function to fetch cloud Regions based on selected filter
-  const fetchRegions = async (id: string): Promise<Regions> => {
-    const res = await apisService.getCloudProviderRegions(id);
+  const fetchRegions = async (
+    id: string,
+    ia: InstanceAvailability
+  ): Promise<Regions> => {
+    const instance_type =
+      ia === 'quota' ? InstanceType.standard : InstanceType.eval;
+    const res = await apisService.getCloudProviderRegions(
+      id,
+      undefined,
+      undefined,
+      InstanceType.eval
+    );
     return (res.data.items || [])
-      .filter((p) => p.enabled)
+      .filter(
+        (p) =>
+          p.enabled &&
+          p.capacity.some(
+            (c) =>
+              c.instance_type === instance_type &&
+              c.max_capacity_reached === false
+          )
+      )
       .map((r): RegionInfo => {
         return {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -70,7 +87,9 @@ export const useAvailableProvidersAndDefault = () => {
       });
   };
 
-  const fetchProviders = async (): Promise<Providers> => {
+  const fetchProviders = async (
+    ia: InstanceAvailability
+  ): Promise<Providers> => {
     const res = await apisService.getCloudProviders();
     const allProviders = res?.data?.items || [];
     return await Promise.all(
@@ -78,7 +97,7 @@ export const useAvailableProvidersAndDefault = () => {
         .filter((p) => p.enabled)
         .map(async (provider): Promise<ProviderInfo> => {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const regions = await fetchRegions(provider.id!);
+          const regions = await fetchRegions(provider.id!, ia);
           return {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             id: provider.id!,
@@ -124,10 +143,6 @@ export const useAvailableProvidersAndDefault = () => {
 
     const kasQuota: QuotaValue | undefined = quota?.get(QuotaType?.kas);
 
-    const availableProviders = await fetchProviders();
-    const defaultProvider: Provider | undefined =
-      availableProviders.length === 1 ? availableProviders[0].id : undefined;
-
     const instanceAvailability = ((): InstanceAvailability => {
       switch (true) {
         case kasQuota !== undefined && kasQuota.remaining > 0:
@@ -140,6 +155,10 @@ export const useAvailableProvidersAndDefault = () => {
           return 'trial';
       }
     })();
+
+    const availableProviders = await fetchProviders(instanceAvailability);
+    const defaultProvider: Provider | undefined =
+      availableProviders.length === 1 ? availableProviders[0].id : undefined;
 
     return {
       defaultProvider,
