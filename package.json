@@ -114,7 +114,7 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/app-services-ui-components": "1.16.1",
+    "@rhoas/app-services-ui-components": "1.17.0",
     "@rhoas/kafka-management-sdk": "0.25.0",
     "date-fns": "2.28.0",
     "dayjs": "1.10.7",
