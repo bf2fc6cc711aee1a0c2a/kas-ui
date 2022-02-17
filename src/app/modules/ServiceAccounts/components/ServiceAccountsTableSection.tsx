@@ -56,9 +56,11 @@ export const ServiceAccountsTableSection: React.FunctionComponent<
 
   const onSearch = (State) => {
     const { description, clientid, owner } = State;
-    if (description.length === 0 &&
+    if (
+      description.length === 0 &&
       clientid.length === 0 &&
-      owner.length === 0) {
+      owner.length === 0
+    ) {
       setFilteredData(tableData);
     } else {
       const filterData = filteredData.filter((serviceAccountItem) => {
