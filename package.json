@@ -35,7 +35,7 @@
     "chromatic": "npx chromatic"
   },
   "devDependencies": {
-    "@babel/core": "7.17.4",
+    "@babel/core": "7.17.5",
     "@patternfly/patternfly": "4.164.2",
     "@patternfly/quickstarts": "1.2.2",
     "@patternfly/react-core": "4.181.1",
