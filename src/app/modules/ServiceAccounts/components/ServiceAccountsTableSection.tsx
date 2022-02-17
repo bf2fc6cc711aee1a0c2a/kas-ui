@@ -20,19 +20,20 @@ export const ServiceAccountsTableSection: React.FunctionComponent<
     useModal<ModalType.KasCreateServiceAccount>();
   const { showModal: showDeleteServiceAccountModal } =
     useModal<ModalType.KasDeleteServiceAccount>();
-  const location = useLocation();
 
   const [orderBy, setOrderBy] = useState<string>('name asc');
 
   const { page = 1, perPage = 10 } = usePagination() || {};
 
-  const [filteredData, setFilteredData] = useState<ServiceAccountListItem[]>(serviceAccountItems);
-  const [userFilteredData, setUserFilteredData] = useState<ServiceAccountListItem[]>(serviceAccountItems)
+  const [tableData, setTableData] =
+    useState<ServiceAccountListItem[]>(serviceAccountItems);
+  const [filteredData, setFilteredData] =
+    useState<ServiceAccountListItem[]>(serviceAccountItems);
 
   useEffect(() => {
-    setFilteredData(filteredData)
-    setUserFilteredData(filteredData)
-  }, [])
+    setTableData(tableData);
+    setFilteredData(tableData);
+  }, []);
 
   const onResetCredentials = (serviceAccount: ServiceAccountListItem) => {
     showResetCredentialsModal(ModalType.KasResetServiceAccountCredentials, {
@@ -54,20 +55,24 @@ export const ServiceAccountsTableSection: React.FunctionComponent<
   };
 
   const onSearch = (State) => {
-    const { description, clientid, owner } = State
-    if (description.length === 0 && clientid.length === 0 && owner.length === 0) {
-      setUserFilteredData(filteredData)
+    const { description, clientid, owner } = State;
+    if (description.length === 0 &&
+      clientid.length === 0 &&
+      owner.length === 0) {
+      setFilteredData(tableData);
     } else {
-      const filterData = userFilteredData.filter((serviceAccountItem) => {
+      const filterData = filteredData.filter((serviceAccountItem) => {
         return (
           description.some((des) => serviceAccountItem.name?.includes(des)) ||
-          clientid.some((client) => serviceAccountItem.client_id?.includes(client)) ||
+          clientid.some((client) =>
+            serviceAccountItem.client_id?.includes(client)
+          ) ||
           owner.some((owner) => serviceAccountItem.owner?.includes(owner))
-        )
-      })
-      setUserFilteredData(filterData)
+        );
+      });
+      setFilteredData(filterData);
     }
-  }
+  };
 
   return (
     <PageSection
@@ -81,7 +86,7 @@ export const ServiceAccountsTableSection: React.FunctionComponent<
           perPage={perPage}
           expectedTotal={0}
           serviceAccountsDataLoaded={true}
-          serviceAccountItems={userFilteredData}
+          serviceAccountItems={filteredData}
           orderBy={orderBy}
           setOrderBy={setOrderBy}
           onResetCredentials={onResetCredentials}
