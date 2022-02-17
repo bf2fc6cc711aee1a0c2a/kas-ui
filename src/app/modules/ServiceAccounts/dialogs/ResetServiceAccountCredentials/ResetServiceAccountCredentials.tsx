@@ -135,6 +135,7 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
       onClose={handleModalToggle}
       appendTo={getModalAppendTo}
       actions={getModalActions()}
+      showClose={false}
     >
       <Body />
     </Modal>
