@@ -204,6 +204,10 @@ export const useCreateInstance = (): OnCreateKafka => {
           case ErrorCodes.INSUFFICIENT_QUOTA:
             onError('over-quota');
             break;
+          case ErrorCodes.REACHED_MAX_LIMIT_ALLOWED_KAFKA:
+          case ErrorCodes.INSTANCE_TYPE_NOT_SUPPORTED:
+            onError('trial-unavailable');
+            break;
           default:
             onError('unknown');
         }
