@@ -1,7 +1,7 @@
 import {
   asKafkaRequestPayload,
   createEmptyNewKafkaRequestPayload,
-} from "@app/models/kafka";
+} from '@app/models/kafka';
 import {
   CreateKafkaInitializationData,
   InstanceAvailability,
@@ -11,7 +11,7 @@ import {
   Providers,
   RegionInfo,
   Regions,
-} from "@rhoas/app-services-ui-components";
+} from '@rhoas/app-services-ui-components';
 import {
   Quota,
   QuotaType,
@@ -19,10 +19,10 @@ import {
   useAuth,
   useConfig,
   useQuota,
-} from "@rhoas/app-services-ui-shared";
-import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
-import { isServiceApiError } from "@app/utils/error";
-import { ErrorCodes, InstanceType } from "@app/utils";
+} from '@rhoas/app-services-ui-shared';
+import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
+import { isServiceApiError } from '@app/utils/error';
+import { ErrorCodes, InstanceType } from '@app/utils';
 
 export const useAvailableProvidersAndDefault = () => {
   const auth = useAuth();
@@ -38,7 +38,7 @@ export const useAvailableProvidersAndDefault = () => {
     })
   );
 
-  const fetchQuota = async (): Promise<Quota["data"]> => {
+  const fetchQuota = async (): Promise<Quota['data']> => {
     return new Promise((resolve, reject) => {
       async function getQuotaData() {
         const quota = await getQuota();
@@ -60,7 +60,7 @@ export const useAvailableProvidersAndDefault = () => {
     ia: InstanceAvailability
   ): Promise<Regions> => {
     const instance_type =
-      ia === "quota" ? InstanceType.standard : InstanceType.eval;
+      ia === 'quota' ? InstanceType.standard : InstanceType.eval;
     const res = await apisService.getCloudProviderRegions(
       id,
       undefined,
@@ -127,7 +127,7 @@ export const useAvailableProvidersAndDefault = () => {
           basePath,
         })
       );
-      const res = await apisService.getKafkas("", "", "", filter);
+      const res = await apisService.getKafkas('', '', '', filter);
       if (res.data.items) {
         return res.data.items.some(
           (k) => k?.instance_type === InstanceType?.eval
@@ -148,13 +148,13 @@ export const useAvailableProvidersAndDefault = () => {
     const instanceAvailability = ((): InstanceAvailability => {
       switch (true) {
         case kasQuota !== undefined && kasQuota.remaining > 0:
-          return "quota";
+          return 'quota';
         case hasTrialRunning:
-          return "trial-used";
+          return 'trial-used';
         // TODO check if trial instances are available for creation using the info returned by the region endpoint
         // TODO also check if there is any capacity for standar instances, as for the trial ones
         default:
-          return "trial";
+          return 'trial';
       }
     })();
 
@@ -164,7 +164,7 @@ export const useAvailableProvidersAndDefault = () => {
 
     return {
       defaultProvider,
-      defaultAZ: "multi",
+      defaultAZ: 'multi',
       availableProviders,
       instanceAvailability,
     };
@@ -192,7 +192,7 @@ export const useCreateInstance = (): OnCreateKafka => {
       kafkaRequest.name = data.name;
       kafkaRequest.cloud_provider = data.provider;
       kafkaRequest.region = data.region;
-      kafkaRequest.multi_az = data.az === "multi";
+      kafkaRequest.multi_az = data.az === 'multi';
       await apisService.createKafka(true, kafkaRequest);
       onSuccess();
     } catch (error) {
@@ -201,17 +201,17 @@ export const useCreateInstance = (): OnCreateKafka => {
 
         switch (code) {
           case ErrorCodes.DUPLICATE_INSTANCE_NAME:
-            onError("name-taken");
+            onError('name-taken');
             break;
           case ErrorCodes.INSUFFICIENT_QUOTA:
-            onError("over-quota");
+            onError('over-quota');
             break;
           case ErrorCodes.REACHED_MAX_LIMIT_ALLOWED_KAFKA:
           case ErrorCodes.INSTANCE_TYPE_NOT_SUPPORTED:
-            onError("trial-unavailable");
+            onError('trial-unavailable');
             break;
           default:
-            onError("unknown");
+            onError('unknown');
         }
       }
     }
