@@ -67,22 +67,24 @@ export const useAvailableProvidersAndDefault = () => {
       undefined,
       InstanceType.eval
     );
+
     return (res.data.items || [])
       .filter(
         (p) =>
-          p.enabled &&
-          p.capacity.some(
-            (c) =>
-              c.instance_type === instance_type &&
-              c.max_capacity_reached === false
-          )
+          p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
       )
       .map((r): RegionInfo => {
+        const max_capacity_reached = r.capacity?.some(
+          (c) =>
+            c.max_capacity_reached === true && c.instance_type === instance_type
+        );
         return {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: r.id!,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           displayName: r.display_name!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          isDisabled: max_capacity_reached,
         };
       });
   };
