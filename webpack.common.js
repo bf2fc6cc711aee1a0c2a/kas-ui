@@ -32,7 +32,7 @@ module.exports = (env, argv) => {
             {
               loader: 'ts-loader',
               options: {
-                transpileOnly: true,
+                transpileOnly: false,
                 experimentalWatchApi: true,
               },
             },
