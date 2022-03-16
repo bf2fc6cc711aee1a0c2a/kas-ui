@@ -57,6 +57,7 @@
     "@types/enzyme": "3.10.11",
     "@types/enzyme-adapter-react-16": "1.0.6",
     "@types/jest": "27.4.1",
+    "@types/react": "17.0.40",
     "@types/react-router-dom": "5.3.3",
     "@types/victory": "33.1.5",
     "@typescript-eslint/eslint-plugin": "5.17.0",
