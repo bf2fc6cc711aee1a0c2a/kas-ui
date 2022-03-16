@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, cleanup } from '@testing-library/react';
 import { PaginationVariant } from '@patternfly/react-core';
 import { MASPagination, PaginationProps } from './MASPagination';

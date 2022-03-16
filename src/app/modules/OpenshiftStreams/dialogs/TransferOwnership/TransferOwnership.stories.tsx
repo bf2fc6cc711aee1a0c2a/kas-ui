@@ -1,6 +1,4 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import React from 'react';
-
 import { OwnerSelect } from './OwnerSelect';
 
 export default {

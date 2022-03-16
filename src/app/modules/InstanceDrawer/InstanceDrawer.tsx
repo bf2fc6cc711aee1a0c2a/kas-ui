@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, VoidFunctionComponent } from 'react';
+import { ReactElement, useMemo, VoidFunctionComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';

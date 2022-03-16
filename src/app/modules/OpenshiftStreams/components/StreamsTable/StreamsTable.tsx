@@ -153,7 +153,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
           {
             title:
               status === InstanceStatus.DEPROVISION ||
-              status !== InstanceStatus.READY ? (
+                status !== InstanceStatus.READY ? (
                 name
               ) : (
                 <Link to={`kafkas/${row?.id}/dashboard`}>{name}</Link>
@@ -330,7 +330,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
 
   const onRowClick = (
     event: React.MouseEvent<HTMLTableRowElement | HTMLButtonElement>,
-    rowIndex?: number,
+    _: number,
     row?: IRowData
   ) => {
     if (event.target instanceof HTMLElement) {

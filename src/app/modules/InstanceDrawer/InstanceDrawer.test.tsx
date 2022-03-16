@@ -1,7 +1,4 @@
-import React from 'react';
-
 import { render, waitFor } from '@testing-library/react';
-
 import { Drawer, DrawerContent } from '@patternfly/react-core';
 import userEvent from '@testing-library/user-event';
 import { KafkaRequest } from '@rhoas/kafka-management-sdk';

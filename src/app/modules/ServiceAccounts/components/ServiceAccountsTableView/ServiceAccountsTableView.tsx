@@ -31,25 +31,21 @@ export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   onResetCredentials?: (serviceAccount: ServiceAccountListItem) => void;
   onDeleteServiceAccount?: (serviceAccount: ServiceAccountListItem) => void;
   onCreateServiceAccount: () => void;
+  page: number;
+  perPage: number;
 };
 
 const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   page,
   perPage,
   expectedTotal,
-  total,
   serviceAccountsDataLoaded,
   serviceAccountItems,
   onResetCredentials,
   onDeleteServiceAccount,
   orderBy,
   setOrderBy,
-  filteredValue,
-  setFilteredValue,
-  filterSelected,
-  setFilterSelected,
   onCreateServiceAccount,
-  mainToggle,
 }: ServiceAccountsTableViewProps) => {
   const { t } = useTranslation(['kasTemporaryFixMe']);
   const auth = useAuth();
@@ -224,15 +220,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   return (
     <>
       <ServiceAccountsToolbar
-        filterSelected={filterSelected}
-        setFilterSelected={setFilterSelected}
-        total={total}
-        page={page}
-        perPage={perPage}
-        filteredValue={filteredValue}
-        setFilteredValue={setFilteredValue}
         onCreateServiceAccount={onCreateServiceAccount}
-        mainToggle={mainToggle}
       />
       <MASTable
         tableProps={{
