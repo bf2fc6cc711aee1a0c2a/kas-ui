@@ -1,2 +1,2 @@
-export * from './DeleteInstance';
-export * from './DeleteInstanceConnected';
+export * from "./DeleteInstance";
+export * from "./DeleteInstanceConnected";

@@ -1,8 +1,13 @@
-import React, { createContext, LegacyRef, useContext } from 'react';
-import { InstanceStatus } from '@app/utils';
-import { css } from '@patternfly/react-styles';
-import './CustomRowWrapper.css';
-import { IRow } from '@patternfly/react-table';
+import React, {
+  createContext,
+  FunctionComponent,
+  LegacyRef,
+  useContext,
+} from "react";
+import { InstanceStatus } from "@app/utils";
+import { css } from "@patternfly/react-styles";
+import "./CustomRowWrapper.css";
+import { IRow } from "@patternfly/react-table";
 
 export type CustomRowWrapperContextProps<T> = {
   activeRow?: string;
@@ -18,21 +23,23 @@ export type CustomRowWrapperContextProps<T> = {
 const CustomRowWrapperContext = createContext<
   CustomRowWrapperContextProps<any>
 >({
-  activeRow: '',
+  activeRow: "",
   onRowClick: () => {
     // No-op
   },
-  loggedInUser: '',
+  loggedInUser: "",
 });
 
 export const CustomRowWrapperProvider = CustomRowWrapperContext.Provider;
 
-export const CustomRowWrapper = (rowWrapperProps): JSX.Element => {
+export const CustomRowWrapper: FunctionComponent<
+  CustomRowWrapperContextProps<any>
+> = (rowWrapperProps) => {
   const { activeRow, onRowClick, rowDataTestId, loggedInUser } = useContext(
     CustomRowWrapperContext
   );
   const { trRef, className, rowProps, row, onClick, ...props } =
-    rowWrapperProps || {};
+    (rowWrapperProps || {}) as unknown as any;
   const isRowDeleted =
     row?.originalData?.status === InstanceStatus.DEPROVISION ||
     row?.originalData?.status === InstanceStatus.DELETED;
@@ -49,14 +56,14 @@ export const CustomRowWrapper = (rowWrapperProps): JSX.Element => {
       ref={ref}
       className={css(
         className,
-        'pf-c-table-row__item',
+        "pf-c-table-row__item",
         isRowDeleted
-          ? 'pf-m-disabled'
-          : isLoggedInUserOwner && 'pf-m-selectable',
+          ? "pf-m-disabled"
+          : isLoggedInUserOwner && "pf-m-selectable",
         !isRowDisabled &&
           activeRow &&
           activeRow === row?.originalData?.name &&
-          'pf-m-selected'
+          "pf-m-selected"
       )}
       hidden={row?.isExpanded !== undefined && !row?.isExpanded}
       onClick={(event) => {

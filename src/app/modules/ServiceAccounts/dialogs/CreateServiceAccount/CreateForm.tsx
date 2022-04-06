@@ -2,13 +2,13 @@ import {
   createEmptyNewServiceAccountRequest,
   isServiceAccountRequestInvalid,
   NewServiceAccountRequest,
-} from '@app/models';
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@app/models";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   MAX_INSTANCE_NAME_LENGTH,
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
-} from '@app/utils';
+} from "@app/utils";
 import {
   Alert,
   Form,
@@ -16,8 +16,9 @@ import {
   FormGroup,
   TextInput,
   Popover,
-} from '@patternfly/react-core';
-import HelpIcon from '@patternfly/react-icons/dist/esm/icons/help-icon';
+  FormProps,
+} from "@patternfly/react-core";
+import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 
 export type CreateFormProps = {
   createServiceAccount: () => Promise<void>;
@@ -34,18 +35,18 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
   setServiceAccountRequest,
   id,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const validateName = (serviceAccountRequest: NewServiceAccountRequest) => {
     //validate required field
     if (
       serviceAccountRequest.name.value === undefined ||
-      serviceAccountRequest.name.value.trim() === ''
+      serviceAccountRequest.name.value.trim() === ""
     ) {
-      serviceAccountRequest.name.validated = 'error';
+      serviceAccountRequest.name.validated = "error";
       serviceAccountRequest.name.errorMessage = t(
-        'common.this_is_a_required_field'
+        "common.this_is_a_required_field"
       );
     } else if (
       serviceAccountRequest.name.value !== undefined &&
@@ -53,9 +54,9 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
         serviceAccountRequest.name.value.trim()
       )
     ) {
-      serviceAccountRequest.name.validated = 'error';
+      serviceAccountRequest.name.validated = "error";
       serviceAccountRequest.name.errorMessage = t(
-        'common.input_filed_invalid_helper_text'
+        "common.input_filed_invalid_helper_text"
       );
     }
     //validate max length
@@ -63,15 +64,15 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
       serviceAccountRequest.name.value !== undefined &&
       serviceAccountRequest.name.value.length > MAX_SERVICE_ACCOUNT_NAME_LENGTH
     ) {
-      serviceAccountRequest.name.validated = 'error';
+      serviceAccountRequest.name.validated = "error";
       serviceAccountRequest.name.errorMessage = t(
-        'serviceAccount.service_account_name_length_is_greater_than_expected',
+        "serviceAccount.service_account_name_length_is_greater_than_expected",
         {
           maxLength: MAX_INSTANCE_NAME_LENGTH,
         }
       );
     } else {
-      serviceAccountRequest.name.validated = 'success';
+      serviceAccountRequest.name.validated = "success";
     }
     return serviceAccountRequest;
   };
@@ -96,9 +97,9 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
       return (
         <FormAlert>
           <Alert
-            variant='danger'
-            title={t('common.form_invalid_alert')}
-            aria-live='polite'
+            variant="danger"
+            title={t("common.form_invalid_alert")}
+            aria-live="polite"
             isInline
           />
         </FormAlert>
@@ -107,7 +108,7 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
     return <></>;
   };
 
-  const submit = (event) => {
+  const submit: FormProps["onSubmit"] = (event) => {
     event.preventDefault();
     setFormSubmitted(true);
     const validated = validateName(serviceAccountRequest);
@@ -122,31 +123,29 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
     setServiceAccountRequest(createEmptyNewServiceAccountRequest());
   };
 
-  const preventButtonSubmit = (event) => event.preventDefault();
-
   return (
     <Form onSubmit={submit} id={id}>
       <FormValidAlert />
       <FormGroup
-        label={t('serviceAccount.short_description')}
+        label={t("serviceAccount.short_description")}
         isRequired
-        fieldId='text-input-short-description'
+        fieldId="text-input-short-description"
         helperTextInvalid={serviceAccountRequest.name.errorMessage}
         validated={serviceAccountRequest.name.validated}
-        helperText={t('common.input_filed_invalid_helper_text')}
+        helperText={t("common.input_filed_invalid_helper_text")}
         labelIcon={
           <Popover
             headerContent={
-              <div>{t('serviceAccount.short_description_popover_title')}</div>
+              <div>{t("serviceAccount.short_description_popover_title")}</div>
             }
             bodyContent={
-              <div>{t('serviceAccount.short_description_popover_body')}</div>
+              <div>{t("serviceAccount.short_description_popover_body")}</div>
             }
           >
             <button
-              aria-label={t('serviceAccount.short_description_popover_button')}
-              onClick={preventButtonSubmit}
-              className='pf-c-form__group-label-help'
+              aria-label={t("serviceAccount.short_description_popover_button")}
+              onClick={(e) => e.preventDefault()}
+              className="pf-c-form__group-label-help"
             >
               <HelpIcon noVerticalAlign />
             </button>
@@ -155,9 +154,9 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
       >
         <TextInput
           isRequired
-          type='text'
-          id='text-input-short-description'
-          name='text-input-short-description'
+          type="text"
+          id="text-input-short-description"
+          name="text-input-short-description"
           value={serviceAccountRequest.name.value}
           onChange={setName}
           validated={serviceAccountRequest.name.validated}

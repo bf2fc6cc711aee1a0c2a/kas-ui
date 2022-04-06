@@ -1,4 +1,4 @@
-import { render, screen, cleanup, act } from '@testing-library/react';
+import { render, screen, cleanup, act } from "@testing-library/react";
 import {
   Button,
   ToolbarGroup,
@@ -10,29 +10,29 @@ import {
   InputGroup,
   TextInput,
   ButtonVariant,
-} from '@patternfly/react-core';
-import { MASToolbar, MASToolbarProps, ToolbarItemProps } from './MASToolbar';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import userEvent from '@testing-library/user-event';
+} from "@patternfly/react-core";
+import { MASToolbar, MASToolbarProps, ToolbarItemProps } from "./MASToolbar";
+import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
+import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
+import userEvent from "@testing-library/user-event";
 
 afterEach(cleanup);
 
-describe('<MASToolbar/>', () => {
-  it('should render MASToolbar', () => {
+describe("<MASToolbar/>", () => {
+  it("should render MASToolbar", () => {
     //arrange
     const mainFilterOptions = [
-      { label: 'Name', value: 'name', disabled: false },
-      { label: 'Cloud Provider', value: 'cloud_provider', disabled: false },
-      { label: 'Region', value: 'region', disabled: false },
-      { label: 'Owner', value: 'owner', disabled: false },
-      { label: 'Status', value: 'status', disabled: false },
+      { label: "Name", value: "name", disabled: false },
+      { label: "Cloud Provider", value: "cloud_provider", disabled: false },
+      { label: "Region", value: "region", disabled: false },
+      { label: "Owner", value: "owner", disabled: false },
+      { label: "Status", value: "status", disabled: false },
     ];
 
     const onClear = jest.fn();
     const setIsModalOpen = jest.fn();
     const onFilterToggle = jest.fn();
-    const filterSelected = 'name';
+    const filterSelected = "name";
     const isFilterExpanded = true;
     const onChangeSelect = jest.fn();
     const getSelectionForFilter = jest.fn();
@@ -41,14 +41,14 @@ describe('<MASToolbar/>', () => {
     const onNameInputChange = jest.fn();
     const onInputPress = jest.fn();
     const onFilter = jest.fn();
-    const nameInputValue = 'name';
+    const nameInputValue = "name";
 
     const toggleGroupItems = (
-      <ToolbarGroup variant='filter-group'>
+      <ToolbarGroup variant="filter-group">
         <ToolbarItem>
           <Select
             variant={SelectVariant.single}
-            aria-label='Select filter'
+            aria-label="Select filter"
             onToggle={onFilterToggle}
             selections={filterSelected}
             isOpen={isFilterExpanded}
@@ -66,27 +66,27 @@ describe('<MASToolbar/>', () => {
           </Select>
         </ToolbarItem>
         <ToolbarFilter
-          chips={getSelectionForFilter('name')}
-          deleteChip={(_category, chip) => onDeleteChip('name', chip)}
-          deleteChipGroup={() => onDeleteChipGroup('name')}
-          categoryName={'Name'}
+          chips={getSelectionForFilter("name")}
+          deleteChip={(_category, chip) => onDeleteChip("name", chip)}
+          deleteChipGroup={() => onDeleteChipGroup("name")}
+          categoryName={"Name"}
         >
           <ToolbarItem>
             <InputGroup>
               <TextInput
-                name='name'
-                id='filterText'
-                type='search'
-                aria-label='Search filter input'
-                placeholder={'Filter by name'}
+                name="name"
+                id="filterText"
+                type="search"
+                aria-label="Search filter input"
+                placeholder={"Filter by name"}
                 onChange={onNameInputChange}
                 onKeyPress={onInputPress}
                 value={nameInputValue}
               />
               <Button
                 variant={ButtonVariant.control}
-                onClick={() => onFilter('name')}
-                aria-label='Search instances'
+                onClick={() => onFilter("name")}
+                aria-label="Search instances"
               >
                 <SearchIcon />
               </Button>
@@ -99,7 +99,7 @@ describe('<MASToolbar/>', () => {
     const toolbarItems: ToolbarItemProps[] = [
       {
         item: (
-          <Button variant='primary' onClick={setIsModalOpen}>
+          <Button variant="primary" onClick={setIsModalOpen}>
             Create kafka instance
           </Button>
         ),
@@ -108,12 +108,12 @@ describe('<MASToolbar/>', () => {
 
     const props: MASToolbarProps = {
       toolbarProps: {
-        id: 'instance-toolbar',
+        id: "instance-toolbar",
         clearAllFilters: onClear,
-        collapseListedFiltersBreakpoint: 'md',
-        inset: { lg: 'insetLg' },
+        collapseListedFiltersBreakpoint: "md",
+        inset: { lg: "insetLg" },
       },
-      toggleGroupProps: { toggleIcon: <FilterIcon />, breakpoint: 'md' },
+      toggleGroupProps: { toggleIcon: <FilterIcon />, breakpoint: "md" },
       toggleGroupItems,
       toolbarItems,
     };
@@ -122,15 +122,15 @@ describe('<MASToolbar/>', () => {
 
     //act
     act(() => {
-      const createButton: any = screen.getByRole('button', {
+      const createButton: any = screen.getByRole("button", {
         name: /Create kafka instance/i,
       });
       userEvent.click(createButton);
-      const filterSelect: any = screen.getByRole('listbox', {
+      const filterSelect: any = screen.getByRole("listbox", {
         name: /Select filter/i,
       });
       userEvent.click(filterSelect);
-      const searchButton: any = screen.getByRole('button', {
+      const searchButton: any = screen.getByRole("button", {
         name: /Search instances/i,
       });
       userEvent.click(searchButton);
@@ -144,9 +144,9 @@ describe('<MASToolbar/>', () => {
     screen.getAllByText(/name/i);
     screen.getAllByText(/status/i);
     //input field
-    const nameInput: any = screen.getByRole('searchbox', {
+    const nameInput: any = screen.getByRole("searchbox", {
       name: /Search filter input/i,
     });
-    expect(nameInput).toHaveValue('name');
+    expect(nameInput).toHaveValue("name");
   });
 });

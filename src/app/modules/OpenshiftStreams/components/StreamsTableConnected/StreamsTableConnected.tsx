@@ -1,48 +1,48 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
-import dayjs from 'dayjs';
+import React, { useCallback, useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import dayjs from "dayjs";
 import {
   AlertVariant,
   Card,
   PageSection,
   PageSectionVariants,
-} from '@patternfly/react-core';
-import { usePagination } from '@app/common';
-import { useTimeout } from '@app/hooks/useTimeout';
+} from "@patternfly/react-core";
+import { usePagination } from "@app/common";
+import { useTimeout } from "@app/hooks/useTimeout";
 import {
   ErrorCodes,
   InstanceStatus,
   isServiceApiError,
   MAX_POLL_INTERVAL,
-} from '@app/utils';
-import { usePageVisibility } from '@app/hooks/usePageVisibility';
+} from "@app/utils";
+import { usePageVisibility } from "@app/hooks/usePageVisibility";
 import {
   Configuration,
   DefaultApi,
   KafkaRequest,
   KafkaRequestList,
-} from '@rhoas/kafka-management-sdk';
-import './StreamsTableConnected.css';
+} from "@rhoas/kafka-management-sdk";
+import "./StreamsTableConnected.css";
 import {
   ModalType,
   useAlert,
   useAuth,
   useConfig,
   useModal,
-} from '@rhoas/app-services-ui-shared';
-import { useFederated } from '@app/contexts';
-import '@app/modules/styles.css';
+} from "@rhoas/app-services-ui-shared";
+import { useFederated } from "@app/contexts";
+import "@app/modules/styles.css";
 import {
   FilterType,
   KafkaEmptyState,
   Unauthorized,
-} from '@app/modules/OpenshiftStreams/components';
-import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
-import { InstanceDrawerTab } from '@app/modules/InstanceDrawer/tabs';
-import { StreamsTable } from '@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable';
-import { KafkaStatusAlerts } from '@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts';
+} from "@app/modules/OpenshiftStreams/components";
+import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
+import { StreamsTable } from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
+import { KafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts";
 
 export type StreamsTableProps = {
   preCreateInstance: (open: boolean) => Promise<boolean>;
@@ -61,7 +61,7 @@ export const StreamsTableConnected: React.FunctionComponent<
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const { page = 1, perPage = 10 } = usePagination() || {};
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const { addAlert } = useAlert() || {};
   const { showModal: showCreateModal } =
     useModal<ModalType.KasCreateInstance>();
@@ -85,8 +85,8 @@ export const StreamsTableConnected: React.FunctionComponent<
   const [expectedTotal, setExpectedTotal] = useState<number>(3);
 
   // filter and sort state
-  const [orderBy, setOrderBy] = useState<string>('created_at desc');
-  const [filterSelected, setFilterSelected] = useState('name');
+  const [orderBy, setOrderBy] = useState<string>("created_at desc");
+  const [filterSelected, setFilterSelected] = useState("name");
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
 
   // user state
@@ -147,7 +147,7 @@ export const StreamsTableConnected: React.FunctionComponent<
     filteredValue.forEach((filter) => {
       const { filterKey, filterValue } = filter;
       if (filterValue && filterValue.length > 0) {
-        let filterQuery = '(';
+        let filterQuery = "(";
         filterQuery += filterValue
           .map((val) => {
             const value = val.value.trim();
@@ -157,19 +157,19 @@ export const StreamsTableConnected: React.FunctionComponent<
             if (value === InstanceStatus.DEPROVISION) {
               return `${filterKey} = ${InstanceStatus.DEPROVISION} or ${filterKey} = ${InstanceStatus.DELETED}`;
             }
-            return value !== ''
+            return value !== ""
               ? `${filterKey} ${
                   val.isExact === true ? `= ${value}` : `like %${value}%`
                 }`
-              : '';
+              : "";
           })
-          .join(' or ');
-        filterQuery += ')';
+          .join(" or ");
+        filterQuery += ")";
 
         filters.push(filterQuery);
       }
     });
-    return filters.join(' and ');
+    return filters.join(" and ");
   };
 
   const handleServerError = (error: unknown) => {
@@ -298,8 +298,8 @@ export const StreamsTableConnected: React.FunctionComponent<
         kafkaInstancesList?.items !== undefined &&
         kafkaInstancesList.size === 0
       ) {
-        setSearchParam('page', (page - 1).toString());
-        setSearchParam('perPage', perPage.toString());
+        setSearchParam("page", (page - 1).toString());
+        setSearchParam("perPage", perPage.toString());
         history.push({
           search: searchParams.toString(),
         });
@@ -335,7 +335,7 @@ export const StreamsTableConnected: React.FunctionComponent<
      * and avoid delete instanceDrawerInstance api call
      */
     if (instance.id === undefined) {
-      throw new Error('kafka instanceDrawerInstance id is not set');
+      throw new Error("kafka instanceDrawerInstance id is not set");
     }
     const accessToken = await auth?.kas.getToken();
     const apisService = new DefaultApi(
@@ -364,7 +364,7 @@ export const StreamsTableConnected: React.FunctionComponent<
        */
       addAlert &&
         addAlert({
-          title: t('common.something_went_wrong'),
+          title: t("common.something_went_wrong"),
           variant: AlertVariant.danger,
           description: reason,
         });
@@ -388,11 +388,11 @@ export const StreamsTableConnected: React.FunctionComponent<
   } else if (isDisplayKafkaEmptyState !== undefined) {
     return (
       <PageSection
-        className='mk--main-page__page-section--table pf-m-padding-on-xl'
+        className="mk--main-page__page-section--table pf-m-padding-on-xl"
         variant={PageSectionVariants.default}
-        padding={{ default: 'noPadding' }}
+        padding={{ default: "noPadding" }}
       >
-        <Card ouiaId='card-controlplane'>
+        <Card ouiaId="card-controlplane">
           <StreamsTable
             onDeleteInstance={onDeleteInstance}
             onViewInstance={onViewInstance}

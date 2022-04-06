@@ -1,6 +1,6 @@
-import { MemoryRouter } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
-import { act, render, screen } from '@testing-library/react';
+import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
+import { act, render, screen } from "@testing-library/react";
 import {
   AlertContext,
   Auth,
@@ -8,31 +8,31 @@ import {
   Config,
   ConfigContext,
   ModalContext,
-} from '@rhoas/app-services-ui-shared';
-import { KasModalLoader } from '@app/modals';
-import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
+} from "@rhoas/app-services-ui-shared";
+import { KasModalLoader } from "@app/modals";
+import { InstanceDrawerContextProvider } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
 const kafkaInstanceItems = [
   {
-    id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
-    kind: 'kafka',
-    href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
-    status: 'ready',
-    cloud_provider: 'aws',
+    id: "1iSY6RQ3JKI8Q0OTmjQFd3ocFRg",
+    kind: "kafka",
+    href: "/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg",
+    status: "ready",
+    cloud_provider: "aws",
     multi_az: false,
-    region: 'us-east-1',
-    owner: 'api_kafka_service',
-    name: 'serviceapi',
+    region: "us-east-1",
+    owner: "api_kafka_service",
+    name: "serviceapi",
     bootstrap_server_host:
-      'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
-    created_at: '2020-10-05T12:51:24.053142Z',
-    updated_at: '2020-10-05T12:56:36.362208Z',
+      "serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org",
+    created_at: "2020-10-05T12:51:24.053142Z",
+    updated_at: "2020-10-05T12:56:36.362208Z",
   },
 ];
 
-const actualSDK = jest.requireActual('@rhoas/kafka-management-sdk');
+const actualSDK = jest.requireActual("@rhoas/kafka-management-sdk");
 
-jest.mock('@rhoas/kafka-management-sdk', () => {
+jest.mock("@rhoas/kafka-management-sdk", () => {
   return {
     ...actualSDK,
     DefaultApi: jest.fn().mockImplementation(() => {
@@ -43,16 +43,16 @@ jest.mock('@rhoas/kafka-management-sdk', () => {
   };
 });
 
-import { StreamsTable } from '@app/modules/OpenshiftStreams/components';
+import { StreamsTable } from "@app/modules/OpenshiftStreams/components";
 
-describe('<StreamsTable/>', () => {
+describe("<StreamsTable/>", () => {
   const setup = (
     args: any,
     authValue = {
       kas: {
-        getToken: () => Promise.resolve('test-token'),
+        getToken: () => Promise.resolve("test-token"),
       },
-      getUsername: () => Promise.resolve('api_kafka_service'),
+      getUsername: () => Promise.resolve("api_kafka_service"),
       isOrgAdmin: () => Promise.resolve(true),
     } as Auth
   ) => {
@@ -60,16 +60,16 @@ describe('<StreamsTable/>', () => {
       <MemoryRouter>
         <ModalContext.Provider
           value={{
-            registerModals: () => '',
-            showModal: () => '',
-            hideModal: () => '',
+            registerModals: () => "",
+            showModal: () => "",
+            hideModal: () => "",
           }}
         >
           <ConfigContext.Provider
             value={
               {
                 kas: {
-                  apiBasePath: '',
+                  apiBasePath: "",
                 },
               } as Config
             }
@@ -109,38 +109,38 @@ describe('<StreamsTable/>', () => {
     expectedTotal: 1,
     filteredValue: [],
     setFilteredValue: jest.fn(),
-    filterSelected: '',
+    filterSelected: "",
     setFilterSelected: jest.fn(),
-    orderBy: '',
+    orderBy: "",
     setOrderBy: jest.fn(),
   };
 
-  it('should render translation text in English language', () => {
+  it("should render translation text in English language", () => {
     //arrange
     setup(props);
 
     //assert
-    expect(screen.getByText('us-east-1')).toBeInTheDocument();
+    expect(screen.getByText("us-east-1")).toBeInTheDocument();
   });
 
-  it('should disable the delete kebab button if the ower and loggedInUser are not the same', () => {
+  it("should disable the delete kebab button if the ower and loggedInUser are not the same", () => {
     //arrange
     const newProps = Object.assign({}, props);
-    newProps.kafkaInstanceItems[0].owner = 'test-user';
+    newProps.kafkaInstanceItems[0].owner = "test-user";
     setup(newProps);
 
     //act
     const kebabDropdownButton: any =
-      screen.getByText('test-user')?.parentElement?.lastChild?.lastChild
+      screen.getByText("test-user")?.parentElement?.lastChild?.lastChild
         ?.lastChild;
     act(() => {
       userEvent.click(kebabDropdownButton);
     });
     const classList: string[] = screen
-      .getByRole('button', { name: /Delete/i })
-      .className.split(' ');
+      .getByRole("button", { name: /Delete/i })
+      .className.split(" ");
 
     //assert
-    expect(classList).toContain('pf-m-disabled');
+    expect(classList).toContain("pf-m-disabled");
   });
 });

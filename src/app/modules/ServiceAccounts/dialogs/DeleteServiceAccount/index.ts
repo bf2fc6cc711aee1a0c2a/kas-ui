@@ -1,1 +1,1 @@
-export * from './DeleteServiceAccount';
+export * from "./DeleteServiceAccount";

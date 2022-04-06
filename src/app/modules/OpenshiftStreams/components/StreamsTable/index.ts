@@ -1,1 +1,1 @@
-export * from './StreamsTable';
+export * from "./StreamsTable";

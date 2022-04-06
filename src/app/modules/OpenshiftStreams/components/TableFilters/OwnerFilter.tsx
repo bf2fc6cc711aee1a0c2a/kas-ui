@@ -1,17 +1,18 @@
-import { FilterProps } from '@app/modules/OpenshiftStreams/components/TableFilters/types';
-import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/TableFilters/hooks';
+import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
+import React, { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 import {
   Button,
   ButtonVariant,
   InputGroup,
   TextInput,
+  TextInputProps,
   ToolbarFilter,
   Tooltip,
   ValidatedOptions,
-} from '@patternfly/react-core';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+} from "@patternfly/react-core";
+import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 
 export type OwnerFilterProps = FilterProps;
 export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
@@ -22,9 +23,9 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
   isMaxFilter,
   updateFilter,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const inputRef = useRef<HTMLInputElement>(null);
-  const tooltipContent = useTooltipContent(isMaxFilter, 'owner');
+  const tooltipContent = useTooltipContent(isMaxFilter, "owner");
 
   const [value, setValue] = useState<string | undefined>();
   const [valid, setValid] = useState<boolean>(true);
@@ -34,18 +35,18 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
   };
 
   const onFilter = () => {
-    if (value && value.trim() != '') {
+    if (value && value.trim() != "") {
       if (validate(value)) {
-        updateFilter('owner', { value: value, isExact: false }, false);
-        setValue('');
+        updateFilter("owner", { value: value, isExact: false }, false);
+        setValue("");
       } else {
         setValid(false);
       }
     }
   };
 
-  const onKeyPress = (event) => {
-    if (event.key === 'Enter' && !isMaxFilter) {
+  const onKeyPress: TextInputProps["onKeyPress"] = (event) => {
+    if (event.key === "Enter" && !isMaxFilter) {
       onFilter();
     }
   };
@@ -56,7 +57,7 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
   };
 
   const renderOwnerInput = () => {
-    if (filterSelected?.toLowerCase() === 'owner') {
+    if (filterSelected?.toLowerCase() === "owner") {
       const v = !valid || isMaxFilter;
 
       const FilterTooltip: React.FunctionComponent = () => {
@@ -75,11 +76,11 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
       return (
         <InputGroup>
           <TextInput
-            name='owner'
-            id='filterOwners'
-            type='search'
-            aria-label='Search filter input'
-            placeholder={t('filter_by_owner')}
+            name="owner"
+            id="filterOwners"
+            type="search"
+            aria-label="Search filter input"
+            placeholder={t("filter_by_owner")}
             validated={v ? ValidatedOptions.error : ValidatedOptions.default}
             onChange={onChange}
             onKeyPress={onKeyPress}
@@ -90,7 +91,7 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
             isDisabled={v}
             variant={ButtonVariant.control}
             onClick={onFilter}
-            aria-label='Search owners'
+            aria-label="Search owners"
           >
             <SearchIcon />
           </Button>
@@ -103,11 +104,11 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
 
   return (
     <ToolbarFilter
-      chips={getSelectionForFilter('owner')}
-      deleteChip={(_category, chip) => onDeleteChip('owner', chip)}
-      deleteChipGroup={() => onDeleteChipGroup('owner')}
-      categoryName={t('owner')}
-      showToolbarItem={filterSelected?.toLowerCase() === 'owner'}
+      chips={getSelectionForFilter("owner")}
+      deleteChip={(_category, chip) => onDeleteChip("owner", chip)}
+      deleteChipGroup={() => onDeleteChipGroup("owner")}
+      categoryName={t("owner")}
+      showToolbarItem={filterSelected?.toLowerCase() === "owner"}
     >
       {renderOwnerInput()}
     </ToolbarFilter>

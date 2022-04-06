@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { NavLink, useLocation, useHistory } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import * as React from "react";
+import { NavLink, useLocation, useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Nav,
   NavList,
@@ -11,10 +11,10 @@ import {
   PageSidebar,
   SkipToContent,
   PageHeaderTools,
-} from '@patternfly/react-core';
-import { routes, IAppRoute, IAppRouteGroup } from '@app/routes';
-import logo from '@app/bgimages/Patternfly-Logo.svg';
-import { KeycloakContext } from '@app/auth/keycloak/KeycloakContext';
+} from "@patternfly/react-core";
+import { routes, IAppRoute, IAppRouteGroup } from "@app/routes";
+import logo from "@app/bgimages/Patternfly-Logo.svg";
+import { KeycloakContext } from "@app/auth/keycloak/KeycloakContext";
 
 const AppLayout: React.FunctionComponent = ({ children }) => {
   const [isNavOpen, setIsNavOpen] = React.useState(true);
@@ -35,14 +35,14 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
     setIsMobileView(props.mobileView);
   };
 
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
 
   function LogoImg() {
     const history = useHistory();
     function handleClick() {
-      history.push('/');
+      history.push("/");
     }
-    return <img src={logo} onClick={handleClick} alt='PatternFly Logo' />;
+    return <img src={logo} onClick={handleClick} alt="PatternFly Logo" />;
   }
 
   if (!keycloakContext.keycloak) {
@@ -58,9 +58,7 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
     return <></>;
   }
 
-  const email =
-    keycloakContext.keycloak.tokenParsed &&
-    keycloakContext.keycloak.tokenParsed['email'];
+  const email = keycloakContext.keycloak.profile?.email;
 
   const HeaderTools = <PageHeaderTools>{email}</PageHeaderTools>;
 
@@ -71,14 +69,14 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
       isNavOpen={isNavOpen}
       headerTools={HeaderTools}
       onNavToggle={isMobileView ? onNavToggleMobile : onNavToggle}
-      aria-label={t('global_navigation')}
+      aria-label={t("global_navigation")}
     />
   );
 
   const renderNavItem = (route: IAppRoute, index: number) => {
     return (
       <NavItem key={`${route.label}-${index}`} id={`${route.label}-${index}`}>
-        <NavLink exact to={route.path} activeClassName='pf-m-current'>
+        <NavLink exact to={route.path} activeClassName="pf-m-current">
           {route?.label && t(route.label)}
         </NavLink>
       </NavItem>
@@ -101,12 +99,12 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
 
   const Navigation = (
     <Nav
-      id='nav-primary-simple'
-      role='navigation'
-      theme='dark'
-      aria-label={t('global')}
+      id="nav-primary-simple"
+      role="navigation"
+      theme="dark"
+      aria-label={t("global")}
     >
-      <NavList id='nav-list-simple'>
+      <NavList id="nav-list-simple">
         {routes.map(
           (route, idx) =>
             route.label &&
@@ -119,20 +117,20 @@ const AppLayout: React.FunctionComponent = ({ children }) => {
   );
   const Sidebar = (
     <PageSidebar
-      theme='dark'
+      theme="dark"
       nav={Navigation}
       isNavOpen={isMobileView ? isNavOpenMobile : isNavOpen}
     />
   );
   const PageSkipToContent = (
-    <SkipToContent href='#primary-app-container'>
-      {t('skip_to_content')}
+    <SkipToContent href="#primary-app-container">
+      {t("skip_to_content")}
     </SkipToContent>
   );
   return (
     <Page
-      mainContainerId='primary-app-container'
-      role='main'
+      mainContainerId="primary-app-container"
+      role="main"
       header={Header}
       sidebar={Sidebar}
       onPageResize={onPageResize}

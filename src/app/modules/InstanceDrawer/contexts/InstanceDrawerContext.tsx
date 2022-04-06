@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
-import { InstanceDrawerTab } from '@app/modules/InstanceDrawer/tabs';
-import { KafkaInstance } from '@rhoas/app-services-ui-shared';
+import React, { useContext, useState } from "react";
+import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
+import { KafkaInstance } from "@rhoas/app-services-ui-shared";
 
 export type InstanceDrawerContextProps = {
   isInstanceDrawerOpen: boolean;
@@ -21,7 +21,7 @@ export const InstanceDrawerContext = React.createContext<
 export const useInstanceDrawer = (): InstanceDrawerContextProps => {
   const answer = useContext(InstanceDrawerContext);
   if (answer === undefined) {
-    throw new Error('must be used inside a InstanceDrawerContext provider');
+    throw new Error("must be used inside a InstanceDrawerContext provider");
   }
   return answer;
 };

@@ -1,17 +1,18 @@
-import { FilterProps } from '@app/modules/OpenshiftStreams/components/TableFilters/types';
-import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/TableFilters/hooks';
+import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
+import React, { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 import {
   Button,
   ButtonVariant,
   InputGroup,
   TextInput,
+  TextInputProps,
   ToolbarFilter,
   Tooltip,
   ValidatedOptions,
-} from '@patternfly/react-core';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+} from "@patternfly/react-core";
+import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 
 export type NameFilterProps = FilterProps;
 
@@ -23,11 +24,11 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
   isMaxFilter,
   updateFilter,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [valid, setValid] = useState<boolean>(true);
   const [value, setValue] = useState<string | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
-  const tooltipContent = useTooltipContent(isMaxFilter, 'name');
+  const tooltipContent = useTooltipContent(isMaxFilter, "name");
 
   const change = (input?: string) => {
     setValue(input);
@@ -40,17 +41,17 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
       : true;
   };
 
-  const onKeyPress = (event) => {
-    if (event.key === 'Enter' && !isMaxFilter) {
+  const onKeyPress: TextInputProps["onKeyPress"] = (event) => {
+    if (event.key === "Enter" && !isMaxFilter) {
       onFilter();
     }
   };
 
   const onFilter = () => {
-    if (value && value.trim() != '') {
+    if (value && value.trim() != "") {
       if (validate(value)) {
-        updateFilter('name', { value: value, isExact: false }, false);
-        setValue('');
+        updateFilter("name", { value: value, isExact: false }, false);
+        setValue("");
       } else {
         setValid(false);
       }
@@ -72,16 +73,16 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
       return <></>;
     };
 
-    if (filterSelected?.toLowerCase() === 'name') {
+    if (filterSelected?.toLowerCase() === "name") {
       return (
         <InputGroup>
           <TextInput
-            name='name'
-            id='filterText'
-            type='search'
-            aria-label='Search filter input'
+            name="name"
+            id="filterText"
+            type="search"
+            aria-label="Search filter input"
             validated={v ? ValidatedOptions.error : ValidatedOptions.default}
-            placeholder={t('filter_by_name_lower')}
+            placeholder={t("filter_by_name_lower")}
             onChange={change}
             onKeyPress={onKeyPress}
             value={value}
@@ -91,7 +92,7 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
             variant={ButtonVariant.control}
             isDisabled={!valid || isMaxFilter}
             onClick={() => onFilter()}
-            aria-label='Search instances'
+            aria-label="Search instances"
           >
             <SearchIcon />
           </Button>
@@ -104,11 +105,11 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
 
   return (
     <ToolbarFilter
-      chips={getSelectionForFilter('name')}
-      deleteChip={(_category, chip) => onDeleteChip('name', chip)}
-      deleteChipGroup={() => onDeleteChipGroup('name')}
-      categoryName={t('name')}
-      showToolbarItem={filterSelected?.toLowerCase() === 'name'}
+      chips={getSelectionForFilter("name")}
+      deleteChip={(_category, chip) => onDeleteChip("name", chip)}
+      deleteChipGroup={() => onDeleteChipGroup("name")}
+      categoryName={t("name")}
+      showToolbarItem={filterSelected?.toLowerCase() === "name"}
     >
       {renderNameInput()}
     </ToolbarFilter>

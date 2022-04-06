@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useAlert, useAuth } from '@rhoas/app-services-ui-shared';
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useAlert, useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import {
   Configuration,
   DefaultApi,
   KafkaRequest,
-} from '@rhoas/kafka-management-sdk';
-import { usePageVisibility } from '@app/hooks/usePageVisibility';
-import { InstanceStatus, MAX_POLL_INTERVAL } from '@app/utils';
-import { AlertVariant } from '@patternfly/react-core';
-import { useTimeout } from '@app/hooks/useTimeout';
+} from "@rhoas/kafka-management-sdk";
+import { usePageVisibility } from "@app/hooks/usePageVisibility";
+import { InstanceStatus, MAX_POLL_INTERVAL } from "@app/utils";
+import { AlertVariant } from "@patternfly/react-core";
+import { useTimeout } from "@app/hooks/useTimeout";
 
 export const KafkaStatusAlerts: React.FunctionComponent = () => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const { addAlert } = useAlert() || {};
   const auth = useAuth();
 
@@ -25,6 +25,7 @@ export const KafkaStatusAlerts: React.FunctionComponent = () => {
     undefined
   );
   const { isVisible } = usePageVisibility();
+  const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export const KafkaStatusAlerts: React.FunctionComponent = () => {
           basePath,
         })
       );
-      await apisService.getKafkas('', '', '', filter).then((res) => {
+      await apisService.getKafkas("", "", "", filter).then((res) => {
         const kafkaInstances = res.data;
         setCurrentUserKafkas(kafkaInstances.items);
       });
@@ -75,7 +76,7 @@ export const KafkaStatusAlerts: React.FunctionComponent = () => {
       // filter all new kafka which is not in deleteKafka state
       const notPresentKafkas = deprovisonedKafkas
         .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
-        .map((k) => k.name || '');
+        .map((k) => k.name || "");
       // create new array by merging old and new kafka with status as deprovion
       const allDeletedKafkas: string[] = [
         ...deletedKafkas,
@@ -93,7 +94,7 @@ export const KafkaStatusAlerts: React.FunctionComponent = () => {
           removeKafkaFromDeleted(k);
           addAlert &&
             addAlert({
-              title: t('kafka_successfully_deleted', { name: k }),
+              title: t("kafka_successfully_deleted", { name: k }),
               variant: AlertVariant.success,
             });
         }
@@ -120,34 +121,34 @@ export const KafkaStatusAlerts: React.FunctionComponent = () => {
           if (instances[0].status === InstanceStatus.READY) {
             addAlert &&
               addAlert({
-                title: t('kafka_successfully_created'),
+                title: t("kafka_successfully_created"),
                 variant: AlertVariant.success,
                 description: (
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: t('kafka_success_message', {
+                      __html: t("kafka_success_message", {
                         name: instances[0]?.name,
                       }),
                     }}
                   />
                 ),
-                dataTestId: 'toastCreateKafka-success',
+                dataTestId: "toastCreateKafka-success",
               });
           } else if (instances[0].status === InstanceStatus.FAILED) {
             addAlert &&
               addAlert({
-                title: t('kafka_not_created'),
+                title: t("kafka_not_created"),
                 variant: AlertVariant.danger,
                 description: (
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: t('kafka_failed_message', {
+                      __html: t("kafka_failed_message", {
                         name: instances[0]?.name,
                       }),
                     }}
                   />
                 ),
-                dataTestId: 'toastCreateKafka-failed',
+                dataTestId: "toastCreateKafka-failed",
               });
           }
         }

@@ -2,15 +2,15 @@ import {
   CreateKafkaInstance,
   CreateKafkaInitializationData,
   OnCreateKafka,
-} from '@rhoas/app-services-ui-components';
+} from "@rhoas/app-services-ui-components";
 import {
   BaseModalProps,
   CreateInstanceProps,
-} from '@rhoas/app-services-ui-shared';
-import { QuickStartContext } from '@patternfly/quickstarts';
-import React, { useCallback, useContext } from 'react';
-import { getModalAppendTo } from '@app/utils';
-import { useAvailableProvidersAndDefault, useCreateInstance } from './api';
+} from "@rhoas/app-services-ui-shared";
+import { QuickStartContext } from "@patternfly/quickstarts";
+import React, { useCallback, useContext } from "react";
+import { getModalAppendTo } from "@app/utils";
+import { useAvailableProvidersAndDefault, useCreateInstance } from "./api";
 
 const CreateInstance: React.FunctionComponent<
   CreateInstanceProps & BaseModalProps
@@ -21,7 +21,7 @@ const CreateInstance: React.FunctionComponent<
 
   const onClickQuickStart = useCallback(() => {
     qsContext.setActiveQuickStart &&
-      qsContext.setActiveQuickStart('getting-started');
+      qsContext.setActiveQuickStart("getting-started");
   }, []);
 
   const handleCreate = useCallback<OnCreateKafka>(

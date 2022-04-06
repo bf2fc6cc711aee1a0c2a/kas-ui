@@ -1,1 +1,1 @@
-export * from './federated';
+export * from "./federated";

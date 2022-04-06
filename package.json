@@ -44,6 +44,7 @@
     "@redhat-cloud-services/frontend-components-notifications": "3.2.5",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.12",
     "@rhoas/api-mock": "0.27.0",
+    "@rhoas/app-services-ui-components": "1.29.0",
     "@rhoas/app-services-ui-shared": "0.15.4",
     "@storybook/addon-actions": "6.4.19",
     "@storybook/addon-essentials": "6.4.19",
@@ -114,7 +115,6 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/app-services-ui-components": "1.29.0",
     "@rhoas/kafka-management-sdk": "0.27.0",
     "date-fns": "2.28.0",
     "dayjs": "1.10.7",
@@ -131,6 +131,7 @@
     "@redhat-cloud-services/frontend-components-notifications": "3.2.5",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.12",
     "@rhoas/app-services-ui-shared": "0.15.4",
+    "@rhoas/app-services-ui-components": "1.29.0",
     "axios": "0.25.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

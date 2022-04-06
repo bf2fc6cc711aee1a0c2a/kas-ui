@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   IAction,
   IRowData,
@@ -8,39 +8,39 @@ import {
   OnSort,
   sortable,
   SortByDirection,
-} from '@patternfly/react-table';
-import { KafkaRequest } from '@rhoas/kafka-management-sdk';
+} from "@patternfly/react-table";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import {
   getFormattedDate,
   getLoadingRowsCount,
   getSkeletonForRows,
   InstanceStatus,
   InstanceType,
-} from '@app/utils';
-import { Skeleton } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
+} from "@app/utils";
+import { Skeleton } from "@patternfly/react-core";
+import { Link } from "react-router-dom";
 import {
   StatusColumn,
   StreamsToolbar,
   StreamsToolbarProps,
-} from '@app/modules/OpenshiftStreams/components';
-import { MASTable } from '@app/common';
-import { Pagination } from '@app/modules/OpenshiftStreams/components/StreamsTable/Pagination';
-import { NoResultsFound } from '@app/modules/OpenshiftStreams/components/StreamsTable/NoResultsFound';
-import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
+} from "@app/modules/OpenshiftStreams/components";
+import { MASTable, MASTableProps } from "@app/common";
+import { Pagination } from "@app/modules/OpenshiftStreams/components/StreamsTable/Pagination";
+import { NoResultsFound } from "@app/modules/OpenshiftStreams/components/StreamsTable/NoResultsFound";
+import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
 export type StreamsTableProps = Pick<
   StreamsToolbarProps,
-  | 'page'
-  | 'perPage'
-  | 'total'
-  | 'filterSelected'
-  | 'setFilterSelected'
-  | 'filteredValue'
-  | 'setFilteredValue'
-  | 'onCreate'
-  | 'refresh'
-  | 'handleCreateInstanceModal'
+  | "page"
+  | "perPage"
+  | "total"
+  | "filterSelected"
+  | "setFilterSelected"
+  | "filteredValue"
+  | "setFilteredValue"
+  | "onCreate"
+  | "refresh"
+  | "handleCreateInstanceModal"
 > & {
   onDeleteInstance: (instance: KafkaRequest) => Promise<void>;
   onChangeOwner: (instance: KafkaRequest) => Promise<void>;
@@ -77,39 +77,39 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
   refresh,
   handleCreateInstanceModal,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const { instanceDrawerInstance } = useInstanceDrawer();
 
   const cells = [
-    { title: t('name'), transforms: [sortable] },
-    { title: t('cloud_provider'), transforms: [sortable] },
-    { title: t('region'), transforms: [sortable] },
-    { title: t('owner'), transforms: [sortable] },
-    { title: t('status'), transforms: [sortable] },
-    { title: t('time_created'), transforms: [sortable] },
+    { title: t("name"), transforms: [sortable] },
+    { title: t("cloud_provider"), transforms: [sortable] },
+    { title: t("region"), transforms: [sortable] },
+    { title: t("owner"), transforms: [sortable] },
+    { title: t("status"), transforms: [sortable] },
+    { title: t("time_created"), transforms: [sortable] },
   ];
 
   const sortBy = useMemo((): ISortBy | undefined => {
     const getIndexForSortParameter = (parameter: string) => {
       switch (parameter.toLowerCase()) {
-        case 'name':
+        case "name":
           return 0;
-        case 'cloud_provider':
+        case "cloud_provider":
           return 1;
-        case 'region':
+        case "region":
           return 2;
-        case 'owner':
+        case "owner":
           return 3;
-        case 'status':
+        case "status":
           return 4;
-        case 'created_at':
+        case "created_at":
           return 5;
         default:
           return undefined;
       }
     };
 
-    const sort: string[] = orderBy?.split(' ') || [];
+    const sort: string[] = orderBy?.split(" ") || [];
     if (sort.length > 1) {
       return {
         index: getIndexForSortParameter(sort[0]),
@@ -153,7 +153,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
           {
             title:
               status === InstanceStatus.DEPROVISION ||
-                status !== InstanceStatus.READY ? (
+              status !== InstanceStatus.READY ? (
                 name
               ) : (
                 <Link to={`kafkas/${row?.id}/dashboard`}>{name}</Link>
@@ -168,9 +168,9 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
           {
             title: (
               <>
-                {getFormattedDate(created_at, t('ago'))}
+                {getFormattedDate(created_at, t("ago"))}
                 <br />
-                {instance_type === InstanceType?.eval && '48 hours duration'}
+                {instance_type === InstanceType?.eval && "48 hours duration"}
               </>
             ),
           },
@@ -179,7 +179,15 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
       });
     });
     return tableRow;
-  }, [page, perPage, expectedTotal, kafkaDataLoaded, kafkaInstanceItems]);
+  }, [
+    page,
+    perPage,
+    expectedTotal,
+    kafkaDataLoaded,
+    kafkaInstanceItems,
+    cells.length,
+    t,
+  ]);
 
   const actionResolver = (rowData: IRowData) => {
     if (!kafkaDataLoaded) {
@@ -200,96 +208,96 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         tooltip: true,
         isDisabled: true,
         style: {
-          pointerEvents: 'auto',
-          cursor: 'default',
+          pointerEvents: "auto",
+          cursor: "default",
         },
       };
     }
     const resolver: (IAction | ISeparator)[] = [
       {
-        title: t('view_details'),
-        id: 'view-instanceDrawerInstance',
-        ['data-testid']: 'tableStreams-actionDetails',
-        onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
+        title: t("view_details"),
+        id: "view-instanceDrawerInstance",
+        ["data-testid"]: "tableStreams-actionDetails",
+        onClick: (event: React.MouseEvent) =>
           onSelectKebabDropdownOption(
             event,
             originalData,
-            'view-instanceDrawerInstance'
+            "view-instanceDrawerInstance"
           ),
         ...additionalProps,
         tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_view_kafka'),
+          position: "left",
+          content: t("no_permission_to_view_kafka"),
         },
-      },
+      } as IAction,
       {
-        title: t('view_connection_information'),
-        id: 'connect-instanceDrawerInstance',
-        ['data-testid']: 'tableStreams-actionConnection',
-        onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
+        title: t("view_connection_information"),
+        id: "connect-instanceDrawerInstance",
+        ["data-testid"]: "tableStreams-actionConnection",
+        onClick: (event: React.MouseEvent) =>
           onSelectKebabDropdownOption(
             event,
             originalData,
-            'connect-instanceDrawerInstance'
+            "connect-instanceDrawerInstance"
           ),
         ...additionalProps,
         tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_connect_kafka'),
+          position: "left",
+          content: t("no_permission_to_connect_kafka"),
         },
-      },
+      } as IAction,
       {
-        title: t('change_owner'),
-        id: 'change-owner',
-        ['data-testid']: 'tableStreams-actionChangeOwner',
-        onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
+        title: t("change_owner"),
+        id: "change-owner",
+        ["data-testid"]: "tableStreams-actionChangeOwner",
+        onClick: (event: React.MouseEvent) =>
           isUserSameAsLoggedIn &&
-          onSelectKebabDropdownOption(event, originalData, 'change-owner'),
+          onSelectKebabDropdownOption(event, originalData, "change-owner"),
         ...additionalProps,
         tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_change_owner'),
+          position: "left",
+          content: t("no_permission_to_change_owner"),
         },
-      },
+      } as IAction,
       {
-        title: t('delete_instance'),
-        id: 'delete-instanceDrawerInstance',
-        ['data-testid']: 'tableStreams-actionDelete',
-        onClick: (event: React.ChangeEvent<HTMLSelectElement>) =>
+        title: t("delete_instance"),
+        id: "delete-instanceDrawerInstance",
+        ["data-testid"]: "tableStreams-actionDelete",
+        onClick: (event: React.MouseEvent) =>
           isUserSameAsLoggedIn &&
           onSelectKebabDropdownOption(
             event,
             originalData,
-            'delete-instanceDrawerInstance'
+            "delete-instanceDrawerInstance"
           ),
         ...additionalProps,
         tooltipProps: {
-          position: 'left',
-          content: t('no_permission_to_delete_kafka'),
+          position: "left",
+          content: t("no_permission_to_delete_kafka"),
         },
-      },
+      } as IAction,
     ];
     return resolver;
   };
 
   const onSelectKebabDropdownOption = (
-    event: React.ChangeEvent<HTMLSelectElement>,
+    event: React.MouseEvent,
     originalData: KafkaRequest,
     selectedOption: string
   ) => {
-    if (selectedOption === 'view-instanceDrawerInstance') {
+    if (selectedOption === "view-instanceDrawerInstance") {
       onViewInstance(originalData);
       //set selected row for view instanceDrawerInstance and connect instanceDrawerInstance
-    } else if (selectedOption === 'connect-instanceDrawerInstance') {
+    } else if (selectedOption === "connect-instanceDrawerInstance") {
       onViewConnection(originalData);
-    } else if (selectedOption === 'change-owner') {
+    } else if (selectedOption === "change-owner") {
       onChangeOwner(originalData);
-    } else if (selectedOption === 'delete-instanceDrawerInstance') {
+    } else if (selectedOption === "delete-instanceDrawerInstance") {
       deleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
-    const previousNode =
-      event?.target?.parentElement?.parentElement?.previousSibling;
+    const previousNode = (event?.target as any)?.parentElement?.parentElement
+      ?.previousSibling;
     if (previousNode !== undefined && previousNode !== null) {
       (previousNode as HTMLElement).focus();
     }
@@ -303,24 +311,24 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
     const getParameterForSortIndex = (index: number) => {
       switch (index) {
         case 0:
-          return 'name';
+          return "name";
         case 1:
-          return 'cloud_provider';
+          return "cloud_provider";
         case 2:
-          return 'region';
+          return "region";
         case 3:
-          return 'owner';
+          return "owner";
         case 4:
-          return 'status';
+          return "status";
         case 5:
-          return 'created_at';
+          return "created_at";
         default:
-          return '';
+          return "";
       }
     };
 
     let myDirection = direction;
-    if (sortBy?.index !== index && extraData.property === 'time-created') {
+    if (sortBy?.index !== index && extraData.property === "time-created") {
       // trick table to sort descending first for date column
       // https://github.com/patternfly/patternfly-react/issues/5329
       myDirection = SortByDirection.desc;
@@ -328,15 +336,11 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
     setOrderBy(`${getParameterForSortIndex(index)} ${myDirection}`);
   };
 
-  const onRowClick = (
-    event: React.MouseEvent<HTMLTableRowElement | HTMLButtonElement>,
-    _: number,
-    row?: IRowData
-  ) => {
+  const onRowClick: MASTableProps<any>["onRowClick"] = (event, _, row) => {
     if (event.target instanceof HTMLElement) {
       const tagName = event.target.tagName.toLowerCase();
       // Open instance drawer on row click except kebab button click or opening the kafka instance
-      if (tagName === 'button' || tagName === 'a') {
+      if (tagName === "button" || tagName === "a") {
         return;
       }
     }
@@ -361,7 +365,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         tableProps={{
           cells,
           rows,
-          'aria-label': t('cluster_instance_list'),
+          "aria-label": t("cluster_instance_list"),
           actionResolver,
           onSort,
           sortBy,
@@ -369,7 +373,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         }}
         activeRow={instanceDrawerInstance?.name}
         onRowClick={onRowClick}
-        rowDataTestId='tableStreams-row'
+        rowDataTestId="tableStreams-row"
         loggedInUser={loggedInUser}
       />
       <NoResultsFound

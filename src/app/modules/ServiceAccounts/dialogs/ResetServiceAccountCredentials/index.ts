@@ -1,1 +1,1 @@
-export * from './ResetServiceAccountCredentials';
+export * from "./ResetServiceAccountCredentials";

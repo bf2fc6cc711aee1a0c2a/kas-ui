@@ -1,1 +1,1 @@
-export * from './MASErrorBoundary';
+export * from "./MASErrorBoundary";

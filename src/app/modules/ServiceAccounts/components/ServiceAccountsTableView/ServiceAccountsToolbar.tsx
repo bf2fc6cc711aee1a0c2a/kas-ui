@@ -1,7 +1,7 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
-import { MASToolbar, ToolbarItemProps } from '@app/common';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Button } from "@patternfly/react-core";
+import { MASToolbar, ToolbarItemProps } from "@app/common";
 
 export type ServiceAccountsToolbarProps = {
   onCreateServiceAccount: () => void;
@@ -10,16 +10,16 @@ export type ServiceAccountsToolbarProps = {
 const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   onCreateServiceAccount: onCreateServiceAccount,
 }: ServiceAccountsToolbarProps) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: (
         <Button
-          variant='primary'
+          variant="primary"
           onClick={onCreateServiceAccount}
-          data-testid={'tableServiceAccounts-buttonCreateServiceAccount'}
+          data-testid={"tableServiceAccounts-buttonCreateServiceAccount"}
         >
-          {t('serviceAccount.create_service_account')}
+          {t("serviceAccount.create_service_account")}
         </Button>
       ),
     },
@@ -56,9 +56,9 @@ const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
   return (
     <MASToolbar
       toolbarProps={{
-        id: 'instance-toolbar',
-        collapseListedFiltersBreakpoint: 'md',
-        inset: { xl: 'insetLg' },
+        id: "instance-toolbar",
+        collapseListedFiltersBreakpoint: "md",
+        inset: { xl: "insetLg" },
       }}
       toolbarItems={toolbarItems}
     />

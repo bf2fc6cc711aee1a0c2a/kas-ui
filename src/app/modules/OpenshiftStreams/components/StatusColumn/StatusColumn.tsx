@@ -1,11 +1,11 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
-import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import PendingIcon from '@patternfly/react-icons/dist/js/icons/pending-icon';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
-import { statusOptions } from '@app/utils/utils';
-import './StatusColumn.css';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Flex, FlexItem, Spinner } from "@patternfly/react-core";
+import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon";
+import PendingIcon from "@patternfly/react-icons/dist/js/icons/pending-icon";
+import ExclamationCircleIcon from "@patternfly/react-icons/dist/js/icons/exclamation-circle-icon";
+import { statusOptions } from "@app/utils/utils";
+import "./StatusColumn.css";
 
 type StatusColumnProps = {
   status: string;
@@ -16,7 +16,7 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
   status,
   instanceName,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
 
   const Status: React.FunctionComponent = () => {
     const filteredstatus = statusOptions.filter(
@@ -25,14 +25,14 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
     if (filteredstatus.length === 1) {
       return t(filteredstatus[0].value);
     } else {
-      return t('creation_pending');
+      return t("creation_pending");
     }
   };
 
   const StatusIcon: React.FunctionComponent = () => {
     const statusIcon = getStatusIcon();
     if (statusIcon) {
-      return <FlexItem spacer={{ default: 'spacerSm' }}>{statusIcon}</FlexItem>;
+      return <FlexItem spacer={{ default: "spacerSm" }}>{statusIcon}</FlexItem>;
     }
     return <></>;
   };
@@ -41,11 +41,11 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
     switch (status?.toLowerCase()) {
       case statusOptions[0].value: // 'ready'
         return (
-          <CheckCircleIcon className='mk--instances__table--icon--completed' />
+          <CheckCircleIcon className="mk--instances__table--icon--completed" />
         );
       case statusOptions[1].value: // 'failed'
         return (
-          <ExclamationCircleIcon className='mk--instances__table--icon--failed' />
+          <ExclamationCircleIcon className="mk--instances__table--icon--failed" />
         );
       case statusOptions[2].value: // 'accepted'
         return <PendingIcon />;
@@ -53,9 +53,9 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
       case statusOptions[4].value: // 'preparing'
         return (
           <Spinner
-            size='md'
+            size="md"
             aria-label={instanceName}
-            aria-valuetext='Creation in progress'
+            aria-valuetext="Creation in progress"
           />
         );
       case statusOptions[5].value: // 'deprovision'

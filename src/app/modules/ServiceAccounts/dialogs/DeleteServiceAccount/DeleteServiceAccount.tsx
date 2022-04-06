@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { AlertVariant } from '@patternfly/react-core';
-import { DeleteModal } from '@app/common';
-import { isServiceApiError } from '@app/utils';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { AlertVariant } from "@patternfly/react-core";
+import { DeleteModal } from "@app/common";
+import { isServiceApiError } from "@app/utils";
 import {
   Configuration,
   SecurityApi,
   ServiceAccountListItem,
-} from '@rhoas/kafka-management-sdk';
+} from "@rhoas/kafka-management-sdk";
 import {
   BaseModalProps,
   DeleteServiceAccountProps,
   useAlert,
   useAuth,
   useConfig,
-} from '@rhoas/app-services-ui-shared';
+} from "@rhoas/app-services-ui-shared";
 
 const DeleteServiceAccount: React.FunctionComponent<
   DeleteServiceAccountProps & BaseModalProps
 > = ({ onDelete, serviceAccount, title, hideModal }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
@@ -37,7 +37,7 @@ const DeleteServiceAccount: React.FunctionComponent<
   ) => {
     const serviceAccountId = serviceAccount?.id;
     if (serviceAccountId === undefined) {
-      throw new Error('service account id not defined');
+      throw new Error("service account id not defined");
     }
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
@@ -58,7 +58,7 @@ const DeleteServiceAccount: React.FunctionComponent<
             addAlert &&
               addAlert({
                 title: t(
-                  'serviceAccount.service_account_successfully_deleted',
+                  "serviceAccount.service_account_successfully_deleted",
                   {
                     name: serviceAccount?.name,
                   }
@@ -77,7 +77,7 @@ const DeleteServiceAccount: React.FunctionComponent<
         setIsLoading(false);
         addAlert &&
           addAlert({
-            title: t('common.something_went_wrong'),
+            title: t("common.something_went_wrong"),
             variant: AlertVariant.danger,
             description: reason,
           });
@@ -92,12 +92,12 @@ const DeleteServiceAccount: React.FunctionComponent<
       title={title}
       confirmButtonProps={{
         onClick: () => deleteServiceAccount(serviceAccount),
-        label: 'Delete',
+        label: "Delete",
         isLoading,
       }}
     >
       <p>
-        <b>{serviceAccount?.name}</b> {t('serviceAccount.will_be_deleted')}
+        <b>{serviceAccount?.name}</b> {t("serviceAccount.will_be_deleted")}
       </p>
     </DeleteModal>
   );

@@ -1,14 +1,14 @@
-import React from 'react';
-import { PaginationProvider } from '@app/common';
-import { FederatedContext, FederatedProps } from '@app/contexts';
-import { ModalProvider } from '@rhoas/app-services-ui-components';
-import { KasModalLoader } from '@app/modals';
-import { InstanceDrawerContextProvider } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
-import { KasLayout } from '@app/modules/OpenshiftStreams/components';
+import React from "react";
+import { PaginationProvider } from "@app/common";
+import { FederatedContext, FederatedProps } from "@app/contexts";
+import { ModalProvider } from "@rhoas/app-services-ui-components";
+import { KasModalLoader } from "@app/modals";
+import { InstanceDrawerContextProvider } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { KasLayout } from "@app/modules/OpenshiftStreams/components";
 import {
   StreamsTableConnected,
   StreamsTableProps,
-} from '@app/modules/OpenshiftStreams/components/StreamsTableConnected';
+} from "@app/modules/OpenshiftStreams/components/StreamsTableConnected";
 
 // Version of OpenshiftStreams for federation
 type OpenshiftStreamsFederatedProps = StreamsTableProps & FederatedProps;

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectOption,
   SelectOptionObject,
   SelectVariant,
   ToolbarItem,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
 export type FilterSelectProps = {
   filterSelected?: string;
@@ -17,7 +17,7 @@ export const FilterSelect: React.FunctionComponent<FilterSelectProps> = ({
   setFilterSelected,
   filterSelected,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
 
   const onToggle = () => {
@@ -33,18 +33,18 @@ export const FilterSelect: React.FunctionComponent<FilterSelectProps> = ({
   };
 
   const options = [
-    { label: t('name'), value: 'name', disabled: false },
-    { label: t('cloud_provider'), value: 'cloud_provider', disabled: false },
-    { label: t('region'), value: 'region', disabled: false },
-    { label: t('owner'), value: 'owner', disabled: false },
-    { label: t('status'), value: 'status', disabled: false },
+    { label: t("name"), value: "name", disabled: false },
+    { label: t("cloud_provider"), value: "cloud_provider", disabled: false },
+    { label: t("region"), value: "region", disabled: false },
+    { label: t("owner"), value: "owner", disabled: false },
+    { label: t("status"), value: "status", disabled: false },
   ];
 
   return (
     <ToolbarItem>
       <Select
         variant={SelectVariant.single}
-        aria-label='Select filter'
+        aria-label="Select filter"
         onToggle={onToggle}
         selections={filterSelected}
         isOpen={isFilterExpanded}

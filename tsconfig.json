@@ -25,11 +25,6 @@
       "@test-utils/*": ["test-utils/*"],
     }
   },
-  "exclude": ["**/test_common",
-    "node_modules",
-    "./node_modules",
-    "./node_modules/*",
-    "./node_modules/@types/node/index.d.ts"
-  ],
+  "exclude": ["**/test_common", "node_modules"],
   "include": ["./src/*", "./src/**/*"]
 }

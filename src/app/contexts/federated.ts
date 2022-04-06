@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { KafkaRequest } from '@rhoas/kafka-management-sdk';
-import { Principal } from '@rhoas/app-services-ui-shared';
+import React, { useContext } from "react";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
+import { Principal } from "@rhoas/app-services-ui-shared";
 
 export type FederatedProps = {
   tokenEndPointUrl: string;

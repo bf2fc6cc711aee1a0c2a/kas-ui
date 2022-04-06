@@ -1,24 +1,24 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { InstanceStatus } from '@app/utils';
-import { MASLoading } from '@app/common';
-import { Tab, Tabs, TabTitleText } from '@patternfly/react-core';
-import { ConnectionTabProps } from '@app/modules/InstanceDrawer/ConnectionTab';
-import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
-import { InstanceDrawerTab } from '@app/modules/InstanceDrawer/tabs';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { InstanceStatus } from "@app/utils";
+import { MASLoading } from "@app/common";
+import { Tab, Tabs, TabTitleText } from "@patternfly/react-core";
+import { ConnectionTabProps } from "@app/modules/InstanceDrawer/ConnectionTab";
+import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 
-export const ResourcesTab = React.lazy(() => import('./ConnectionTab'));
-export const DetailsTab = React.lazy(() => import('./DetailsTab'));
+export const ResourcesTab = React.lazy(() => import("./ConnectionTab"));
+export const DetailsTab = React.lazy(() => import("./DetailsTab"));
 
 export type InstanceDrawerContentProps = Pick<
   ConnectionTabProps,
-  'tokenEndPointUrl'
+  "tokenEndPointUrl"
 >;
 
 export const InstanceDrawerContent: React.FunctionComponent<
   InstanceDrawerContentProps
 > = ({ tokenEndPointUrl }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
 
   const { instanceDrawerTab, setInstanceDrawerTab, instanceDrawerInstance } =
     useInstanceDrawer();
@@ -33,7 +33,7 @@ export const InstanceDrawerContent: React.FunctionComponent<
 
   const getExternalServer = () => {
     const { bootstrap_server_host } = instanceDrawerInstance || {};
-    return bootstrap_server_host?.endsWith(':443')
+    return bootstrap_server_host?.endsWith(":443")
       ? bootstrap_server_host
       : `${bootstrap_server_host}:443`;
   };
@@ -50,14 +50,14 @@ export const InstanceDrawerContent: React.FunctionComponent<
       >
         <Tab
           eventKey={InstanceDrawerTab.DETAILS.toString()}
-          title={<TabTitleText>{t('details')}</TabTitleText>}
+          title={<TabTitleText>{t("details")}</TabTitleText>}
         >
           <DetailsTab />
         </Tab>
         <Tab
           eventKey={InstanceDrawerTab.CONNECTION.toString()}
-          title={<TabTitleText>{t('connection')}</TabTitleText>}
-          data-testid='drawerStreams-tabConnect'
+          title={<TabTitleText>{t("connection")}</TabTitleText>}
+          data-testid="drawerStreams-tabConnect"
         >
           <ResourcesTab
             externalServer={getExternalServer()}

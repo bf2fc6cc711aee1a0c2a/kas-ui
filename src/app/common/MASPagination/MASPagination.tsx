@@ -4,14 +4,14 @@ import React, {
   createContext,
   useContext,
   useState,
-} from 'react';
+} from "react";
 import {
   Pagination as PFPagination,
   PaginationProps as PFPaginationProps,
   PaginationVariant,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
-export type PaginationProps = Omit<PFPaginationProps, 'children' | 'ref'>;
+export type PaginationProps = Omit<PFPaginationProps, "children" | "ref">;
 
 export type PaginationContextProps = {
   page: number | undefined;

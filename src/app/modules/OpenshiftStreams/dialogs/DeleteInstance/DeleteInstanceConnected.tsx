@@ -1,22 +1,25 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { AlertVariant } from '@patternfly/react-core';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { AlertVariant } from "@patternfly/react-core";
 import {
   BaseModalProps,
   DeleteInstanceProps,
   useAlert,
   useAuth,
   useConfig,
-} from '@rhoas/app-services-ui-shared';
-import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
-import { DeleteInstanceModal } from './DeleteInstance';
-import { isServiceApiError } from '@app/utils';
+} from "@rhoas/app-services-ui-shared";
+import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
+import {
+  DeleteInstanceModal,
+  DeleteInstanceModalProps,
+} from "./DeleteInstance";
+import { isServiceApiError } from "@app/utils";
 
 const DeleteInstanceConnected: React.FunctionComponent<
   DeleteInstanceProps & BaseModalProps
 > = ({ kafka, onDelete, hideModal }) => {
   const { addAlert } = useAlert() || {};
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
@@ -57,7 +60,7 @@ const DeleteInstanceConnected: React.FunctionComponent<
     }
     addAlert &&
       addAlert({
-        title: t('something_went_wrong'),
+        title: t("something_went_wrong"),
         variant: AlertVariant.danger,
         description: reason,
       });
@@ -67,7 +70,7 @@ const DeleteInstanceConnected: React.FunctionComponent<
     <DeleteInstanceModal
       hideModal={hideModal}
       onClose={closeModal}
-      kafka={kafka}
+      kafka={kafka as DeleteInstanceModalProps["kafka"]}
       onDelete={deleteInstance}
       isLoading={isLoading}
     />
