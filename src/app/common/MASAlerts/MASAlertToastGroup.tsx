@@ -12,9 +12,10 @@ type AlertToastGroupProps = {
   onCloseAlert: (key: string | undefined) => void;
 };
 
-export const MASAlertToastGroup: FunctionComponent<
-  AlertToastGroupProps
-> = ({ alerts, onCloseAlert }: AlertToastGroupProps) => {
+export const MASAlertToastGroup: FunctionComponent<AlertToastGroupProps> = ({
+  alerts,
+  onCloseAlert,
+}: AlertToastGroupProps) => {
   return (
     <AlertGroup isToast>
       {alerts.map(

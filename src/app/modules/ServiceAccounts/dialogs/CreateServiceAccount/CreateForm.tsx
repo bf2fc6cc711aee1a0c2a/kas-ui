@@ -23,9 +23,7 @@ import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 export type CreateFormProps = {
   createServiceAccount: () => Promise<void>;
   serviceAccountRequest: NewServiceAccountRequest;
-  setServiceAccountRequest: Dispatch<
-    SetStateAction<NewServiceAccountRequest>
-  >;
+  setServiceAccountRequest: Dispatch<SetStateAction<NewServiceAccountRequest>>;
   id: string;
 };
 

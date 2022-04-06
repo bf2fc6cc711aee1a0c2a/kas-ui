@@ -14,8 +14,7 @@ export const KafkaEmptyState: FunctionComponent<KafkaEmptyStateProps> = ({
   handleCreateInstanceModal,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  const qsContext: QuickStartContextValues =
-    useContext(QuickStartContext);
+  const qsContext: QuickStartContextValues = useContext(QuickStartContext);
   return (
     <PageSection padding={{ default: "noPadding" }} isFilled>
       <MASEmptyState

@@ -20,9 +20,7 @@ export type StreamsFilterGroupProps = {
   setFilterSelected: (value: string) => void;
 };
 
-export const StreamsFilterGroup: FunctionComponent<
-  StreamsFilterGroupProps
-> = ({
+export const StreamsFilterGroup: FunctionComponent<StreamsFilterGroupProps> = ({
   isMaxFilter,
   filteredValue,
   setFilteredValue,
