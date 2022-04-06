@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import {
   AlertVariant,
   Button,
@@ -35,7 +35,7 @@ enum Step {
   Credentials = "Credentials",
 }
 
-const CreateServiceAccountConnected: React.FunctionComponent<
+const CreateServiceAccountConnected: FunctionComponent<
   CreateServiceAccountProps & BaseModalProps
 > = ({ onCreate, title, hideModal }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
@@ -131,7 +131,7 @@ const CreateServiceAccountConnected: React.FunctionComponent<
     return [];
   };
 
-  const Body: React.FunctionComponent = () => {
+  const Body: FunctionComponent = () => {
     if (step === Step.CreateServiceAccount) {
       return (
         <CreateForm

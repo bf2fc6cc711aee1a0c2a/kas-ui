@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent, useContext } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import {
   QuickStartContext,
@@ -10,12 +10,12 @@ import { MASEmptyState, MASEmptyStateVariant } from "@app/common";
 export type KafkaEmptyStateProps = {
   handleCreateInstanceModal: () => void;
 };
-export const KafkaEmptyState: React.FunctionComponent<KafkaEmptyStateProps> = ({
+export const KafkaEmptyState: FunctionComponent<KafkaEmptyStateProps> = ({
   handleCreateInstanceModal,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const qsContext: QuickStartContextValues =
-    React.useContext(QuickStartContext);
+    useContext(QuickStartContext);
   return (
     <PageSection padding={{ default: "noPadding" }} isFilled>
       <MASEmptyState

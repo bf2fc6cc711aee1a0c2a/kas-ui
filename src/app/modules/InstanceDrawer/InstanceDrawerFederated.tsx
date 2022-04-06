@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import "@patternfly/patternfly/utilities/Accessibility/accessibility.css";
 import "@patternfly/patternfly/utilities/Sizing/sizing.css";
 import "@patternfly/patternfly/utilities/Spacing/spacing.css";
@@ -20,7 +20,7 @@ export type InstanceDrawerFederatedProps = InstanceDrawerProps &
   FederatedProps &
   InstanceDrawerContextProviderProps;
 
-const InstanceDrawerFederated: React.FunctionComponent<
+const InstanceDrawerFederated: FunctionComponent<
   InstanceDrawerFederatedProps
 > = ({
   "data-ouia-app-id": dataOuiaAppId,

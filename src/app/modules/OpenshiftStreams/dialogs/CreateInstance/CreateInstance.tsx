@@ -8,11 +8,11 @@ import {
   CreateInstanceProps,
 } from "@rhoas/app-services-ui-shared";
 import { QuickStartContext } from "@patternfly/quickstarts";
-import React, { useCallback, useContext } from "react";
+import { FunctionComponent, useCallback, useContext } from "react";
 import { getModalAppendTo } from "@app/utils";
 import { useAvailableProvidersAndDefault, useCreateInstance } from "./api";
 
-const CreateInstance: React.FunctionComponent<
+const CreateInstance: FunctionComponent<
   CreateInstanceProps & BaseModalProps
 > = ({ hideModal, onCreate }) => {
   const fetchAvailableProvidersAndDefault = useAvailableProvidersAndDefault();

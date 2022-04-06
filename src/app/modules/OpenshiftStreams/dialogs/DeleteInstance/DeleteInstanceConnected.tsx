@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertVariant } from "@patternfly/react-core";
 import {
@@ -15,7 +15,7 @@ import {
 } from "./DeleteInstance";
 import { isServiceApiError } from "@app/utils";
 
-const DeleteInstanceConnected: React.FunctionComponent<
+const DeleteInstanceConnected: FunctionComponent<
   DeleteInstanceProps & BaseModalProps
 > = ({ kafka, onDelete, hideModal }) => {
   const { addAlert } = useAlert() || {};

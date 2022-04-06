@@ -1,5 +1,5 @@
 import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
-import React, { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import {
   Configuration,
   SecurityApi,
@@ -13,7 +13,7 @@ import { MASLoading } from "@app/common";
 import { ServiceAccountsEmpty } from "@app/modules/ServiceAccounts/components/ServiceAccountsEmpty";
 import { ServiceAccountsTableSection } from "@app/modules/ServiceAccounts/components/ServiceAccountsTableSection";
 
-export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
+export const ServiceAccountsTableConnected: FunctionComponent = () => {
   const auth = useAuth();
   const config = useConfig();
 

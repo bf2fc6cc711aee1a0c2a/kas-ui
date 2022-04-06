@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@patternfly/react-core";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
@@ -21,7 +21,7 @@ export type StreamsToolbarProps = {
   handleCreateInstanceModal?: () => void;
 };
 
-const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
+const StreamsToolbar: FunctionComponent<StreamsToolbarProps> = ({
   setFilterSelected,
   filterSelected = "name",
   total,

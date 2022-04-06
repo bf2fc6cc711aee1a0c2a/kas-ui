@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { MASPagination } from "@app/common";
 import { PaginationVariant } from "@patternfly/react-core";
@@ -9,7 +9,7 @@ export type PaginationProps = {
   perPage: number;
 };
 
-export const Pagination: React.FunctionComponent<PaginationProps> = ({
+export const Pagination: FunctionComponent<PaginationProps> = ({
   total,
   page,
   perPage,

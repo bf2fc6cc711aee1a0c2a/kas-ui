@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode, FC } from "react";
 import {
   Drawer,
   DrawerProps,
@@ -22,8 +22,8 @@ import { MASLoading } from "@app/common";
 import "./MASDrawer.css";
 
 export type MASDrawerProps = DrawerProps & {
-  children: React.ReactNode;
-  panelBodyContent?: React.ReactNode;
+  children: ReactNode;
+  panelBodyContent?: ReactNode;
   onClose: () => void;
   drawerData?: any;
   isLoading?: boolean;
@@ -38,10 +38,10 @@ export type MASDrawerProps = DrawerProps & {
   };
   ["data-ouia-app-id"]?: string;
   notRequiredDrawerContentBackground?: boolean | undefined;
-  inlineAlertMessage?: React.ReactNode;
+  inlineAlertMessage?: ReactNode;
 };
 
-export const MASDrawer: React.FC<MASDrawerProps> = ({
+export const MASDrawer: FC<MASDrawerProps> = ({
   onClose,
   isLoading = true,
   drawerPanelContentProps,

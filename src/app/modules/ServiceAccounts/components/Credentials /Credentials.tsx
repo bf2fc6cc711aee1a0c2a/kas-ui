@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import {
   Bullseye,
   Button,
@@ -26,7 +26,7 @@ type CredentialsProps = {
   close: () => void;
 };
 
-const Credentials: React.FunctionComponent<CredentialsProps> = ({
+const Credentials: FunctionComponent<CredentialsProps> = ({
   serviceAccount,
   close,
 }) => {

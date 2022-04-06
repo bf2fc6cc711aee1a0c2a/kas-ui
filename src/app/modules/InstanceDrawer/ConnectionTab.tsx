@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -26,7 +26,7 @@ export type ConnectionTabProps = {
   instanceId: string | undefined;
 };
 
-export const ConnectionTab: React.FC<ConnectionTabProps> = ({
+export const ConnectionTab: FC<ConnectionTabProps> = ({
   externalServer,
   isKafkaPending,
   tokenEndPointUrl,

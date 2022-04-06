@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { FunctionComponent, createContext, useContext, useState } from "react";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import { KafkaInstance } from "@rhoas/app-services-ui-shared";
 
@@ -14,7 +14,7 @@ export type InstanceDrawerContextProps = {
   noInstances: boolean;
 };
 
-export const InstanceDrawerContext = React.createContext<
+export const InstanceDrawerContext = createContext<
   InstanceDrawerContextProps | undefined
 >(undefined);
 
@@ -32,7 +32,7 @@ export type InstanceDrawerContextProviderProps = {
   initialNoInstances?: boolean;
 };
 
-export const InstanceDrawerContextProvider: React.FunctionComponent<
+export const InstanceDrawerContextProvider: FunctionComponent<
   InstanceDrawerContextProviderProps
 > = ({ initialTab, initialInstance, initialNoInstances = false, children }) => {
   const defaultTab = InstanceDrawerTab.DETAILS;

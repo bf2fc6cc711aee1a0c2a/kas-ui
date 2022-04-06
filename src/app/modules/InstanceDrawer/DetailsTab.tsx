@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   TextContent,
@@ -12,7 +12,7 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 import dayjs from "dayjs";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
-export const DetailsTab: React.FunctionComponent = () => {
+export const DetailsTab: FunctionComponent = () => {
   const { instanceDrawerInstance } = useInstanceDrawer();
   dayjs.extend(localizedFormat);
   const { t } = useTranslation(["kasTemporaryFixMe"]);

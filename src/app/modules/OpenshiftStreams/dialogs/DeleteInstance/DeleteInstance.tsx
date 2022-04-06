@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteModal } from "@app/common";
 import { InstanceStatus } from "@app/utils";
@@ -13,7 +13,7 @@ export type DeleteInstanceModalProps = {
   isLoading: boolean;
 };
 
-export const DeleteInstanceModal: React.FunctionComponent<
+export const DeleteInstanceModal: FunctionComponent<
   DeleteInstanceModalProps
 > = ({ kafka, onClose, hideModal, onDelete, isLoading }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);

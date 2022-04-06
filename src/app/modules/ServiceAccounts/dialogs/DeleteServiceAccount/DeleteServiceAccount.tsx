@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertVariant } from "@patternfly/react-core";
 import { DeleteModal } from "@app/common";
@@ -16,7 +16,7 @@ import {
   useConfig,
 } from "@rhoas/app-services-ui-shared";
 
-const DeleteServiceAccount: React.FunctionComponent<
+const DeleteServiceAccount: FunctionComponent<
   DeleteServiceAccountProps & BaseModalProps
 > = ({ onDelete, serviceAccount, title, hideModal }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);

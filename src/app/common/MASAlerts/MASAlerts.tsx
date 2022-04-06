@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { MASAlertToastGroup } from "@app/common";
 import { AlertContext, AlertProps } from "@rhoas/app-services-ui-shared";
 
@@ -7,7 +7,7 @@ type TimeOut = {
   timeOut: ReturnType<typeof setTimeout> | undefined;
 };
 
-export const AlertProvider: React.FunctionComponent = ({ children }) => {
+export const AlertProvider: FunctionComponent = ({ children }) => {
   const [alerts, setAlerts] = useState<AlertProps[]>([]);
   const [timers, setTimers] = useState<TimeOut[]>([]);
 

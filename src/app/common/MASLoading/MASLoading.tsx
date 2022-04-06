@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import {
   Bullseye,
   BullseyeProps,
@@ -11,7 +11,7 @@ export type MASLoadingProps = {
   spinnerProps?: SpinnerProps;
 };
 
-export const MASLoading: React.FunctionComponent<MASLoadingProps> = ({
+export const MASLoading: FunctionComponent<MASLoadingProps> = ({
   bullseyeProps,
   spinnerProps,
 }: MASLoadingProps) => (

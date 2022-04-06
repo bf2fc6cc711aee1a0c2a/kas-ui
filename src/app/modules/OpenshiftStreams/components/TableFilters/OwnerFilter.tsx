@@ -1,5 +1,5 @@
 import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
-import React, { useRef, useState } from "react";
+import { FunctionComponent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 import {
@@ -15,7 +15,7 @@ import {
 import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 
 export type OwnerFilterProps = FilterProps;
-export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
+export const OwnerFilter: FunctionComponent<OwnerFilterProps> = ({
   getSelectionForFilter,
   onDeleteChipGroup,
   onDeleteChip,
@@ -60,7 +60,7 @@ export const OwnerFilter: React.FunctionComponent<OwnerFilterProps> = ({
     if (filterSelected?.toLowerCase() === "owner") {
       const v = !valid || isMaxFilter;
 
-      const FilterTooltip: React.FunctionComponent = () => {
+      const FilterTooltip: FunctionComponent = () => {
         if (v) {
           return (
             <Tooltip

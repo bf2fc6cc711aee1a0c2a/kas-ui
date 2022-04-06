@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import localizedFormat from "dayjs/plugin/localizedFormat";
@@ -48,7 +48,7 @@ export type StreamsTableProps = {
   preCreateInstance: (open: boolean) => Promise<boolean>;
 };
 
-export const StreamsTableConnected: React.FunctionComponent<
+export const StreamsTableConnected: FunctionComponent<
   StreamsTableProps
 > = ({ preCreateInstance }: StreamsTableProps) => {
   dayjs.extend(localizedFormat);

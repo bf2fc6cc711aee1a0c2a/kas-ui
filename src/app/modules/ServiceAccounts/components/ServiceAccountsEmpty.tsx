@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { PageSection } from "@patternfly/react-core";
 import { MASEmptyState, MASEmptyStateVariant } from "@app/common";
@@ -7,7 +7,7 @@ import { ModalType, useModal } from "@rhoas/app-services-ui-shared";
 export type ServiceAccountsEmptyProps = {
   fetchServiceAccounts: () => Promise<void>;
 };
-export const ServiceAccountsEmpty: React.FunctionComponent<
+export const ServiceAccountsEmpty: FunctionComponent<
   ServiceAccountsEmptyProps
 > = ({ fetchServiceAccounts }) => {
   const { showModal } = useModal<ModalType.KasCreateServiceAccount>();

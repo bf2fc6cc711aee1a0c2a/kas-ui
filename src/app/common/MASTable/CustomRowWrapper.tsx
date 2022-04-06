@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  FunctionComponent,
-  LegacyRef,
-  useContext,
-} from "react";
+import { MouseEvent, createContext, FunctionComponent, LegacyRef, useContext } from "react";
 import { InstanceStatus } from "@app/utils";
 import { css } from "@patternfly/react-styles";
 import "./CustomRowWrapper.css";
@@ -12,7 +7,7 @@ import { IRow } from "@patternfly/react-table";
 export type CustomRowWrapperContextProps<T> = {
   activeRow?: string;
   onRowClick?: (
-    event: React.MouseEvent<T>,
+    event: MouseEvent<T>,
     rowIndex?: number,
     row?: IRow
   ) => void;

@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { ToolbarChip, ToolbarGroup } from "@patternfly/react-core";
 import { CloudProviderFilter } from "@app/modules/OpenshiftStreams/components/TableFilters/CloudProviderFilter";
 import { NameFilter } from "@app/modules/OpenshiftStreams/components/TableFilters/NameFilter";
@@ -20,7 +20,7 @@ export type StreamsFilterGroupProps = {
   setFilterSelected: (value: string) => void;
 };
 
-export const StreamsFilterGroup: React.FunctionComponent<
+export const StreamsFilterGroup: FunctionComponent<
   StreamsFilterGroupProps
 > = ({
   isMaxFilter,

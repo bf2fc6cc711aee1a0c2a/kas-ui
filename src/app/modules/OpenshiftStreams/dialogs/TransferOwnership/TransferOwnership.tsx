@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { OwnerSelect } from "./OwnerSelect";
 import { useGetAllUsers } from "./FilterOwners";
@@ -31,7 +31,7 @@ export type TransferOwnershipProps = {
   hideModal: () => void;
 };
 
-export const TransferOwnership: React.FC<
+export const TransferOwnership: FC<
   TransferOwnershipProps & BaseModalProps
 > = ({ kafka, onClose, hideModal, refreshKafkas, variant, title }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);

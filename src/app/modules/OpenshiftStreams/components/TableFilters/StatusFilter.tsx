@@ -1,5 +1,6 @@
 import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
+import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 import {

@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent, useState, useEffect, Suspense } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import {
   BasenameContext,
@@ -31,11 +31,11 @@ import { KasModalLoader } from "@app/modals";
 let keycloak: Keycloak.KeycloakInstance | undefined;
 declare const __BASE_PATH__: string;
 
-const App: React.FunctionComponent = () => {
-  const [initialized, setInitialized] = React.useState(false);
+const App: FunctionComponent = () => {
+  const [initialized, setInitialized] = useState(false);
 
   // Initialize the client
-  React.useEffect(() => {
+  useEffect(() => {
     const init = async () => {
       keycloak = await getKeycloakInstance();
       setInitialized(true);
@@ -92,7 +92,7 @@ const App: React.FunctionComponent = () => {
             <KeycloakAuthProvider>
               <AlertProvider>
                 <Router>
-                  <React.Suspense fallback={<MASLoading />}>
+                  <Suspense fallback={<MASLoading />}>
                     <MASErrorBoundary>
                       <PaginationProvider>
                         <ModalProvider>
@@ -103,7 +103,7 @@ const App: React.FunctionComponent = () => {
                         </ModalProvider>
                       </PaginationProvider>
                     </MASErrorBoundary>
-                  </React.Suspense>
+                  </Suspense>
                 </Router>
               </AlertProvider>
             </KeycloakAuthProvider>

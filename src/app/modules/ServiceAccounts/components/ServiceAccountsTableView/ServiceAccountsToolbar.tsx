@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@patternfly/react-core";
 import { MASToolbar, ToolbarItemProps } from "@app/common";
@@ -7,7 +7,7 @@ export type ServiceAccountsToolbarProps = {
   onCreateServiceAccount: () => void;
 };
 
-const ServiceAccountsToolbar: React.FC<ServiceAccountsToolbarProps> = ({
+const ServiceAccountsToolbar: FC<ServiceAccountsToolbarProps> = ({
   onCreateServiceAccount: onCreateServiceAccount,
 }: ServiceAccountsToolbarProps) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);

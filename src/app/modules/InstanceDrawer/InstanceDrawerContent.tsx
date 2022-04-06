@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { InstanceStatus } from "@app/utils";
 import { MASLoading } from "@app/common";
@@ -7,15 +7,15 @@ import { ConnectionTabProps } from "@app/modules/InstanceDrawer/ConnectionTab";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 
-export const ResourcesTab = React.lazy(() => import("./ConnectionTab"));
-export const DetailsTab = React.lazy(() => import("./DetailsTab"));
+export const ResourcesTab = lazy(() => import("./ConnectionTab"));
+export const DetailsTab = lazy(() => import("./DetailsTab"));
 
 export type InstanceDrawerContentProps = Pick<
   ConnectionTabProps,
   "tokenEndPointUrl"
 >;
 
-export const InstanceDrawerContent: React.FunctionComponent<
+export const InstanceDrawerContent: FunctionComponent<
   InstanceDrawerContentProps
 > = ({ tokenEndPointUrl }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
@@ -43,7 +43,7 @@ export const InstanceDrawerContent: React.FunctionComponent<
     instanceDrawerInstance?.status === InstanceStatus.PREPARING;
 
   return (
-    <React.Suspense fallback={<MASLoading />}>
+    <Suspense fallback={<MASLoading />}>
       <Tabs
         activeKey={instanceDrawerTab.toString()}
         onSelect={(_, tab) => selectTab(tab)}
@@ -67,6 +67,6 @@ export const InstanceDrawerContent: React.FunctionComponent<
           />
         </Tab>
       </Tabs>
-    </React.Suspense>
+    </Suspense>
   );
 };

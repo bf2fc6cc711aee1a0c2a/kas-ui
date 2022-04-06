@@ -1,4 +1,4 @@
-import * as React from "react";
+import { ComponentType, ReactElement } from "react";
 import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { MASPageNotFound } from "@app/common/MASPageNotFound/MASPageNotFound";
@@ -14,8 +14,8 @@ export interface IAppRoute {
   label?: string; // Excluding the label will exclude the route from the nav sidebar in AppLayout
   /* eslint-disable @typescript-eslint/no-explicit-any */
   component:
-    | React.ComponentType<RouteComponentProps<any>>
-    | React.ComponentType<any>;
+    | ComponentType<RouteComponentProps<any>>
+    | ComponentType<any>;
   /* eslint-enable @typescript-eslint/no-explicit-any */
   exact?: boolean;
   path: string;
@@ -96,7 +96,7 @@ const flattenedRoutes: IAppRoute[] = routes.reduce(
   [] as IAppRoute[]
 );
 
-const AppRoutes = (): React.ReactElement => {
+const AppRoutes = (): ReactElement => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   return (
     // <LastLocationProvider>

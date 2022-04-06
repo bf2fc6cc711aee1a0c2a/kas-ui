@@ -3,7 +3,7 @@ import {
   isServiceAccountRequestInvalid,
   NewServiceAccountRequest,
 } from "@app/models";
-import React, { useState } from "react";
+import { SetStateAction, Dispatch, FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   MAX_INSTANCE_NAME_LENGTH,
@@ -23,13 +23,13 @@ import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 export type CreateFormProps = {
   createServiceAccount: () => Promise<void>;
   serviceAccountRequest: NewServiceAccountRequest;
-  setServiceAccountRequest: React.Dispatch<
-    React.SetStateAction<NewServiceAccountRequest>
+  setServiceAccountRequest: Dispatch<
+    SetStateAction<NewServiceAccountRequest>
   >;
   id: string;
 };
 
-export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
+export const CreateForm: FunctionComponent<CreateFormProps> = ({
   serviceAccountRequest,
   createServiceAccount,
   setServiceAccountRequest,
@@ -89,7 +89,7 @@ export const CreateForm: React.FunctionComponent<CreateFormProps> = ({
     });
   };
 
-  const FormValidAlert: React.FunctionComponent = () => {
+  const FormValidAlert: FunctionComponent = () => {
     if (
       formSubmitted &&
       isServiceAccountRequestInvalid(serviceAccountRequest)

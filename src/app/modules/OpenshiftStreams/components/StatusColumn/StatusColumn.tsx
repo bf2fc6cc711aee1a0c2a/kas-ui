@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, FlexItem, Spinner } from "@patternfly/react-core";
 import CheckCircleIcon from "@patternfly/react-icons/dist/js/icons/check-circle-icon";
@@ -12,13 +12,13 @@ type StatusColumnProps = {
   instanceName: string;
 };
 
-const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
+const StatusColumn: FunctionComponent<StatusColumnProps> = ({
   status,
   instanceName,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
 
-  const Status: React.FunctionComponent = () => {
+  const Status: FunctionComponent = () => {
     const filteredstatus = statusOptions.filter(
       (st) => st.value === status?.toLowerCase()
     );
@@ -29,7 +29,7 @@ const StatusColumn: React.FunctionComponent<StatusColumnProps> = ({
     }
   };
 
-  const StatusIcon: React.FunctionComponent = () => {
+  const StatusIcon: FunctionComponent = () => {
     const statusIcon = getStatusIcon();
     if (statusIcon) {
       return <FlexItem spacer={{ default: "spacerSm" }}>{statusIcon}</FlexItem>;

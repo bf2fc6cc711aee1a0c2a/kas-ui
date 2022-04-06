@@ -1,4 +1,4 @@
-import * as React from "react";
+import { FunctionComponent, useState, useContext } from "react";
 import { NavLink, useLocation, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -16,12 +16,12 @@ import { routes, IAppRoute, IAppRouteGroup } from "@app/routes";
 import logo from "@app/bgimages/Patternfly-Logo.svg";
 import { KeycloakContext } from "@app/auth/keycloak/KeycloakContext";
 
-const AppLayout: React.FunctionComponent = ({ children }) => {
-  const [isNavOpen, setIsNavOpen] = React.useState(true);
-  const [isMobileView, setIsMobileView] = React.useState(true);
-  const [isNavOpenMobile, setIsNavOpenMobile] = React.useState(false);
+const AppLayout: FunctionComponent = ({ children }) => {
+  const [isNavOpen, setIsNavOpen] = useState(true);
+  const [isMobileView, setIsMobileView] = useState(true);
+  const [isNavOpenMobile, setIsNavOpenMobile] = useState(false);
 
-  const keycloakContext = React.useContext(KeycloakContext);
+  const keycloakContext = useContext(KeycloakContext);
 
   const location = useLocation();
 

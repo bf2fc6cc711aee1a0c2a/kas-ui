@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import {
   ToolbarContent,
   Toolbar,
@@ -19,7 +19,7 @@ export type MASToolbarProps = {
   toolbarItems?: ToolbarItemProps[];
 };
 
-const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
+const MASToolbar: FunctionComponent<MASToolbarProps> = ({
   toolbarProps,
   toggleGroupProps,
   toolbarItems,

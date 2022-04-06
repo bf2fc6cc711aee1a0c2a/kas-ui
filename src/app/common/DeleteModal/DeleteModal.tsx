@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode, FunctionComponent, ReactElement } from "react";
 import {
   Button,
   ButtonProps,
@@ -48,7 +48,7 @@ export type DeleteModalProps<T> = {
   title?: string;
   modalProps?: NestedModalProps;
   handleModalToggle: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
   selectedItemData?: T;
   confirmButtonProps?: ConfirmButtonProps<T>;
   cancelButtonProps?: CancelButtonProps;
@@ -67,7 +67,7 @@ export const DeleteModal = <T,>({
   children,
   selectedItemData,
   textInputProps,
-}: DeleteModalProps<T>): React.ReactElement => {
+}: DeleteModalProps<T>): ReactElement => {
   const {
     variant = ModalVariant.small,
     titleIconVariant = "warning",
@@ -109,7 +109,7 @@ export const DeleteModal = <T,>({
     ...restInputFieldProps
   } = textInputProps || {};
 
-  const ConfirmDelete: React.FunctionComponent = () => {
+  const ConfirmDelete: FunctionComponent = () => {
     if (showTextInput) {
       return (
         <>

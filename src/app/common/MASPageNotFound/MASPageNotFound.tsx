@@ -1,10 +1,10 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { PageSection, Button } from "@patternfly/react-core";
 import { useHistory } from "react-router-dom";
 import { MASEmptyState, MASEmptyStateVariant } from "@app/common";
 
-const MASPageNotFound: React.FunctionComponent = () => {
+const MASPageNotFound: FunctionComponent = () => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
 
   function GoHomeBtn() {

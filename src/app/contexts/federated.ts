@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { createContext, useContext } from "react";
 import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import { Principal } from "@rhoas/app-services-ui-shared";
 
@@ -10,7 +10,7 @@ export type FederatedProps = {
   getAllUserAccounts?: () => Principal[];
 };
 
-export const FederatedContext = React.createContext<FederatedProps | undefined>(
+export const FederatedContext = createContext<FederatedProps | undefined>(
   undefined
 );
 export const useFederated = (): FederatedProps | undefined =>

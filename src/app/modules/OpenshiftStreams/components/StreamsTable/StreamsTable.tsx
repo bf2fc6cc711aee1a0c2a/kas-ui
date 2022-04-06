@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { FunctionComponent, MouseEvent, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   IAction,
@@ -54,7 +54,7 @@ export type StreamsTableProps = Pick<
   setOrderBy: (order: string) => void;
   orderBy: string;
 };
-export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
+export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   onDeleteInstance,
   onChangeOwner,
   onViewInstance,
@@ -218,7 +218,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         title: t("view_details"),
         id: "view-instanceDrawerInstance",
         ["data-testid"]: "tableStreams-actionDetails",
-        onClick: (event: React.MouseEvent) =>
+        onClick: (event: MouseEvent) =>
           onSelectKebabDropdownOption(
             event,
             originalData,
@@ -234,7 +234,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         title: t("view_connection_information"),
         id: "connect-instanceDrawerInstance",
         ["data-testid"]: "tableStreams-actionConnection",
-        onClick: (event: React.MouseEvent) =>
+        onClick: (event: MouseEvent) =>
           onSelectKebabDropdownOption(
             event,
             originalData,
@@ -250,7 +250,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         title: t("change_owner"),
         id: "change-owner",
         ["data-testid"]: "tableStreams-actionChangeOwner",
-        onClick: (event: React.MouseEvent) =>
+        onClick: (event: MouseEvent) =>
           isUserSameAsLoggedIn &&
           onSelectKebabDropdownOption(event, originalData, "change-owner"),
         ...additionalProps,
@@ -263,7 +263,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
         title: t("delete_instance"),
         id: "delete-instanceDrawerInstance",
         ["data-testid"]: "tableStreams-actionDelete",
-        onClick: (event: React.MouseEvent) =>
+        onClick: (event: MouseEvent) =>
           isUserSameAsLoggedIn &&
           onSelectKebabDropdownOption(
             event,
@@ -281,7 +281,7 @@ export const StreamsTable: React.FunctionComponent<StreamsTableProps> = ({
   };
 
   const onSelectKebabDropdownOption = (
-    event: React.MouseEvent,
+    event: MouseEvent,
     originalData: KafkaRequest,
     selectedOption: string
   ) => {

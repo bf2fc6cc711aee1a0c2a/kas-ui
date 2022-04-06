@@ -1,5 +1,5 @@
 import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
-import React, { useRef, useState } from "react";
+import { FunctionComponent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 import {
@@ -16,7 +16,7 @@ import SearchIcon from "@patternfly/react-icons/dist/js/icons/search-icon";
 
 export type NameFilterProps = FilterProps;
 
-export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
+export const NameFilter: FunctionComponent<NameFilterProps> = ({
   getSelectionForFilter,
   onDeleteChip,
   onDeleteChipGroup,
@@ -60,7 +60,7 @@ export const NameFilter: React.FunctionComponent<NameFilterProps> = ({
 
   const renderNameInput = () => {
     const v = !valid || isMaxFilter;
-    const FilterTooltip: React.FunctionComponent = () => {
+    const FilterTooltip: FunctionComponent = () => {
       if (v) {
         return (
           <Tooltip

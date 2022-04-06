@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactNode, ReactElement } from "react";
 import {
   HeaderProps,
   Table as PFTable,
@@ -20,7 +20,7 @@ export type MASTableProps<T> = CustomRowWrapperContextProps<T> & {
   };
   tableHeaderProps?: Omit<HeaderProps, "children">;
   tableBodyProps?: Omit<TableBodyProps, "children">;
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 
 const MASTable = <T,>({

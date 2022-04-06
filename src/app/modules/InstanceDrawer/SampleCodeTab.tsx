@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   TextContent,
@@ -8,7 +8,7 @@ import {
 } from "@patternfly/react-core";
 import CopyIcon from "@patternfly/react-icons/dist/js/icons/copy-icon";
 
-export const SampleCodeTab: React.FunctionComponent = () => {
+export const SampleCodeTab: FunctionComponent = () => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
 
   return (

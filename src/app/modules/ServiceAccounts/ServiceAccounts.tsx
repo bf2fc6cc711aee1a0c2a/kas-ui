@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import {
   PageSection,
@@ -9,7 +9,7 @@ import {
 import { ServiceAccountsTableConnected } from "@app/modules/ServiceAccounts/components/ServiceAccountsTableConnected";
 import "@app/modules/styles.css";
 
-const ServiceAccounts: React.FC = () => {
+const ServiceAccounts: FC = () => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   return (
     <>

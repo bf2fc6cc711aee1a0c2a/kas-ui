@@ -2,7 +2,7 @@ import {
   InstanceDrawer,
   InstanceDrawerProps,
 } from "@app/modules/InstanceDrawer";
-import React, { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { isMobileTablet } from "@app/utils";
 import {
@@ -19,7 +19,7 @@ import {
 
 export type KasLayoutProps = Pick<InstanceDrawerProps, "tokenEndPointUrl">;
 
-export const KasLayout: React.FunctionComponent<KasLayoutProps> = ({
+export const KasLayout: FunctionComponent<KasLayoutProps> = ({
   children,
   tokenEndPointUrl,
 }) => {

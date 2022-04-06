@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   cellWidth,
@@ -36,7 +36,7 @@ export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   perPage: number;
 };
 
-const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
+const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
   page,
   perPage,
   expectedTotal,
@@ -72,7 +72,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   ];
 
   const resetCredentials = (
-    event: React.MouseEvent,
+    event: MouseEvent,
     originalData: ServiceAccountListItem
   ) => {
     onResetCredentials && onResetCredentials(originalData);
@@ -82,7 +82,7 @@ const ServiceAccountsTableView: React.FC<ServiceAccountsTableViewProps> = ({
   };
 
   const deleteAccount = (
-    event: React.MouseEvent,
+    event: MouseEvent,
     originalData: ServiceAccountListItem
   ) => {
     onDeleteServiceAccount && onDeleteServiceAccount(originalData);

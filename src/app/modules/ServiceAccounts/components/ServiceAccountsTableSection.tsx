@@ -1,6 +1,6 @@
 import { ServiceAccountListItem } from "@rhoas/kafka-management-sdk";
 import { usePagination } from "@app/common";
-import React, { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { Card, PageSection, PageSectionVariants } from "@patternfly/react-core";
 import { ServiceAccountsTableView } from "@app/modules/ServiceAccounts/components/ServiceAccountsTableView";
 import { ModalType, useModal } from "@rhoas/app-services-ui-shared";
@@ -10,7 +10,7 @@ export type ServiceAccountTableSectionProps = {
   serviceAccountItems: ServiceAccountListItem[];
 };
 
-export const ServiceAccountsTableSection: React.FunctionComponent<
+export const ServiceAccountsTableSection: FunctionComponent<
   ServiceAccountTableSectionProps
 > = ({ fetchServiceAccounts, serviceAccountItems }) => {
   const { showModal: showResetCredentialsModal } =

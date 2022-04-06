@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import {
   Select,
   SelectOption,
@@ -20,7 +20,7 @@ export type OwnerSelectProps = {
   allUsers: allUsersType;
 };
 
-export const OwnerSelect: React.FC<OwnerSelectProps> = ({
+export const OwnerSelect: FC<OwnerSelectProps> = ({
   selection,
   setSelection,
   allUsers,

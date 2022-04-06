@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { SetStateAction, Dispatch, useEffect, useState } from "react";
 
 type XDocument = Document & {
   msHidden: string;
@@ -35,7 +35,7 @@ export function getIsDocumentHidden(): boolean {
 
 export function usePageVisibility(): {
   isVisible: boolean;
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
 } {
   const [isVisible, setIsVisible] = useState(getIsDocumentHidden());
   const onVisibilityChange = () => setIsVisible(getIsDocumentHidden());

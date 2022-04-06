@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertVariant, Button, Modal } from "@patternfly/react-core";
 import { isServiceApiError } from "@app/utils";
@@ -22,7 +22,7 @@ enum Step {
   Credentials = "Credentials",
 }
 
-const ResetServiceAccountCredentials: React.FunctionComponent<
+const ResetServiceAccountCredentials: FunctionComponent<
   ResetServiceAccountCredentialsProps & BaseModalProps
 > = ({ serviceAccount, onReset, variant, title, hideModal }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
@@ -82,7 +82,7 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
     hideModal();
   };
 
-  const StepConfirm: React.FunctionComponent = () => (
+  const StepConfirm: FunctionComponent = () => (
     <span
       dangerouslySetInnerHTML={{
         __html: t("serviceAccount.client_secret_will_be_reset", {
@@ -114,7 +114,7 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
     return [];
   };
 
-  const Body: React.FunctionComponent = () => {
+  const Body: FunctionComponent = () => {
     if (step === Step.Confirm) {
       return <StepConfirm />;
     }

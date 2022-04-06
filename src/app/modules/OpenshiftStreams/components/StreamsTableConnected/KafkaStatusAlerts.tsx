@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAlert, useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import {
@@ -11,7 +11,7 @@ import { InstanceStatus, MAX_POLL_INTERVAL } from "@app/utils";
 import { AlertVariant } from "@patternfly/react-core";
 import { useTimeout } from "@app/hooks/useTimeout";
 
-export const KafkaStatusAlerts: React.FunctionComponent = () => {
+export const KafkaStatusAlerts: FunctionComponent = () => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const { addAlert } = useAlert() || {};
   const auth = useAuth();

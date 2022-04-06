@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { PaginationProvider } from "@app/common";
 import { FederatedContext, FederatedProps } from "@app/contexts";
 import { ModalProvider } from "@rhoas/app-services-ui-components";
@@ -13,7 +13,7 @@ import {
 // Version of OpenshiftStreams for federation
 type OpenshiftStreamsFederatedProps = StreamsTableProps & FederatedProps;
 
-const OpenshiftStreamsFederated: React.FunctionComponent<
+const OpenshiftStreamsFederated: FunctionComponent<
   OpenshiftStreamsFederatedProps
 > = ({
   preCreateInstance,

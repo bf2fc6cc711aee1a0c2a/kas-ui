@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { FunctionComponent, MouseEvent, ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Select,
@@ -13,7 +13,7 @@ export type FilterSelectProps = {
   setFilterSelected: (value: string) => void;
 };
 
-export const FilterSelect: React.FunctionComponent<FilterSelectProps> = ({
+export const FilterSelect: FunctionComponent<FilterSelectProps> = ({
   setFilterSelected,
   filterSelected,
 }) => {
@@ -25,7 +25,7 @@ export const FilterSelect: React.FunctionComponent<FilterSelectProps> = ({
   };
 
   const onSelect = (
-    _event: React.MouseEvent | React.ChangeEvent,
+    _event: MouseEvent | ChangeEvent,
     selection: string | SelectOptionObject
   ) => {
     setIsFilterExpanded(!isFilterExpanded);

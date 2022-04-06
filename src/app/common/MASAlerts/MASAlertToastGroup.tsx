@@ -1,4 +1,4 @@
-import React from "react";
+import { FunctionComponent } from "react";
 import { AlertProps } from "@rhoas/app-services-ui-shared";
 import {
   AlertGroup,
@@ -12,7 +12,7 @@ type AlertToastGroupProps = {
   onCloseAlert: (key: string | undefined) => void;
 };
 
-export const MASAlertToastGroup: React.FunctionComponent<
+export const MASAlertToastGroup: FunctionComponent<
   AlertToastGroupProps
 > = ({ alerts, onCloseAlert }: AlertToastGroupProps) => {
   return (
