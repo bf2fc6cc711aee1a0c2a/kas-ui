@@ -22,7 +22,7 @@ const CreateInstance: FunctionComponent<
   const onClickQuickStart = useCallback(() => {
     qsContext.setActiveQuickStart &&
       qsContext.setActiveQuickStart("getting-started");
-  }, []);
+  }, [qsContext]);
 
   const handleCreate = useCallback<OnCreateKafka>(
     function (data, onSuccess, onError) {
@@ -39,7 +39,7 @@ const CreateInstance: FunctionComponent<
   const getAvailableProvidersAndDefaults =
     useCallback(async (): Promise<CreateKafkaInitializationData> => {
       return fetchAvailableProvidersAndDefault();
-    }, []);
+    }, [fetchAvailableProvidersAndDefault]);
 
   return (
     <CreateKafkaInstance

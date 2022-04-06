@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@patternfly/react-core";
 import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
@@ -34,16 +34,12 @@ const StreamsToolbar: FunctionComponent<StreamsToolbarProps> = ({
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
 
-  useEffect(() => {
-    handleMaxFilters();
-  }, [filteredValue]);
-
   const onClear = () => {
     setFilteredValue([]);
     setIsMaxFilter(false);
   };
 
-  const handleMaxFilters = () => {
+  const handleMaxFilters = useCallback(() => {
     let maxFilterCount = 0;
     filteredValue?.forEach((filter: FilterType) => {
       const { filterValue, filterKey } = filter;
@@ -77,7 +73,11 @@ const StreamsToolbar: FunctionComponent<StreamsToolbarProps> = ({
     } else {
       setIsMaxFilter(false);
     }
-  };
+  }, [filteredValue]);
+
+  useEffect(() => {
+    handleMaxFilters();
+  }, [handleMaxFilters]);
 
   const toolbarItems: ToolbarItemProps[] = [
     {

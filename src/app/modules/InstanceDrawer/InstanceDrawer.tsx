@@ -1,5 +1,6 @@
 import { ReactElement, useMemo, VoidFunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+// eslint-disable-next-line no-restricted-imports
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import "@patternfly/react-styles/css/utilities/Spacing/spacing.css";
@@ -55,7 +56,12 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
         openDrawer: openInstanceDrawer,
         setInstance: setInstanceDrawerInstance,
       }),
-    []
+    [
+      closeInstanceDrawer,
+      openInstanceDrawer,
+      renderContent,
+      setInstanceDrawerInstance,
+    ]
   );
 
   return (

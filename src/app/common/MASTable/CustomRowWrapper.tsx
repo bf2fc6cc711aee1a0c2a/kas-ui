@@ -1,23 +1,17 @@
-import { MouseEvent, createContext, FunctionComponent, LegacyRef, useContext } from "react";
+import { MouseEvent, createContext, LegacyRef, useContext } from "react";
 import { InstanceStatus } from "@app/utils";
 import { css } from "@patternfly/react-styles";
 import "./CustomRowWrapper.css";
-import { IRow } from "@patternfly/react-table";
+import { IRow, RowWrapperProps } from "@patternfly/react-table";
 
-export type CustomRowWrapperContextProps<T> = {
+export type CustomRowWrapperContextProps = {
   activeRow?: string;
-  onRowClick?: (
-    event: MouseEvent<T>,
-    rowIndex?: number,
-    row?: IRow
-  ) => void;
+  onRowClick?: (event: MouseEvent, rowIndex?: number, row?: IRow) => void;
   rowDataTestId?: string;
   loggedInUser?: string;
-};
+} & RowWrapperProps;
 
-const CustomRowWrapperContext = createContext<
-  CustomRowWrapperContextProps<any>
->({
+const CustomRowWrapperContext = createContext<CustomRowWrapperContextProps>({
   activeRow: "",
   onRowClick: () => {
     // No-op
@@ -27,14 +21,13 @@ const CustomRowWrapperContext = createContext<
 
 export const CustomRowWrapperProvider = CustomRowWrapperContext.Provider;
 
-export const CustomRowWrapper: FunctionComponent<
-  CustomRowWrapperContextProps<any>
-> = (rowWrapperProps) => {
+export const CustomRowWrapper = (
+  rowWrapperProps: CustomRowWrapperContextProps
+) => {
   const { activeRow, onRowClick, rowDataTestId, loggedInUser } = useContext(
     CustomRowWrapperContext
   );
-  const { trRef, className, rowProps, row, onClick, ...props } =
-    (rowWrapperProps || {}) as unknown as any;
+  const { trRef, className, rowProps, row, ...props } = rowWrapperProps;
   const isRowDeleted =
     row?.originalData?.status === InstanceStatus.DEPROVISION ||
     row?.originalData?.status === InstanceStatus.DELETED;
@@ -63,7 +56,6 @@ export const CustomRowWrapper: FunctionComponent<
       hidden={row?.isExpanded !== undefined && !row?.isExpanded}
       onClick={(event) => {
         if (!isRowDeleted) {
-          onClick && onClick(event);
           onRowClick && onRowClick(event, rowProps?.rowIndex, row);
         }
       }}

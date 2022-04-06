@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-export function useTimeout<T>(callback: T, delay: number): void {
-  const savedCallback = useRef<any>();
+export function useTimeout(callback: () => void, delay: number): void {
+  const savedCallback = useRef<() => void>();
 
   useEffect(() => {
     savedCallback.current = callback;
@@ -9,7 +9,7 @@ export function useTimeout<T>(callback: T, delay: number): void {
 
   useEffect(() => {
     function tick() {
-      savedCallback.current();
+      savedCallback.current && savedCallback.current();
     }
     if (delay !== null) {
       const id = setTimeout(tick, delay);

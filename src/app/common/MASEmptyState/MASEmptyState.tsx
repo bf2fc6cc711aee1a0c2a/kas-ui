@@ -34,7 +34,7 @@ export enum MASEmptyStateVariant {
 
 export type MASEmptyStateProps = {
   titleProps?: Omit<TitleProps, "children" | "headingLevel"> & {
-    headingLevel?: string;
+    headingLevel?: TitleProps["headingLevel"];
   };
   emptyStateProps?: Omit<PFEmptyStateProps, "children" | "variant"> & {
     variant?: MASEmptyStateVariant | EmptyStateVariant;
@@ -77,14 +77,14 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
   );
 
   const getVariantConfig = () => {
-    let variantConfig: any = {};
+    let variantConfig;
     switch (masEmptyStateVariant) {
       case MASEmptyStateVariant.GettingStarted:
         variantConfig = {
           variant: EmptyStateVariant.xl,
           icon: SpaceShuttleIcon,
           titleSize: TitleSizes["4xl"],
-          headingLevel: "h1",
+          headingLevel: "h1" as TitleProps["headingLevel"],
         };
         break;
       case MASEmptyStateVariant.NoAccess:
@@ -92,7 +92,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           variant: EmptyStateVariant.large,
           icon: LockIcon,
           titleSize: TitleSizes.xl,
-          headingLevel: "h2",
+          headingLevel: "h2" as TitleProps["headingLevel"],
         };
         break;
       case MASEmptyStateVariant.NoItems:
@@ -100,7 +100,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           variant: EmptyStateVariant.large,
           icon: PlusCircleIcon,
           titleSize: TitleSizes.xl,
-          headingLevel: "h2",
+          headingLevel: "h2" as TitleProps["headingLevel"],
         };
         break;
       case MASEmptyStateVariant.NoResult:
@@ -108,7 +108,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           variant: EmptyStateVariant.large,
           icon: SearchIcon,
           titleSize: TitleSizes.lg,
-          headingLevel: "h2",
+          headingLevel: "h2" as TitleProps["headingLevel"],
         };
         break;
       case MASEmptyStateVariant.UnexpectedError:
@@ -116,7 +116,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           variant: EmptyStateVariant.full,
           icon: ExclamationCircleIcon,
           titleSize: TitleSizes.lg,
-          headingLevel: "h1",
+          headingLevel: "h1" as TitleProps["headingLevel"],
         };
         break;
       case MASEmptyStateVariant.PageNotFound:
@@ -124,7 +124,7 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
           variant: EmptyStateVariant.full,
           icon: NotFoundImg,
           titleSize: TitleSizes.lg,
-          headingLevel: "h1",
+          headingLevel: "h1" as TitleProps["headingLevel"],
         };
         break;
       default:
@@ -149,7 +149,11 @@ export const MASEmptyState: React.FC<MASEmptyStateProps> = ({
     >
       <EmptyStateIcon icon={icon} {...emptyStateIconProps} />
       {title && (
-        <Title headingLevel={headingLevel} size={titleSize} {...restTitleProps}>
+        <Title
+          {...restTitleProps}
+          headingLevel={headingLevel || "h2"}
+          size={titleSize}
+        >
           {title}
         </Title>
       )}

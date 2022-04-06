@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAlert, useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import {
@@ -32,7 +32,7 @@ export const KafkaStatusAlerts: FunctionComponent = () => {
     auth.getUsername()?.then((username) => setLoggedInUser(username));
   }, [auth]);
 
-  const fetchCurrentUserKafkas = async () => {
+  const fetchCurrentUserKafkas = useCallback(async () => {
     const accessToken = await auth?.kas.getToken();
     const filter = `owner = ${loggedInUser}`;
     if (accessToken && isVisible) {
@@ -47,15 +47,15 @@ export const KafkaStatusAlerts: FunctionComponent = () => {
         setCurrentUserKafkas(kafkaInstances.items);
       });
     }
-  };
+  }, [auth, basePath, isVisible, loggedInUser]);
 
   useEffect(() => {
     loggedInUser && fetchCurrentUserKafkas();
-  }, [loggedInUser]);
+  }, [fetchCurrentUserKafkas, loggedInUser]);
 
   useTimeout(() => fetchCurrentUserKafkas(), MAX_POLL_INTERVAL);
 
-  const addAlertAfterSuccessDeletion = () => {
+  const addAlertAfterSuccessDeletion = useCallback(() => {
     const removeKafkaFromDeleted = (name: string) => {
       const index = deletedKafkas.findIndex((k) => k === name);
       if (index > -1) {
@@ -100,9 +100,9 @@ export const KafkaStatusAlerts: FunctionComponent = () => {
         }
       });
     }
-  };
+  }, [addAlert, currentUserKafkas, deletedKafkas, t]);
 
-  const addAlertAfterSuccessCreation = () => {
+  const addAlertAfterSuccessCreation = useCallback(() => {
     const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
     if (items && items.length > 0) {
       const completedOrFailedItems = Object.assign(
@@ -163,7 +163,7 @@ export const KafkaStatusAlerts: FunctionComponent = () => {
       )
     );
     setItems(incompleteKafkas);
-  };
+  }, [addAlert, currentUserKafkas, items, t]);
 
   // Redirect the user to a previous page if there are no kafka instances for a page number / size
   useEffect(() => {
@@ -171,7 +171,11 @@ export const KafkaStatusAlerts: FunctionComponent = () => {
     addAlertAfterSuccessDeletion();
     // handle success alert for creation
     addAlertAfterSuccessCreation();
-  }, [currentUserKafkas]);
+  }, [
+    addAlertAfterSuccessCreation,
+    addAlertAfterSuccessDeletion,
+    currentUserKafkas,
+  ]);
 
   return <></>;
 };

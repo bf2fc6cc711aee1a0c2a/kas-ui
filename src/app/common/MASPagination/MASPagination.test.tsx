@@ -71,23 +71,22 @@ describe("<MASPagination/>", () => {
     expect(container.getElementsByClassName("pf-c-form-control").length).toBe(
       1
     );
-    const currentPageButton: any = screen.getByLabelText(/Current page/);
+    const currentPageButton = screen.getByLabelText(/Current page/);
     expect(currentPageButton).toBeDisabled();
     expect(currentPageButton).toHaveValue(1);
     expect(currentPageButton).toHaveAttribute("min", "1");
     expect(currentPageButton).toHaveAttribute("max", "1");
     //first page
-    const firstPageButton: any = screen.getByLabelText(/Go to first page/);
+    const firstPageButton = screen.getByLabelText(/Go to first page/);
     expect(firstPageButton).toHaveClass("pf-m-disabled");
     //last page
-    const lastPageButton: any = screen.getByLabelText(/Go to last page/);
+    const lastPageButton = screen.getByLabelText(/Go to last page/);
     expect(lastPageButton).toHaveClass("pf-m-disabled");
     //previous button
-    const previousPageButton: any =
-      screen.getByLabelText(/Go to previous page/);
+    const previousPageButton = screen.getByLabelText(/Go to previous page/);
     expect(previousPageButton).toHaveClass("pf-m-disabled");
     //next button
-    const nextPageButton: any = screen.getByLabelText(/Go to next page/);
+    const nextPageButton = screen.getByLabelText(/Go to next page/);
     expect(nextPageButton).toHaveClass("pf-m-disabled");
   });
 
@@ -120,22 +119,22 @@ describe("<MASPagination/>", () => {
     expect(container.getElementsByClassName("pf-c-form-control").length).toBe(
       1
     );
-    const currentPageButton: any = screen.getByLabelText(/Current page/);
+    const currentPageButton = screen.getByLabelText(/Current page/);
     expect(currentPageButton).not.toBeDisabled();
     expect(currentPageButton).toHaveValue(1);
     expect(currentPageButton).toHaveAttribute("min", "1");
     expect(currentPageButton).toHaveAttribute("max", "3");
     //first page
-    const firstPage: any = screen.getByLabelText(/Go to first page/);
+    const firstPage = screen.getByLabelText(/Go to first page/);
     expect(firstPage).toHaveClass("pf-m-disabled");
     //last page
-    const lastPage: any = screen.getByLabelText(/Go to last page/);
+    const lastPage = screen.getByLabelText(/Go to last page/);
     expect(lastPage).not.toHaveClass("pf-m-disabled");
     //previous button
-    const previousButton: any = screen.getByLabelText(/Go to previous page/);
+    const previousButton = screen.getByLabelText(/Go to previous page/);
     expect(previousButton).toHaveClass("pf-m-disabled");
     //next button
-    const nextButton: any = screen.getByLabelText(/Go to next page/);
+    const nextButton = screen.getByLabelText(/Go to next page/);
     expect(nextButton).not.toHaveClass("pf-m-disabled");
   });
 

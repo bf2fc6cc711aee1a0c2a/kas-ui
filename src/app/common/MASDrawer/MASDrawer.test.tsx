@@ -56,13 +56,13 @@ describe("<MASDrawer/>", () => {
 
     //act
     act(() => {
-      const detailsTab: any = screen.getByRole("button", { name: /Details/i });
+      const detailsTab = screen.getByRole("button", { name: /Details/i });
       userEvent.click(detailsTab);
-      const connectionTab: any = screen.getByRole("button", {
+      const connectionTab = screen.getByRole("button", {
         name: /Connection/i,
       });
       userEvent.click(connectionTab);
-      const closeButton: any = screen.getByRole("button", {
+      const closeButton = screen.getByRole("button", {
         name: /Close drawer panel/i,
       });
       userEvent.click(closeButton);

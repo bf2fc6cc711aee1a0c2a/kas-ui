@@ -1,4 +1,11 @@
-import { FC, useCallback, FunctionComponent, createContext, useContext, useState } from "react";
+import {
+  FC,
+  useCallback,
+  FunctionComponent,
+  createContext,
+  useContext,
+  useState,
+} from "react";
 import {
   Pagination as PFPagination,
   PaginationProps as PFPaginationProps,
@@ -40,14 +47,20 @@ const MASPagination: FunctionComponent<PaginationProps> = ({
 }) => {
   const { setPage, setPerPage, perPage, page } = usePagination() || {};
 
-  const onSetPage = useCallback((_: unknown, newPage: number) => {
-    setPage && setPage(newPage);
-  }, []);
+  const onSetPage = useCallback(
+    (_: unknown, newPage: number) => {
+      setPage && setPage(newPage);
+    },
+    [setPage]
+  );
 
-  const onPerPageSelect = useCallback((_: unknown, newPerPage: number) => {
-    setPage && setPage(1);
-    setPerPage && setPerPage(newPerPage);
-  }, []);
+  const onPerPageSelect = useCallback(
+    (_: unknown, newPerPage: number) => {
+      setPage && setPage(1);
+      setPerPage && setPerPage(newPerPage);
+    },
+    [setPage, setPerPage]
+  );
 
   return (
     <PFPagination

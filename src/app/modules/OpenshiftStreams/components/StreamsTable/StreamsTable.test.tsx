@@ -9,10 +9,11 @@ import {
   ConfigContext,
   ModalContext,
 } from "@rhoas/app-services-ui-shared";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import { KasModalLoader } from "@app/modals";
 import { InstanceDrawerContextProvider } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
-const kafkaInstanceItems = [
+const kafkaInstanceItems: KafkaRequest[] = [
   {
     id: "1iSY6RQ3JKI8Q0OTmjQFd3ocFRg",
     kind: "kafka",
@@ -27,6 +28,7 @@ const kafkaInstanceItems = [
       "serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org",
     created_at: "2020-10-05T12:51:24.053142Z",
     updated_at: "2020-10-05T12:56:36.362208Z",
+    reauthentication_enabled: false,
   },
 ];
 
@@ -43,11 +45,14 @@ jest.mock("@rhoas/kafka-management-sdk", () => {
   };
 });
 
-import { StreamsTable } from "@app/modules/OpenshiftStreams/components";
+import {
+  StreamsTable,
+  StreamsTableProps,
+} from "@app/modules/OpenshiftStreams/components";
 
 describe("<StreamsTable/>", () => {
   const setup = (
-    args: any,
+    args: StreamsTableProps,
     authValue = {
       kas: {
         getToken: () => Promise.resolve("test-token"),
@@ -94,13 +99,15 @@ describe("<StreamsTable/>", () => {
     );
   };
 
-  const props = {
-    createStreamsInstance: false,
-    setCreateStreamsInstance: jest.fn(),
+  const props: StreamsTableProps = {
+    handleCreateInstanceModal: jest.fn(),
+    loggedInUser: undefined,
+    onChangeOwner: jest.fn(),
+    onCreate: jest.fn(),
+    onDeleteInstance: jest.fn(),
     kafkaInstanceItems,
     onViewInstance: jest.fn(),
     onViewConnection: jest.fn(),
-    mainToggle: false,
     refresh: jest.fn(),
     page: 1,
     perPage: 10,
@@ -126,11 +133,11 @@ describe("<StreamsTable/>", () => {
   it("should disable the delete kebab button if the ower and loggedInUser are not the same", () => {
     //arrange
     const newProps = Object.assign({}, props);
-    newProps.kafkaInstanceItems[0].owner = "test-user";
+    newProps.kafkaInstanceItems![0].owner = "test-user";
     setup(newProps);
 
     //act
-    const kebabDropdownButton: any =
+    const kebabDropdownButton =
       screen.getByText("test-user")?.parentElement?.lastChild?.lastChild
         ?.lastChild;
     act(() => {

@@ -1,5 +1,5 @@
 import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import {
   Configuration,
   SecurityApi,
@@ -32,7 +32,7 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
     }
   };
 
-  const fetchServiceAccounts = async () => {
+  const fetchServiceAccounts = useCallback(async () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken && config) {
       try {
@@ -59,11 +59,11 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
         }
       }
     }
-  };
+  }, [auth, config]);
 
   useEffect(() => {
     fetchServiceAccounts();
-  }, [auth, config]);
+  }, [fetchServiceAccounts]);
 
   if (isUserUnauthorized) {
     return <UserUnauthorized />;

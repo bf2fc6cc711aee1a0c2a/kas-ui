@@ -122,15 +122,15 @@ describe("<MASToolbar/>", () => {
 
     //act
     act(() => {
-      const createButton: any = screen.getByRole("button", {
+      const createButton = screen.getByRole("button", {
         name: /Create kafka instance/i,
       });
       userEvent.click(createButton);
-      const filterSelect: any = screen.getByRole("listbox", {
+      const filterSelect = screen.getByRole("listbox", {
         name: /Select filter/i,
       });
       userEvent.click(filterSelect);
-      const searchButton: any = screen.getByRole("button", {
+      const searchButton = screen.getByRole("button", {
         name: /Search instances/i,
       });
       userEvent.click(searchButton);
@@ -144,7 +144,7 @@ describe("<MASToolbar/>", () => {
     screen.getAllByText(/name/i);
     screen.getAllByText(/status/i);
     //input field
-    const nameInput: any = screen.getByRole("searchbox", {
+    const nameInput = screen.getByRole("searchbox", {
       name: /Search filter input/i,
     });
     expect(nameInput).toHaveValue("name");

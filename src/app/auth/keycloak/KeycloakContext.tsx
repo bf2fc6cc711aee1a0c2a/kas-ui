@@ -18,12 +18,14 @@ export const KeycloakContext = createContext<IKeycloakContext>({
 
 export const KeycloakAuthProvider: FunctionComponent = (props) => {
   const getUsername = () => {
-    return getParsedKeyCloakToken().then((token) => (token as any)["username"]);
+    return getParsedKeyCloakToken().then(
+      (token) => (token as Record<string, string>)["username"]
+    );
   };
 
   const isOrgAdmin = () => {
     return getParsedKeyCloakToken().then(
-      (token) => (token as any)["is_org_admin"]
+      (token) => (token as Record<string, boolean>)["is_org_admin"]
     );
   };
 

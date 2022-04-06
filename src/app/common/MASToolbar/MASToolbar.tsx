@@ -15,7 +15,7 @@ export type ToolbarItemProps = Omit<PFToolbarItemProps, "children"> & {
 export type MASToolbarProps = {
   toolbarProps: Omit<ToolbarProps, "children" | "ref">;
   toggleGroupProps?: Omit<ToolbarToggleGroupProps, "children">;
-  toggleGroupItems?: any;
+  toggleGroupItems?: ToolbarToggleGroupProps["children"];
   toolbarItems?: ToolbarItemProps[];
 };
 

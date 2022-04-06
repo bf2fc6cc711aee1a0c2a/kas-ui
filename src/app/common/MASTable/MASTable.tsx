@@ -14,7 +14,7 @@ import {
   CustomRowWrapperProvider,
 } from "./CustomRowWrapper";
 
-export type MASTableProps<T> = CustomRowWrapperContextProps<T> & {
+export type MASTableProps = CustomRowWrapperContextProps & {
   tableProps: Omit<PFTableProps, "children"> & {
     hasDefaultCustomRowWrapper?: boolean;
   };
@@ -23,7 +23,7 @@ export type MASTableProps<T> = CustomRowWrapperContextProps<T> & {
   children?: ReactNode;
 };
 
-const MASTable = <T,>({
+const MASTable = ({
   tableProps,
   tableHeaderProps,
   tableBodyProps,
@@ -32,7 +32,7 @@ const MASTable = <T,>({
   onRowClick,
   rowDataTestId,
   loggedInUser,
-}: MASTableProps<T>): ReactElement<any, any> => {
+}: MASTableProps): ReactElement => {
   const {
     cells,
     rows,
@@ -50,7 +50,7 @@ const MASTable = <T,>({
    * Handle CustomRowWrapper
    */
   if (hasDefaultCustomRowWrapper) {
-    (restProps as any)["rowWrapper"] = CustomRowWrapper;
+    restProps.rowWrapper = CustomRowWrapper;
   }
 
   return (

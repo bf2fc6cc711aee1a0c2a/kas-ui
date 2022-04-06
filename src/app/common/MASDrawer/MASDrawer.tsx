@@ -25,7 +25,7 @@ export type MASDrawerProps = DrawerProps & {
   children: ReactNode;
   panelBodyContent?: ReactNode;
   onClose: () => void;
-  drawerData?: any;
+  drawerData?: unknown;
   isLoading?: boolean;
   drawerPanelContentProps?: Omit<DrawerPanelContentProps, "children">;
   drawerHeaderProps?: {

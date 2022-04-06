@@ -296,8 +296,11 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
       deleteInstance(originalData);
     }
     // Set focus back on previous selected element i.e. kebab button
-    const previousNode = (event?.target as any)?.parentElement?.parentElement
-      ?.previousSibling;
+
+    const previousNode =
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      event?.target?.parentElement?.parentElement?.previousSibling;
     if (previousNode !== undefined && previousNode !== null) {
       (previousNode as HTMLElement).focus();
     }
@@ -336,7 +339,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
     setOrderBy(`${getParameterForSortIndex(index)} ${myDirection}`);
   };
 
-  const onRowClick: MASTableProps<any>["onRowClick"] = (event, _, row) => {
+  const onRowClick: MASTableProps["onRowClick"] = (event, _, row) => {
     if (event.target instanceof HTMLElement) {
       const tagName = event.target.tagName.toLowerCase();
       // Open instance drawer on row click except kebab button click or opening the kafka instance
@@ -361,7 +364,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
         refresh={refresh}
         handleCreateInstanceModal={handleCreateInstanceModal}
       />
-      <MASTable<HTMLTableRowElement | HTMLButtonElement>
+      <MASTable
         tableProps={{
           cells,
           rows,
