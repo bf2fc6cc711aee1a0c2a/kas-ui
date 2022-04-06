@@ -5,30 +5,31 @@
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
-    "declaration": true,
-    "declarationDir": "types",
+    "declaration": false,
     "sourceMap": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
-    "rootDir": ".",
-    "outDir": "dist",
-    "jsx": "react-jsx",
     "moduleResolution": "node",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "noImplicitThis": true,
+    "outDir": "./dist",
+    "baseUrl": ".",
     "paths": {
       "@app/*": ["src/app/*"],
-      "@i18n/*": ["src/i18n/*"],
-      "@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"]
-    },
+      "@test-utils/*": ["test-utils/*"],
+    }
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.jsx", "**/*.js"],
-  "exclude": ["node_modules"]
+  "exclude": ["**/test_common",
+    "node_modules",
+    "./node_modules",
+    "./node_modules/*",
+    "./node_modules/@types/node/index.d.ts"
+  ],
+  "include": ["./src/*", "./src/**/*"]
 }
