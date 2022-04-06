@@ -1,10 +1,10 @@
 import {
   InstanceDrawer,
   InstanceDrawerProps,
-} from '@app/modules/InstanceDrawer';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { isMobileTablet } from '@app/utils';
+} from "@app/modules/InstanceDrawer";
+import { FunctionComponent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { isMobileTablet } from "@app/utils";
 import {
   Button,
   Level,
@@ -15,25 +15,25 @@ import {
   PageSectionVariants,
   Text,
   TextContent,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
-export type KasLayoutProps = Pick<InstanceDrawerProps, 'tokenEndPointUrl'>;
+export type KasLayoutProps = Pick<InstanceDrawerProps, "tokenEndPointUrl">;
 
-export const KasLayout: React.FunctionComponent<KasLayoutProps> = ({
+export const KasLayout: FunctionComponent<KasLayoutProps> = ({
   children,
   tokenEndPointUrl,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (isMobileTablet()) {
       const localStorage = window.localStorage;
       if (localStorage) {
-        const count = parseInt(localStorage.getItem('openSessions') || '0');
+        const count = parseInt(localStorage.getItem("openSessions") || "0");
         const newCount = count + 1;
         if (count < 1) {
-          localStorage.setItem('openSessions', `${newCount}`);
+          localStorage.setItem("openSessions", `${newCount}`);
           setIsMobileModalOpen(true);
         }
       }
@@ -49,12 +49,12 @@ export const KasLayout: React.FunctionComponent<KasLayoutProps> = ({
       <InstanceDrawer
         tokenEndPointUrl={tokenEndPointUrl}
         renderContent={() => (
-          <main className='pf-c-page__main'>
+          <main className="pf-c-page__main">
             <PageSection variant={PageSectionVariants.light}>
               <Level>
                 <LevelItem>
                   <TextContent>
-                    <Text component='h1'>{t('kafka_instances')}</Text>
+                    <Text component="h1">{t("kafka_instances")}</Text>
                   </TextContent>
                 </LevelItem>
               </Level>
@@ -65,13 +65,13 @@ export const KasLayout: React.FunctionComponent<KasLayoutProps> = ({
       />
       <Modal
         variant={ModalVariant.small}
-        title='Mobile experience'
+        title="Mobile experience"
         isOpen={isMobileModalOpen}
         onClose={() => handleMobileModal()}
         actions={[
           <Button
-            key='confirm'
-            variant='primary'
+            key="confirm"
+            variant="primary"
             onClick={() => handleMobileModal()}
           >
             Ok

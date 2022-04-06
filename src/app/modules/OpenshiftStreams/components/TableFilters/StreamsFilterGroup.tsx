@@ -1,16 +1,16 @@
-import React from 'react';
-import { ToolbarChip, ToolbarGroup } from '@patternfly/react-core';
-import { CloudProviderFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/CloudProviderFilter';
-import { NameFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/NameFilter';
-import { OwnerFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/OwnerFilter';
-import { RegionFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/RegionFilter';
-import { FilterSelect } from '@app/modules/OpenshiftStreams/components/TableFilters/FilterSelect';
-import { StatusFilter } from '@app/modules/OpenshiftStreams/components/TableFilters/StatusFilter';
-import { KeyValueOptions } from '@app/utils';
+import { FunctionComponent } from "react";
+import { ToolbarChip, ToolbarGroup } from "@patternfly/react-core";
+import { CloudProviderFilter } from "@app/modules/OpenshiftStreams/components/TableFilters/CloudProviderFilter";
+import { NameFilter } from "@app/modules/OpenshiftStreams/components/TableFilters/NameFilter";
+import { OwnerFilter } from "@app/modules/OpenshiftStreams/components/TableFilters/OwnerFilter";
+import { RegionFilter } from "@app/modules/OpenshiftStreams/components/TableFilters/RegionFilter";
+import { FilterSelect } from "@app/modules/OpenshiftStreams/components/TableFilters/FilterSelect";
+import { StatusFilter } from "@app/modules/OpenshiftStreams/components/TableFilters/StatusFilter";
+import { KeyValueOptions } from "@app/utils";
 import {
   FilterType,
   FilterValue,
-} from '@app/modules/OpenshiftStreams/components';
+} from "@app/modules/OpenshiftStreams/components";
 
 export type StreamsFilterGroupProps = {
   isMaxFilter: boolean;
@@ -20,9 +20,7 @@ export type StreamsFilterGroupProps = {
   setFilterSelected: (value: string) => void;
 };
 
-export const StreamsFilterGroup: React.FunctionComponent<
-  StreamsFilterGroupProps
-> = ({
+export const StreamsFilterGroup: FunctionComponent<StreamsFilterGroupProps> = ({
   isMaxFilter,
   filteredValue,
   setFilteredValue,
@@ -149,7 +147,7 @@ export const StreamsFilterGroup: React.FunctionComponent<
 
   return (
     <>
-      <ToolbarGroup variant='filter-group'>
+      <ToolbarGroup variant="filter-group">
         <FilterSelect
           setFilterSelected={setFilterSelected}
           filterSelected={filterSelected}

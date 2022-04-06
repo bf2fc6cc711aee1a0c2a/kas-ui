@@ -1,4 +1,4 @@
-import React from 'react';
+import { FunctionComponent } from "react";
 import {
   ToolbarContent,
   Toolbar,
@@ -7,19 +7,19 @@ import {
   ToolbarToggleGroup,
   ToolbarItem,
   ToolbarToggleGroupProps,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
-export type ToolbarItemProps = Omit<PFToolbarItemProps, 'children'> & {
+export type ToolbarItemProps = Omit<PFToolbarItemProps, "children"> & {
   item: JSX.Element | undefined;
 };
 export type MASToolbarProps = {
-  toolbarProps: Omit<ToolbarProps, 'children' | 'ref'>;
-  toggleGroupProps?: Omit<ToolbarToggleGroupProps, 'children'>;
-  toggleGroupItems?: any;
+  toolbarProps: Omit<ToolbarProps, "children" | "ref">;
+  toggleGroupProps?: Omit<ToolbarToggleGroupProps, "children">;
+  toggleGroupItems?: ToolbarToggleGroupProps["children"];
   toolbarItems?: ToolbarItemProps[];
 };
 
-const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
+const MASToolbar: FunctionComponent<MASToolbarProps> = ({
   toolbarProps,
   toggleGroupProps,
   toolbarItems,
@@ -28,7 +28,7 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
   const {
     id,
     clearAllFilters,
-    collapseListedFiltersBreakpoint = 'md',
+    collapseListedFiltersBreakpoint = "md",
     inset,
     ...restToolbarProps
   } = toolbarProps;
@@ -40,7 +40,7 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
         clearAllFilters={clearAllFilters}
         inset={inset}
         collapseListedFiltersBreakpoint={collapseListedFiltersBreakpoint}
-        ouiaId='toolbar'
+        ouiaId="toolbar"
         {...restToolbarProps}
       >
         <ToolbarContent>
@@ -54,7 +54,7 @@ const MASToolbar: React.FunctionComponent<MASToolbarProps> = ({
           )}
           {toolbarItems?.map((toolbarItem, index) => {
             const {
-              key = 'mas',
+              key = "mas",
               variant,
               className,
               id,

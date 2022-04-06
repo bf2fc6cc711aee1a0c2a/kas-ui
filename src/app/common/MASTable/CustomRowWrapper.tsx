@@ -1,38 +1,33 @@
-import React, { createContext, LegacyRef, useContext } from 'react';
-import { InstanceStatus } from '@app/utils';
-import { css } from '@patternfly/react-styles';
-import './CustomRowWrapper.css';
-import { IRow } from '@patternfly/react-table';
+import { MouseEvent, createContext, LegacyRef, useContext } from "react";
+import { InstanceStatus } from "@app/utils";
+import { css } from "@patternfly/react-styles";
+import "./CustomRowWrapper.css";
+import { IRow, RowWrapperProps } from "@patternfly/react-table";
 
-export type CustomRowWrapperContextProps<T> = {
+export type CustomRowWrapperContextProps = {
   activeRow?: string;
-  onRowClick?: (
-    event: React.MouseEvent<T>,
-    rowIndex?: number,
-    row?: IRow
-  ) => void;
+  onRowClick?: (event: MouseEvent, rowIndex?: number, row?: IRow) => void;
   rowDataTestId?: string;
   loggedInUser?: string;
-};
+} & RowWrapperProps;
 
-const CustomRowWrapperContext = createContext<
-  CustomRowWrapperContextProps<any>
->({
-  activeRow: '',
+const CustomRowWrapperContext = createContext<CustomRowWrapperContextProps>({
+  activeRow: "",
   onRowClick: () => {
     // No-op
   },
-  loggedInUser: '',
+  loggedInUser: "",
 });
 
 export const CustomRowWrapperProvider = CustomRowWrapperContext.Provider;
 
-export const CustomRowWrapper = (rowWrapperProps): JSX.Element => {
+export const CustomRowWrapper = (
+  rowWrapperProps: CustomRowWrapperContextProps
+) => {
   const { activeRow, onRowClick, rowDataTestId, loggedInUser } = useContext(
     CustomRowWrapperContext
   );
-  const { trRef, className, rowProps, row, onClick, ...props } =
-    rowWrapperProps || {};
+  const { trRef, className, rowProps, row, ...props } = rowWrapperProps;
   const isRowDeleted =
     row?.originalData?.status === InstanceStatus.DEPROVISION ||
     row?.originalData?.status === InstanceStatus.DELETED;
@@ -49,19 +44,18 @@ export const CustomRowWrapper = (rowWrapperProps): JSX.Element => {
       ref={ref}
       className={css(
         className,
-        'pf-c-table-row__item',
+        "pf-c-table-row__item",
         isRowDeleted
-          ? 'pf-m-disabled'
-          : isLoggedInUserOwner && 'pf-m-selectable',
+          ? "pf-m-disabled"
+          : isLoggedInUserOwner && "pf-m-selectable",
         !isRowDisabled &&
           activeRow &&
           activeRow === row?.originalData?.name &&
-          'pf-m-selected'
+          "pf-m-selected"
       )}
       hidden={row?.isExpanded !== undefined && !row?.isExpanded}
       onClick={(event) => {
         if (!isRowDeleted) {
-          onClick && onClick(event);
           onRowClick && onRowClick(event, rowProps?.rowIndex, row);
         }
       }}

@@ -1,6 +1,7 @@
-import { FilterProps } from '@app/modules/OpenshiftStreams/components/TableFilters/types';
-import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
+import { useRef, useState } from "react";
+import * as React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectOption,
@@ -8,9 +9,9 @@ import {
   SelectVariant,
   ToolbarFilter,
   Tooltip,
-} from '@patternfly/react-core';
-import { cloudRegionOptions, KeyValueOptions } from '@app/utils';
-import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/TableFilters/hooks';
+} from "@patternfly/react-core";
+import { cloudRegionOptions, KeyValueOptions } from "@app/utils";
+import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 
 export type RegionFilterProps = FilterProps;
 
@@ -24,18 +25,18 @@ export const RegionFilter: React.FunctionComponent<RegionFilterProps> = ({
   filterSelected,
   updateFilter,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const options = cloudRegionOptions.map((region) => {
     return { label: t(region.value), value: region.value, disabled: false };
   });
 
   return (
     <ToolbarFilter
-      chips={getSelectionForFilter('region')?.map((val) => t(val))}
-      deleteChip={(_category, chip) => onDeleteChip('region', chip, options)}
-      deleteChipGroup={() => onDeleteChipGroup('region')}
-      categoryName={t('region')}
-      showToolbarItem={filterSelected === 'region'}
+      chips={getSelectionForFilter("region")?.map((val) => t(val))}
+      deleteChip={(_category, chip) => onDeleteChip("region", chip, options)}
+      deleteChipGroup={() => onDeleteChipGroup("region")}
+      categoryName={t("region")}
+      showToolbarItem={filterSelected === "region"}
     >
       <RegionSelect
         updateFilter={updateFilter}
@@ -52,12 +53,12 @@ export const RegionFilter: React.FunctionComponent<RegionFilterProps> = ({
 
 type RegionSelectProps = Pick<
   FilterProps,
-  | 'updateFilter'
-  | 'isMaxFilter'
-  | 'removeFilterValue'
-  | 'isDisabledSelectOption'
-  | 'getSelectionForFilter'
-  | 'filterSelected'
+  | "updateFilter"
+  | "isMaxFilter"
+  | "removeFilterValue"
+  | "isDisabledSelectOption"
+  | "getSelectionForFilter"
+  | "filterSelected"
 > & {
   options: KeyValueOptions[];
 };
@@ -71,7 +72,7 @@ const RegionSelect: React.FunctionComponent<RegionSelectProps> = ({
   getSelectionForFilter,
   filterSelected,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const selectRef = useRef<Select>(null);
   const tooltipContent = useTooltipContent(isMaxFilter);
   const [expanded, setExpanded] = useState(false);
@@ -100,7 +101,7 @@ const RegionSelect: React.FunctionComponent<RegionSelectProps> = ({
   ) => {
     if (isPlaceholder) clear();
     updateFilter(
-      'region',
+      "region",
       { value: selection.toString(), isExact: true },
       true
     );
@@ -108,22 +109,22 @@ const RegionSelect: React.FunctionComponent<RegionSelectProps> = ({
   };
 
   const clear = () => {
-    removeFilterValue('region');
+    removeFilterValue("region");
     setExpanded(false);
   };
 
-  if (filterSelected === 'region') {
+  if (filterSelected === "region") {
     return (
       <Select
-        id='region-select'
+        id="region-select"
         variant={SelectVariant.checkbox}
-        aria-label='Select region'
+        aria-label="Select region"
         onToggle={onToggle}
-        selections={getSelectionForFilter('region')}
+        selections={getSelectionForFilter("region")}
         isOpen={expanded}
         onSelect={onSelect}
-        placeholderText={t('filter_by_region')}
-        className='select-custom-width'
+        placeholderText={t("filter_by_region")}
+        className="select-custom-width"
         ref={selectRef}
       >
         {options.map((option, index) => {
@@ -132,7 +133,7 @@ const RegionSelect: React.FunctionComponent<RegionSelectProps> = ({
               return true;
             }
             return (
-              isMaxFilter && isDisabledSelectOption('region', option.value)
+              isMaxFilter && isDisabledSelectOption("region", option.value)
             );
           };
           return (

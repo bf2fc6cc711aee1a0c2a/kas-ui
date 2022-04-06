@@ -1,5 +1,5 @@
-import { KafkaRequestPayload } from '@rhoas/kafka-management-sdk';
-import { Validated } from '@app/models/validated';
+import { KafkaRequestPayload } from "@rhoas/kafka-management-sdk";
+import { Validated } from "@app/models/validated";
 
 export type NewKafkaRequestPayload = {
   cloud_provider: Validated<string | undefined>;
@@ -12,16 +12,16 @@ export const asKafkaRequestPayload = (
   kafkaRequest: NewKafkaRequestPayload
 ): KafkaRequestPayload => {
   if (kafkaRequest.name.value === undefined) {
-    throw new Error('kafkaRequest.name must not be undefined');
+    throw new Error("kafkaRequest.name must not be undefined");
   }
   if (kafkaRequest.region.value === undefined) {
-    throw new Error('kafkaRequest.region must not be undefined');
+    throw new Error("kafkaRequest.region must not be undefined");
   }
   if (kafkaRequest.multi_az.value === undefined) {
-    throw new Error('kafkaRequest.multi_az must not be undefined');
+    throw new Error("kafkaRequest.multi_az must not be undefined");
   }
   if (kafkaRequest.cloud_provider.value === undefined) {
-    throw new Error('kafkaRequest.cloud_provider must not be undefined');
+    throw new Error("kafkaRequest.cloud_provider must not be undefined");
   }
   return {
     name: kafkaRequest.name.value,
@@ -35,26 +35,26 @@ export const isKafkaRequestInvalid = (
   value: NewKafkaRequestPayload
 ): boolean => {
   return (
-    value.name.validated === 'error' ||
-    value.region.validated === 'error' ||
-    value.cloud_provider.validated === 'error' ||
-    value.multi_az.validated === 'error'
+    value.name.validated === "error" ||
+    value.region.validated === "error" ||
+    value.cloud_provider.validated === "error" ||
+    value.multi_az.validated === "error"
   );
 };
 
 export const createEmptyNewKafkaRequestPayload = (): NewKafkaRequestPayload => {
   return {
     cloud_provider: {
-      value: '',
+      value: "",
     },
     multi_az: {
       value: true,
     },
     region: {
-      value: '',
+      value: "",
     },
     name: {
-      value: '',
+      value: "",
     },
   };
 };

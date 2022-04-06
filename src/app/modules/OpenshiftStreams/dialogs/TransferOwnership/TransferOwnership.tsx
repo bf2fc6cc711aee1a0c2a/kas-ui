@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { OwnerSelect } from './OwnerSelect';
-import { useGetAllUsers } from './FilterOwners';
+import { FC, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { OwnerSelect } from "./OwnerSelect";
+import { useGetAllUsers } from "./FilterOwners";
 import {
   Form,
   FormGroup,
@@ -9,20 +9,20 @@ import {
   AlertVariant,
   Alert,
   Modal,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 import {
   Configuration,
   DefaultApi,
   KafkaRequest,
   KafkaUpdateRequest,
-} from '@rhoas/kafka-management-sdk';
+} from "@rhoas/kafka-management-sdk";
 import {
   BaseModalProps,
   useAlert,
   useAuth,
   useConfig,
-} from '@rhoas/app-services-ui-shared';
-import { ErrorCodes, isServiceApiError } from '@app/utils/error';
+} from "@rhoas/app-services-ui-shared";
+import { ErrorCodes, isServiceApiError } from "@app/utils/error";
 
 export type TransferOwnershipProps = {
   kafka: KafkaRequest;
@@ -31,15 +31,20 @@ export type TransferOwnershipProps = {
   hideModal: () => void;
 };
 
-export const TransferOwnership: React.FC<
-  TransferOwnershipProps & BaseModalProps
-> = ({ kafka, onClose, hideModal, refreshKafkas, variant, title }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+export const TransferOwnership: FC<TransferOwnershipProps & BaseModalProps> = ({
+  kafka,
+  onClose,
+  hideModal,
+  refreshKafkas,
+  variant,
+  title,
+}) => {
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
-  const { addAlert } = useAlert() || { addAlert: () => '' };
+  const { addAlert } = useAlert() || { addAlert: () => "" };
 
   //states
   const [selection, setSelection] = useState<string | undefined>();
@@ -70,9 +75,9 @@ export const TransferOwnership: React.FC<
           .then(() => {
             refreshKafkas && refreshKafkas();
             addAlert({
-              title: t('owner_change_sucess_title'),
+              title: t("owner_change_sucess_title"),
               variant: AlertVariant.success,
-              description: t('owner_change_sucess_message', {
+              description: t("owner_change_sucess_message", {
                 newOwner: selection,
                 name: kafka?.name,
               }),
@@ -94,20 +99,20 @@ export const TransferOwnership: React.FC<
   const renderAlert = () => {
     let title, description;
     if (errorCode === ErrorCodes.OWNER_DOES_NOT_EXIST) {
-      title = t('new_owner_does_not_exist_title');
-      description = t('new_owner_does_not_exist_message', {
+      title = t("new_owner_does_not_exist_title");
+      description = t("new_owner_does_not_exist_message", {
         newOwner: selection,
       });
     } else if (errorCode) {
-      title = t('can_not_change_owner_title');
-      description = t('onwer_transfer_failed_message', { name: kafka?.name });
+      title = t("can_not_change_owner_title");
+      description = t("onwer_transfer_failed_message", { name: kafka?.name });
     }
 
     if (title && description) {
       return (
         <Alert
           variant={AlertVariant.danger}
-          aria-live='polite'
+          aria-live="polite"
           isInline
           title={title}
         >
@@ -121,39 +126,39 @@ export const TransferOwnership: React.FC<
 
   return (
     <Modal
-      id='manage-permissions-modal'
+      id="manage-permissions-modal"
       title={title}
       isOpen={true}
       onClose={onCloseModal}
       variant={variant}
-      position='top'
+      position="top"
       actions={[
         <Button
-          id='confirm__button'
-          key='changeowner'
-          variant='primary'
+          id="confirm__button"
+          key="changeowner"
+          variant="primary"
           onClick={onSubmitTransferOwnership}
           isLoading={loading}
           isDisabled={!selection?.trim() || loading}
         >
-          {t('common.change_owner')}
+          {t("common.change_owner")}
         </Button>,
         <Button
-          id='cancel__button'
-          key='cancel'
-          variant='link'
+          id="cancel__button"
+          key="cancel"
+          variant="link"
           onClick={onCloseModal}
         >
-          {t('cancel')}
+          {t("cancel")}
         </Button>,
       ]}
     >
       <Form>
         {renderAlert()}
-        <FormGroup fieldId='Current-owner-name' label={t('current_owner_name')}>
+        <FormGroup fieldId="Current-owner-name" label={t("current_owner_name")}>
           {kafka?.owner}
         </FormGroup>
-        <FormGroup fieldId='New-owner-name' label={t('new_owner_name')}>
+        <FormGroup fieldId="New-owner-name" label={t("new_owner_name")}>
           <OwnerSelect
             selection={selection}
             setSelection={setSelection}

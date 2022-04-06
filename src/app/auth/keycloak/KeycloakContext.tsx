@@ -1,10 +1,10 @@
-import React from 'react';
-import { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
+import { FunctionComponent, createContext } from "react";
+import { KeycloakInstance, KeycloakProfile } from "keycloak-js";
 import {
   getKeyCloakToken,
   getParsedKeyCloakToken,
-} from '@app/auth/keycloak/keycloakAuth';
-import { Auth, AuthContext } from '@rhoas/app-services-ui-shared';
+} from "@app/auth/keycloak/keycloakAuth";
+import { Auth, AuthContext } from "@rhoas/app-services-ui-shared";
 
 // This is a context which can manage the keycloak
 export interface IKeycloakContext {
@@ -12,17 +12,21 @@ export interface IKeycloakContext {
   profile?: KeycloakProfile | undefined;
 }
 
-export const KeycloakContext = React.createContext<IKeycloakContext>({
+export const KeycloakContext = createContext<IKeycloakContext>({
   keycloak: undefined,
 });
 
-export const KeycloakAuthProvider: React.FunctionComponent = (props) => {
+export const KeycloakAuthProvider: FunctionComponent = (props) => {
   const getUsername = () => {
-    return getParsedKeyCloakToken().then((token) => token['username']);
+    return getParsedKeyCloakToken().then(
+      (token) => (token as Record<string, string>)["username"]
+    );
   };
 
   const isOrgAdmin = () => {
-    return getParsedKeyCloakToken().then((token) => token['is_org_admin']);
+    return getParsedKeyCloakToken().then(
+      (token) => (token as Record<string, boolean>)["is_org_admin"]
+    );
   };
 
   const authTokenContext = {

@@ -1,0 +1,48 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+  "@typescript-eslint",
+  "react-hooks"
+],
+  "extends": [
+  "eslint:recommended",
+  "plugin:@typescript-eslint/eslint-recommended",
+  "plugin:@typescript-eslint/recommended",
+  "prettier"
+],
+  "rules": {
+  "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "no-restricted-imports": [
+    "error",
+    {
+      "paths": [
+        {
+          "name": ".",
+          "message": "Please import sibling components explictly to avoid cyclic dependencies"
+        },
+        {
+          "name": "./",
+          "message": "Please import sibling components explictly to avoid cyclic dependencies"
+        },
+        {
+          "name": "dayjs",
+          "message": "Please use date-fns instead"
+        }
+      ]
+    }
+  ]
+},
+  "overrides": [
+  {
+    "files": ["*.test.ts", "*.test.tsx"],
+    "rules": {
+      "@typescript-eslint/no-non-null-assertion": "off"
+    }
+  }
+],
+  "ignorePatterns": ["ProofOfconcepts", "*.typegen.ts"]
+}

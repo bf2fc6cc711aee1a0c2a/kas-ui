@@ -1,56 +1,63 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import localizedFormat from 'dayjs/plugin/localizedFormat';
-import dayjs from 'dayjs';
+import {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+// eslint-disable-next-line no-restricted-imports
+import dayjs from "dayjs";
 import {
   AlertVariant,
   Card,
   PageSection,
   PageSectionVariants,
-} from '@patternfly/react-core';
-import { usePagination } from '@app/common';
-import { useTimeout } from '@app/hooks/useTimeout';
+} from "@patternfly/react-core";
+import { usePagination } from "@app/common";
+import { useTimeout } from "@app/hooks/useTimeout";
 import {
   ErrorCodes,
   InstanceStatus,
   isServiceApiError,
   MAX_POLL_INTERVAL,
-} from '@app/utils';
-import { usePageVisibility } from '@app/hooks/usePageVisibility';
+} from "@app/utils";
+import { usePageVisibility } from "@app/hooks/usePageVisibility";
 import {
   Configuration,
   DefaultApi,
   KafkaRequest,
   KafkaRequestList,
-} from '@rhoas/kafka-management-sdk';
-import './StreamsTableConnected.css';
+} from "@rhoas/kafka-management-sdk";
+import "./StreamsTableConnected.css";
 import {
   ModalType,
   useAlert,
   useAuth,
   useConfig,
   useModal,
-} from '@rhoas/app-services-ui-shared';
-import { useFederated } from '@app/contexts';
-import '@app/modules/styles.css';
+} from "@rhoas/app-services-ui-shared";
+import { useFederated } from "@app/contexts";
+import "@app/modules/styles.css";
 import {
   FilterType,
   KafkaEmptyState,
   Unauthorized,
-} from '@app/modules/OpenshiftStreams/components';
-import { useInstanceDrawer } from '@app/modules/InstanceDrawer/contexts/InstanceDrawerContext';
-import { InstanceDrawerTab } from '@app/modules/InstanceDrawer/tabs';
-import { StreamsTable } from '@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable';
-import { KafkaStatusAlerts } from '@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts';
+} from "@app/modules/OpenshiftStreams/components";
+import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
+import { StreamsTable } from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
+import { KafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts";
 
 export type StreamsTableProps = {
   preCreateInstance: (open: boolean) => Promise<boolean>;
 };
 
-export const StreamsTableConnected: React.FunctionComponent<
-  StreamsTableProps
-> = ({ preCreateInstance }: StreamsTableProps) => {
+export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
+  preCreateInstance,
+}: StreamsTableProps) => {
   dayjs.extend(localizedFormat);
   const { shouldOpenCreateModal } = useFederated() || {};
 
@@ -59,9 +66,12 @@ export const StreamsTableConnected: React.FunctionComponent<
   const { apiBasePath: basePath } = kas || {};
   const { isVisible } = usePageVisibility();
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const searchParams = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search]
+  );
   const { page = 1, perPage = 10 } = usePagination() || {};
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const { addAlert } = useAlert() || {};
   const { showModal: showCreateModal } =
     useModal<ModalType.KasCreateInstance>();
@@ -85,8 +95,8 @@ export const StreamsTableConnected: React.FunctionComponent<
   const [expectedTotal, setExpectedTotal] = useState<number>(3);
 
   // filter and sort state
-  const [orderBy, setOrderBy] = useState<string>('created_at desc');
-  const [filterSelected, setFilterSelected] = useState('name');
+  const [orderBy, setOrderBy] = useState<string>("created_at desc");
+  const [filterSelected, setFilterSelected] = useState("name");
   const [filteredValue, setFilteredValue] = useState<FilterType[]>([]);
 
   // user state
@@ -98,26 +108,6 @@ export const StreamsTableConnected: React.FunctionComponent<
 
   // States to sort out
   const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
-
-  useEffect(() => {
-    const openModal = async () => {
-      const shouldOpen =
-        shouldOpenCreateModal && (await shouldOpenCreateModal());
-      if (shouldOpen) {
-        openCreateModal();
-      }
-    };
-    openModal();
-  }, [shouldOpenCreateModal]);
-
-  const openCreateModal = () => {
-    showCreateModal(ModalType.KasCreateInstance, {
-      onCreate: () => {
-        onCreate();
-        refreshKafkasAfterAction();
-      },
-    });
-  };
 
   const handleCreateInstanceModal = async () => {
     let open;
@@ -142,12 +132,12 @@ export const StreamsTableConnected: React.FunctionComponent<
     setInstanceDrawerTab(InstanceDrawerTab.CONNECTION);
   };
 
-  const getFilterQuery = () => {
+  const getFilterQuery = useCallback(() => {
     const filters: string[] = [];
     filteredValue.forEach((filter) => {
       const { filterKey, filterValue } = filter;
       if (filterValue && filterValue.length > 0) {
-        let filterQuery = '(';
+        let filterQuery = "(";
         filterQuery += filterValue
           .map((val) => {
             const value = val.value.trim();
@@ -157,20 +147,20 @@ export const StreamsTableConnected: React.FunctionComponent<
             if (value === InstanceStatus.DEPROVISION) {
               return `${filterKey} = ${InstanceStatus.DEPROVISION} or ${filterKey} = ${InstanceStatus.DELETED}`;
             }
-            return value !== ''
+            return value !== ""
               ? `${filterKey} ${
                   val.isExact === true ? `= ${value}` : `like %${value}%`
                 }`
-              : '';
+              : "";
           })
-          .join(' or ');
-        filterQuery += ')';
+          .join(" or ");
+        filterQuery += ")";
 
         filters.push(filterQuery);
       }
     });
-    return filters.join(' and ');
-  };
+    return filters.join(" and ");
+  }, [filteredValue]);
 
   const handleServerError = (error: unknown) => {
     let errorCode: string | undefined;
@@ -184,7 +174,7 @@ export const StreamsTableConnected: React.FunctionComponent<
   };
 
   // Functions
-  const fetchKafkas = async () => {
+  const fetchKafkas = useCallback(async () => {
     const filterQuery = getFilterQuery();
     const accessToken = await auth?.kas.getToken();
 
@@ -230,36 +220,21 @@ export const StreamsTableConnected: React.FunctionComponent<
         handleServerError(error);
       }
     }
-  };
+  }, [
+    auth,
+    basePath,
+    expectedTotal,
+    filteredValue.length,
+    getFilterQuery,
+    isVisible,
+    kafkaInstancesList,
+    orderBy,
+    page,
+    perPage,
+    waitingForDelete,
+  ]);
 
-  useEffect(() => {
-    setKafkaDataLoaded(false);
-    fetchKafkas();
-  }, [auth, page, perPage, filteredValue, orderBy]);
-
-  useEffect(() => {
-    if (kafkaInstancesList !== undefined && kafkaInstancesList?.size > 0) {
-      const selectedKafkaItem = kafkaInstancesList.items?.find(
-        (kafka) => kafka?.id === instanceDrawerInstance?.id
-      );
-      if (selectedKafkaItem !== undefined) {
-        setInstanceDrawerInstance(selectedKafkaItem);
-      }
-    }
-  }, [kafkaInstancesList?.items]);
-
-  useEffect(() => {
-    setNoInstances(kafkaInstancesList?.size === 0);
-  }, [kafkaInstancesList?.size]);
-
-  useEffect(() => {
-    auth.getUsername()?.then((username) => setLoggedInUser(username));
-    auth.isOrgAdmin()?.then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
-  }, [auth]);
-
-  useTimeout(() => fetchKafkas(), MAX_POLL_INTERVAL);
-
-  const refreshKafkasAfterAction = () => {
+  const refreshKafkasAfterAction = useCallback(() => {
     //set the page to laoding state
     if (kafkaInstancesList?.size === 1) {
       setKafkaDataLoaded(true);
@@ -267,14 +242,23 @@ export const StreamsTableConnected: React.FunctionComponent<
       setKafkaDataLoaded(false);
     }
     fetchKafkas();
-  };
+  }, [fetchKafkas, kafkaInstancesList]);
 
   // Function to pre-empt the number of kafka instances for Skeleton Loading in the table (add 1)
-  const onCreate = () => {
+  const onCreate = useCallback(() => {
     setExpectedTotal(
       (kafkaInstancesList === undefined ? 0 : kafkaInstancesList.total) + 1
     );
-  };
+  }, [kafkaInstancesList]);
+
+  const openCreateModal = useCallback(() => {
+    showCreateModal(ModalType.KasCreateInstance, {
+      onCreate: () => {
+        onCreate();
+        refreshKafkasAfterAction();
+      },
+    });
+  }, [onCreate, refreshKafkasAfterAction, showCreateModal]);
 
   // Function to pre-empt the number of kafka instances for Skeleton Loading in the table (delete 1)
   const onDelete = () => {
@@ -290,22 +274,6 @@ export const StreamsTableConnected: React.FunctionComponent<
     },
     [searchParams]
   );
-
-  // Redirect the user to a previous page if there are no kafka instances for a page number / size
-  useEffect(() => {
-    if (page > 1) {
-      if (
-        kafkaInstancesList?.items !== undefined &&
-        kafkaInstancesList.size === 0
-      ) {
-        setSearchParam('page', (page - 1).toString());
-        setSearchParam('perPage', perPage.toString());
-        history.push({
-          search: searchParams.toString(),
-        });
-      }
-    }
-  }, [page, perPage, kafkaInstancesList?.items]);
 
   const onChangeOwner = async (instance: KafkaRequest) => {
     showTransferOwnershipModal(ModalType.KasTransferOwnership, {
@@ -335,7 +303,7 @@ export const StreamsTableConnected: React.FunctionComponent<
      * and avoid delete instanceDrawerInstance api call
      */
     if (instance.id === undefined) {
-      throw new Error('kafka instanceDrawerInstance id is not set');
+      throw new Error("kafka instanceDrawerInstance id is not set");
     }
     const accessToken = await auth?.kas.getToken();
     const apisService = new DefaultApi(
@@ -364,12 +332,73 @@ export const StreamsTableConnected: React.FunctionComponent<
        */
       addAlert &&
         addAlert({
-          title: t('common.something_went_wrong'),
+          title: t("common.something_went_wrong"),
           variant: AlertVariant.danger,
           description: reason,
         });
     }
   };
+
+  // Redirect the user to a previous page if there are no kafka instances for a page number / size
+  useEffect(() => {
+    if (page > 1) {
+      if (
+        kafkaInstancesList?.items !== undefined &&
+        kafkaInstancesList.size === 0
+      ) {
+        setSearchParam("page", (page - 1).toString());
+        setSearchParam("perPage", perPage.toString());
+        history.push({
+          search: searchParams.toString(),
+        });
+      }
+    }
+  }, [
+    history,
+    kafkaInstancesList,
+    page,
+    perPage,
+    searchParams,
+    setSearchParam,
+  ]);
+
+  useEffect(() => {
+    setKafkaDataLoaded(false);
+    fetchKafkas();
+  }, [auth, page, perPage, filteredValue, orderBy, fetchKafkas]);
+
+  useEffect(() => {
+    if (kafkaInstancesList !== undefined && kafkaInstancesList?.size > 0) {
+      const selectedKafkaItem = kafkaInstancesList.items?.find(
+        (kafka) => kafka?.id === instanceDrawerInstance?.id
+      );
+      if (selectedKafkaItem !== undefined) {
+        setInstanceDrawerInstance(selectedKafkaItem);
+      }
+    }
+  }, [instanceDrawerInstance, kafkaInstancesList, setInstanceDrawerInstance]);
+
+  useEffect(() => {
+    setNoInstances(kafkaInstancesList?.size === 0);
+  }, [kafkaInstancesList, setNoInstances]);
+
+  useEffect(() => {
+    auth.getUsername()?.then((username) => setLoggedInUser(username));
+    auth.isOrgAdmin()?.then((isOrgAdmin) => setIsOrgAdmin(isOrgAdmin));
+  }, [auth]);
+
+  useEffect(() => {
+    const openModal = async () => {
+      const shouldOpen =
+        shouldOpenCreateModal && (await shouldOpenCreateModal());
+      if (shouldOpen) {
+        openCreateModal();
+      }
+    };
+    openModal();
+  }, [openCreateModal, shouldOpenCreateModal]);
+
+  useTimeout(() => fetchKafkas(), MAX_POLL_INTERVAL);
 
   if (isUserUnauthorized) {
     return <Unauthorized />;
@@ -388,11 +417,11 @@ export const StreamsTableConnected: React.FunctionComponent<
   } else if (isDisplayKafkaEmptyState !== undefined) {
     return (
       <PageSection
-        className='mk--main-page__page-section--table pf-m-padding-on-xl'
+        className="mk--main-page__page-section--table pf-m-padding-on-xl"
         variant={PageSectionVariants.default}
-        padding={{ default: 'noPadding' }}
+        padding={{ default: "noPadding" }}
       >
-        <Card ouiaId='card-controlplane'>
+        <Card ouiaId="card-controlplane">
           <StreamsTable
             onDeleteInstance={onDeleteInstance}
             onViewInstance={onViewInstance}

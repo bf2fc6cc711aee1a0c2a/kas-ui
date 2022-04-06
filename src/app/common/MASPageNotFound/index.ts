@@ -1,1 +1,1 @@
-export * from './MASPageNotFound';
+export * from "./MASPageNotFound";

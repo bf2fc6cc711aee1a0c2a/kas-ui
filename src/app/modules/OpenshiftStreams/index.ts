@@ -1,1 +1,1 @@
-export * from './OpenshiftStreamsStandalone';
+export * from "./OpenshiftStreamsStandalone";

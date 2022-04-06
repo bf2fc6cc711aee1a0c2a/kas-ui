@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode, FunctionComponent, ReactElement } from "react";
 import {
   Button,
   ButtonProps,
@@ -10,30 +10,30 @@ import {
   TextInput,
   TextInputProps,
   TextProps,
-} from '@patternfly/react-core';
-import { getModalAppendTo } from '@app/utils/utils';
-import './DeleteModal.css';
+} from "@patternfly/react-core";
+import { getModalAppendTo } from "@app/utils/utils";
+import "./DeleteModal.css";
 
 export type ConfirmButtonProps<T> = Omit<
   ButtonProps,
-  'children' | 'onClick'
+  "children" | "onClick"
 > & {
   id?: string;
   key?: string;
   label?: string;
   onClick?: (data?: T) => Promise<void> | void;
-  'data-testid'?: string;
+  "data-testid"?: string;
 };
 
-export type NestedModalProps = Omit<ModalProps, 'children' | 'ref'>;
+export type NestedModalProps = Omit<ModalProps, "children" | "ref">;
 
-export type CancelButtonProps = Omit<ButtonProps, 'children'> & {
+export type CancelButtonProps = Omit<ButtonProps, "children"> & {
   id?: string;
   key?: string;
   label?: string;
 };
 
-export type NestedTextProps = Omit<TextProps, 'children'> & {
+export type NestedTextProps = Omit<TextProps, "children"> & {
   description?: string;
 };
 
@@ -48,7 +48,7 @@ export type DeleteModalProps<T> = {
   title?: string;
   modalProps?: NestedModalProps;
   handleModalToggle: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
   selectedItemData?: T;
   confirmButtonProps?: ConfirmButtonProps<T>;
   cancelButtonProps?: CancelButtonProps;
@@ -67,41 +67,41 @@ export const DeleteModal = <T,>({
   children,
   selectedItemData,
   textInputProps,
-}: DeleteModalProps<T>): React.ReactElement => {
+}: DeleteModalProps<T>): ReactElement => {
   const {
     variant = ModalVariant.small,
-    titleIconVariant = 'warning',
-    ['aria-label']: ariaLabel,
+    titleIconVariant = "warning",
+    ["aria-label"]: ariaLabel,
     showClose = true,
     ...restModalProps
   } = modalProps || {};
 
   const {
-    id = 'confirm__button',
-    key = 'confirm-button',
+    id = "confirm__button",
+    key = "confirm-button",
     variant: buttonConfirmVariant = ButtonVariant.danger,
     onClick: onClickConfirmButton,
     isDisabled: isDisabledConfirmButton,
-    label: confirmActionLabel = 'Delete',
+    label: confirmActionLabel = "Delete",
     isLoading,
     ...restConfirmButtonProps
   } = confirmButtonProps || {};
 
   const {
-    id: cancelButtonId = 'cancel__button',
+    id: cancelButtonId = "cancel__button",
     key: cancelButtonKey = '"cancel-button',
     variant: cancelButtonVariant = ButtonVariant.link,
-    label: cancelActionLabel = 'Cancel',
+    label: cancelActionLabel = "Cancel",
     ...restCancelButtonProps
   } = cancelButtonProps || {};
 
   const {
-    className = 'delete-item__modal--text',
+    className = "delete-item__modal--text",
     description,
     ...restTextProps
   } = textProps || {};
   const {
-    label = '',
+    label = "",
     value,
     onChange,
     onKeyPress,
@@ -109,18 +109,18 @@ export const DeleteModal = <T,>({
     ...restInputFieldProps
   } = textInputProps || {};
 
-  const ConfirmDelete: React.FunctionComponent = () => {
+  const ConfirmDelete: FunctionComponent = () => {
     if (showTextInput) {
       return (
         <>
           <label
-            htmlFor='mas-name-input'
+            htmlFor="mas-name-input"
             dangerouslySetInnerHTML={{ __html: label }}
           />
           <TextInput
-            id='name__input'
-            name='mas-name-input'
-            type='text'
+            id="name__input"
+            name="mas-name-input"
+            type="text"
             value={value}
             onChange={onChange}
             onKeyPress={onKeyPress}
@@ -172,7 +172,7 @@ export const DeleteModal = <T,>({
     >
       <Text
         className={className}
-        dangerouslySetInnerHTML={{ __html: description || '' }}
+        dangerouslySetInnerHTML={{ __html: description || "" }}
         {...restTextProps}
       />
       <ConfirmDelete />

@@ -1,4 +1,4 @@
 export enum InstanceDrawerTab {
-  DETAILS = 'details',
-  CONNECTION = 'connection',
+  DETAILS = "details",
+  CONNECTION = "connection",
 }

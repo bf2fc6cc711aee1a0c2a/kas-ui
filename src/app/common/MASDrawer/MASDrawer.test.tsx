@@ -1,31 +1,31 @@
-import React from 'react';
-import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
-import { MASDrawer } from './MASDrawer';
+import { render, screen, act } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Tabs, Tab, TabTitleText } from "@patternfly/react-core";
+import { MASDrawer, MASDrawerProps } from "./MASDrawer";
 
-describe('<MASDrawer/>', () => {
-  const renderSetup = (props) => {
+describe("<MASDrawer/>", () => {
+  const renderSetup = (props: MASDrawerProps) => {
     const children = <div>Drawer content</div>;
     return render(<MASDrawer {...props}>{children}</MASDrawer>);
   };
 
-  it('should render default MASDrawer', () => {
+  it("should render default MASDrawer", () => {
     //arrange
     const onClose = jest.fn();
-    const props = {
+    const props: MASDrawerProps = {
       onClose,
       isLoading: true,
+      children: undefined,
     };
 
     const { container } = renderSetup(props);
 
     //assert
-    screen.getByText('Drawer content');
-    expect(container.getElementsByClassName('pf-c-drawer').length).toBe(1);
+    screen.getByText("Drawer content");
+    expect(container.getElementsByClassName("pf-c-drawer").length).toBe(1);
   });
 
-  it('should render MASDrawer with props and load Drawer content body', () => {
+  it("should render MASDrawer with props and load Drawer content body", () => {
     //arrange
     const onClose = jest.fn();
     const activeKey = 0;
@@ -40,28 +40,29 @@ describe('<MASDrawer/>', () => {
         </Tab>
       </Tabs>
     );
-    const props = {
+    const props: MASDrawerProps = {
       onClose,
       isLoading: false,
       isExpanded: true,
       panelBodyContent: panelBodyContent(),
       drawerHeaderProps: {
-        text: { label: 'test-instance' },
-        title: { value: name, headingLevel: 'h1' },
+        text: { label: "test-instance" },
+        title: { value: "name", headingLevel: "h1" },
       },
+      children: undefined,
     };
 
     const { container } = renderSetup(props);
 
     //act
     act(() => {
-      const detailsTab: any = screen.getByRole('button', { name: /Details/i });
+      const detailsTab = screen.getByRole("button", { name: /Details/i });
       userEvent.click(detailsTab);
-      const connectionTab: any = screen.getByRole('button', {
+      const connectionTab = screen.getByRole("button", {
         name: /Connection/i,
       });
       userEvent.click(connectionTab);
-      const closeButton: any = screen.getByRole('button', {
+      const closeButton = screen.getByRole("button", {
         name: /Close drawer panel/i,
       });
       userEvent.click(closeButton);
@@ -69,12 +70,12 @@ describe('<MASDrawer/>', () => {
 
     //assert
     expect(handleTabClick).toHaveBeenCalled();
-    screen.getByText('test-instance');
-    screen.getByText('Details');
-    screen.getByText('Details tab content');
-    screen.getByText('Connection');
-    screen.getByText('Connection tab content');
-    expect(container.getElementsByClassName('pf-m-expanded').length).toBe(1);
+    screen.getByText("test-instance");
+    screen.getByText("Details");
+    screen.getByText("Details tab content");
+    screen.getByText("Connection");
+    screen.getByText("Connection tab content");
+    expect(container.getElementsByClassName("pf-m-expanded").length).toBe(1);
     expect(onClose).toHaveBeenCalled();
   });
 });

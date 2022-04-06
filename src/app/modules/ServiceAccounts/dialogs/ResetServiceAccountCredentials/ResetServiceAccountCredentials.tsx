@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { AlertVariant, Button, Modal } from '@patternfly/react-core';
-import { isServiceApiError } from '@app/utils';
-import { getModalAppendTo } from '@app/utils/utils';
+import { FunctionComponent, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { AlertVariant, Button, Modal } from "@patternfly/react-core";
+import { isServiceApiError } from "@app/utils";
+import { getModalAppendTo } from "@app/utils/utils";
 import {
   Configuration,
   SecurityApi,
   ServiceAccount,
-} from '@rhoas/kafka-management-sdk';
+} from "@rhoas/kafka-management-sdk";
 import {
   BaseModalProps,
   ResetServiceAccountCredentialsProps,
   useAlert,
   useAuth,
   useConfig,
-} from '@rhoas/app-services-ui-shared';
-import Credentials from '@app/modules/ServiceAccounts/components/Credentials /Credentials';
+} from "@rhoas/app-services-ui-shared";
+import Credentials from "@app/modules/ServiceAccounts/components/Credentials /Credentials";
 
 enum Step {
-  Confirm = 'Confirm',
-  Credentials = 'Credentials',
+  Confirm = "Confirm",
+  Credentials = "Credentials",
 }
 
-const ResetServiceAccountCredentials: React.FunctionComponent<
+const ResetServiceAccountCredentials: FunctionComponent<
   ResetServiceAccountCredentialsProps & BaseModalProps
 > = ({ serviceAccount, onReset, variant, title, hideModal }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const {
     kas: { apiBasePath: basePath },
@@ -45,7 +45,7 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
     }
     addAlert &&
       addAlert({
-        title: t('something_went_wrong'),
+        title: t("something_went_wrong"),
         variant: AlertVariant.danger,
         description: reason,
       });
@@ -62,7 +62,7 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
           })
         );
         if (serviceAccount.id === undefined) {
-          throw new Error('id must not be undefined');
+          throw new Error("id must not be undefined");
         }
         setIsModalLoading(true);
         const response = await apisService.resetServiceAccountCreds(
@@ -82,10 +82,10 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
     hideModal();
   };
 
-  const StepConfirm: React.FunctionComponent = () => (
+  const StepConfirm: FunctionComponent = () => (
     <span
       dangerouslySetInnerHTML={{
-        __html: t('serviceAccount.client_secret_will_be_reset', {
+        __html: t("serviceAccount.client_secret_will_be_reset", {
           serviceAccountId: serviceAccount.name,
           client_id: serviceAccount.client_id,
         }),
@@ -97,29 +97,29 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
     if (step === Step.Confirm) {
       return [
         <Button
-          key='create'
-          variant='primary'
-          type='submit'
+          key="create"
+          variant="primary"
+          type="submit"
           onClick={resetServiceAccountCreds}
-          spinnerAriaValueText={t('common.submitting_request')}
+          spinnerAriaValueText={t("common.submitting_request")}
           isLoading={isModalLoading}
         >
-          {t('serviceAccount.reset')}
+          {t("serviceAccount.reset")}
         </Button>,
-        <Button key='cancel' variant='link' onClick={handleModalToggle}>
-          {t('common.cancel')}
+        <Button key="cancel" variant="link" onClick={handleModalToggle}>
+          {t("common.cancel")}
         </Button>,
       ];
     }
     return [];
   };
 
-  const Body: React.FunctionComponent = () => {
+  const Body: FunctionComponent = () => {
     if (step === Step.Confirm) {
       return <StepConfirm />;
     }
     if (resetServiceAccount === undefined) {
-      throw new Error('resetServiceAccount must not be undefined');
+      throw new Error("resetServiceAccount must not be undefined");
     }
     return (
       <Credentials serviceAccount={resetServiceAccount} close={hideModal} />
@@ -128,9 +128,9 @@ const ResetServiceAccountCredentials: React.FunctionComponent<
 
   return (
     <Modal
-      id='reset-service-account-modal'
+      id="reset-service-account-modal"
       variant={variant}
-      title={step === Step.Confirm ? title : ''}
+      title={step === Step.Confirm ? title : ""}
       isOpen={true}
       onClose={handleModalToggle}
       appendTo={getModalAppendTo}

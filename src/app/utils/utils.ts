@@ -1,9 +1,9 @@
-import { IRowCell, IRowData } from '@patternfly/react-table';
-import { formatDistance } from 'date-fns';
+import { IRowCell, IRowData } from "@patternfly/react-table";
+import { formatDistance } from "date-fns";
 
 function accessibleRouteChangeHandler(): number {
   return window.setTimeout(() => {
-    const mainContainer = document.getElementById('primary-app-container');
+    const mainContainer = document.getElementById("primary-app-container");
     if (mainContainer) {
       mainContainer.focus();
     }
@@ -17,22 +17,22 @@ export type KeyValueOptions = {
 };
 
 enum InstanceStatus {
-  READY = 'ready',
-  ACCEPTED = 'accepted',
-  PREPARING = 'preparing',
-  PROVISIONING = 'provisioning',
-  FAILED = 'failed',
-  DEPROVISION = 'deprovision',
-  DELETED = 'deleting',
+  READY = "ready",
+  ACCEPTED = "accepted",
+  PREPARING = "preparing",
+  PROVISIONING = "provisioning",
+  FAILED = "failed",
+  DEPROVISION = "deprovision",
+  DELETED = "deleting",
 }
 
 enum InstanceType {
-  eval = 'eval',
-  standard = 'standard',
+  eval = "eval",
+  standard = "standard",
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
-  { value: 'aws', label: 'Amazon Web Services' },
+  { value: "aws", label: "Amazon Web Services" },
   // Only aws is supported for now
   // { value: 'azure', label: 'Microsoft Azure' },
   // { value: 'baremetal', label: 'Bare Metal' },
@@ -43,13 +43,13 @@ const cloudProviderOptions: KeyValueOptions[] = [
 ];
 
 const statusOptions: KeyValueOptions[] = [
-  { value: 'ready', label: 'Ready' },
-  { value: 'failed', label: 'Failed' },
-  { value: 'accepted', label: 'Creation pending' },
-  { value: 'provisioning', label: 'Creation in progress' },
-  { value: 'preparing', label: 'Creation in progress' },
-  { value: 'deprovision', label: 'Deletion in progress' },
-  { value: 'deleting', label: 'Deletion in progress' },
+  { value: "ready", label: "Ready" },
+  { value: "failed", label: "Failed" },
+  { value: "accepted", label: "Creation pending" },
+  { value: "provisioning", label: "Creation in progress" },
+  { value: "preparing", label: "Creation in progress" },
+  { value: "deprovision", label: "Deletion in progress" },
+  { value: "deleting", label: "Deletion in progress" },
 ];
 
 const getCloudProviderDisplayName = (value: string): string => {
@@ -60,8 +60,8 @@ const getCloudProviderDisplayName = (value: string): string => {
 };
 
 const cloudRegionOptions: KeyValueOptions[] = [
-  { value: 'us-east-1', label: 'US East, N. Virginia' },
-  { value: 'eu-west-1', label: 'EU, Ireland' },
+  { value: "us-east-1", label: "US East, N. Virginia" },
+  { value: "eu-west-1", label: "EU, Ireland" },
 
   // Only us-east is supported for now
   // { value: 'ap-northeast-1', label: 'Asia Pacific, Tokyo' },
@@ -123,44 +123,16 @@ const getLoadingRowsCount = (
   return loadingRowCount !== 0 ? loadingRowCount : perPage;
 };
 
-const sortValues = <T>(
-  items: T[] | undefined,
-  key: string,
-  order = 'asc'
-): T[] | undefined => {
-  const compareValue = (a: T, b: T) => {
-    if (
-      !Object.prototype.hasOwnProperty.call(a, key) ||
-      Object.prototype.hasOwnProperty.call(b, key)
-    ) {
-      // property doesn't exist on either object
-      return 0;
-    }
-
-    const varA = typeof a[key] === 'string' ? a[key].toUpperCase() : a[key];
-    const varB = typeof b[key] === 'string' ? b[key].toUpperCase() : b[key];
-
-    let comparison = 0;
-    if (varA > varB) {
-      comparison = 1;
-    } else if (varA < varB) {
-      comparison = -1;
-    }
-    return order === 'desc' ? comparison * -1 : comparison;
-  };
-  return items?.sort(compareValue);
-};
-
 const getFormattedDate = (
   date: string | Date,
   translatePostfix: string
 ): string => {
-  date = typeof date === 'string' ? new Date(date) : date;
-  return formatDistance(date, new Date()) + ' ' + translatePostfix;
+  date = typeof date === "string" ? new Date(date) : date;
+  return formatDistance(date, new Date()) + " " + translatePostfix;
 };
 
 const getModalAppendTo = (): HTMLElement =>
-  (document.getElementById('chrome-app-render-root') as HTMLElement) ||
+  (document.getElementById("chrome-app-render-root") as HTMLElement) ||
   document.body;
 
 const isMobileTablet = (): boolean => {
@@ -176,7 +148,7 @@ const isMobileTablet = (): boolean => {
       )
     )
       check = true;
-  })(navigator.userAgent || navigator.vendor || window['opera']);
+  })(navigator.userAgent || navigator.vendor || (window as any)["opera"]);
   return check;
 };
 
@@ -216,7 +188,6 @@ export {
   MAX_POLL_INTERVAL,
   getLoadingRowsCount,
   MAX_SERVICE_ACCOUNT_NAME_LENGTH,
-  sortValues,
   getFormattedDate,
   getModalAppendTo,
   isMobileTablet,

@@ -292,7 +292,6 @@ More information about testing will be available here soon. We expect to follow 
 - [TypeScript Config](./tsconfig.json)
 - [Webpack Config](./webpack.common.js)
 - [Jest Config](./jest.config.js)
-- [Editor Config](./.editorconfig)
 
 ### Raster Image Support
 

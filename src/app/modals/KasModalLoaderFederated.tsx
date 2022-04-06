@@ -1,8 +1,8 @@
-import React from 'react';
-import { ModalProvider } from '@rhoas/app-services-ui-components';
-import { KasModalLoader } from './KasModalLoader';
+import { FC } from "react";
+import { ModalProvider } from "@rhoas/app-services-ui-components";
+import { KasModalLoader } from "./KasModalLoader";
 
-const KasModalLoaderFederated: React.FC = ({ children }) => {
+const KasModalLoaderFederated: FC = ({ children }) => {
   return (
     <ModalProvider>
       {children}

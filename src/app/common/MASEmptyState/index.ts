@@ -1,1 +1,1 @@
-export * from './MASEmptyState';
+export * from "./MASEmptyState";

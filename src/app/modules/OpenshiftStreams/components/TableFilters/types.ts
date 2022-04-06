@@ -1,5 +1,5 @@
-import { ToolbarChip } from '@patternfly/react-core';
-import { KeyValueOptions } from '@app/utils';
+import { ToolbarChip } from "@patternfly/react-core";
+import { KeyValueOptions } from "@app/utils";
 
 export type FilterProps = {
   getSelectionForFilter: (key: string) => string[] | undefined;

@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useRef, useState } from "react";
+import * as React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectOption,
@@ -7,10 +8,10 @@ import {
   SelectVariant,
   ToolbarFilter,
   Tooltip,
-} from '@patternfly/react-core';
-import { FilterProps } from '@app/modules/OpenshiftStreams/components/TableFilters/types';
-import { cloudProviderOptions, KeyValueOptions } from '@app/utils';
-import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/TableFilters/hooks';
+} from "@patternfly/react-core";
+import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
+import { cloudProviderOptions, KeyValueOptions } from "@app/utils";
+import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 
 export type CloudProviderFilterProps = FilterProps;
 
@@ -26,7 +27,7 @@ export const CloudProviderFilter: React.FunctionComponent<
   removeFilterValue,
   isDisabledSelectOption,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
 
   const options: KeyValueOptions[] = cloudProviderOptions.map(
     (cloudProvider) => {
@@ -40,15 +41,15 @@ export const CloudProviderFilter: React.FunctionComponent<
 
   return (
     <ToolbarFilter
-      chips={getSelectionForFilter('cloud_provider')?.map((val) => t(val))}
+      chips={getSelectionForFilter("cloud_provider")?.map((val) => t(val))}
       deleteChip={(_category, chip) =>
-        onDeleteChip && onDeleteChip('cloud_provider', chip, options)
+        onDeleteChip && onDeleteChip("cloud_provider", chip, options)
       }
       deleteChipGroup={() =>
-        onDeleteChipGroup && onDeleteChipGroup('cloud_provider')
+        onDeleteChipGroup && onDeleteChipGroup("cloud_provider")
       }
-      categoryName={t('cloud_provider')}
-      showToolbarItem={filterSelected === 'cloud_provider'}
+      categoryName={t("cloud_provider")}
+      showToolbarItem={filterSelected === "cloud_provider"}
     >
       <CloudProviderSelect
         updateFilter={updateFilter}
@@ -65,12 +66,12 @@ export const CloudProviderFilter: React.FunctionComponent<
 
 type CloudProviderSelectProps = Pick<
   FilterProps,
-  | 'updateFilter'
-  | 'isMaxFilter'
-  | 'removeFilterValue'
-  | 'isDisabledSelectOption'
-  | 'getSelectionForFilter'
-  | 'filterSelected'
+  | "updateFilter"
+  | "isMaxFilter"
+  | "removeFilterValue"
+  | "isDisabledSelectOption"
+  | "getSelectionForFilter"
+  | "filterSelected"
 > & {
   options: KeyValueOptions[];
 };
@@ -86,7 +87,7 @@ const CloudProviderSelect: React.FunctionComponent<
   getSelectionForFilter,
   filterSelected,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const selectRef = useRef<Select>(null);
   const tooltipContent = useTooltipContent(isMaxFilter);
 
@@ -116,7 +117,7 @@ const CloudProviderSelect: React.FunctionComponent<
   ) => {
     if (isPlaceholder) clear();
     updateFilter(
-      'cloud_provider',
+      "cloud_provider",
       { value: selection.toString(), isExact: true },
       true
     );
@@ -124,22 +125,22 @@ const CloudProviderSelect: React.FunctionComponent<
   };
 
   const clear = () => {
-    removeFilterValue && removeFilterValue('cloud_provider');
+    removeFilterValue && removeFilterValue("cloud_provider");
     setExpanded(false);
   };
 
-  if (filterSelected === 'cloud_provider') {
+  if (filterSelected === "cloud_provider") {
     return (
       <Select
-        id='cloud-provider-select'
+        id="cloud-provider-select"
         variant={SelectVariant.checkbox}
-        aria-label='Select cloud provider'
+        aria-label="Select cloud provider"
         onToggle={onToggle}
-        selections={getSelectionForFilter('cloud_provider')}
+        selections={getSelectionForFilter("cloud_provider")}
         isOpen={expanded}
         onSelect={onSelect}
-        placeholderText={t('filter_by_cloud_provider')}
-        className='select-custom-width'
+        placeholderText={t("filter_by_cloud_provider")}
+        className="select-custom-width"
         ref={selectRef}
       >
         {options.map((option, index) => {
@@ -149,7 +150,7 @@ const CloudProviderSelect: React.FunctionComponent<
             }
             return (
               isMaxFilter &&
-              isDisabledSelectOption('cloud_provider', option.value)
+              isDisabledSelectOption("cloud_provider", option.value)
             );
           };
 

@@ -1,11 +1,11 @@
-import { useFederated } from '@app/contexts';
-import { Principal } from '@rhoas/app-services-ui-shared';
+import { useFederated } from "@app/contexts";
+import { Principal } from "@rhoas/app-services-ui-shared";
 
-export const filterUsers = (value, options) => {
+export const filterUsers = (value: string, options: JSX.Element[]) => {
   if (!value) {
     return options;
   }
-  const input = new RegExp(value, 'i');
+  const input = new RegExp(value, "i");
   return options?.filter(
     (userAccount) =>
       input.test(userAccount.props.value) ||

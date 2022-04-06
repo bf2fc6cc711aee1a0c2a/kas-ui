@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { SetStateAction, Dispatch, useEffect, useState } from "react";
 
 type XDocument = Document & {
   msHidden: string;
@@ -7,34 +7,35 @@ type XDocument = Document & {
 
 export function getBrowserVisibilityProp(): string {
   const doc: XDocument = document as XDocument;
-  if (typeof doc.hidden !== 'undefined') {
+  if (typeof doc.hidden !== "undefined") {
     // Opera 12.10 and Firefox 18 and later support
-    return 'visibilitychange';
-  } else if (typeof doc.msHidden !== 'undefined') {
-    return 'msvisibilitychange';
-  } else if (typeof doc.webkitHidden !== 'undefined') {
-    return 'webkitvisibilitychange';
+    return "visibilitychange";
+  } else if (typeof doc.msHidden !== "undefined") {
+    return "msvisibilitychange";
+  } else if (typeof doc.webkitHidden !== "undefined") {
+    return "webkitvisibilitychange";
   }
-  return '';
+  return "";
 }
-export function getBrowserDocumentHiddenProp(): string {
+export function getBrowserDocumentHiddenProp(): keyof XDocument | undefined {
   const doc: XDocument = document as XDocument;
-  if (typeof doc.hidden !== 'undefined') {
-    return 'hidden';
-  } else if (typeof doc.msHidden !== 'undefined') {
-    return 'msHidden';
-  } else if (typeof doc.webkitHidden !== 'undefined') {
-    return 'webkitHidden';
+  if (typeof doc.hidden !== "undefined") {
+    return "hidden";
+  } else if (typeof doc.msHidden !== "undefined") {
+    return "msHidden";
+  } else if (typeof doc.webkitHidden !== "undefined") {
+    return "webkitHidden";
   }
-  return '';
+  return undefined;
 }
 export function getIsDocumentHidden(): boolean {
-  return !document[getBrowserDocumentHiddenProp()];
+  const hiddenKey = getBrowserDocumentHiddenProp();
+  return hiddenKey !== undefined && !(document as XDocument)[hiddenKey];
 }
 
 export function usePageVisibility(): {
   isVisible: boolean;
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
 } {
   const [isVisible, setIsVisible] = useState(getIsDocumentHidden());
   const onVisibilityChange = () => setIsVisible(getIsDocumentHidden());

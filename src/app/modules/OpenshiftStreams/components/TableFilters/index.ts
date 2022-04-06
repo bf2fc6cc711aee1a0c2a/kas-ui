@@ -1,2 +1,2 @@
-export * from './StreamsFilterGroup';
-export * from './types';
+export * from "./StreamsFilterGroup";
+export * from "./types";

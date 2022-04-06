@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { DeleteModal } from '@app/common';
-import { InstanceStatus } from '@app/utils';
-import { KafkaRequest } from '@rhoas/kafka-management-sdk';
+import { FunctionComponent, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { DeleteModal } from "@app/common";
+import { InstanceStatus } from "@app/utils";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
+import { TextInputProps } from "@patternfly/react-core";
 
 export type DeleteInstanceModalProps = {
   kafka: KafkaRequest;
@@ -12,10 +13,10 @@ export type DeleteInstanceModalProps = {
   isLoading: boolean;
 };
 
-export const DeleteInstanceModal: React.FunctionComponent<
+export const DeleteInstanceModal: FunctionComponent<
   DeleteInstanceModalProps
 > = ({ kafka, onClose, hideModal, onDelete, isLoading }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const selectedInstanceName = kafka?.name;
 
   const [instanceNameInput, setInstanceNameInput] = useState<string>();
@@ -36,8 +37,8 @@ export const DeleteInstanceModal: React.FunctionComponent<
     return false;
   };
 
-  const onKeyPress = (event) => {
-    if (event.key === 'Enter' && !isConfirmButtonDisabled()) {
+  const onKeyPress: TextInputProps["onKeyPress"] = (event) => {
+    if (event.key === "Enter" && !isConfirmButtonDisabled()) {
       submit();
     }
   };
@@ -47,7 +48,7 @@ export const DeleteInstanceModal: React.FunctionComponent<
   };
 
   const handleToggle = () => {
-    setInstanceNameInput('');
+    setInstanceNameInput("");
     hideModal();
     onClose && onClose();
   };
@@ -56,24 +57,24 @@ export const DeleteInstanceModal: React.FunctionComponent<
     return (
       <DeleteModal
         isModalOpen={true}
-        title={`${t('delete_instance')}?`}
+        title={`${t("delete_instance")}?`}
         confirmButtonProps={{
           isDisabled: isConfirmButtonDisabled(),
-          'data-testid': 'modalDeleteKafka-buttonDelete',
-          label: t('delete'),
+          "data-testid": "modalDeleteKafka-buttonDelete",
+          label: t("delete"),
           onClick: submit,
           isLoading,
         }}
         handleModalToggle={handleToggle}
         textProps={{
-          description: t('delete_instance_status_complete', {
+          description: t("delete_instance_status_complete", {
             instanceName: kafka.name,
           }),
         }}
         selectedItemData={kafka}
         textInputProps={{
           showTextInput: kafka.status === InstanceStatus.READY,
-          label: t('instance_name_label', { name: selectedInstanceName }),
+          label: t("instance_name_label", { name: selectedInstanceName }),
           value: instanceNameInput,
           onChange: handleInstanceName,
           onKeyPress,
@@ -89,24 +90,24 @@ export const DeleteInstanceModal: React.FunctionComponent<
     return (
       <DeleteModal
         isModalOpen={true}
-        title={`${t('delete_instance')}?`}
+        title={`${t("delete_instance")}?`}
         confirmButtonProps={{
           isDisabled: isConfirmButtonDisabled(),
-          'data-testid': 'modalDeleteKafka-buttonDelete',
-          label: t('delete'),
+          "data-testid": "modalDeleteKafka-buttonDelete",
+          label: t("delete"),
           onClick: submit,
           isLoading,
         }}
         handleModalToggle={handleToggle}
         textProps={{
-          description: t('delete_instance_status_accepted_or_provisioning', {
+          description: t("delete_instance_status_accepted_or_provisioning", {
             instanceName: kafka.name,
           }),
         }}
         selectedItemData={kafka}
         textInputProps={{
           showTextInput: false,
-          label: t('instance_name_label', { name: selectedInstanceName }),
+          label: t("instance_name_label", { name: selectedInstanceName }),
           value: instanceNameInput,
           onChange: handleInstanceName,
           onKeyPress,
@@ -118,11 +119,11 @@ export const DeleteInstanceModal: React.FunctionComponent<
     return (
       <DeleteModal
         isModalOpen={true}
-        title=''
+        title=""
         confirmButtonProps={{
           isDisabled: isConfirmButtonDisabled(),
-          'data-testid': 'modalDeleteKafka-buttonDelete',
-          label: t('delete'),
+          "data-testid": "modalDeleteKafka-buttonDelete",
+          label: t("delete"),
           onClick: submit,
           isLoading,
         }}
@@ -130,7 +131,7 @@ export const DeleteInstanceModal: React.FunctionComponent<
         selectedItemData={kafka}
         textInputProps={{
           showTextInput: kafka.status === InstanceStatus.READY,
-          label: t('instance_name_label', { name: selectedInstanceName }),
+          label: t("instance_name_label", { name: selectedInstanceName }),
           value: instanceNameInput,
           onChange: handleInstanceName,
           onKeyPress,

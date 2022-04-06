@@ -1,17 +1,18 @@
-import React, {
+import {
+  FC,
   useCallback,
   FunctionComponent,
   createContext,
   useContext,
   useState,
-} from 'react';
+} from "react";
 import {
   Pagination as PFPagination,
   PaginationProps as PFPaginationProps,
   PaginationVariant,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
-export type PaginationProps = Omit<PFPaginationProps, 'children' | 'ref'>;
+export type PaginationProps = Omit<PFPaginationProps, "children" | "ref">;
 
 export type PaginationContextProps = {
   page: number | undefined;
@@ -26,7 +27,7 @@ export const PaginationContext = createContext<
 export const usePagination = (): PaginationContextProps | undefined =>
   useContext(PaginationContext);
 
-export const PaginationProvider: React.FC = ({ children }) => {
+export const PaginationProvider: FC = ({ children }) => {
   const [page, setPage] = useState<number | undefined>(1);
   const [perPage, setPerPage] = useState<number | undefined>(10);
 
@@ -46,14 +47,20 @@ const MASPagination: FunctionComponent<PaginationProps> = ({
 }) => {
   const { setPage, setPerPage, perPage, page } = usePagination() || {};
 
-  const onSetPage = useCallback((_: unknown, newPage: number) => {
-    setPage && setPage(newPage);
-  }, []);
+  const onSetPage = useCallback(
+    (_: unknown, newPage: number) => {
+      setPage && setPage(newPage);
+    },
+    [setPage]
+  );
 
-  const onPerPageSelect = useCallback((_: unknown, newPerPage: number) => {
-    setPage && setPage(1);
-    setPerPage && setPerPage(newPerPage);
-  }, []);
+  const onPerPageSelect = useCallback(
+    (_: unknown, newPerPage: number) => {
+      setPage && setPage(1);
+      setPerPage && setPerPage(newPerPage);
+    },
+    [setPage, setPerPage]
+  );
 
   return (
     <PFPagination

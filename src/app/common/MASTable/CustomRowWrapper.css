@@ -42,7 +42,7 @@
     bottom: 0;
     left: 0;
     width: var(--pf-c-table-row__item--before--Width);
-    content: '';
+    content: "";
     background-color: var(--pf-c-table-row__item--before--BackgroundColor);
     transition: var(--pf-c-table-row__item--before--Transition);
   }

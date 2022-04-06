@@ -1,20 +1,19 @@
-import { useTranslation } from 'react-i18next';
-import { useAlert, useAuth, useConfig } from '@rhoas/app-services-ui-shared';
-import React, { useEffect, useState } from 'react';
+import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import {
   Configuration,
   SecurityApi,
   ServiceAccountList,
   ServiceAccountListItem,
-} from '@rhoas/kafka-management-sdk';
-import { ErrorCodes, isServiceApiError } from '@app/utils';
-import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { UserUnauthorized } from '@app/modules/ServiceAccounts/components/UserUnauthorized';
-import { MASLoading } from '@app/common';
-import { ServiceAccountsEmpty } from '@app/modules/ServiceAccounts/components/ServiceAccountsEmpty';
-import { ServiceAccountsTableSection } from '@app/modules/ServiceAccounts/components/ServiceAccountsTableSection';
+} from "@rhoas/kafka-management-sdk";
+import { ErrorCodes, isServiceApiError } from "@app/utils";
+import { PageSection, PageSectionVariants } from "@patternfly/react-core";
+import { UserUnauthorized } from "@app/modules/ServiceAccounts/components/UserUnauthorized";
+import { MASLoading } from "@app/common";
+import { ServiceAccountsEmpty } from "@app/modules/ServiceAccounts/components/ServiceAccountsEmpty";
+import { ServiceAccountsTableSection } from "@app/modules/ServiceAccounts/components/ServiceAccountsTableSection";
 
-export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
+export const ServiceAccountsTableConnected: FunctionComponent = () => {
   const auth = useAuth();
   const config = useConfig();
 
@@ -33,7 +32,7 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
     }
   };
 
-  const fetchServiceAccounts = async () => {
+  const fetchServiceAccounts = useCallback(async () => {
     const accessToken = await auth?.kas.getToken();
     if (accessToken && config) {
       try {
@@ -54,15 +53,17 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
             );
           setServiceAccountItems(sortedServiceAccounts);
         });
-      } catch (error) {
-        handleServerError(error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          handleServerError(error);
+        }
       }
     }
-  };
+  }, [auth, config]);
 
   useEffect(() => {
     fetchServiceAccounts();
-  }, [auth, config]);
+  }, [fetchServiceAccounts]);
 
   if (isUserUnauthorized) {
     return <UserUnauthorized />;
@@ -72,7 +73,7 @@ export const ServiceAccountsTableConnected: React.FunctionComponent = () => {
     return (
       <PageSection
         variant={PageSectionVariants.light}
-        padding={{ default: 'noPadding' }}
+        padding={{ default: "noPadding" }}
       >
         <MASLoading />
       </PageSection>

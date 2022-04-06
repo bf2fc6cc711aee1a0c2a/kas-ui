@@ -1,4 +1,4 @@
-import Keycloak, { KeycloakInstance, KeycloakTokenParsed } from 'keycloak-js';
+import Keycloak, { KeycloakInstance, KeycloakTokenParsed } from "keycloak-js";
 
 export let keycloak: KeycloakInstance | undefined;
 
@@ -28,13 +28,13 @@ export const init = async (): Promise<void> => {
     keycloak = Keycloak();
     if (keycloak) {
       await keycloak.init({
-        onLoad: 'login-required',
+        onLoad: "login-required",
       });
     }
   } catch {
     keycloak = undefined;
     console.warn(
-      'Auth: Unable to initialize keycloak. Client side will not be configured to use authentication'
+      "Auth: Unable to initialize keycloak. Client side will not be configured to use authentication"
     );
   }
 };
@@ -50,8 +50,8 @@ export const init = async (): Promise<void> => {
 export const getKeyCloakToken = async (): Promise<string> => {
   await keycloak?.updateToken(50);
   if (keycloak?.token) return keycloak.token;
-  console.error('No keycloak token available');
-  return 'foo';
+  console.error("No keycloak token available");
+  return "foo";
 };
 
 /**
@@ -66,7 +66,7 @@ export const getParsedKeyCloakToken =
   async (): Promise<KeycloakTokenParsed> => {
     await keycloak?.updateToken(50);
     if (keycloak?.tokenParsed) return keycloak.tokenParsed;
-    console.error('No keycloak token available');
+    console.error("No keycloak token available");
     return {} as KeycloakTokenParsed;
   };
 

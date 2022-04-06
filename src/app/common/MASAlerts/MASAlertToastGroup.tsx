@@ -1,20 +1,21 @@
-import React from 'react';
-import { AlertProps } from '@rhoas/app-services-ui-shared';
+import { FunctionComponent } from "react";
+import { AlertProps } from "@rhoas/app-services-ui-shared";
 import {
   AlertGroup,
   Alert,
   AlertActionCloseButton,
   AlertVariant,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
 type AlertToastGroupProps = {
   alerts: AlertProps[];
   onCloseAlert: (key: string | undefined) => void;
 };
 
-export const MASAlertToastGroup: React.FunctionComponent<
-  AlertToastGroupProps
-> = ({ alerts, onCloseAlert }: AlertToastGroupProps) => {
+export const MASAlertToastGroup: FunctionComponent<AlertToastGroupProps> = ({
+  alerts,
+  onCloseAlert,
+}: AlertToastGroupProps) => {
   return (
     <AlertGroup isToast>
       {alerts.map(
@@ -23,7 +24,7 @@ export const MASAlertToastGroup: React.FunctionComponent<
             key={id}
             isLiveRegion
             variant={AlertVariant[variant]}
-            variantLabel=''
+            variantLabel=""
             title={title}
             actionClose={
               <AlertActionCloseButton

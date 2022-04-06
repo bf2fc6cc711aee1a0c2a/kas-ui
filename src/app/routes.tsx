@@ -1,24 +1,19 @@
-import * as React from 'react';
-import { Route, RouteComponentProps, Switch } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { accessibleRouteChangeHandler } from '@app/utils/utils';
-import { MASPageNotFound } from '@app/common/MASPageNotFound/MASPageNotFound';
-import { useDocumentTitle } from '@app/utils/useDocumentTitle';
+import { ComponentType, ReactElement } from "react";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { MASPageNotFound } from "@app/common/MASPageNotFound/MASPageNotFound";
+import { useDocumentTitle } from "@app/utils/useDocumentTitle";
 // import {
 //   LastLocationProvider,
 //   useLastLocation,
 // } from 'react-router-last-location';
-import { OpenshiftStreamsStandalone } from '@app/modules/OpenshiftStreams';
-import { ServiceAccountsConnected } from '@app/modules/ServiceAccounts';
-
-let routeFocusTimer: number;
+import { OpenshiftStreamsStandalone } from "@app/modules/OpenshiftStreams";
+import { ServiceAccountsConnected } from "@app/modules/ServiceAccounts";
 
 export interface IAppRoute {
   label?: string; // Excluding the label will exclude the route from the nav sidebar in AppLayout
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  component:
-    | React.ComponentType<RouteComponentProps<any>>
-    | React.ComponentType<any>;
+  component: ComponentType<RouteComponentProps<any>> | ComponentType<any>;
   /* eslint-enable @typescript-eslint/no-explicit-any */
   exact?: boolean;
   path: string;
@@ -39,16 +34,16 @@ const routes: AppRouteConfig[] = [
     component: OpenshiftStreamsStandalone,
     exact: true,
     // t('kafka_instances')
-    label: 'Kafka Instances',
-    path: '/',
-    title: 'Kafka Instances',
+    label: "Kafka Instances",
+    path: "/",
+    title: "Kafka Instances",
   },
   {
     component: ServiceAccountsConnected,
     exact: true,
-    label: 'Service Accounts',
-    path: '/service-accounts',
-    title: 'Service Accounts',
+    label: "Service Accounts",
+    path: "/service-accounts",
+    title: "Service Accounts",
   },
 ];
 
@@ -99,8 +94,8 @@ const flattenedRoutes: IAppRoute[] = routes.reduce(
   [] as IAppRoute[]
 );
 
-const AppRoutes = (): React.ReactElement => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+const AppRoutes = (): ReactElement => {
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   return (
     // <LastLocationProvider>
     <Switch>
@@ -116,7 +111,7 @@ const AppRoutes = (): React.ReactElement => {
           />
         )
       )}
-      <PageNotFound title={t('404_page_does_not_exist')} />
+      <PageNotFound title={t("404_page_does_not_exist")} />
     </Switch>
     // </LastLocationProvider>
   );

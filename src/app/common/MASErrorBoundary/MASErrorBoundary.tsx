@@ -1,9 +1,9 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { withTranslation, WithTranslation } from 'react-i18next';
-import { PageSection, Button } from '@patternfly/react-core';
-import { MASEmptyState, MASEmptyStateVariant } from '@app/common';
-import './MASErrorBoundary.css';
+import { Component, ErrorInfo, ReactNode } from "react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import { withTranslation, WithTranslation } from "react-i18next";
+import { PageSection, Button } from "@patternfly/react-core";
+import { MASEmptyState, MASEmptyStateVariant } from "@app/common";
+import "./MASErrorBoundary.css";
 
 type Props = WithTranslation &
   RouteComponentProps & {
@@ -19,19 +19,19 @@ class MASErrorBoundary extends Component<Props, State> {
     hasError: false,
   };
 
-  static getDerivedStateFromError(_: Error): State {
+  static getDerivedStateFromError(): State {
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('error:', error, errorInfo);
+    console.error("error:", error, errorInfo);
   }
 
   onClickButton = () => {
     const { history } = this.props;
     this.setState({ hasError: false });
-    history && history.push('/');
+    history && history.push("/");
   };
 
   render() {
@@ -40,23 +40,23 @@ class MASErrorBoundary extends Component<Props, State> {
 
     if (hasError) {
       return (
-        <PageSection padding={{ default: 'noPadding' }} isFilled>
+        <PageSection padding={{ default: "noPadding" }} isFilled>
           <MASEmptyState
             emptyStateProps={{
               variant: MASEmptyStateVariant.UnexpectedError,
             }}
             emptyStateIconProps={{
-              className: 'icon-color',
+              className: "icon-color",
             }}
             titleProps={{
-              title: t('common.something_went_wrong'),
+              title: t("common.something_went_wrong"),
             }}
             emptyStateBodyProps={{
-              body: t('unexpected_error'),
+              body: t("unexpected_error"),
             }}
           >
             <Button onClick={this.onClickButton}>
-              {t('go_to_kafka_instances')}
+              {t("go_to_kafka_instances")}
             </Button>
           </MASEmptyState>
         </PageSection>

@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import { FC, useState } from "react";
 import {
   Select,
   SelectOption,
   SelectOptionObject,
+  SelectProps,
   SelectVariant,
-} from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
-import { filterUsers } from './FilterOwners';
+} from "@patternfly/react-core";
+import { useTranslation } from "react-i18next";
+import { filterUsers } from "./FilterOwners";
 export type allUsersType =
   | {
       id: string;
@@ -19,27 +20,25 @@ export type OwnerSelectProps = {
   allUsers: allUsersType;
 };
 
-export const OwnerSelect: React.FC<OwnerSelectProps> = ({
+export const OwnerSelect: FC<OwnerSelectProps> = ({
   selection,
   setSelection,
   allUsers,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const options =
-    allUsers &&
-    allUsers?.map((userAccount: { id; displayName }) => {
-      const { id, displayName } = userAccount;
-      return (
-        <SelectOption key={id} value={id} description={displayName}>
-          {id}
-        </SelectOption>
-      );
-    });
+  const options = (allUsers || []).map((userAccount) => {
+    const { id, displayName } = userAccount;
+    return (
+      <SelectOption key={id} value={id} description={displayName}>
+        {id}
+      </SelectOption>
+    );
+  });
   const onToggle = (isExpanded: boolean) => {
     setIsOpen(isExpanded);
   };
-  const onSelect = (
+  const onSelect: SelectProps["onSelect"] = (
     _,
     selection: string | SelectOptionObject,
     isPlaceholder: boolean | undefined
@@ -54,18 +53,18 @@ export const OwnerSelect: React.FC<OwnerSelectProps> = ({
     setSelection(undefined);
     setIsOpen(false);
   };
-  const customFilter = (_, value: string) => {
+  const customFilter: SelectProps["onFilter"] = (_, value: string) => {
     return filterUsers(value, options);
   };
   return (
     <Select
-      id='manage-permissions-owner-select'
+      id="manage-permissions-owner-select"
       variant={SelectVariant.typeahead}
       onToggle={onToggle}
       isOpen={isOpen}
-      placeholderText={t('select_user_account')}
-      createText={t('common.use')}
-      menuAppendTo='parent'
+      placeholderText={t("select_user_account")}
+      createText={t("common.use")}
+      menuAppendTo="parent"
       maxHeight={400}
       onSelect={onSelect}
       selections={selection}

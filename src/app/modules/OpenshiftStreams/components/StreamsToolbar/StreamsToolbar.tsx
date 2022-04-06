@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { MASPagination, MASToolbar, ToolbarItemProps } from '@app/common';
-import { InstanceStatus, MAX_FILTER_LIMIT } from '@app/utils';
-import './StreamsToolbar.css';
-import { StreamsFilterGroup } from '@app/modules/OpenshiftStreams/components/TableFilters/StreamsFilterGroup';
-import { FilterType } from '@app/modules/OpenshiftStreams/components';
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Button } from "@patternfly/react-core";
+import FilterIcon from "@patternfly/react-icons/dist/js/icons/filter-icon";
+import { MASPagination, MASToolbar, ToolbarItemProps } from "@app/common";
+import { InstanceStatus, MAX_FILTER_LIMIT } from "@app/utils";
+import "./StreamsToolbar.css";
+import { StreamsFilterGroup } from "@app/modules/OpenshiftStreams/components/TableFilters/StreamsFilterGroup";
+import { FilterType } from "@app/modules/OpenshiftStreams/components";
 
 export type StreamsToolbarProps = {
   filterSelected?: string;
@@ -21,9 +21,9 @@ export type StreamsToolbarProps = {
   handleCreateInstanceModal?: () => void;
 };
 
-const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
+const StreamsToolbar: FunctionComponent<StreamsToolbarProps> = ({
   setFilterSelected,
-  filterSelected = 'name',
+  filterSelected = "name",
   total,
   page,
   perPage,
@@ -31,30 +31,26 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
   setFilteredValue,
   handleCreateInstanceModal,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [isMaxFilter, setIsMaxFilter] = useState<boolean>(false);
-
-  useEffect(() => {
-    handleMaxFilters();
-  }, [filteredValue]);
 
   const onClear = () => {
     setFilteredValue([]);
     setIsMaxFilter(false);
   };
 
-  const handleMaxFilters = () => {
+  const handleMaxFilters = useCallback(() => {
     let maxFilterCount = 0;
     filteredValue?.forEach((filter: FilterType) => {
       const { filterValue, filterKey } = filter;
       const provisioningStatus =
-        filterKey === 'status'
+        filterKey === "status"
           ? filterValue?.filter(
               ({ value }) => value === InstanceStatus.PROVISIONING
             )
           : [];
       const deprovisionStatus =
-        filterKey === 'status'
+        filterKey === "status"
           ? filterValue?.filter(
               ({ value }) => value === InstanceStatus.DEPROVISION
             )
@@ -77,18 +73,22 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     } else {
       setIsMaxFilter(false);
     }
-  };
+  }, [filteredValue]);
+
+  useEffect(() => {
+    handleMaxFilters();
+  }, [handleMaxFilters]);
 
   const toolbarItems: ToolbarItemProps[] = [
     {
       item: (
         <Button
-          variant='primary'
+          variant="primary"
           onClick={handleCreateInstanceModal}
-          data-testid='tableStreams-buttonCreateKafka'
-          ouiaId='button-create'
+          data-testid="tableStreams-buttonCreateKafka"
+          ouiaId="button-create"
         >
-          {t('create_kafka_instance')}
+          {t("create_kafka_instance")}
         </Button>
       ),
     },
@@ -98,37 +98,37 @@ const StreamsToolbar: React.FunctionComponent<StreamsToolbarProps> = ({
     toolbarItems.push({
       item: (
         <MASPagination
-          widgetId='pagination-cloudProviderOptions-menu-top'
+          widgetId="pagination-cloudProviderOptions-menu-top"
           itemCount={total}
           page={page}
           perPage={perPage}
           isCompact={true}
           titles={{
-            paginationTitle: t('minimal_pagination'),
-            perPageSuffix: t('per_page_suffix'),
-            toFirstPage: t('to_first_page'),
-            toPreviousPage: t('to_previous_page'),
-            toLastPage: t('to_last_page'),
-            toNextPage: t('to_next_page'),
-            optionsToggle: t('options_toggle'),
-            currPage: t('curr_page'),
+            paginationTitle: t("minimal_pagination"),
+            perPageSuffix: t("per_page_suffix"),
+            toFirstPage: t("to_first_page"),
+            toPreviousPage: t("to_previous_page"),
+            toLastPage: t("to_last_page"),
+            toNextPage: t("to_next_page"),
+            optionsToggle: t("options_toggle"),
+            currPage: t("curr_page"),
           }}
         />
       ),
-      variant: 'pagination',
-      alignment: { default: 'alignRight' },
+      variant: "pagination",
+      alignment: { default: "alignRight" },
     });
   }
 
   return (
     <MASToolbar
       toolbarProps={{
-        id: 'instanceDrawerInstance-toolbar',
+        id: "instanceDrawerInstance-toolbar",
         clearAllFilters: onClear,
-        collapseListedFiltersBreakpoint: 'md',
-        inset: { xl: 'insetLg' },
+        collapseListedFiltersBreakpoint: "md",
+        inset: { xl: "insetLg" },
       }}
-      toggleGroupProps={{ toggleIcon: <FilterIcon />, breakpoint: 'md' }}
+      toggleGroupProps={{ toggleIcon: <FilterIcon />, breakpoint: "md" }}
       toggleGroupItems={
         <StreamsFilterGroup
           isMaxFilter={isMaxFilter}

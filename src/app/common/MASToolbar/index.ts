@@ -1,1 +1,1 @@
-export * from './MASToolbar';
+export * from "./MASToolbar";

@@ -2,7 +2,7 @@ import {
   APIErrorCodes,
   isServiceApiError,
   getErrorCode,
-} from '@rhoas/kafka-management-sdk';
+} from "@rhoas/kafka-management-sdk";
 
 const ErrorCodes = {
   /** Forbidden to perform this action*/

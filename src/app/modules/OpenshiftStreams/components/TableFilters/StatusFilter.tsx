@@ -1,7 +1,8 @@
-import { FilterProps } from '@app/modules/OpenshiftStreams/components/TableFilters/types';
-import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useTooltipContent } from '@app/modules/OpenshiftStreams/components/TableFilters/hooks';
+import { FilterProps } from "@app/modules/OpenshiftStreams/components/TableFilters/types";
+import { useRef, useState } from "react";
+import * as React from "react";
+import { useTranslation } from "react-i18next";
+import { useTooltipContent } from "@app/modules/OpenshiftStreams/components/TableFilters/hooks";
 import {
   Select,
   SelectOption,
@@ -9,8 +10,8 @@ import {
   SelectVariant,
   ToolbarFilter,
   Tooltip,
-} from '@patternfly/react-core';
-import { InstanceStatus, statusOptions, KeyValueOptions } from '@app/utils';
+} from "@patternfly/react-core";
+import { InstanceStatus, statusOptions, KeyValueOptions } from "@app/utils";
 
 export type StatusFilter = FilterProps;
 
@@ -24,7 +25,7 @@ export const StatusFilter: React.FunctionComponent<StatusFilter> = ({
   removeFilterValue,
   isDisabledSelectOption,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
 
   const statusFilterOptions = statusOptions
     .filter(
@@ -38,13 +39,13 @@ export const StatusFilter: React.FunctionComponent<StatusFilter> = ({
 
   return (
     <ToolbarFilter
-      chips={getSelectionForFilter('status')?.map((val) => t(val))}
+      chips={getSelectionForFilter("status")?.map((val) => t(val))}
       deleteChip={(_category, chip) =>
-        onDeleteChip('status', chip, statusFilterOptions)
+        onDeleteChip("status", chip, statusFilterOptions)
       }
-      deleteChipGroup={() => onDeleteChipGroup('status')}
-      categoryName={t('status')}
-      showToolbarItem={filterSelected === 'status'}
+      deleteChipGroup={() => onDeleteChipGroup("status")}
+      categoryName={t("status")}
+      showToolbarItem={filterSelected === "status"}
     >
       <StatusSelect
         updateFilter={updateFilter}
@@ -61,12 +62,12 @@ export const StatusFilter: React.FunctionComponent<StatusFilter> = ({
 
 type StatusSelectProps = Pick<
   FilterProps,
-  | 'updateFilter'
-  | 'isMaxFilter'
-  | 'removeFilterValue'
-  | 'isDisabledSelectOption'
-  | 'getSelectionForFilter'
-  | 'filterSelected'
+  | "updateFilter"
+  | "isMaxFilter"
+  | "removeFilterValue"
+  | "isDisabledSelectOption"
+  | "getSelectionForFilter"
+  | "filterSelected"
 > & {
   statusFilterOptions: KeyValueOptions[];
 };
@@ -80,7 +81,7 @@ const StatusSelect: React.FunctionComponent<StatusSelectProps> = ({
   getSelectionForFilter,
   filterSelected,
 }) => {
-  const { t } = useTranslation(['kasTemporaryFixMe']);
+  const { t } = useTranslation(["kasTemporaryFixMe"]);
   const tooltipContent = useTooltipContent(isMaxFilter);
   const selectRef = useRef<Select>(null);
 
@@ -110,28 +111,28 @@ const StatusSelect: React.FunctionComponent<StatusSelectProps> = ({
   ) => {
     if (isPlaceholder) clear();
     updateFilter(
-      'status',
+      "status",
       { value: selection.toString(), isExact: true },
       true
     );
   };
 
   const clear = () => {
-    removeFilterValue('status');
+    removeFilterValue("status");
     setExpanded(false);
   };
-  if (filterSelected === 'status') {
+  if (filterSelected === "status") {
     return (
       <Select
-        id='status-select'
+        id="status-select"
         variant={SelectVariant.checkbox}
-        aria-label='Select status'
+        aria-label="Select status"
         onToggle={onToggle}
-        selections={getSelectionForFilter('status')}
+        selections={getSelectionForFilter("status")}
         isOpen={expanded}
         onSelect={onSelect}
-        placeholderText={t('filter_by_status')}
-        className='select-custom-width'
+        placeholderText={t("filter_by_status")}
+        className="select-custom-width"
         ref={selectRef}
       >
         {statusFilterOptions.map((option, index) => {
@@ -140,7 +141,7 @@ const StatusSelect: React.FunctionComponent<StatusSelectProps> = ({
               return true;
             }
             return (
-              isMaxFilter && isDisabledSelectOption('status', option.value)
+              isMaxFilter && isDisabledSelectOption("status", option.value)
             );
           };
 
