@@ -1,6 +1,6 @@
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import {
   AlertContext,
   Auth,
@@ -137,12 +137,9 @@ describe("<StreamsTable/>", () => {
     setup(newProps);
 
     //act
-    const kebabDropdownButton =
-      screen.getByText("test-user")?.parentElement?.lastChild?.lastChild
-        ?.lastChild;
-    act(() => {
-      userEvent.click(kebabDropdownButton);
-    });
+    const kebabDropdownButton = screen.getByText("test-user")?.parentElement
+      ?.lastChild?.lastChild?.lastChild as Element;
+    userEvent.click(kebabDropdownButton);
     const classList: string[] = screen
       .getByRole("button", { name: /Delete/i })
       .className.split(" ");

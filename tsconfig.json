@@ -22,7 +22,7 @@
     "baseUrl": ".",
     "paths": {
       "@app/*": ["src/app/*"],
-      "@test-utils/*": ["test-utils/*"],
+      "@test-utils/*": ["test-utils/*"]
     }
   },
   "exclude": ["**/test_common", "node_modules"],
