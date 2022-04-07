@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
@@ -70,7 +71,7 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
     () => new URLSearchParams(location.search),
     [location.search]
   );
-  const { page = 1, perPage = 10 } = usePagination() || {};
+  const { page = 1, perPage = 10, setPage } = usePagination() || {};
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const { addAlert } = useAlert() || {};
   const { showModal: showCreateModal } =
@@ -108,6 +109,8 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
 
   // States to sort out
   const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
+
+  const [shouldRefresh, setShouldRefresh] = useState(false);
 
   const handleCreateInstanceModal = async () => {
     let open;
@@ -174,75 +177,84 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
   };
 
   // Functions
-  const fetchKafkas = useCallback(async () => {
-    const filterQuery = getFilterQuery();
-    const accessToken = await auth?.kas.getToken();
+  const fetchKafkas = useCallback(
+    async (isPolling = false) => {
+      const filterQuery = getFilterQuery();
+      const accessToken = await auth?.kas.getToken();
 
-    if (accessToken && isVisible) {
-      try {
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
+      if (accessToken && isVisible) {
+        try {
+          const apisService = new DefaultApi(
+            new Configuration({
+              accessToken,
+              basePath,
+            })
+          );
 
-        await apisService
-          .getKafkas(
-            page?.toString(),
-            perPage?.toString(),
-            orderBy,
-            filterQuery
-          )
-          .then((res) => {
-            const kafkaInstances = res.data;
-            const kafkaItems = kafkaInstances?.items || [];
-            setKafkaInstancesList(kafkaInstances);
+          if (!isPolling) {
+            setKafkaDataLoaded(false);
+          }
+          setShouldRefresh(false);
 
-            if (
-              kafkaInstancesList?.total !== undefined &&
-              kafkaInstancesList.total > expectedTotal
-            ) {
-              setExpectedTotal(kafkaInstancesList.total);
-            }
+          await apisService
+            .getKafkas(
+              page?.toString(),
+              perPage?.toString(),
+              orderBy,
+              filterQuery
+            )
+            .then((res) => {
+              const kafkaInstances = res.data;
+              const kafkaItems = kafkaInstances?.items || [];
+              setKafkaInstancesList(kafkaInstances);
 
-            if (
-              waitingForDelete &&
-              filteredValue.length < 1 &&
-              kafkaItems?.length == 0
-            ) {
-              setWaitingForDelete(false);
-            }
+              if (
+                kafkaInstancesList?.total !== undefined &&
+                kafkaInstancesList.total > expectedTotal
+              ) {
+                setExpectedTotal(kafkaInstancesList.total);
+              }
 
-            setKafkaDataLoaded(true);
-          });
-      } catch (error) {
-        handleServerError(error);
+              if (
+                waitingForDelete &&
+                filteredValue.length < 1 &&
+                kafkaItems?.length == 0
+              ) {
+                setWaitingForDelete(false);
+              }
+            })
+            .finally(() => setKafkaDataLoaded(true));
+        } catch (error) {
+          handleServerError(error);
+        }
       }
-    }
-  }, [
-    auth,
-    basePath,
-    expectedTotal,
-    filteredValue.length,
-    getFilterQuery,
-    isVisible,
-    kafkaInstancesList,
-    orderBy,
-    page,
-    perPage,
-    waitingForDelete,
-  ]);
+    },
+    [
+      auth,
+      basePath,
+      expectedTotal,
+      filteredValue,
+      getFilterQuery,
+      isVisible,
+      kafkaInstancesList,
+      orderBy,
+      page,
+      perPage,
+      waitingForDelete,
+    ]
+  );
+
+  const onSearch = useCallback(
+    (filter: FilterType[]) => {
+      setFilteredValue(filter);
+      setPage && setPage(1);
+    },
+    [setPage]
+  );
 
   const refreshKafkasAfterAction = useCallback(() => {
-    //set the page to laoding state
-    if (kafkaInstancesList?.size === 1) {
-      setKafkaDataLoaded(true);
-    } else {
-      setKafkaDataLoaded(false);
-    }
-    fetchKafkas();
-  }, [fetchKafkas, kafkaInstancesList]);
+    setShouldRefresh(true);
+  }, []);
 
   // Function to pre-empt the number of kafka instances for Skeleton Loading in the table (add 1)
   const onCreate = useCallback(() => {
@@ -262,7 +274,6 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
 
   // Function to pre-empt the number of kafka instances for Skeleton Loading in the table (delete 1)
   const onDelete = () => {
-    setKafkaDataLoaded(false);
     setExpectedTotal(
       (kafkaInstancesList === undefined ? 0 : kafkaInstancesList.total) - 1
     );
@@ -362,10 +373,26 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
     setSearchParam,
   ]);
 
+  const mounted = useRef(false);
+
   useEffect(() => {
-    setKafkaDataLoaded(false);
-    fetchKafkas();
-  }, [auth, page, perPage, filteredValue, orderBy, fetchKafkas]);
+    if (mounted.current === false || shouldRefresh) {
+      mounted.current = true;
+      fetchKafkas();
+    }
+  }, [fetchKafkas, shouldRefresh]);
+
+  // refresh the data when interacting with the UI in a way that will make the displayed data change
+  useEffect(() => {
+    refreshKafkasAfterAction();
+  }, [
+    page,
+    perPage,
+    orderBy,
+    searchParams,
+    refreshKafkasAfterAction,
+    filteredValue,
+  ]);
 
   useEffect(() => {
     if (kafkaInstancesList !== undefined && kafkaInstancesList?.size > 0) {
@@ -398,7 +425,7 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
     openModal();
   }, [openCreateModal, shouldOpenCreateModal]);
 
-  useTimeout(() => fetchKafkas(), MAX_POLL_INTERVAL);
+  useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
 
   if (isUserUnauthorized) {
     return <Unauthorized />;
@@ -437,7 +464,7 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
             kafkaInstanceItems={kafkaInstancesList?.items}
             setOrderBy={setOrderBy}
             setFilterSelected={setFilterSelected}
-            setFilteredValue={setFilteredValue}
+            setFilteredValue={onSearch}
             filteredValue={filteredValue}
             handleCreateInstanceModal={handleCreateInstanceModal}
             orderBy={orderBy}
