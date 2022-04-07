@@ -37,6 +37,12 @@ export const CustomRowWrapper = (
   const ref =
     trRef === undefined ? undefined : (trRef as LegacyRef<HTMLTableRowElement>);
 
+  const handleRowClick = (event: MouseEvent) => {
+    if (!isRowDeleted) {
+      onRowClick && onRowClick(event, rowProps?.rowIndex, row);
+    }
+  };
+
   return (
     <tr
       data-testid={rowDataTestId}
@@ -54,12 +60,8 @@ export const CustomRowWrapper = (
           "pf-m-selected"
       )}
       hidden={row?.isExpanded !== undefined && !row?.isExpanded}
-      onClick={(event) => {
-        if (!isRowDeleted) {
-          onRowClick && onRowClick(event, rowProps?.rowIndex, row);
-        }
-      }}
       {...props}
+      onClick={handleRowClick}
     />
   );
 };
