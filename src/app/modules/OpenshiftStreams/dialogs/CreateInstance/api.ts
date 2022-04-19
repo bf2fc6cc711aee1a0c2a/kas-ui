@@ -146,15 +146,14 @@ export const useAvailableProvidersAndDefault = () => {
     const kasQuota: QuotaValue | undefined = quota?.get(QuotaType?.kas);
 
     const instanceAvailability = ((): InstanceAvailability => {
-      switch (true) {
-        case kasQuota !== undefined && kasQuota.remaining > 0:
+        if(kasQuota !== undefined && kasQuota.remaining > 0){
           return "quota";
-        case hasTrialRunning:
+        }
+        if(hasTrialRunning){
           return "trial-used";
-        // TODO check if trial instances are available for creation using the info returned by the region endpoint
-        // TODO also check if there is any capacity for standar instances, as for the trial ones
-        default:
-          return "trial";
+        }
+         
+        return "trial";
       }
     })();
 
