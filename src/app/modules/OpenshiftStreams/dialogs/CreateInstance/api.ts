@@ -43,8 +43,17 @@ export const useAvailableProvidersAndDefault = () => {
       async function getQuotaData() {
         const quota = await getQuota();
         if (quota.isServiceDown) {
+          console.error(
+            "useAvailableProvidersAndDefault",
+            "fetchQuota rejected because isServiceDown is true"
+          );
           reject();
         } else if (quota.loading) {
+          console.warn(
+            "useAvailableProvidersAndDefault",
+            "fetchQuota",
+            "quota is loading, retrying in 1000ms"
+          );
           setTimeout(getQuota, 1000);
         } else {
           resolve(quota.data);
@@ -92,35 +101,40 @@ export const useAvailableProvidersAndDefault = () => {
   const fetchProviders = async (
     ia: InstanceAvailability
   ): Promise<Providers> => {
-    const res = await apisService.getCloudProviders();
-    const allProviders = res?.data?.items || [];
-    return await Promise.all(
-      allProviders
-        .filter((p) => p.enabled)
-        .map(async (provider): Promise<ProviderInfo> => {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const regions = await fetchRegions(provider.id!, ia);
-          return {
+    try {
+      const res = await apisService.getCloudProviders();
+      const allProviders = res?.data?.items || [];
+      return await Promise.all(
+        allProviders
+          .filter((p) => p.enabled)
+          .map(async (provider): Promise<ProviderInfo> => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            id: provider.id!,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            displayName: provider.display_name!,
-            regions,
-            AZ: {
-              single: false,
-              multi: true,
-            },
-          };
-        })
-    );
+            const regions = await fetchRegions(provider.id!, ia);
+            return {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              id: provider.id!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              displayName: provider.display_name!,
+              regions,
+              AZ: {
+                single: false,
+                multi: true,
+              },
+            };
+          })
+      );
+    } catch (e) {
+      console.error("useAvailableProvidersAndDefault", "fetchProvider", e);
+      return Promise.reject(e);
+    }
   };
 
   const fetchUserHasTrialInstance = async (): Promise<boolean> => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const loggedInUser = await auth.getUsername()!;
-    const accessToken = await auth.kas.getToken();
-    const filter = `owner = ${loggedInUser}`;
     try {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const loggedInUser = await auth.getUsername()!;
+      const accessToken = await auth.kas.getToken();
+      const filter = `owner = ${loggedInUser}`;
       const apisService = new DefaultApi(
         new Configuration({
           accessToken,
@@ -133,41 +147,70 @@ export const useAvailableProvidersAndDefault = () => {
           (k) => k?.instance_type === InstanceType?.eval
         );
       }
-    } catch {
-      // noop
+    } catch (e) {
+      console.error(
+        "useAvailableProvidersAndDefault",
+        "fetchUserHasTrialInstance",
+        e
+      );
     }
     return false;
   };
 
   return async function (): Promise<CreateKafkaInitializationData> {
-    const quota = await fetchQuota();
-    const hasTrialRunning = await fetchUserHasTrialInstance();
+    try {
+      const quota = await fetchQuota();
+      const hasTrialRunning = await fetchUserHasTrialInstance();
 
-    const kasQuota: QuotaValue | undefined = quota?.get(QuotaType?.kas);
-
-    const instanceAvailability = ((): InstanceAvailability => {
-      switch (true) {
-        case kasQuota !== undefined && kasQuota.remaining > 0:
-          return "quota";
-        case hasTrialRunning:
-          return "trial-used";
-        // TODO check if trial instances are available for creation using the info returned by the region endpoint
-        // TODO also check if there is any capacity for standar instances, as for the trial ones
-        default:
-          return "trial";
+      let kasQuota: QuotaValue | undefined;
+      try {
+        kasQuota = quota?.get(QuotaType?.kas);
+      } catch (e) {
+        console.error(
+          "useAvailableProvidersAndDefault",
+          "quota?.get exception",
+          e
+        );
       }
-    })();
 
-    const availableProviders = await fetchProviders(instanceAvailability);
-    const defaultProvider: Provider | undefined =
-      availableProviders.length === 1 ? availableProviders[0].id : undefined;
+      const instanceAvailability = ((): InstanceAvailability => {
+        switch (true) {
+          case kasQuota !== undefined && kasQuota.remaining > 0:
+            return "quota";
+          case hasTrialRunning:
+            return "trial-used";
+          // TODO check if trial instances are available for creation using the info returned by the region endpoint
+          // TODO also check if there is any capacity for standard instances, as for the trial ones
+          default:
+            return "trial";
+        }
+      })();
 
-    return {
-      defaultProvider,
-      defaultAZ: "multi",
-      availableProviders,
-      instanceAvailability,
-    };
+      const availableProviders = await fetchProviders(instanceAvailability);
+      let defaultProvider: Provider | undefined;
+      try {
+        defaultProvider =
+          availableProviders.length === 1
+            ? availableProviders[0].id
+            : undefined;
+      } catch (e) {
+        console.error(
+          "useAvailableProvidersAndDefault",
+          "defaultProvider error",
+          e
+        );
+      }
+
+      return {
+        defaultProvider,
+        defaultAZ: "multi",
+        availableProviders,
+        instanceAvailability,
+      };
+    } catch (e) {
+      console.error("useAvailableProvidersAndDefault", e);
+      return Promise.reject(e);
+    }
   };
 };
 
@@ -211,8 +254,19 @@ export const useCreateInstance = (): OnCreateKafka => {
             onError("trial-unavailable");
             break;
           default:
+            console.error(
+              "useAvailableProvidersAndDefault",
+              "createKafka unknown error",
+              error
+            );
             onError("unknown");
         }
+      } else {
+        console.error(
+          "useAvailableProvidersAndDefault",
+          "createKafka unexpected error",
+          error
+        );
       }
     }
   };
