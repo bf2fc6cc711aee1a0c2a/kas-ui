@@ -25,18 +25,20 @@ import { isServiceApiError } from "@app/utils/error";
 import { ErrorCodes, InstanceType } from "@app/utils";
 
 export const useAvailableProvidersAndDefault = () => {
-  const auth = useAuth();
+  const { kas, getUsername } = useAuth();
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
   const { getQuota } = useQuota();
 
-  const apisService = new DefaultApi(
-    new Configuration({
-      accessToken: auth.kas.getToken(),
-      basePath,
-    })
-  );
+  function getApi() {
+    return new DefaultApi(
+      new Configuration({
+        accessToken: kas.getToken(),
+        basePath,
+      })
+    );
+  }
 
   const fetchQuota = async (): Promise<Quota["data"]> => {
     return new Promise((resolve, reject) => {
@@ -68,6 +70,7 @@ export const useAvailableProvidersAndDefault = () => {
     id: string,
     ia: InstanceAvailability
   ): Promise<Regions> => {
+    const apisService = getApi();
     const instance_type =
       ia === "quota" ? InstanceType.standard : InstanceType.eval;
     const res = await apisService.getCloudProviderRegions(
@@ -102,6 +105,7 @@ export const useAvailableProvidersAndDefault = () => {
     ia: InstanceAvailability
   ): Promise<Providers> => {
     try {
+      const apisService = getApi();
       const res = await apisService.getCloudProviders();
       const allProviders = res?.data?.items || [];
       return await Promise.all(
@@ -132,15 +136,9 @@ export const useAvailableProvidersAndDefault = () => {
   const fetchUserHasTrialInstance = async (): Promise<boolean> => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const loggedInUser = await auth.getUsername()!;
-      const accessToken = await auth.kas.getToken();
+      const loggedInUser = await getUsername()!;
       const filter = `owner = ${loggedInUser}`;
-      const apisService = new DefaultApi(
-        new Configuration({
-          accessToken,
-          basePath,
-        })
-      );
+      const apisService = getApi();
       const res = await apisService.getKafkas("", "", "", filter);
       if (res.data.items) {
         return res.data.items.some(
