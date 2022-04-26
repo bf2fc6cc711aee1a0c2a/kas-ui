@@ -17,7 +17,7 @@
     "mock": "asapi",
     "start:dev": "webpack serve --https --hot --color --progress --config webpack.dev.js",
     "start:federate": "HOST=localhost PORT=9000 PROTOCOL=http webpack serve --hot --color --progress --open=false --config webpack.dev.js",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:watch": "npm run test -- --watch",
     "ci-checks": "npm run type-check && npm run lint && npm run test",
     "bundle-profile:build": "webpack --config webpack.prod.js --profile --json > dist/stats.json",
