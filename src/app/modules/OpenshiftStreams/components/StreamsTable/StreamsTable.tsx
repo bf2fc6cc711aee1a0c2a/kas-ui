@@ -172,7 +172,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
               <>
                 {getFormattedDate(created_at, t("ago"))}
                 <br />
-                {instance_type === InstanceType?.eval && (
+                {instance_type === InstanceType?.developer && (
                   <Trans
                     i18nKey="common.expires_in"
                     ns={["kasTemporaryFixMe"]}

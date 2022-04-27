@@ -69,13 +69,8 @@ export const useAvailableProvidersAndDefault = () => {
     ia: InstanceAvailability
   ): Promise<Regions> => {
     const instance_type =
-      ia === "quota" ? InstanceType.standard : InstanceType.eval;
-    const res = await apisService.getCloudProviderRegions(
-      id,
-      undefined,
-      undefined,
-      InstanceType.eval
-    );
+      ia === "quota" ? InstanceType.standard : InstanceType.developer;
+    const res = await apisService.getCloudProviderRegions(id);
 
     return (res.data.items || [])
       .filter(
@@ -144,7 +139,7 @@ export const useAvailableProvidersAndDefault = () => {
       const res = await apisService.getKafkas("", "", "", filter);
       if (res.data.items) {
         return res.data.items.some(
-          (k) => k?.instance_type === InstanceType?.eval
+          (k) => k?.instance_type === InstanceType?.developer
         );
       }
     } catch (e) {
