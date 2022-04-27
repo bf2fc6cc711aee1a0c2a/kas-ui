@@ -29,6 +29,7 @@ enum InstanceStatus {
 enum InstanceType {
   eval = "eval",
   standard = "standard",
+  developer = "developer",
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
