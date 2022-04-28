@@ -68,19 +68,31 @@ export const useAvailableProvidersAndDefault = () => {
     id: string,
     ia: InstanceAvailability
   ): Promise<Regions> => {
-    const instance_type =
-      ia === "quota" ? InstanceType.standard : InstanceType.developer;
+    // const instance_type =
+    //   ia === "quota" ? InstanceType.standard : InstanceType.developer;
     const res = await apisService.getCloudProviderRegions(id);
+    //backward compatibility instanceType for stage and prod env due to backend changes are not available on prod.
+    //Note: remove this code when backend large kafka changes deployed on prod.
+    const filterInstanceType = (instanceType: string | undefined) => {
+      return (
+        instanceType ===
+        (ia === "quota"
+          ? InstanceType.standard
+          : InstanceType.eval || InstanceType.developer)
+      );
+    };
 
     return (res.data.items || [])
       .filter(
         (p) =>
-          p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
+          p.enabled &&
+          p.capacity.some((c) => filterInstanceType(c.instance_type))
       )
       .map((r): RegionInfo => {
         const max_capacity_reached = r.capacity?.some(
           (c) =>
-            c.max_capacity_reached === true && c.instance_type === instance_type
+            c.max_capacity_reached === true &&
+            filterInstanceType(c.instance_type)
         );
         return {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -139,7 +151,9 @@ export const useAvailableProvidersAndDefault = () => {
       const res = await apisService.getKafkas("", "", "", filter);
       if (res.data.items) {
         return res.data.items.some(
-          (k) => k?.instance_type === InstanceType?.developer
+          (k) =>
+            k?.instance_type === InstanceType?.eval ||
+            k?.instance_type === InstanceType?.developer
         );
       }
     } catch (e) {
