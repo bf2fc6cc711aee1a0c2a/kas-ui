@@ -20,7 +20,11 @@ import {
   useConfig,
   useQuota,
 } from "@rhoas/app-services-ui-shared";
-import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
+import {
+  CloudRegion,
+  Configuration,
+  DefaultApi,
+} from "@rhoas/kafka-management-sdk";
 import { isServiceApiError } from "@app/utils/error";
 import { ErrorCodes, InstanceType } from "@app/utils";
 
@@ -68,29 +72,59 @@ export const useAvailableProvidersAndDefault = () => {
     id: string,
     ia: InstanceAvailability
   ): Promise<Regions> => {
-    const instance_type =
-      ia === "quota" ? InstanceType.standard : InstanceType.developer;
     const res = await apisService.getCloudProviderRegions(id);
 
-    return (res.data.items || [])
-      .filter(
-        (p) =>
-          p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
-      )
-      .map((r): RegionInfo => {
-        const max_capacity_reached = r.capacity?.some(
-          (c) =>
-            c.max_capacity_reached === true && c.instance_type === instance_type
+    if (!res?.data?.items) {
+      return [];
+    }
+
+    const instance_type =
+      ia === "quota"
+        ? InstanceType.standard
+        : getInstanceTypeForResponse(res.data.items);
+
+    const regionsForInstance = res.data.items.filter(
+      (p) =>
+        p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
+    );
+
+    return regionsForInstance.map((r): RegionInfo => {
+      let max_capacity_reached = false;
+      // Backwards compatibility remove once eval type is removed
+      if (instance_type == InstanceType.eval) {
+        max_capacity_reached = r.capacity?.some(
+          (c) => c.max_capacity_reached === true
         );
-        return {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: r.id!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          displayName: r.display_name!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          isDisabled: max_capacity_reached,
-        };
+      } else {
+        max_capacity_reached = r.capacity?.some(
+          (c) => c.available_sizes?.length === 0
+        );
+      }
+
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        id: r.id!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        displayName: r.display_name!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        isDisabled: max_capacity_reached,
+      };
+    });
+  };
+
+  // FUTURE: this method should be removed and replaced with InstanceType.developer value
+  const getInstanceTypeForResponse = (regions: CloudRegion[]): InstanceType => {
+    const detectedNewAPI = !!regions.find((info) => {
+      return info.capacity.find((capacity) => {
+        return !!capacity.available_sizes;
       });
+    });
+
+    if (detectedNewAPI) {
+      return InstanceType.developer;
+    } else {
+      return InstanceType.eval;
+    }
   };
 
   const fetchProviders = async (
@@ -139,7 +173,9 @@ export const useAvailableProvidersAndDefault = () => {
       const res = await apisService.getKafkas("", "", "", filter);
       if (res.data.items) {
         return res.data.items.some(
-          (k) => k?.instance_type === InstanceType?.developer
+          (k) =>
+            k?.instance_type === InstanceType?.eval ||
+            k?.instance_type === InstanceType?.developer
         );
       }
     } catch (e) {
@@ -172,6 +208,8 @@ export const useAvailableProvidersAndDefault = () => {
         switch (true) {
           case kasQuota !== undefined && kasQuota.remaining > 0:
             return "quota";
+          case kasQuota !== undefined && kasQuota.remaining === 0:
+            return "over-quota";
           case hasTrialRunning:
             return "trial-used";
           // TODO check if trial instances are available for creation using the info returned by the region endpoint
