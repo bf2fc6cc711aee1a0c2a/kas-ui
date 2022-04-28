@@ -72,35 +72,35 @@ export const useAvailableProvidersAndDefault = () => {
     //   ia === "quota" ? InstanceType.standard : InstanceType.developer;
     const res = await apisService.getCloudProviderRegions(id);
     //backward compatibility instanceType for stage and prod env due to backend changes are not available on prod.
-    //Note: remove this code when backend large kafka changes deployed on prod.
-    const filterInstanceType = (instanceType: string | undefined) => {
-      return (
-        instanceType ===
-        (ia === "quota"
-          ? InstanceType.standard
-          : InstanceType.eval || InstanceType.developer)
-      );
-    };
+    //Note: remove eval check  when backend large kafka changes deployed on prod.
 
     return (res.data.items || [])
       .filter(
         (p) =>
           p.enabled &&
-          p.capacity.some((c) => filterInstanceType(c.instance_type))
+          p.capacity.some((c) =>
+            ia === "quota"
+              ? c.instance_type === InstanceType.standard
+              : c.instance_type === InstanceType.eval ||
+                c.instance_type === InstanceType.developer
+          )
       )
       .map((r): RegionInfo => {
-        const max_capacity_reached = r.capacity?.some(
-          (c) =>
-            c.max_capacity_reached === true &&
-            filterInstanceType(c.instance_type)
-        );
+        const max_capacity_reached =
+          r.capacity?.some((c) =>
+            ia === "quota"
+              ? c.instance_type === InstanceType.standard
+              : c.instance_type === InstanceType.eval ||
+                c.instance_type === InstanceType.standard
+          ) || r.capacity?.length === 0;
+
         return {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           id: r.id!,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           displayName: r.display_name!,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          isDisabled: max_capacity_reached,
+          isDisabled: !max_capacity_reached,
         };
       });
   };
@@ -186,6 +186,8 @@ export const useAvailableProvidersAndDefault = () => {
         switch (true) {
           case kasQuota !== undefined && kasQuota.remaining > 0:
             return "quota";
+          case kasQuota !== undefined && kasQuota.remaining === 0:
+            return "over-quota";
           case hasTrialRunning:
             return "trial-used";
           // TODO check if trial instances are available for creation using the info returned by the region endpoint
