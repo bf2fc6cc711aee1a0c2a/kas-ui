@@ -1,7 +1,4 @@
-import {
-  asKafkaRequestPayload,
-  createEmptyNewKafkaRequestPayload,
-} from "@app/models/kafka";
+import { asKafkaRequestPayload, createEmptyNewKafkaRequestPayload } from '@app/models/kafka';
 import {
   CreateKafkaInitializationData,
   InstanceAvailability,
@@ -11,18 +8,11 @@ import {
   Providers,
   RegionInfo,
   Regions,
-} from "@rhoas/app-services-ui-components";
-import {
-  Quota,
-  QuotaType,
-  QuotaValue,
-  useAuth,
-  useConfig,
-  useQuota,
-} from "@rhoas/app-services-ui-shared";
-import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
-import { isServiceApiError } from "@app/utils/error";
-import { ErrorCodes, InstanceType } from "@app/utils";
+} from '@rhoas/app-services-ui-components';
+import { Quota, QuotaType, QuotaValue, useAuth, useConfig, useQuota } from '@rhoas/app-services-ui-shared';
+import { CloudRegion, Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
+import { isServiceApiError } from '@app/utils/error';
+import { ErrorCodes, InstanceType } from '@app/utils';
 
 export const useAvailableProvidersAndDefault = () => {
   const auth = useAuth();
@@ -38,22 +28,15 @@ export const useAvailableProvidersAndDefault = () => {
     })
   );
 
-  const fetchQuota = async (): Promise<Quota["data"]> => {
+  const fetchQuota = async (): Promise<Quota['data']> => {
     return new Promise((resolve, reject) => {
       async function getQuotaData() {
         const quota = await getQuota();
         if (quota.isServiceDown) {
-          console.error(
-            "useAvailableProvidersAndDefault",
-            "fetchQuota rejected because isServiceDown is true"
-          );
+          console.error('useAvailableProvidersAndDefault', 'fetchQuota rejected because isServiceDown is true');
           reject();
         } else if (quota.loading) {
-          console.warn(
-            "useAvailableProvidersAndDefault",
-            "fetchQuota",
-            "quota is loading, retrying in 1000ms"
-          );
+          console.warn('useAvailableProvidersAndDefault', 'fetchQuota', 'quota is loading, retrying in 1000ms');
           setTimeout(getQuota, 1000);
         } else {
           resolve(quota.data);
@@ -64,50 +47,55 @@ export const useAvailableProvidersAndDefault = () => {
   };
 
   // Function to fetch cloud Regions based on selected filter
-  const fetchRegions = async (
-    id: string,
-    ia: InstanceAvailability
-  ): Promise<Regions> => {
-    // const instance_type =
-    //   ia === "quota" ? InstanceType.standard : InstanceType.developer;
+  const fetchRegions = async (id: string, ia: InstanceAvailability): Promise<Regions> => {
     const res = await apisService.getCloudProviderRegions(id);
-    //backward compatibility instanceType for stage and prod env due to backend changes are not available on prod.
-    //Note: remove eval check  when backend large kafka changes deployed on prod.
 
-    return (res.data.items || [])
-      .filter(
-        (p) =>
-          p.enabled &&
-          p.capacity.some((c) =>
-            ia === "quota"
-              ? c.instance_type === InstanceType.standard
-              : c.instance_type === InstanceType.eval ||
-                c.instance_type === InstanceType.developer
-          )
-      )
-      .map((r): RegionInfo => {
-        const max_capacity_reached =
-          r.capacity?.some((c) =>
-            ia === "quota"
-              ? c.instance_type === InstanceType.standard
-              : c.instance_type === InstanceType.eval ||
-                c.instance_type === InstanceType.standard
-          ) || r.capacity?.length === 0;
+    if (!res?.data?.items) {
+      return [];
+    }
 
-        return {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: r.id!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          displayName: r.display_name!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          isDisabled: !max_capacity_reached,
-        };
-      });
+    const instance_type = ia === 'quota' ? InstanceType.standard : getInstanceTypeForResponse(res.data.items);
+
+    const regionsForInstance = res.data.items.filter(
+      (p) => p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
+    );
+
+    return regionsForInstance.map((r): RegionInfo => {
+      let max_capacity_reached = false;
+      // Backwards compatibility remove once eval type is removed
+      if (instance_type == InstanceType.eval) {
+        max_capacity_reached = r.capacity?.some((c) => c.max_capacity_reached === true);
+      } else {
+        max_capacity_reached = r.capacity?.some((c) => c.available_sizes?.length === 0);
+      }
+
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        id: r.id!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        displayName: r.display_name!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        isDisabled: max_capacity_reached,
+      };
+    });
   };
 
-  const fetchProviders = async (
-    ia: InstanceAvailability
-  ): Promise<Providers> => {
+  // FUTURE: this method should be removed and replaced with InstanceType.developer value
+  const getInstanceTypeForResponse = (regions: CloudRegion[]): InstanceType => {
+    const detectedNewAPI = !!regions.find((info) => {
+      return info.capacity.find((capacity) => {
+        return !!capacity.available_sizes;
+      });
+    });
+
+    if (detectedNewAPI) {
+      return InstanceType.developer;
+    } else {
+      return InstanceType.eval;
+    }
+  };
+
+  const fetchProviders = async (ia: InstanceAvailability): Promise<Providers> => {
     try {
       const res = await apisService.getCloudProviders();
       const allProviders = res?.data?.items || [];
@@ -131,7 +119,7 @@ export const useAvailableProvidersAndDefault = () => {
           })
       );
     } catch (e) {
-      console.error("useAvailableProvidersAndDefault", "fetchProvider", e);
+      console.error('useAvailableProvidersAndDefault', 'fetchProvider', e);
       return Promise.reject(e);
     }
   };
@@ -148,20 +136,14 @@ export const useAvailableProvidersAndDefault = () => {
           basePath,
         })
       );
-      const res = await apisService.getKafkas("", "", "", filter);
+      const res = await apisService.getKafkas('', '', '', filter);
       if (res.data.items) {
         return res.data.items.some(
-          (k) =>
-            k?.instance_type === InstanceType?.eval ||
-            k?.instance_type === InstanceType?.developer
+          (k) => k?.instance_type === InstanceType?.eval || k?.instance_type === InstanceType?.developer
         );
       }
     } catch (e) {
-      console.error(
-        "useAvailableProvidersAndDefault",
-        "fetchUserHasTrialInstance",
-        e
-      );
+      console.error('useAvailableProvidersAndDefault', 'fetchUserHasTrialInstance', e);
     }
     return false;
   };
@@ -175,51 +157,40 @@ export const useAvailableProvidersAndDefault = () => {
       try {
         kasQuota = quota?.get(QuotaType?.kas);
       } catch (e) {
-        console.error(
-          "useAvailableProvidersAndDefault",
-          "quota?.get exception",
-          e
-        );
+        console.error('useAvailableProvidersAndDefault', 'quota?.get exception', e);
       }
 
       const instanceAvailability = ((): InstanceAvailability => {
         switch (true) {
           case kasQuota !== undefined && kasQuota.remaining > 0:
-            return "quota";
+            return 'quota';
           case kasQuota !== undefined && kasQuota.remaining === 0:
-            return "over-quota";
+            return 'over-quota';
           case hasTrialRunning:
-            return "trial-used";
+            return 'trial-used';
           // TODO check if trial instances are available for creation using the info returned by the region endpoint
           // TODO also check if there is any capacity for standard instances, as for the trial ones
           default:
-            return "trial";
+            return 'trial';
         }
       })();
 
       const availableProviders = await fetchProviders(instanceAvailability);
       let defaultProvider: Provider | undefined;
       try {
-        defaultProvider =
-          availableProviders.length === 1
-            ? availableProviders[0].id
-            : undefined;
+        defaultProvider = availableProviders.length === 1 ? availableProviders[0].id : undefined;
       } catch (e) {
-        console.error(
-          "useAvailableProvidersAndDefault",
-          "defaultProvider error",
-          e
-        );
+        console.error('useAvailableProvidersAndDefault', 'defaultProvider error', e);
       }
 
       return {
         defaultProvider,
-        defaultAZ: "multi",
+        defaultAZ: 'multi',
         availableProviders,
         instanceAvailability,
       };
     } catch (e) {
-      console.error("useAvailableProvidersAndDefault", e);
+      console.error('useAvailableProvidersAndDefault', e);
       return Promise.reject(e);
     }
   };
@@ -240,13 +211,11 @@ export const useCreateInstance = (): OnCreateKafka => {
 
   return async (data, onSuccess, onError) => {
     try {
-      const kafkaRequest = asKafkaRequestPayload(
-        createEmptyNewKafkaRequestPayload()
-      );
+      const kafkaRequest = asKafkaRequestPayload(createEmptyNewKafkaRequestPayload());
       kafkaRequest.name = data.name;
       kafkaRequest.cloud_provider = data.provider;
       kafkaRequest.region = data.region;
-      kafkaRequest.multi_az = data.az === "multi";
+      kafkaRequest.multi_az = data.az === 'multi';
       await apisService.createKafka(true, kafkaRequest);
       onSuccess();
     } catch (error) {
@@ -255,29 +224,21 @@ export const useCreateInstance = (): OnCreateKafka => {
 
         switch (code) {
           case ErrorCodes.DUPLICATE_INSTANCE_NAME:
-            onError("name-taken");
+            onError('name-taken');
             break;
           case ErrorCodes.INSUFFICIENT_QUOTA:
-            onError("over-quota");
+            onError('over-quota');
             break;
           case ErrorCodes.REACHED_MAX_LIMIT_ALLOWED_KAFKA:
           case ErrorCodes.INSTANCE_TYPE_NOT_SUPPORTED:
-            onError("trial-unavailable");
+            onError('trial-unavailable');
             break;
           default:
-            console.error(
-              "useAvailableProvidersAndDefault",
-              "createKafka unknown error",
-              error
-            );
-            onError("unknown");
+            console.error('useAvailableProvidersAndDefault', 'createKafka unknown error', error);
+            onError('unknown');
         }
       } else {
-        console.error(
-          "useAvailableProvidersAndDefault",
-          "createKafka unexpected error",
-          error
-        );
+        console.error('useAvailableProvidersAndDefault', 'createKafka unexpected error', error);
       }
     }
   };
