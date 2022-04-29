@@ -1,5 +1,5 @@
 import { FunctionComponent, MouseEvent, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   IAction,
   IRowData,
@@ -28,6 +28,8 @@ import { MASTable, MASTableProps } from "@app/common";
 import { Pagination } from "@app/modules/OpenshiftStreams/components/StreamsTable/Pagination";
 import { NoResultsFound } from "@app/modules/OpenshiftStreams/components/StreamsTable/NoResultsFound";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { FormatDate } from "@rhoas/app-services-ui-components";
+import { add } from "date-fns";
 
 export type StreamsTableProps = Pick<
   StreamsToolbarProps,
@@ -170,7 +172,21 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
               <>
                 {getFormattedDate(created_at, t("ago"))}
                 <br />
-                {instance_type === InstanceType?.eval && "48 hours duration"}
+                {(instance_type === InstanceType?.developer ||
+                  instance_type === InstanceType?.eval) && (
+                  <Trans
+                    i18nKey="common.expires_in"
+                    ns={["kasTemporaryFixMe"]}
+                    components={{
+                      time: (
+                        <FormatDate
+                          date={add(new Date(created_at), { days: 2 })}
+                          format="expiration"
+                        />
+                      ),
+                    }}
+                  />
+                )}
               </>
             ),
           },
