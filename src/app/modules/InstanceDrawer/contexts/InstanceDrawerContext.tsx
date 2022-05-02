@@ -1,6 +1,6 @@
 import { FunctionComponent, createContext, useContext, useState } from "react";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import { KafkaInstance } from "@rhoas/app-services-ui-shared";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 
 export type InstanceDrawerContextProps = {
   isInstanceDrawerOpen: boolean;
@@ -8,8 +8,8 @@ export type InstanceDrawerContextProps = {
   setInstanceDrawerTab: (tab: InstanceDrawerTab) => void;
   openInstanceDrawer: (tab?: InstanceDrawerTab) => void;
   closeInstanceDrawer: () => void;
-  instanceDrawerInstance: KafkaInstance | undefined;
-  setInstanceDrawerInstance: (instance: KafkaInstance) => void;
+  instanceDrawerInstance: KafkaRequest | undefined;
+  setInstanceDrawerInstance: (instance: KafkaRequest) => void;
   setNoInstances: (noInstances: boolean) => void;
   noInstances: boolean;
 };
@@ -28,7 +28,7 @@ export const useInstanceDrawer = (): InstanceDrawerContextProps => {
 
 export type InstanceDrawerContextProviderProps = {
   initialTab?: InstanceDrawerTab;
-  initialInstance?: KafkaInstance;
+  initialInstance?: KafkaRequest;
   initialNoInstances?: boolean;
 };
 
@@ -40,7 +40,7 @@ export const InstanceDrawerContextProvider: FunctionComponent<
     InstanceDrawerTab | undefined
   >(initialTab);
   const [instanceDrawerInstance, setInstanceDrawerInstance] = useState<
-    KafkaInstance | undefined
+    KafkaRequest | undefined
   >(initialInstance);
   const [noInstances, setNoInstances] = useState<boolean>(initialNoInstances);
   return (
