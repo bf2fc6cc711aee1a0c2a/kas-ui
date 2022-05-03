@@ -1,15 +1,20 @@
 import { CreateKafkaInstanceWithSizesTypes } from '@rhoas/app-services-ui-components';
-import { Quota, QuotaType, QuotaValue, useAuth, useConfig, useQuota } from '@rhoas/app-services-ui-shared';
-import { CloudRegion, Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
+import { useAuth, useConfig } from '@rhoas/app-services-ui-shared';
+import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { InstanceType } from '@app/utils';
+import { convertQuotaToInstanceType, getQuotaType, useAMSQuota } from './useAMSQuota';
 
-// TODO this method is
+/**
+ * Hooks for fetching available providers and their regions
+ *
+ * @returns
+ */
 export const useAvailableProvidersAndDefault = () => {
   const { kas, getUsername } = useAuth();
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
-  const { getQuota } = useQuota();
+  const getQuota = useAMSQuota();
 
   function getApi() {
     return new DefaultApi(
@@ -20,29 +25,10 @@ export const useAvailableProvidersAndDefault = () => {
     );
   }
 
-  // TODO most evil function. PR cannot be merged without refactoring this method!
-  const fetchQuota = async (): Promise<Quota['data']> => {
-    return new Promise((resolve, reject) => {
-      async function getQuotaData() {
-        const quota = await getQuota();
-        if (quota.isServiceDown) {
-          console.error('useAvailableProvidersAndDefault', 'fetchQuota rejected because isServiceDown is true');
-          reject();
-        } else if (quota.loading) {
-          console.warn('useAvailableProvidersAndDefault', 'fetchQuota', 'quota is loading, retrying in 1000ms');
-          setTimeout(getQuota, 1000);
-        } else {
-          resolve(quota.data);
-        }
-      }
-      getQuotaData();
-    });
-  };
-
   // Function to fetch cloud Regions based on selected filter
   const fetchRegions = async (
     id: string,
-    plan: CreateKafkaInstanceWithSizesTypes.Plan
+    instance_type: string
   ): Promise<CreateKafkaInstanceWithSizesTypes.Regions> => {
     const apisService = getApi();
     const res = await apisService.getCloudProviderRegions(id);
@@ -51,20 +37,12 @@ export const useAvailableProvidersAndDefault = () => {
       return [];
     }
 
-    const instance_type = plan === 'standard' ? InstanceType.standard : getInstanceTypeForResponse(res.data.items);
-
     const regionsForInstance = res.data.items.filter(
       (p) => p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
     );
 
     return regionsForInstance.map((r): CreateKafkaInstanceWithSizesTypes.RegionInfo => {
-      let max_capacity_reached = false;
-      // Backwards compatibility remove once eval type is removed
-      if (instance_type == InstanceType.eval) {
-        max_capacity_reached = r.capacity?.some((c) => c.max_capacity_reached === true);
-      } else {
-        max_capacity_reached = r.capacity?.some((c) => c.available_sizes?.length === 0);
-      }
+      const max_capacity_reached = r.capacity?.some((c) => c.available_sizes?.length === 0);
 
       return {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -77,24 +55,7 @@ export const useAvailableProvidersAndDefault = () => {
     });
   };
 
-  // FUTURE: this method should be removed and replaced with InstanceType.developer value
-  const getInstanceTypeForResponse = (regions: CloudRegion[]): InstanceType => {
-    const detectedNewAPI = !!regions.find((info) => {
-      return info.capacity.find((capacity) => {
-        return !!capacity.available_sizes;
-      });
-    });
-
-    if (detectedNewAPI) {
-      return InstanceType.developer;
-    } else {
-      return InstanceType.eval;
-    }
-  };
-
-  const fetchProviders = async (
-    plan: CreateKafkaInstanceWithSizesTypes.Plan
-  ): Promise<CreateKafkaInstanceWithSizesTypes.Providers> => {
+  const fetchProviders = async (instance_type: string): Promise<CreateKafkaInstanceWithSizesTypes.Providers> => {
     try {
       const apisService = getApi();
       const res = await apisService.getCloudProviders();
@@ -104,7 +65,7 @@ export const useAvailableProvidersAndDefault = () => {
           .filter((p) => p.enabled)
           .map(async (provider): Promise<CreateKafkaInstanceWithSizesTypes.ProviderInfo> => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const regions = await fetchRegions(provider.id!, plan);
+            const regions = await fetchRegions(provider.id!, instance_type);
             return {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               id: provider.id!,
@@ -141,20 +102,12 @@ export const useAvailableProvidersAndDefault = () => {
 
   return async function (): Promise<CreateKafkaInstanceWithSizesTypes.CreateKafkaInitializationData> {
     try {
-      const quota = await fetchQuota();
+      const quota = await getQuota();
+      const plan = getQuotaType(quota.data);
+      const instance_type = convertQuotaToInstanceType(quota.data);
+
       const hasTrialRunning = await fetchUserHasTrialInstance();
-
-      let kasQuota: QuotaValue | undefined;
-      try {
-        kasQuota = quota?.get(QuotaType?.kas);
-      } catch (e) {
-        console.error('useAvailableProvidersAndDefault', 'quota?.get exception', e);
-      }
-
-      const plan: CreateKafkaInstanceWithSizesTypes.Plan =
-        kasQuota !== undefined && kasQuota.remaining > 0 ? 'standard' : 'trial';
-
-      const availableProviders = await fetchProviders(plan);
+      const availableProviders = await fetchProviders(instance_type);
       let defaultProvider: CreateKafkaInstanceWithSizesTypes.Provider | undefined;
       try {
         defaultProvider = availableProviders.length === 1 ? availableProviders[0].id : undefined;

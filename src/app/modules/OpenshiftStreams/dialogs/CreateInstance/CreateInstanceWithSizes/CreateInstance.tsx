@@ -32,7 +32,8 @@ const CreateInstanceWithSizes: FunctionComponent<CreateInstanceProps & BaseModal
 
   const getAvailableProvidersAndDefaults =
     useCallback(async (): Promise<CreateKafkaInstanceWithSizesTypes.CreateKafkaInitializationData> => {
-      return fetchAvailableProvidersAndDefault();
+      const data = await fetchAvailableProvidersAndDefault();
+      return data;
     }, [fetchAvailableProvidersAndDefault]);
 
   const kafkaSizes = useCallback<CreateKafkaInstancePropsWithSizes['getSizes']>(getKafkaSizes, [getKafkaSizes]);

@@ -23,7 +23,7 @@ export function useGetAvailableSizes() {
         basePath,
       })
     );
-    // TODO quota calculation/instance selection needs refactoring
+
     const quota = await getQuota();
     const kasQuota = quota?.data?.get(QuotaType?.kas);
     const instanceType = kasQuota ? InstanceType.standard : InstanceType.developer;
