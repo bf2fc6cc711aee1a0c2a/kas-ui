@@ -1,6 +1,7 @@
 import { InstanceType } from '@app/utils';
 import { QuotaType, useAuth, useConfig, useQuota } from '@rhoas/app-services-ui-shared';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
+import { CreateKafkaInstanceWithSizesTypes } from 'app-services-ui-components/types/src';
 import { Size } from 'app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types';
 
 /**
@@ -15,8 +16,7 @@ export function useGetAvailableSizes() {
     kas: { apiBasePath: basePath },
   } = useConfig();
 
-  // TODO progress, error handling
-  return async (provider: string, region: string) => {
+  return async (provider: string, region: string): Promise<CreateKafkaInstanceWithSizesTypes.GetSizesData> => {
     const api = new DefaultApi(
       new Configuration({
         accessToken: kas.getToken(),
@@ -36,7 +36,7 @@ export function useGetAvailableSizes() {
           instanceTypesSizes = instanceTypesSizes.filter((s) => (s.quota_consumed || 0) <= kasQuota.remaining);
         }
         // TODO filter sizes that do not fit to the region
-        return instanceTypesSizes.map((s) => {
+        const componentSizes = instanceTypesSizes.map((s) => {
           return {
             id: s.id,
             streamingUnits: s.quota_consumed,
@@ -50,13 +50,14 @@ export function useGetAvailableSizes() {
             messageSize: 10000,
           } as Size;
         });
+        return { sizes: componentSizes };
       } else {
         // TODO This case should never happen
-        console.error('Missing');
-        return [];
+        console.error('Cannot match instance type to backend response.', instanceType);
+        return { sizes: [] };
       }
     }
 
-    return [];
+    return { sizes: [] };
   };
 }

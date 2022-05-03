@@ -35,14 +35,7 @@ const CreateInstanceWithSizes: FunctionComponent<CreateInstanceProps & BaseModal
       return fetchAvailableProvidersAndDefault();
     }, [fetchAvailableProvidersAndDefault]);
 
-  const getSizes = useCallback<CreateKafkaInstancePropsWithSizes['getSizes']>(
-    async (provider, region) => {
-      console.log(provider, region);
-      const sizes = await getKafkaSizes(provider, region);
-      return { sizes };
-    },
-    [getKafkaSizes]
-  );
+  const kafkaSizes = useCallback<CreateKafkaInstancePropsWithSizes['getSizes']>(getKafkaSizes, [getKafkaSizes]);
 
   return (
     <CreateKafkaInstanceWithSizes
@@ -56,7 +49,7 @@ const CreateInstanceWithSizes: FunctionComponent<CreateInstanceProps & BaseModal
       onLearnHowToAddStreamingUnits={() => console.log('')}
       onLearnMoreAboutSizes={() => console.log('')}
       onClickKafkaOverview={() => console.log('')}
-      getSizes={getSizes}
+      getSizes={kafkaSizes}
     />
   );
 };
