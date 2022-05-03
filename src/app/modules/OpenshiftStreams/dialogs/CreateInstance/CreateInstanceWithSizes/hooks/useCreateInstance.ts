@@ -4,9 +4,16 @@ import { useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { isServiceApiError } from '@app/utils/error';
 import { ErrorCodes } from '@app/utils';
+import { useAMSQuota } from './useAMSQuota';
 
+/**
+ * Create Kafka instance hook that creates kafka instance
+ * @param currentAMSPlan
+ * @returns
+ */
 export const useCreateInstance = (): CreateKafkaInstanceWithSizesTypes.OnCreateKafka => {
   const auth = useAuth();
+  const getQuota = useAMSQuota();
   const {
     kas: { apiBasePath: basePath },
   } = useConfig();
@@ -18,14 +25,15 @@ export const useCreateInstance = (): CreateKafkaInstanceWithSizesTypes.OnCreateK
         basePath,
       })
     );
+    const quota = await getQuota();
+    const instanceType = convertPlanToInstanceType(quota.data);
+
     try {
       const kafkaRequest = asKafkaRequestPayload(createEmptyNewKafkaRequestPayload());
       kafkaRequest.name = data.name;
       kafkaRequest.cloud_provider = data.provider;
       kafkaRequest.region = data.region;
-      // TODO how we can avoid calling AMS In every hook.
-      // For all instances all we need is instance type
-      kafkaRequest.plan = 'developer.' + data.sizeId;
+      kafkaRequest.plan = instanceType + '.' + data.sizeId;
       await apisService.createKafka(true, kafkaRequest);
       onSuccess();
     } catch (error) {
@@ -53,3 +61,11 @@ export const useCreateInstance = (): CreateKafkaInstanceWithSizesTypes.OnCreateK
     }
   };
 };
+
+function convertPlanToInstanceType(
+  data:
+    | Map<import('@rhoas/app-services-ui-shared').QuotaType, import('@rhoas/app-services-ui-shared').QuotaValue>
+    | undefined
+) {
+  throw new Error('Function not implemented.');
+}
