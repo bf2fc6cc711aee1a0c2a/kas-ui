@@ -4,7 +4,7 @@ import { useAuth, useConfig } from '@rhoas/app-services-ui-shared';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
 import { isServiceApiError } from '@app/utils/error';
 import { ErrorCodes } from '@app/utils';
-import { useAMSQuota } from './useAMSQuota';
+import { convertQuotaToInstanceType, useAMSQuota } from './useAMSQuota';
 
 /**
  * Create Kafka instance hook that creates kafka instance
@@ -26,7 +26,7 @@ export const useCreateInstance = (): CreateKafkaInstanceWithSizesTypes.OnCreateK
       })
     );
     const quota = await getQuota();
-    const instanceType = convertPlanToInstanceType(quota.data);
+    const instanceType = convertQuotaToInstanceType(quota.data);
 
     try {
       const kafkaRequest = asKafkaRequestPayload(createEmptyNewKafkaRequestPayload());
@@ -61,11 +61,3 @@ export const useCreateInstance = (): CreateKafkaInstanceWithSizesTypes.OnCreateK
     }
   };
 };
-
-function convertPlanToInstanceType(
-  data:
-    | Map<import('@rhoas/app-services-ui-shared').QuotaType, import('@rhoas/app-services-ui-shared').QuotaValue>
-    | undefined
-) {
-  throw new Error('Function not implemented.');
-}
