@@ -1,8 +1,8 @@
 import { InstanceType } from '@app/utils';
+import { CreateKafkaInstanceWithSizesTypes } from '@rhoas/app-services-ui-components';
+import { Size } from '@rhoas/app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types';
 import { QuotaType, useAuth, useConfig, useQuota } from '@rhoas/app-services-ui-shared';
 import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
-import { CreateKafkaInstanceWithSizesTypes } from 'app-services-ui-components/types/src';
-import { Size } from 'app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types';
 
 /**
  * Return list of the instance types available for the current user
