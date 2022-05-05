@@ -40,14 +40,14 @@ export function useGetAvailableSizes() {
           return {
             id: s.id,
             streamingUnits: s.quota_consumed,
-            ingress: s.ingress_throughput_per_sec,
-            egress: s.egress_throughput_per_sec,
-            storage: s.max_data_retention_size,
+            ingress: (s.ingress_throughput_per_sec?.bytes || 0) / 1048576,
+            egress: (s.egress_throughput_per_sec?.bytes || 0) / 1048576,
+            storage: Math.round((s.max_data_retention_size?.bytes  || 0) / (1073741824)),
             connections: s.total_max_connections,
             connectionRate: s.max_connection_attempts_per_sec,
             maxPartitions: s.max_partitions,
             // TODO https://issues.redhat.com/browse/MGDSTRM-8385
-            messageSize: 10000,
+            messageSize: 1,
           } as Size;
         });
         return { sizes: componentSizes };
