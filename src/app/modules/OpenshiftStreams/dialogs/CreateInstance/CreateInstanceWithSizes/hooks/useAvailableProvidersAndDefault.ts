@@ -1,8 +1,12 @@
-import { CreateKafkaInstanceWithSizesTypes } from '@rhoas/app-services-ui-components';
-import { useAuth, useConfig } from '@rhoas/app-services-ui-shared';
-import { Configuration, DefaultApi } from '@rhoas/kafka-management-sdk';
-import { InstanceType } from '@app/utils';
-import { convertQuotaToInstanceType, getQuotaType, useAMSQuota } from './useAMSQuota';
+import { CreateKafkaInstanceWithSizesTypes } from "@rhoas/app-services-ui-components";
+import { useAuth, useConfig, QuotaType } from "@rhoas/app-services-ui-shared";
+import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
+import { InstanceType } from "@app/utils";
+import {
+  convertQuotaToInstanceType,
+  getQuotaType,
+  useAMSQuota,
+} from "./useAMSQuota";
 
 /**
  * Hooks for fetching available providers and their regions
@@ -38,24 +42,31 @@ export const useAvailableProvidersAndDefault = () => {
     }
 
     const regionsForInstance = res.data.items.filter(
-      (p) => p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
+      (p) =>
+        p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
     );
 
-    return regionsForInstance.map((r): CreateKafkaInstanceWithSizesTypes.RegionInfo => {
-      const max_capacity_reached = r.capacity?.some((c) => c.available_sizes?.length === 0);
+    return regionsForInstance.map(
+      (r): CreateKafkaInstanceWithSizesTypes.RegionInfo => {
+        const max_capacity_reached = r.capacity?.some(
+          (c) => c.available_sizes?.length === 0
+        );
 
-      return {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        id: r.id!,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        displayName: r.display_name!,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        isDisabled: max_capacity_reached,
-      };
-    });
+        return {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          id: r.id!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          displayName: r.display_name!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          isDisabled: max_capacity_reached,
+        };
+      }
+    );
   };
 
-  const fetchProviders = async (instance_type: string): Promise<CreateKafkaInstanceWithSizesTypes.Providers> => {
+  const fetchProviders = async (
+    instance_type: string
+  ): Promise<CreateKafkaInstanceWithSizesTypes.Providers> => {
     try {
       const apisService = getApi();
       const res = await apisService.getCloudProviders();
@@ -63,20 +74,24 @@ export const useAvailableProvidersAndDefault = () => {
       return await Promise.all(
         allProviders
           .filter((p) => p.enabled)
-          .map(async (provider): Promise<CreateKafkaInstanceWithSizesTypes.ProviderInfo> => {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const regions = await fetchRegions(provider.id!, instance_type);
-            return {
+          .map(
+            async (
+              provider
+            ): Promise<CreateKafkaInstanceWithSizesTypes.ProviderInfo> => {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              id: provider.id!,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              displayName: provider.display_name!,
-              regions,
-            };
-          })
+              const regions = await fetchRegions(provider.id!, instance_type);
+              return {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                id: provider.id!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                displayName: provider.display_name!,
+                regions,
+              };
+            }
+          )
       );
     } catch (e) {
-      console.error('useAvailableProvidersAndDefault', 'fetchProvider', e);
+      console.error("useAvailableProvidersAndDefault", "fetchProvider", e);
       return Promise.reject(e);
     }
   };
@@ -88,14 +103,20 @@ export const useAvailableProvidersAndDefault = () => {
       const loggedInUser = await getUsername()!;
       const filter = `owner = ${loggedInUser}`;
       const apisService = getApi();
-      const res = await apisService.getKafkas('', '', '', filter);
+      const res = await apisService.getKafkas("", "", "", filter);
       if (res.data.items) {
         return res.data.items.some(
-          (k) => k?.instance_type === InstanceType?.eval || k?.instance_type === InstanceType?.developer
+          (k) =>
+            k?.instance_type === InstanceType?.eval ||
+            k?.instance_type === InstanceType?.developer
         );
       }
     } catch (e) {
-      console.error('useAvailableProvidersAndDefault', 'fetchUserHasTrialInstance', e);
+      console.error(
+        "useAvailableProvidersAndDefault",
+        "fetchUserHasTrialInstance",
+        e
+      );
     }
     return false;
   };
@@ -104,32 +125,51 @@ export const useAvailableProvidersAndDefault = () => {
     try {
       const quota = await getQuota();
       const plan = getQuotaType(quota.data);
-      const instance_type = convertQuotaToInstanceType(quota.data);
+      const instanceType = convertQuotaToInstanceType(quota.data);
+      const kasQuota = quota?.data?.get(QuotaType?.kas);
 
       const hasTrialRunning = await fetchUserHasTrialInstance();
-      const availableProviders = await fetchProviders(instance_type);
-      let defaultProvider: CreateKafkaInstanceWithSizesTypes.Provider | undefined;
+      const availableProviders = await fetchProviders(instanceType);
+      let defaultProvider:
+        | CreateKafkaInstanceWithSizesTypes.Provider
+        | undefined;
       try {
-        defaultProvider = availableProviders.length === 1 ? availableProviders[0].id : undefined;
+        defaultProvider =
+          availableProviders.length === 1
+            ? availableProviders[0].id
+            : undefined;
       } catch (e) {
-        console.error('useAvailableProvidersAndDefault', 'defaultProvider error', e);
+        console.error(
+          "useAvailableProvidersAndDefault",
+          "defaultProvider error",
+          e
+        );
       }
 
-      // TODO: figure out how to get the status of the system to pass to the dialog to show the right state
-      const instanceAvailability: CreateKafkaInstanceWithSizesTypes.InstanceAvailability = hasTrialRunning
-        ? 'trial-used'
-        : 'standard-available';
+      const instanceAvailability =
+        ((): CreateKafkaInstanceWithSizesTypes.InstanceAvailability => {
+          switch (true) {
+            case kasQuota !== undefined && kasQuota.remaining > 0:
+              return "standard-available";
+            case kasQuota !== undefined && kasQuota.remaining === 0:
+              return "over-quota";
+            case hasTrialRunning:
+              return "trial-used";
+            default:
+              return "trial-available";
+          }
+        })();
 
       return {
         defaultProvider,
         availableProviders,
         instanceAvailability,
-        maxStreamingUnits: 5,
-        remainingStreamingUnits: 4,
+        maxStreamingUnits: kasQuota?.allowed || 0,
+        remainingStreamingUnits: kasQuota?.remaining || 0,
         plan,
       };
     } catch (e) {
-      console.error('useAvailableProvidersAndDefault', e);
+      console.error("useAvailableProvidersAndDefault", e);
       return Promise.reject(e);
     }
   };
