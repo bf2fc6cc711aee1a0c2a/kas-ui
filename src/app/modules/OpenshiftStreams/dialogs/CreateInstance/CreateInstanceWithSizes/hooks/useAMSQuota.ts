@@ -1,6 +1,12 @@
-import { useAuth, useConfig, Quota, QuotaValue, QuotaType } from '@rhoas/app-services-ui-shared';
-import { Configuration, AppServicesApi } from '@rhoas/account-management-sdk';
-import { InstanceType } from '@app/utils';
+import {
+  useAuth,
+  useConfig,
+  Quota,
+  QuotaValue,
+  QuotaType,
+} from "@rhoas/app-services-ui-shared";
+import { Configuration, AppServicesApi } from "@rhoas/account-management-sdk";
+import { InstanceType } from "@app/utils";
 
 /**
  * Hook that fetches available entitelemts from AMS
@@ -12,38 +18,54 @@ export const useAMSQuota = () => {
   const auth = useAuth();
 
   // TODO we need this details to be shared to from app-servies-ui
-  const quotaProductId = 'RHOSAK';
-  const trialQuotaProductId = 'RHOSAKTrial';
-  const resourceName = 'rhosak';
+  const quotaProductId = "RHOSAK";
+  const trialQuotaProductId = "RHOSAKTrial";
+  const resourceName = "rhosak";
 
   return async () => {
     const accessToken = await auth?.ams.getToken();
     const ams = new AppServicesApi({
       accessToken,
-      basePath: config?.ams.apiBasePath || '',
+      basePath: config?.ams.apiBasePath || "",
     } as Configuration);
 
     const account = await ams.apiAccountsMgmtV1CurrentAccountGet();
     const orgId = account?.data?.organization?.id;
     const quotaData = new Map<QuotaType, QuotaValue>();
     // TODO remove service down and other values. Use different model?
-    const filteredQuota: Quota = { loading: true, isServiceDown: false, data: undefined };
+    const filteredQuota: Quota = {
+      loading: true,
+      isServiceDown: false,
+      data: undefined,
+    };
 
     if (!orgId) {
-      console.error('useQuota', 'orgId is not defined');
+      console.error("useQuota", "orgId is not defined");
       filteredQuota.loading = false;
       filteredQuota.isServiceDown = true;
       return filteredQuota;
     }
 
     try {
-      const response = await ams.apiAccountsMgmtV1OrganizationsOrgIdQuotaCostGet(orgId, undefined, true);
+      const response =
+        await ams.apiAccountsMgmtV1OrganizationsOrgIdQuotaCostGet(
+          orgId,
+          undefined,
+          true
+        );
 
       const quota = response?.data?.items?.find((q) =>
-        q.related_resources?.find((r) => r.resource_name === resourceName && r.product === quotaProductId)
+        q.related_resources?.find(
+          (r) =>
+            r.resource_name === resourceName && r.product === quotaProductId
+        )
       );
       const trialQuota = response?.data?.items?.find((q) =>
-        q.related_resources?.find((r) => r.resource_name === resourceName && r.product === trialQuotaProductId)
+        q.related_resources?.find(
+          (r) =>
+            r.resource_name === resourceName &&
+            r.product === trialQuotaProductId
+        )
       );
 
       // TODO logic here should include marketplace vs standard billing model.
@@ -78,14 +100,16 @@ export const useAMSQuota = () => {
 };
 
 // Helper methods for busines logic handled in the UI
-export function convertQuotaToInstanceType(quota: Map<QuotaType, QuotaValue> | undefined) {
+export function convertQuotaToInstanceType(
+  quota: Map<QuotaType, QuotaValue> | undefined
+) {
   let kasQuota: QuotaValue | undefined;
   try {
     kasQuota = quota?.get(QuotaType?.kas);
   } catch (e) {
-    console.error('useAvailableProvidersAndDefault', 'quota?.get exception', e);
+    console.error("useAvailableProvidersAndDefault", "quota?.get exception", e);
   }
-  if (kasQuota !== undefined && kasQuota.remaining > 0) {
+  if (kasQuota !== undefined && kasQuota.remaining >= 0) {
     return InstanceType.standard;
   } else {
     return InstanceType.developer;
@@ -97,12 +121,12 @@ export function getQuotaType(quota: Map<QuotaType, QuotaValue> | undefined) {
   try {
     kasQuota = quota?.get(QuotaType?.kas);
   } catch (e) {
-    console.error('useAvailableProvidersAndDefault', 'quota?.get exception', e);
+    console.error("useAvailableProvidersAndDefault", "quota?.get exception", e);
   }
 
-  if (kasQuota !== undefined && kasQuota.remaining > 0) {
-    return 'standard';
+  if (kasQuota !== undefined && kasQuota.remaining >= 0) {
+    return "standard";
   }
 
-  return 'trial';
+  return "trial";
 }
