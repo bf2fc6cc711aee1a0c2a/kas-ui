@@ -134,6 +134,7 @@ export const useAvailableProvidersAndDefault = () => {
     ia: InstanceAvailability
   ): Promise<Providers> => {
     try {
+      const isMultiAZ = ia === "quota";
       const apisService = getApi();
       const res = await apisService.getCloudProviders();
       const allProviders = res?.data?.items || [];
@@ -150,8 +151,8 @@ export const useAvailableProvidersAndDefault = () => {
               displayName: provider.display_name!,
               regions,
               AZ: {
-                single: false,
-                multi: true,
+                single: !isMultiAZ,
+                multi: isMultiAZ,
               },
             };
           })
@@ -234,7 +235,7 @@ export const useAvailableProvidersAndDefault = () => {
 
       return {
         defaultProvider,
-        defaultAZ: "multi",
+        defaultAZ: instanceAvailability !== "trial" ? "multi" : "single",
         availableProviders,
         instanceAvailability,
       };
