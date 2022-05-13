@@ -3,7 +3,14 @@ import { Drawer, DrawerContent } from "@patternfly/react-core";
 import userEvent from "@testing-library/user-event";
 import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import { MemoryRouter } from "react-router-dom";
-import { ModalContext, BasenameContext } from "@rhoas/app-services-ui-shared";
+import {
+  ModalContext,
+  BasenameContext,
+  Config,
+  ConfigContext,
+  AuthContext,
+  Auth,
+} from "@rhoas/app-services-ui-shared";
 import { KasModalLoader } from "@app/modals";
 import { InstanceDrawerContextProvider } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
@@ -45,6 +52,14 @@ const instanceDetail: KafkaRequest = {
   reauthentication_enabled: false,
 };
 
+const authValue = {
+  kas: {
+    getToken: () => Promise.resolve("test-token"),
+  },
+  getUsername: () => Promise.resolve("api_kafka_service"),
+  isOrgAdmin: () => Promise.resolve(true),
+} as Auth;
+
 const setup = (
   onExpand: () => void,
   _isExpanded: boolean,
@@ -63,27 +78,39 @@ const setup = (
             hideModal: () => "",
           }}
         >
-          <Drawer isExpanded={true} onExpand={onExpand}>
-            <DrawerContent
-              panelContent={
-                <InstanceDrawerContextProvider
-                  initialTab={activeTab}
-                  initialInstance={instance || instanceDetail}
-                  initialNoInstances={true}
-                >
-                  <InstanceDrawer
-                    data-ouia-app-id="controlPlane-streams"
-                    data-testId="mk--instance__drawer"
-                    tokenEndPointUrl={
-                      "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
-                    }
-                    renderContent={() => <></>}
-                  />
-                </InstanceDrawerContextProvider>
+          <AuthContext.Provider value={authValue}>
+            <ConfigContext.Provider
+              value={
+                {
+                  kas: {
+                    apiBasePath: "",
+                  },
+                } as Config
               }
-            />
-          </Drawer>
-          <KasModalLoader />
+            >
+              <Drawer isExpanded={true} onExpand={onExpand}>
+                <DrawerContent
+                  panelContent={
+                    <InstanceDrawerContextProvider
+                      initialTab={activeTab}
+                      initialInstance={instance || instanceDetail}
+                      initialNoInstances={true}
+                    >
+                      <InstanceDrawer
+                        data-ouia-app-id="controlPlane-streams"
+                        data-testId="mk--instance__drawer"
+                        tokenEndPointUrl={
+                          "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
+                        }
+                        renderContent={() => <></>}
+                      />
+                    </InstanceDrawerContextProvider>
+                  }
+                />
+              </Drawer>
+              <KasModalLoader />
+            </ConfigContext.Provider>
+          </AuthContext.Provider>
         </ModalContext.Provider>
       </BasenameContext.Provider>
     </MemoryRouter>

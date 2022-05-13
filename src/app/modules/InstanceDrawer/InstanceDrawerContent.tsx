@@ -8,19 +8,50 @@ import { ConnectionTabProps } from "@app/modules/InstanceDrawer/ConnectionTab";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import { KafkaDetailsTab } from "@rhoas/app-services-ui-components";
-import DetailsTab from "./DetailsTab";
+
+export type KafkaDetailsTabProps = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  expiryDate?: Date;
+  owner: string;
+};
+
+export type KafkaSize = {
+  size?: string;
+  ingress: number;
+  egress: number;
+  storage: number;
+  maxPartitions: number;
+  connections: number;
+  connectionRate: number;
+  messageSize: number;
+  isLoadingSize: boolean;
+};
 
 export const ResourcesTab = lazy(() => import("./ConnectionTab"));
 
 export type InstanceDrawerContentProps = Pick<
   ConnectionTabProps,
   "tokenEndPointUrl"
->;
+> & {
+  kafkaSize?: KafkaSize;
+};
 
 export const InstanceDrawerContent: FunctionComponent<
   InstanceDrawerContentProps
-> = ({ tokenEndPointUrl }) => {
+> = ({ tokenEndPointUrl, kafkaSize }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
+  const {
+    ingress = 0,
+    egress = 0,
+    storage = 0,
+    connectionRate = 0,
+    maxPartitions = 0,
+    connections = 0,
+    size,
+    isLoadingSize = false,
+  } = kafkaSize || {};
 
   const { instanceDrawerTab, setInstanceDrawerTab, instanceDrawerInstance } =
     useInstanceDrawer();
@@ -29,13 +60,6 @@ export const InstanceDrawerContent: FunctionComponent<
     owner = "",
     created_at = "",
     updated_at = "",
-    egress_throughput_per_sec = "",
-    ingress_throughput_per_sec = "",
-    kafka_storage_size = "",
-    max_connection_attempts_per_sec = 0,
-    max_partitions = 0,
-    total_max_connections = 0,
-    size_id = "",
     region = "",
     instance_type = "",
   } = instanceDrawerInstance || {};
@@ -58,9 +82,7 @@ export const InstanceDrawerContent: FunctionComponent<
   const isKafkaPending =
     instanceDrawerInstance?.status === InstanceStatus.ACCEPTED ||
     instanceDrawerInstance?.status === InstanceStatus.PREPARING;
-  const testRelease = new URLSearchParams(
-    new URL(document.location.toString()).search
-  ).get("testRelease");
+
   return (
     <Suspense fallback={<MASLoading />}>
       <Tabs
@@ -71,36 +93,24 @@ export const InstanceDrawerContent: FunctionComponent<
           eventKey={InstanceDrawerTab.DETAILS.toString()}
           title={<TabTitleText>{t("details")}</TabTitleText>}
         >
-          {testRelease ? (
-            <KafkaDetailsTab
-              id={id}
-              owner={owner}
-              createdAt={new Date(created_at)}
-              updatedAt={new Date(updated_at)}
-              expiryDate={addHours(new Date(created_at), 48)}
-              size={size_id}
-              ingress={ingress_throughput_per_sec?.slice(
-                0,
-                ingress_throughput_per_sec?.length - 2
-              )}
-              egress={egress_throughput_per_sec?.slice(
-                0,
-                egress_throughput_per_sec?.length - 2
-              )}
-              storage={kafka_storage_size?.slice(
-                0,
-                kafka_storage_size?.length - 2
-              )}
-              maxPartitions={max_partitions}
-              connections={total_max_connections}
-              connectionRate={max_connection_attempts_per_sec}
-              messageSize={1}
-              region={t(region)}
-              instanceType={instance_type === "standard" ? "standard" : "eval"}
-            />
-          ) : (
-            <DetailsTab />
-          )}
+          <KafkaDetailsTab
+            id={id}
+            owner={owner}
+            createdAt={new Date(created_at)}
+            updatedAt={new Date(updated_at)}
+            expiryDate={addHours(new Date(created_at), 48)}
+            size={size}
+            ingress={ingress}
+            egress={egress}
+            storage={storage}
+            maxPartitions={maxPartitions}
+            connections={connections}
+            connectionRate={connectionRate}
+            messageSize={1}
+            region={t(region)}
+            instanceType={instance_type === "standard" ? "standard" : "eval"}
+            isLoadingSize={isLoadingSize}
+          />
         </Tab>
         <Tab
           eventKey={InstanceDrawerTab.CONNECTION.toString()}
