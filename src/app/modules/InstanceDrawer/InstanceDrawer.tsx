@@ -19,14 +19,10 @@ import {
   InstanceDrawerContentProps,
 } from "@app/modules/InstanceDrawer/InstanceDrawerContent";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
-import {
-  KafkaRequest,
-  Configuration,
-  DefaultApi,
-  SupportedKafkaSize,
-} from "@rhoas/kafka-management-sdk";
-import { useConfig, useAuth } from "@rhoas/app-services-ui-shared";
-import { convertBytesToUnit } from "@app/utils";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
+import { InstanceType } from "@app/utils";
+import { useGetAvailableSizes } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceWithSizes/hooks";
+import { Size } from "@rhoas/app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types";
 
 export type InstanceDrawerProps = Omit<
   MASDrawerProps,
@@ -55,16 +51,10 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
   dayjs.extend(localizedFormat);
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   //states
-  const [kafkaSize, setKafkaSize] = useState<SupportedKafkaSize | undefined>();
+  const [kafkaSize, setKafkaSize] = useState<Size | undefined>();
   const [isLoadingSize, setIsLoadingSize] = useState<boolean>(false);
 
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
-
-  const {
-    kas: { getToken },
-  } = useAuth();
+  const getKafkaSizes = useGetAvailableSizes();
 
   const {
     isInstanceDrawerOpen,
@@ -84,27 +74,17 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
   } = instanceDrawerInstance || {};
 
   const fetchAvailableSizes = useCallback(async () => {
-    const api = new DefaultApi(
-      new Configuration({
-        accessToken: getToken(),
-        basePath,
-      })
-    );
-
-    if (provider && region) {
+    if (provider && region && instance_type) {
       try {
         setIsLoadingSize(true);
 
-        const sizes = await api.getInstanceTypesByCloudProviderAndRegion(
+        const kafkaSizes = await getKafkaSizes(
           provider,
-          region
+          region,
+          instance_type as InstanceType
         );
 
-        const instanceTypesSizes = sizes?.data?.instance_types?.find(
-          (i) => i.id === instance_type
-        )?.sizes;
-
-        const size = instanceTypesSizes?.find((s) => s.id === size_id);
+        const size = kafkaSizes.sizes?.find((s) => s.id === size_id);
 
         setKafkaSize(size);
         setIsLoadingSize(false);
@@ -112,7 +92,7 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
         setIsLoadingSize(false);
       }
     }
-  }, [provider, region, basePath, getToken, instance_type, size_id]);
+  }, [provider, region, instance_type, size_id, getKafkaSizes]);
 
   useEffect(() => {
     fetchAvailableSizes();
@@ -134,15 +114,14 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
   );
 
   const {
-    // display_name: size,
-    //max_message_size
-    id: sizeId,
-    ingress_throughput_per_sec,
-    egress_throughput_per_sec,
-    max_partitions,
-    max_connection_attempts_per_sec,
-    total_max_connections,
-    max_data_retention_size,
+    displayName,
+    maxPartitions = 0,
+    ingress = 0,
+    egress = 0,
+    messageSize = 0,
+    connections = 0,
+    connectionRate = 0,
+    storage = 0,
   } = kafkaSize || {};
 
   return (
@@ -154,23 +133,14 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
         <InstanceDrawerContent
           tokenEndPointUrl={tokenEndPointUrl}
           kafkaSize={{
-            size: sizeId,
-            ingress: convertBytesToUnit(
-              ingress_throughput_per_sec?.bytes || 0,
-              "MiB"
-            ),
-            egress: convertBytesToUnit(
-              egress_throughput_per_sec?.bytes || 0,
-              "MiB"
-            ),
-            storage: convertBytesToUnit(
-              max_data_retention_size?.bytes || 0,
-              "GiB"
-            ),
-            maxPartitions: max_partitions || 0,
-            connections: total_max_connections || 0,
-            connectionRate: max_connection_attempts_per_sec || 0,
-            messageSize: 1, //max_message_size
+            size: displayName,
+            ingress,
+            egress,
+            storage,
+            maxPartitions,
+            connections,
+            connectionRate,
+            messageSize,
             isLoadingSize,
           }}
         />
