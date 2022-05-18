@@ -43,7 +43,7 @@
     "@redhat-cloud-services/frontend-components-config": "4.6.13",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.5",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.16",
-    "@rhoas/api-mock": "0.33.0",
+    "@rhoas/api-mock": "0.33.2",
     "@rhoas/app-services-ui-components": "1.38.1",
     "@rhoas/app-services-ui-shared": "0.16.0",
     "@storybook/addon-actions": "6.4.22",
