@@ -165,7 +165,7 @@ export const useAvailableProvidersAndDefault = () => {
         availableProviders,
         instanceAvailability,
         maxStreamingUnits: kasQuota?.allowed || 0,
-        remainingStreamingUnits: kasQuota?.remaining || 0,
+        remainingQuota: kasQuota?.remaining || 0,
         plan,
       };
     } catch (e) {
