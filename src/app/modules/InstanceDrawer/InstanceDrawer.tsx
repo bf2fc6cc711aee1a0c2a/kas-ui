@@ -1,11 +1,4 @@
-import {
-  ReactElement,
-  useMemo,
-  VoidFunctionComponent,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import { ReactElement, useMemo, VoidFunctionComponent, memo } from "react";
 import { useTranslation } from "react-i18next";
 // eslint-disable-next-line no-restricted-imports
 import dayjs from "dayjs";
@@ -20,9 +13,6 @@ import {
 } from "@app/modules/InstanceDrawer/InstanceDrawerContent";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { KafkaRequest } from "@rhoas/kafka-management-sdk";
-import { InstanceType } from "@app/utils";
-import { useGetAvailableSizes } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceWithSizes/hooks";
-import { Size } from "@rhoas/app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types";
 
 export type InstanceDrawerProps = Omit<
   MASDrawerProps,
@@ -50,11 +40,6 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
 }) => {
   dayjs.extend(localizedFormat);
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  //states
-  const [kafkaSize, setKafkaSize] = useState<Size | undefined>();
-  const [isLoadingSize, setIsLoadingSize] = useState<boolean>(false);
-
-  const getKafkaSizes = useGetAvailableSizes();
 
   const {
     isInstanceDrawerOpen,
@@ -64,39 +49,6 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
     setInstanceDrawerInstance,
     noInstances,
   } = useInstanceDrawer();
-
-  const {
-    id: kafkaId,
-    cloud_provider: provider,
-    region,
-    size_id,
-    instance_type,
-  } = instanceDrawerInstance || {};
-
-  const fetchAvailableSizes = useCallback(async () => {
-    if (provider && region && instance_type) {
-      try {
-        setIsLoadingSize(true);
-
-        const kafkaSizes = await getKafkaSizes(
-          provider,
-          region,
-          instance_type as InstanceType
-        );
-
-        const size = kafkaSizes.sizes?.find((s) => s.id === size_id);
-
-        setKafkaSize(size);
-        setIsLoadingSize(false);
-      } catch (error) {
-        setIsLoadingSize(false);
-      }
-    }
-  }, [provider, region, instance_type, size_id, getKafkaSizes]);
-
-  useEffect(() => {
-    fetchAvailableSizes();
-  }, [kafkaId, fetchAvailableSizes]);
 
   const content = useMemo(
     () =>
@@ -113,37 +65,13 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
     ]
   );
 
-  const {
-    displayName,
-    maxPartitions = 0,
-    ingress = 0,
-    egress = 0,
-    messageSize = 0,
-    connections = 0,
-    connectionRate = 0,
-    storage = 0,
-  } = kafkaSize || {};
-
   return (
     <MASDrawer
       isExpanded={isInstanceDrawerOpen}
       isLoading={instanceDrawerInstance === undefined}
       onClose={closeInstanceDrawer}
       panelBodyContent={
-        <InstanceDrawerContent
-          tokenEndPointUrl={tokenEndPointUrl}
-          kafkaSize={{
-            size: displayName,
-            ingress,
-            egress,
-            storage,
-            maxPartitions,
-            connections,
-            connectionRate,
-            messageSize,
-            isLoadingSize,
-          }}
-        />
+        <InstanceDrawerContent tokenEndPointUrl={tokenEndPointUrl} />
       }
       drawerHeaderProps={{
         text: { label: t("instance_name") },
@@ -157,4 +85,6 @@ const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
   );
 };
 
-export { InstanceDrawer };
+const InstanceDrawerMemo = memo(InstanceDrawer);
+
+export { InstanceDrawerMemo as InstanceDrawer };

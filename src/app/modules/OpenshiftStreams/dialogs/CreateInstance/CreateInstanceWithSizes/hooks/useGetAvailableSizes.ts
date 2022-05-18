@@ -1,21 +1,15 @@
-import { InstanceType, convertBytesToUnit } from "@app/utils";
+import { InstanceType } from "@app/utils";
 import { CreateKafkaInstanceWithSizesTypes } from "@rhoas/app-services-ui-components";
-import { Size } from "@rhoas/app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types";
-import {
-  QuotaType,
-  useAuth,
-  useConfig,
-  useQuota,
-} from "@rhoas/app-services-ui-shared";
+import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
+import { SupportedKafkaSize } from "@rhoas/kafka-management-sdk/dist/generated/model/supported-kafka-size";
 
 /**
  * Return list of the instance types available for the current user
  *
  * @returns {Promise<InstanceType[]>}
  */
-
-export const useGetAvailableSizes = () => {
+export function useGetAvailableSizes() {
   const { kas } = useAuth();
   const {
     kas: { apiBasePath: basePath },
@@ -23,8 +17,7 @@ export const useGetAvailableSizes = () => {
 
   return async (
     provider: string,
-    region: string,
-    instanceType: InstanceType
+    region: string
   ): Promise<CreateKafkaInstanceWithSizesTypes.GetSizesData> => {
     const api = new DefaultApi(
       new Configuration({
@@ -37,71 +30,63 @@ export const useGetAvailableSizes = () => {
       provider,
       region
     );
-    if (sizes?.data?.instance_types) {
-      const instanceTypesSizes = sizes?.data?.instance_types.find(
-        (i) => i.id === instanceType
-      )?.sizes;
-      if (instanceTypesSizes) {
-        const componentSizes = instanceTypesSizes.map((s) => {
+    if (!sizes?.data?.instance_types) {
+      throw new Error(`No instance_types from backend`);
+    }
+
+    const standardSizes = sizes?.data?.instance_types.find(
+      (i) => i.id === InstanceType.standard
+    )?.sizes;
+    const trialSize = (sizes?.data?.instance_types.find(
+      (i) => i.id === InstanceType.developer
+    )?.sizes || [])[0] as Required<SupportedKafkaSize>;
+    if (!(standardSizes && trialSize)) {
+      throw new Error(
+        `No standard sizes or trial size: ${standardSizes} ${trialSize}`
+      );
+    }
+    const componentSizes =
+      standardSizes.map<CreateKafkaInstanceWithSizesTypes.Size>(
+        (sizeFromApi) => {
+          const s = sizeFromApi as Required<SupportedKafkaSize>;
           return {
             id: s.id,
             displayName: s.display_name,
             quota: s.quota_consumed,
-            ingress: convertBytesToUnit(
-              s.ingress_throughput_per_sec?.bytes || 0,
-              "MiB"
-            ),
-            egress: convertBytesToUnit(
-              s.egress_throughput_per_sec?.bytes || 0,
-              "MiB"
-            ),
+            ingress: (s.ingress_throughput_per_sec.bytes || 0) / 1048576,
+            egress: (s.egress_throughput_per_sec.bytes || 0) / 1048576,
             storage: Math.round(
-              convertBytesToUnit(s.max_data_retention_size?.bytes || 0, "GiB")
+              (s.max_data_retention_size.bytes || 0) / 1073741824
             ),
             connections: s.total_max_connections,
             connectionRate: s.max_connection_attempts_per_sec,
             maxPartitions: s.max_partitions,
-            messageSize: convertBytesToUnit(
-              s.max_message_size?.bytes || 0,
-              "MiB"
-            ),
-            status: instanceType === "standard" ? "stable" : "preview",
-          } as Size;
-        });
-        return { sizes: componentSizes };
-      } else {
-        // TODO This case should never happen
-        console.error(
-          "Cannot match instance type to backend response.",
-          instanceType
-        );
-        return { sizes: [] };
-      }
-    }
-
-    return { sizes: [] };
-  };
-};
-
-/**
- * Return list of the instance types available for the current user
- *
- * @returns {Promise<InstanceType[]>}
- */
-export function useGetAvailableSizesWithQuota() {
-  const { getQuota } = useQuota();
-  const getAvailableSizes = useGetAvailableSizes();
-
-  return async (
-    provider: string,
-    region: string
-  ): Promise<CreateKafkaInstanceWithSizesTypes.GetSizesData> => {
-    const quota = await getQuota();
-    const kasQuota = quota?.data?.get(QuotaType?.kas);
-    const instanceType = kasQuota
-      ? InstanceType.standard
-      : InstanceType.developer;
-
-    return getAvailableSizes(provider, region, instanceType);
+            messageSize: (s.max_message_size.bytes || 0) / 1048576,
+            status: "stable",
+            trialDurationHours: undefined,
+          };
+        }
+      );
+    return {
+      standard: componentSizes,
+      trial: {
+        id: trialSize.id,
+        displayName: trialSize.display_name,
+        quota: trialSize.quota_consumed,
+        ingress: (trialSize.ingress_throughput_per_sec.bytes || 0) / 1048576,
+        egress: (trialSize.egress_throughput_per_sec.bytes || 0) / 1048576,
+        storage: Math.round(
+          (trialSize.max_data_retention_size.bytes || 0) / 1073741824
+        ),
+        connections: trialSize.total_max_connections,
+        connectionRate: trialSize.max_connection_attempts_per_sec,
+        maxPartitions: trialSize.max_partitions,
+        messageSize: (trialSize.max_message_size.bytes || 0) / 1048576,
+        status: "stable",
+        trialDurationHours: trialSize.lifespan_seconds
+          ? trialSize.lifespan_seconds / 60 / 60
+          : undefined,
+      },
+    };
   };
 }

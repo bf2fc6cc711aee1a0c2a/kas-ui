@@ -1,4 +1,12 @@
-import { FunctionComponent, lazy, Suspense } from "react";
+import {
+  FunctionComponent,
+  lazy,
+  Suspense,
+  useState,
+  useCallback,
+  useEffect,
+  memo,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { addHours } from "date-fns";
 import { InstanceStatus } from "@app/utils";
@@ -8,6 +16,8 @@ import { ConnectionTabProps } from "@app/modules/InstanceDrawer/ConnectionTab";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import { KafkaDetailsTab } from "@rhoas/app-services-ui-components";
+import { useGetAvailableSizes } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceWithSizes/hooks";
+import { Size } from "@rhoas/app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types";
 
 export type KafkaDetailsTabProps = {
   id: string;
@@ -34,14 +44,55 @@ export const ResourcesTab = lazy(() => import("./ConnectionTab"));
 export type InstanceDrawerContentProps = Pick<
   ConnectionTabProps,
   "tokenEndPointUrl"
-> & {
-  kafkaSize?: KafkaSize;
-};
+>;
 
-export const InstanceDrawerContent: FunctionComponent<
-  InstanceDrawerContentProps
-> = ({ tokenEndPointUrl, kafkaSize }) => {
+const InstanceDrawerContent: FunctionComponent<InstanceDrawerContentProps> = ({
+  tokenEndPointUrl,
+}) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
+  //states
+  const [kafkaSize, setKafkaSize] = useState<Size | undefined>();
+  const [isLoadingSize, setIsLoadingSize] = useState<boolean>(false);
+
+  const getKafkaSizes = useGetAvailableSizes();
+
+  const { instanceDrawerTab, setInstanceDrawerTab, instanceDrawerInstance } =
+    useInstanceDrawer();
+  const {
+    id: kafkaId = "",
+    owner = "",
+    created_at = "",
+    updated_at = "",
+    region = "",
+    instance_type: instanceType,
+    cloud_provider: provider,
+    size_id: sizeId,
+  } = instanceDrawerInstance || {};
+
+  const fetchAvailableSizes = useCallback(async () => {
+    if (provider && region && instanceType) {
+      try {
+        setIsLoadingSize(true);
+
+        const kafkaSizes = await getKafkaSizes(provider, region);
+
+        const size =
+          instanceType === "standar"
+            ? kafkaSizes.standard?.find((s) => s.id === sizeId)
+            : kafkaSizes?.trial;
+
+        setKafkaSize(size);
+        setIsLoadingSize(false);
+      } catch (error) {
+        setIsLoadingSize(false);
+      }
+    }
+  }, [provider, region, instanceType, sizeId, getKafkaSizes]);
+
+  useEffect(() => {
+    fetchAvailableSizes();
+  }, [kafkaId, fetchAvailableSizes]);
+
   const {
     ingress = 0,
     egress = 0,
@@ -49,20 +100,8 @@ export const InstanceDrawerContent: FunctionComponent<
     connectionRate = 0,
     maxPartitions = 0,
     connections = 0,
-    size,
-    isLoadingSize = false,
+    displayName,
   } = kafkaSize || {};
-
-  const { instanceDrawerTab, setInstanceDrawerTab, instanceDrawerInstance } =
-    useInstanceDrawer();
-  const {
-    id = "",
-    owner = "",
-    created_at = "",
-    updated_at = "",
-    region = "",
-    instance_type = "",
-  } = instanceDrawerInstance || {};
 
   const selectTab = (tab: string | number) => {
     if (tab === InstanceDrawerTab.CONNECTION) {
@@ -94,12 +133,12 @@ export const InstanceDrawerContent: FunctionComponent<
           title={<TabTitleText>{t("details")}</TabTitleText>}
         >
           <KafkaDetailsTab
-            id={id}
+            id={kafkaId}
             owner={owner}
             createdAt={new Date(created_at)}
             updatedAt={new Date(updated_at)}
             expiryDate={addHours(new Date(created_at), 48)}
-            size={size}
+            size={displayName}
             ingress={ingress}
             egress={egress}
             storage={storage}
@@ -108,7 +147,7 @@ export const InstanceDrawerContent: FunctionComponent<
             connectionRate={connectionRate}
             messageSize={1}
             region={t(region)}
-            instanceType={instance_type === "standard" ? "standard" : "eval"}
+            instanceType={instanceType === "standard" ? "standard" : "eval"}
             isLoadingSize={isLoadingSize}
           />
         </Tab>
@@ -128,3 +167,7 @@ export const InstanceDrawerContent: FunctionComponent<
     </Suspense>
   );
 };
+
+const InstanceDrawerContentMemo = memo(InstanceDrawerContent);
+
+export { InstanceDrawerContentMemo as InstanceDrawerContent };

@@ -10,7 +10,7 @@ import {
 import { QuickStartContext } from "@patternfly/quickstarts";
 import { FunctionComponent, useCallback, useContext } from "react";
 import {
-  useGetAvailableSizesWithQuota,
+  useGetAvailableSizes,
   useCreateInstance,
   useAvailableProvidersAndDefault,
 } from "./hooks/";
@@ -19,7 +19,7 @@ const CreateInstanceWithSizes: FunctionComponent<
   CreateInstanceProps & BaseModalProps
 > = ({ hideModal, onCreate }) => {
   const fetchAvailableProvidersAndDefault = useAvailableProvidersAndDefault();
-  const getKafkaSizes = useGetAvailableSizesWithQuota();
+  const getKafkaSizes = useGetAvailableSizes();
   const createInstance = useCreateInstance();
   const qsContext = useContext(QuickStartContext);
 
