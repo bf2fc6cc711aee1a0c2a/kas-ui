@@ -1,13 +1,8 @@
 import { InstanceType } from "@app/utils";
 import { CreateKafkaInstanceWithSizesTypes } from "@rhoas/app-services-ui-components";
-import { Size } from "@rhoas/app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types";
-import {
-  QuotaType,
-  useAuth,
-  useConfig,
-  useQuota,
-} from "@rhoas/app-services-ui-shared";
+import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
+import { SupportedKafkaSize } from "@rhoas/kafka-management-sdk/dist/generated/model/supported-kafka-size";
 
 /**
  * Return list of the instance types available for the current user
@@ -15,7 +10,6 @@ import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
  * @returns {Promise<InstanceType[]>}
  */
 export function useGetAvailableSizes() {
-  const { getQuota } = useQuota();
   const { kas } = useAuth();
   const {
     kas: { apiBasePath: basePath },
@@ -32,54 +26,67 @@ export function useGetAvailableSizes() {
       })
     );
 
-    const quota = await getQuota();
-    const kasQuota = quota?.data?.get(QuotaType?.kas);
-    const instanceType = kasQuota
-      ? InstanceType.standard
-      : InstanceType.developer;
-
     const sizes = await api.getInstanceTypesByCloudProviderAndRegion(
       provider,
       region
     );
-    if (sizes?.data?.instance_types) {
-      let instanceTypesSizes = sizes?.data?.instance_types.find(
-        (i) => i.id === instanceType
-      )?.sizes;
-      if (instanceTypesSizes) {
-        if (kasQuota) {
-          instanceTypesSizes = instanceTypesSizes.filter(
-            (s) => (s.quota_consumed || 0) <= kasQuota.remaining
-          );
-        }
-        // TODO filter sizes that do not fit to the region
-        const componentSizes = instanceTypesSizes.map((s) => {
+    if (!sizes?.data?.instance_types) {
+      throw new Error(`No instance_types from backend`);
+    }
+
+    const standardSizes = sizes?.data?.instance_types.find(
+      (i) => i.id === InstanceType.standard
+    )?.sizes;
+    const trialSize = (sizes?.data?.instance_types.find(
+      (i) => i.id === InstanceType.developer
+    )?.sizes || [])[0] as Required<SupportedKafkaSize>;
+    if (!(standardSizes && trialSize)) {
+      throw new Error(
+        `No standard sizes or trial size: ${standardSizes} ${trialSize}`
+      );
+    }
+    const componentSizes =
+      standardSizes.map<CreateKafkaInstanceWithSizesTypes.Size>(
+        (sizeFromApi) => {
+          const s = sizeFromApi as Required<SupportedKafkaSize>;
           return {
             id: s.id,
-            streamingUnits: s.quota_consumed,
-            ingress: (s.ingress_throughput_per_sec?.bytes || 0) / 1048576,
-            egress: (s.egress_throughput_per_sec?.bytes || 0) / 1048576,
+            displayName: s.display_name,
+            quota: s.quota_consumed,
+            ingress: (s.ingress_throughput_per_sec.bytes || 0) / 1048576,
+            egress: (s.egress_throughput_per_sec.bytes || 0) / 1048576,
             storage: Math.round(
-              (s.max_data_retention_size?.bytes || 0) / 1073741824
+              (s.max_data_retention_size.bytes || 0) / 1073741824
             ),
             connections: s.total_max_connections,
             connectionRate: s.max_connection_attempts_per_sec,
             maxPartitions: s.max_partitions,
-            // TODO https://issues.redhat.com/browse/MGDSTRM-8385
-            messageSize: 1,
-          } as Size;
-        });
-        return { sizes: componentSizes };
-      } else {
-        // TODO This case should never happen
-        console.error(
-          "Cannot match instance type to backend response.",
-          instanceType
-        );
-        return { sizes: [] };
-      }
-    }
-
-    return { sizes: [] };
+            messageSize: (s.max_message_size.bytes || 0) / 1048576,
+            status: "stable",
+            trialDurationHours: undefined,
+          };
+        }
+      );
+    return {
+      standard: componentSizes,
+      trial: {
+        id: trialSize.id,
+        displayName: trialSize.display_name,
+        quota: trialSize.quota_consumed,
+        ingress: (trialSize.ingress_throughput_per_sec.bytes || 0) / 1048576,
+        egress: (trialSize.egress_throughput_per_sec.bytes || 0) / 1048576,
+        storage: Math.round(
+          (trialSize.max_data_retention_size.bytes || 0) / 1073741824
+        ),
+        connections: trialSize.total_max_connections,
+        connectionRate: trialSize.max_connection_attempts_per_sec,
+        maxPartitions: trialSize.max_partitions,
+        messageSize: (trialSize.max_message_size.bytes || 0) / 1048576,
+        status: "stable",
+        trialDurationHours: trialSize.lifespan_seconds
+          ? trialSize.lifespan_seconds / 60 / 60
+          : undefined,
+      },
+    };
   };
 }
