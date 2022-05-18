@@ -62,7 +62,7 @@ export function useGetAvailableSizes() {
             connectionRate: s.max_connection_attempts_per_sec,
             maxPartitions: s.max_partitions,
             messageSize: (s.max_message_size.bytes || 0) / 1048576,
-            status: "stable",
+            status: s.maturity_status === "stable" ? "stable" : "preview",
             trialDurationHours: undefined,
           };
         }
@@ -72,7 +72,7 @@ export function useGetAvailableSizes() {
       trial: {
         id: trialSize.id,
         displayName: trialSize.display_name,
-        quota: trialSize.quota_consumed,
+        quota: 0,
         ingress: (trialSize.ingress_throughput_per_sec.bytes || 0) / 1048576,
         egress: (trialSize.egress_throughput_per_sec.bytes || 0) / 1048576,
         storage: Math.round(
@@ -82,7 +82,7 @@ export function useGetAvailableSizes() {
         connectionRate: trialSize.max_connection_attempts_per_sec,
         maxPartitions: trialSize.max_partitions,
         messageSize: (trialSize.max_message_size.bytes || 0) / 1048576,
-        status: "stable",
+        status: trialSize.maturity_status === "stable" ? "stable" : "preview",
         trialDurationHours: trialSize.lifespan_seconds
           ? trialSize.lifespan_seconds / 60 / 60
           : undefined,
