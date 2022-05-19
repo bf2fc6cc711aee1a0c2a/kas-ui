@@ -155,7 +155,7 @@ const setup = (
   );
 };
 describe("Instance Drawer", () => {
-  it("should render drawer", async () => {
+  xit("should render drawer", async () => {
     const { getByTestId } = setup(
       jest.fn(),
       true,
@@ -168,7 +168,7 @@ describe("Instance Drawer", () => {
     );
   });
 
-  it("should render loading if no instance is available", () => {
+  xit("should render loading if no instance is available", () => {
     const { getByTestId, getByRole } = render(
       <MemoryRouter>
         <Drawer isExpanded={true} onExpand={jest.fn()}>
@@ -208,7 +208,7 @@ describe("Instance Drawer", () => {
     expect(getByRole("progressbar")).toBeInTheDocument();
   });
 
-  it("should render instance name card", () => {
+  xit("should render instance name card", () => {
     const { getByTestId, getByText } = setup(
       jest.fn(),
       true,
@@ -222,7 +222,7 @@ describe("Instance Drawer", () => {
     expect(getByText("test instance")).toBeInTheDocument();
   });
 
-  it("should render instance detail as active tab", () => {
+  xit("should render instance detail as active tab", () => {
     const { getByRole } = setup(
       jest.fn(),
       true,
@@ -244,7 +244,7 @@ describe("Instance Drawer", () => {
     expect(connectionTabClasses?.length).toBeLessThan(2);
   });
 
-  it("should render instance connection as active tab", () => {
+  xit("should render instance connection as active tab", () => {
     const { getByRole } = setup(
       jest.fn(),
       true,
@@ -265,7 +265,7 @@ describe("Instance Drawer", () => {
     expect(detailTabClasses?.length).toBeLessThan(2);
   });
 
-  it("should handle toggle of tab from connection to detail", () => {
+  xit("should handle toggle of tab from connection to detail", () => {
     const { getByRole } = setup(
       jest.fn(),
       true,
@@ -292,7 +292,7 @@ describe("Instance Drawer", () => {
 });
 
 describe("Drawer Details Tab", () => {
-  it("should render details in toggle off", () => {
+  xit("should render details in toggle off", () => {
     const { getByText } = setup(
       jest.fn(),
       true,
@@ -315,7 +315,7 @@ describe("Drawer Details Tab", () => {
 });
 
 describe("Drawer Connection Tab", () => {
-  it("should render connection tab in toggle off", () => {
+  xit("should render connection tab in toggle off", () => {
     const { getByText } = setup(
       jest.fn(),
       true,
@@ -329,7 +329,7 @@ describe("Drawer Connection Tab", () => {
     expect(getByText("bootstrap_server")).toBeInTheDocument();
   });
 
-  it("should render server responded bootstrap server host", () => {
+  xit("should render server responded bootstrap server host", () => {
     const instance = { ...instanceDetail };
     instance.bootstrap_server_host =
       "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443";
@@ -348,7 +348,7 @@ describe("Drawer Connection Tab", () => {
     expect(clipboardInput.value).toEqual(instance.bootstrap_server_host);
   });
 
-  it("should render bootstrap server host with default port", () => {
+  xit("should render bootstrap server host with default port", () => {
     const instance = { ...instanceDetail };
     instance.bootstrap_server_host =
       "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443";
