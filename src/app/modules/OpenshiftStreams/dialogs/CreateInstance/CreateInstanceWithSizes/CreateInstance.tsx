@@ -7,7 +7,6 @@ import {
 import {
   BaseModalProps,
   CreateInstanceProps,
-  // useBasename,
 } from "@rhoas/app-services-ui-shared";
 import { QuickStartContext } from "@patternfly/quickstarts";
 import { FunctionComponent, useCallback, useContext } from "react";
