@@ -3,44 +3,51 @@ import { PaginationProvider } from "@app/common";
 import { FederatedContext, FederatedProps } from "@app/contexts";
 import { ModalProvider } from "@rhoas/app-services-ui-components";
 import { KasModalLoader } from "@app/modals";
-import { InstanceDrawerContextProvider } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { KasLayout } from "@app/modules/OpenshiftStreams/components";
 import {
   StreamsTableConnected,
   StreamsTableProps,
 } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected";
-
+import { InstanceDrawer } from "@app/modules/InstanceDrawer";
+import {
+  InstanceDrawerContextProps,
+  InstanceDrawerContextProvider,
+} from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 // Version of OpenshiftStreams for federation
-type OpenshiftStreamsFederatedProps = StreamsTableProps & FederatedProps;
+type OpenshiftStreamsFederatedProps = StreamsTableProps &
+  InstanceDrawerContextProps &
+  FederatedProps;
 
 const OpenshiftStreamsFederated: FunctionComponent<
   OpenshiftStreamsFederatedProps
 > = ({
   preCreateInstance,
   shouldOpenCreateModal,
-  tokenEndPointUrl,
-  setKafkaInstance,
   getAllUserAccounts,
+  ...drawerProps
 }) => {
   return (
     <FederatedContext.Provider
       value={{
-        tokenEndPointUrl,
         preCreateInstance,
         shouldOpenCreateModal,
-        setKafkaInstance,
         getAllUserAccounts,
       }}
     >
       <ModalProvider>
-        <InstanceDrawerContextProvider>
-          <PaginationProvider>
-            <KasLayout tokenEndPointUrl={tokenEndPointUrl}>
-              <StreamsTableConnected preCreateInstance={preCreateInstance} />
-            </KasLayout>
-          </PaginationProvider>
-          <KasModalLoader />
-        </InstanceDrawerContextProvider>
+        <PaginationProvider>
+          <InstanceDrawerContextProvider {...drawerProps}>
+            <InstanceDrawer
+              data-ouia-app-id="dataPlane-streams"
+              {...drawerProps}
+            >
+              <KasLayout data-ouia-app-id={"TODO"}>
+                <StreamsTableConnected preCreateInstance={preCreateInstance} />
+              </KasLayout>
+            </InstanceDrawer>
+          </InstanceDrawerContextProvider>
+        </PaginationProvider>
+        <KasModalLoader />
       </ModalProvider>
     </FederatedContext.Provider>
   );

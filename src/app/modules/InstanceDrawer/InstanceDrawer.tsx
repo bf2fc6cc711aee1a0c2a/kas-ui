@@ -1,90 +1,51 @@
-import { ReactElement, useMemo, VoidFunctionComponent, memo } from "react";
+import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-// eslint-disable-next-line no-restricted-imports
-import dayjs from "dayjs";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-import "@patternfly/react-styles/css/utilities/Spacing/spacing.css";
-import "@patternfly/react-styles/css/utilities/Alignment/alignment.css";
-import { MASDrawer, MASDrawerProps } from "@app/common";
+import { InstanceDrawerContent } from "@app/modules/InstanceDrawer/InstanceDrawerContent";
+
 import "./InstanceDrawer.css";
-import {
-  InstanceDrawerContent,
-  InstanceDrawerContentProps,
-} from "@app/modules/InstanceDrawer/InstanceDrawerContent";
-import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
-import { KafkaRequest } from "@rhoas/kafka-management-sdk";
+import { MASDrawer } from "@app/common";
+import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
+import { InstanceDrawerContextProps } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
-export type InstanceDrawerProps = Omit<
-  MASDrawerProps,
-  | "drawerHeaderProps"
-  | "panelBodyContent"
-  | "[data-ouia-app-id]"
-  | "isExpanded"
-  | "isLoading"
-  | "onClose"
-  | "notRequiredDrawerContentBackground"
-  | "children"
-> &
-  InstanceDrawerContentProps & {
-    renderContent: (props: {
-      openDrawer: () => void;
-      closeDrawer: () => void;
-      setInstance: (instance: KafkaRequest) => void;
-    }) => ReactElement;
-  };
+export type InstanceDrawerProps = {
+  "data-ouia-app-id": string;
+} & InstanceDrawerContextProps;
 
-const InstanceDrawer: VoidFunctionComponent<InstanceDrawerProps> = ({
-  renderContent,
+export const InstanceDrawer: FunctionComponent<InstanceDrawerProps> = ({
   "data-ouia-app-id": dataOuiaAppId,
+  isDrawerOpen,
+  drawerInstance,
+  setDrawerActiveTab,
+  drawerActiveTab,
+  closeDrawer,
   tokenEndPointUrl,
+  children,
 }) => {
-  dayjs.extend(localizedFormat);
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-
-  const {
-    isInstanceDrawerOpen,
-    instanceDrawerInstance,
-    openInstanceDrawer,
-    closeInstanceDrawer,
-    setInstanceDrawerInstance,
-    noInstances,
-  } = useInstanceDrawer();
-
-  const content = useMemo(
-    () =>
-      renderContent({
-        closeDrawer: closeInstanceDrawer,
-        openDrawer: openInstanceDrawer,
-        setInstance: setInstanceDrawerInstance,
-      }),
-    [
-      closeInstanceDrawer,
-      openInstanceDrawer,
-      renderContent,
-      setInstanceDrawerInstance,
-    ]
-  );
 
   return (
     <MASDrawer
-      isExpanded={isInstanceDrawerOpen}
-      isLoading={instanceDrawerInstance === undefined}
-      onClose={closeInstanceDrawer}
+      isExpanded={isDrawerOpen}
+      isLoading={drawerInstance === undefined}
+      onClose={closeDrawer}
       panelBodyContent={
-        <InstanceDrawerContent tokenEndPointUrl={tokenEndPointUrl} />
+        drawerInstance && (
+          <InstanceDrawerContent
+            tokenEndPointUrl={tokenEndPointUrl}
+            activeTab={drawerActiveTab || InstanceDrawerTab.DETAILS}
+            instance={drawerInstance}
+            setActiveTab={setDrawerActiveTab}
+          />
+        )
       }
       drawerHeaderProps={{
         text: { label: t("instance_name") },
-        title: { value: instanceDrawerInstance?.name, headingLevel: "h1" },
+        title: { value: drawerInstance?.name, headingLevel: "h1" },
       }}
       data-ouia-app-id={dataOuiaAppId}
-      notRequiredDrawerContentBackground={noInstances}
+      notRequiredDrawerContentBackground={drawerInstance === undefined}
     >
-      {content}
+      {children}
     </MASDrawer>
   );
 };
-
-const InstanceDrawerMemo = memo(InstanceDrawer);
-
-export { InstanceDrawerMemo as InstanceDrawer };

@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { VoidFunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   TextContent,
@@ -7,16 +7,14 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from "@patternfly/react-core";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-// eslint-disable-next-line no-restricted-imports
-import dayjs from "dayjs";
-import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { format, parseISO } from "date-fns";
+import { InstanceDrawerContextProps } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
-export const DetailsTab: FunctionComponent = () => {
-  const { instanceDrawerInstance } = useInstanceDrawer();
-  dayjs.extend(localizedFormat);
+export const DetailsTab: VoidFunctionComponent<
+  Pick<InstanceDrawerContextProps, "drawerInstance">
+> = ({ drawerInstance }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  const { id, owner, created_at, updated_at } = instanceDrawerInstance || {};
+  const { id, owner, created_at, updated_at } = drawerInstance || {};
 
   const renderTextListItem = (title: string, value?: string) =>
     value && (
@@ -31,14 +29,17 @@ export const DetailsTab: FunctionComponent = () => {
       <TextContent>
         <TextList component={TextListVariants.dl}>
           {renderTextListItem(t("cloud_provider"), t("amazon_web_services"))}
-          {renderTextListItem(
-            t("region"),
-            t(instanceDrawerInstance?.region || "")
-          )}
+          {renderTextListItem(t("region"), t(drawerInstance?.region || ""))}
           {renderTextListItem(t("id"), id)}
           {renderTextListItem(t("owner"), owner)}
-          {renderTextListItem(t("created"), dayjs(created_at).format("LLLL"))}
-          {renderTextListItem(t("updated"), dayjs(updated_at).format("LLLL"))}
+          {renderTextListItem(
+            t("created"),
+            created_at ? format(parseISO(created_at), "LLLL") : "-"
+          )}
+          {renderTextListItem(
+            t("updated"),
+            updated_at ? format(parseISO(updated_at), "LLLL") : "-"
+          )}
         </TextList>
       </TextContent>
     </div>

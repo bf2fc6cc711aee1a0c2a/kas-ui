@@ -87,7 +87,16 @@ describe("<StreamsTable/>", () => {
                   },
                 }}
               >
-                <InstanceDrawerContextProvider>
+                <InstanceDrawerContextProvider
+                  isDrawerOpen={false}
+                  drawerInstance={undefined}
+                  setDrawerInstance={() => false}
+                  drawerActiveTab={undefined}
+                  setDrawerActiveTab={() => false}
+                  openDrawer={() => false}
+                  closeDrawer={() => false}
+                  tokenEndPointUrl={""}
+                >
                   <StreamsTable {...args} />
                 </InstanceDrawerContextProvider>
               </AlertContext.Provider>
@@ -100,6 +109,7 @@ describe("<StreamsTable/>", () => {
   };
 
   const props: StreamsTableProps = {
+    selectedInstanceName: undefined,
     handleCreateInstanceModal: jest.fn(),
     loggedInUser: undefined,
     onChangeOwner: jest.fn(),

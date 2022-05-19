@@ -1,16 +1,13 @@
 import {
-  FunctionComponent,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
+  VoidFunctionComponent,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-// eslint-disable-next-line no-restricted-imports
-import dayjs from "dayjs";
 import {
   AlertVariant,
   Card,
@@ -40,26 +37,23 @@ import {
   useConfig,
   useModal,
 } from "@rhoas/app-services-ui-shared";
-import { useFederated } from "@app/contexts";
+import { FederatedProps, useFederated } from "@app/contexts";
 import "@app/modules/styles.css";
 import {
   FilterType,
   KafkaEmptyState,
   Unauthorized,
 } from "@app/modules/OpenshiftStreams/components";
-import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import { StreamsTable } from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
 import { KafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts";
+import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
-export type StreamsTableProps = {
-  preCreateInstance: (open: boolean) => Promise<boolean>;
-};
+export type StreamsTableProps = Pick<FederatedProps, "preCreateInstance">;
 
-export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
-  preCreateInstance,
-}: StreamsTableProps) => {
-  dayjs.extend(localizedFormat);
+export const StreamsTableConnected: VoidFunctionComponent<
+  StreamsTableProps
+> = ({ preCreateInstance }: StreamsTableProps) => {
   const { shouldOpenCreateModal } = useFederated() || {};
 
   const auth = useAuth();
@@ -80,13 +74,16 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
     useModal<ModalType.KasTransferOwnership>();
   const { hideModal: hideDeleteModal, showModal: showDeleteModal } =
     useModal<ModalType.KasDeleteInstance>();
-  const {
-    setInstanceDrawerTab,
-    setInstanceDrawerInstance,
-    instanceDrawerInstance,
-    setNoInstances,
-  } = useInstanceDrawer();
+
   const history = useHistory();
+
+  const {
+    drawerInstance,
+    closeDrawer,
+    openDrawer,
+    setDrawerActiveTab,
+    setDrawerInstance,
+  } = useInstanceDrawer();
 
   // Kafka list state
   const [kafkaInstancesList, setKafkaInstancesList] = useState<
@@ -126,13 +123,15 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
   };
 
   const onViewInstance = (instance: KafkaRequest) => {
-    setInstanceDrawerInstance(instance);
-    setInstanceDrawerTab(InstanceDrawerTab.DETAILS);
+    setDrawerInstance(instance.id!);
+    setDrawerActiveTab(InstanceDrawerTab.DETAILS);
+    openDrawer();
   };
 
   const onViewConnection = (instance: KafkaRequest) => {
-    setInstanceDrawerInstance(instance);
-    setInstanceDrawerTab(InstanceDrawerTab.CONNECTION);
+    setDrawerInstance(instance.id!);
+    setDrawerActiveTab(InstanceDrawerTab.CONNECTION);
+    openDrawer();
   };
 
   const getFilterQuery = useCallback(() => {
@@ -395,19 +394,32 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
   ]);
 
   useEffect(() => {
-    if (kafkaInstancesList !== undefined && kafkaInstancesList?.size > 0) {
+    // close the drawer if the selected instance isn't visible in the list
+    if (
+      kafkaInstancesList !== undefined &&
+      kafkaInstancesList?.size > 0 &&
+      drawerInstance
+    ) {
       const selectedKafkaItem = kafkaInstancesList.items?.find(
-        (kafka) => kafka?.id === instanceDrawerInstance?.id
+        (kafka) => kafka?.id === drawerInstance?.id
       );
-      if (selectedKafkaItem !== undefined) {
-        setInstanceDrawerInstance(selectedKafkaItem);
+      if (selectedKafkaItem === undefined) {
+        closeDrawer();
       }
     }
-  }, [instanceDrawerInstance, kafkaInstancesList, setInstanceDrawerInstance]);
+  }, [
+    closeDrawer,
+    drawerInstance,
+    drawerInstance?.id,
+    kafkaInstancesList,
+    openDrawer,
+  ]);
 
   useEffect(() => {
-    setNoInstances(kafkaInstancesList?.size === 0);
-  }, [kafkaInstancesList, setNoInstances]);
+    if (kafkaInstancesList?.size === 0) {
+      closeDrawer();
+    }
+  }, [kafkaInstancesList, closeDrawer]);
 
   useEffect(() => {
     auth.getUsername()?.then((username) => setLoggedInUser(username));
@@ -471,6 +483,7 @@ export const StreamsTableConnected: FunctionComponent<StreamsTableProps> = ({
             filterSelected={filterSelected}
             onCreate={onCreate}
             refresh={refreshKafkasAfterAction}
+            selectedInstanceName={drawerInstance?.name}
           />
         </Card>
         <KafkaStatusAlerts />

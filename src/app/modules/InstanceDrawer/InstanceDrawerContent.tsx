@@ -1,154 +1,73 @@
-import {
-  FunctionComponent,
-  lazy,
-  Suspense,
-  useState,
-  useCallback,
-  useEffect,
-  memo,
-} from "react";
+import { FunctionComponent, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import { addHours } from "date-fns";
+import { addHours, parseISO } from "date-fns";
 import { InstanceStatus } from "@app/utils";
 import { MASLoading } from "@app/common";
 import { Tab, Tabs, TabTitleText } from "@patternfly/react-core";
-import { ConnectionTabProps } from "@app/modules/InstanceDrawer/ConnectionTab";
-import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import { KafkaDetailsTab } from "@rhoas/app-services-ui-components";
-import { useGetAvailableSizes } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceWithSizes/hooks";
-import { Size } from "@rhoas/app-services-ui-components/types/src/Kafka/CreateKafkaInstanceWithSizes/types";
-
-export type KafkaDetailsTabProps = {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  expiryDate?: Date;
-  owner: string;
-};
-
-export type KafkaSize = {
-  size?: string;
-  ingress: number;
-  egress: number;
-  storage: number;
-  maxPartitions: number;
-  connections: number;
-  connectionRate: number;
-  messageSize: number;
-  isLoadingSize: boolean;
-};
+import { InstanceDrawerContextProps } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 
 export const ResourcesTab = lazy(() => import("./ConnectionTab"));
 
-export type InstanceDrawerContentProps = Pick<
-  ConnectionTabProps,
-  "tokenEndPointUrl"
->;
+export type InstanceDrawerContentProps = {
+  instance: NonNullable<InstanceDrawerContextProps["drawerInstance"]>;
+  activeTab: InstanceDrawerTab;
+  setActiveTab: (tab: InstanceDrawerTab) => void;
+  tokenEndPointUrl: string;
+};
 
-const InstanceDrawerContent: FunctionComponent<InstanceDrawerContentProps> = ({
-  tokenEndPointUrl,
-}) => {
+export const InstanceDrawerContent: FunctionComponent<
+  InstanceDrawerContentProps
+> = ({ instance, activeTab, setActiveTab, tokenEndPointUrl }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  //states
-  const [kafkaSize, setKafkaSize] = useState<Size | undefined>();
-  const [isLoadingSize, setIsLoadingSize] = useState<boolean>(false);
-
-  const getKafkaSizes = useGetAvailableSizes();
-
-  const { instanceDrawerTab, setInstanceDrawerTab, instanceDrawerInstance } =
-    useInstanceDrawer();
-  const {
-    id: kafkaId = "",
-    owner = "",
-    created_at = "",
-    updated_at = "",
-    region = "",
-    instance_type: instanceType,
-    cloud_provider: provider,
-    size_id: sizeId,
-  } = instanceDrawerInstance || {};
-
-  const fetchAvailableSizes = useCallback(async () => {
-    if (provider && region && instanceType) {
-      try {
-        setIsLoadingSize(true);
-
-        const kafkaSizes = await getKafkaSizes(provider, region);
-
-        const size =
-          instanceType === "standar"
-            ? kafkaSizes.standard?.find((s) => s.id === sizeId)
-            : kafkaSizes?.trial;
-
-        setKafkaSize(size);
-        setIsLoadingSize(false);
-      } catch (error) {
-        setIsLoadingSize(false);
-      }
-    }
-  }, [provider, region, instanceType, sizeId, getKafkaSizes]);
-
-  useEffect(() => {
-    fetchAvailableSizes();
-  }, [kafkaId, fetchAvailableSizes]);
-
-  const {
-    ingress = 0,
-    egress = 0,
-    storage = 0,
-    connectionRate = 0,
-    maxPartitions = 0,
-    connections = 0,
-    displayName,
-  } = kafkaSize || {};
-
-  const selectTab = (tab: string | number) => {
-    if (tab === InstanceDrawerTab.CONNECTION) {
-      setInstanceDrawerTab(InstanceDrawerTab.CONNECTION);
-    } else {
-      setInstanceDrawerTab(InstanceDrawerTab.DETAILS);
-    }
-  };
 
   const getExternalServer = () => {
-    const { bootstrap_server_host } = instanceDrawerInstance || {};
+    const { bootstrap_server_host } = instance;
     return bootstrap_server_host?.endsWith(":443")
       ? bootstrap_server_host
       : `${bootstrap_server_host}:443`;
   };
 
   const isKafkaPending =
-    instanceDrawerInstance?.status === InstanceStatus.ACCEPTED ||
-    instanceDrawerInstance?.status === InstanceStatus.PREPARING;
+    instance.status === InstanceStatus.ACCEPTED ||
+    instance.status === InstanceStatus.PREPARING;
 
   return (
     <Suspense fallback={<MASLoading />}>
       <Tabs
-        activeKey={instanceDrawerTab.toString()}
-        onSelect={(_, tab) => selectTab(tab)}
+        activeKey={activeTab}
+        onSelect={(_, tab) => setActiveTab(tab as InstanceDrawerTab)}
       >
         <Tab
-          eventKey={InstanceDrawerTab.DETAILS.toString()}
+          eventKey={InstanceDrawerTab.DETAILS}
           title={<TabTitleText>{t("details")}</TabTitleText>}
         >
           <KafkaDetailsTab
-            id={kafkaId}
-            owner={owner}
-            createdAt={new Date(created_at)}
-            updatedAt={new Date(updated_at)}
-            expiryDate={addHours(new Date(created_at), 48)}
-            size={displayName}
-            ingress={ingress}
-            egress={egress}
-            storage={storage}
-            maxPartitions={maxPartitions}
-            connections={connections}
-            connectionRate={connectionRate}
-            messageSize={1}
-            region={t(region)}
-            instanceType={instanceType === "standard" ? "standard" : "eval"}
-            isLoadingSize={isLoadingSize}
+            id={instance.id}
+            owner={instance.owner}
+            createdAt={parseISO(instance.created_at)}
+            updatedAt={parseISO(instance.updated_at)}
+            expiryDate={addHours(parseISO(instance.created_at), 48)}
+            size={instance.size.display_name}
+            ingress={
+              (instance.size.ingress_throughput_per_sec.bytes || 0) / 1048576
+            }
+            egress={
+              (instance.size.egress_throughput_per_sec.bytes || 0) / 1048576
+            }
+            storage={Math.round(
+              (instance.size.max_data_retention_size.bytes || 0) / 1073741824
+            )}
+            maxPartitions={instance.size.max_partitions}
+            connections={instance.size.total_max_connections}
+            connectionRate={instance.size.max_connection_attempts_per_sec}
+            messageSize={(instance.size.max_message_size.bytes || 0) / 1048576}
+            region={t(instance.region)}
+            instanceType={
+              instance.instance_type === "standard" ? "standard" : "eval"
+            }
+            isLoadingSize={false}
           />
         </Tab>
         <Tab
@@ -160,14 +79,10 @@ const InstanceDrawerContent: FunctionComponent<InstanceDrawerContentProps> = ({
             externalServer={getExternalServer()}
             isKafkaPending={isKafkaPending}
             tokenEndPointUrl={tokenEndPointUrl}
-            instanceId={instanceDrawerInstance?.id}
+            instanceId={instance.id}
           />
         </Tab>
       </Tabs>
     </Suspense>
   );
 };
-
-const InstanceDrawerContentMemo = memo(InstanceDrawerContent);
-
-export { InstanceDrawerContentMemo as InstanceDrawerContent };

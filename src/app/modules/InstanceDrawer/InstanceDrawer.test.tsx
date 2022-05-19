@@ -1,7 +1,6 @@
 import { render, waitFor } from "@testing-library/react";
 import { Drawer, DrawerContent } from "@patternfly/react-core";
 import userEvent from "@testing-library/user-event";
-import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import { MemoryRouter } from "react-router-dom";
 import {
   ModalContext,
@@ -12,7 +11,10 @@ import {
   Auth,
 } from "@rhoas/app-services-ui-shared";
 import { KasModalLoader } from "@app/modals";
-import { InstanceDrawerContextProvider } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import {
+  InstanceDrawerContextProps,
+  InstanceDrawerContextProvider,
+} from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 
 const actualSDK = jest.requireActual("@rhoas/kafka-management-sdk");
@@ -40,7 +42,9 @@ jest.mock("react-i18next", () => {
   };
 });
 
-const instanceDetail: KafkaRequest = {
+const instanceDetail: NonNullable<
+  Required<InstanceDrawerContextProps["drawerInstance"]>
+> = {
   name: "test instance",
   id: "test_id",
   created_at: "2020-12-10T16:26:53.357492Z",
@@ -50,7 +54,30 @@ const instanceDetail: KafkaRequest = {
     "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org",
   multi_az: true,
   reauthentication_enabled: false,
-};
+  status: "aaa",
+  cloud_provider: "aws",
+  region: "EU",
+  size: {
+    id: "id",
+    display_name: "id",
+    ingress_throughput_per_sec: { bytes: 123 },
+    egress_throughput_per_sec: { bytes: 123 },
+    total_max_connections: 123,
+    max_data_retention_size: { bytes: 123 },
+    max_partitions: 123,
+    max_data_retention_period: "aaa",
+    max_connection_attempts_per_sec: 123,
+    max_message_size: { bytes: 123 },
+    min_in_sync_replicas: 123,
+    replication_factor: 123,
+    supported_az_modes: ["single"],
+    lifespan_seconds: 123,
+    quota_consumed: 123,
+    quota_type: "quota type",
+    capacity_consumed: 123,
+    maturity_status: "stable",
+  },
+} as NonNullable<Required<InstanceDrawerContextProps["drawerInstance"]>>;
 
 const authValue = {
   kas: {
@@ -66,7 +93,7 @@ const setup = (
   _mainToggle: boolean,
   _onClose: () => void,
   activeTab: InstanceDrawerTab,
-  instance?: KafkaRequest
+  instance?: InstanceDrawerContextProps["drawerInstance"]
 ) => {
   return render(
     <MemoryRouter>
@@ -92,9 +119,14 @@ const setup = (
                 <DrawerContent
                   panelContent={
                     <InstanceDrawerContextProvider
-                      initialTab={activeTab}
-                      initialInstance={instance || instanceDetail}
-                      initialNoInstances={true}
+                      isDrawerOpen={false}
+                      drawerInstance={instance}
+                      setDrawerInstance={() => false}
+                      drawerActiveTab={activeTab}
+                      setDrawerActiveTab={() => false}
+                      openDrawer={() => false}
+                      closeDrawer={() => false}
+                      tokenEndPointUrl={""}
                     >
                       <InstanceDrawer
                         data-ouia-app-id="controlPlane-streams"
@@ -102,7 +134,13 @@ const setup = (
                         tokenEndPointUrl={
                           "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
                         }
-                        renderContent={() => <></>}
+                        isDrawerOpen={false}
+                        drawerInstance={instance}
+                        setDrawerInstance={() => false}
+                        drawerActiveTab={activeTab}
+                        setDrawerActiveTab={() => false}
+                        openDrawer={() => false}
+                        closeDrawer={() => false}
                       />
                     </InstanceDrawerContextProvider>
                   }
@@ -137,15 +175,28 @@ describe("Instance Drawer", () => {
           <DrawerContent
             panelContent={
               <InstanceDrawerContextProvider
-                initialTab={InstanceDrawerTab.DETAILS}
-                initialInstance={undefined}
-                initialNoInstances={false}
+                isDrawerOpen={false}
+                drawerInstance={undefined}
+                setDrawerInstance={() => false}
+                drawerActiveTab={undefined}
+                setDrawerActiveTab={() => false}
+                openDrawer={() => false}
+                closeDrawer={() => false}
+                tokenEndPointUrl={""}
               >
                 <InstanceDrawer
+                  data-ouia-app-id="controlPlane-streams"
+                  data-testId="mk--instance__drawer"
                   tokenEndPointUrl={
                     "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
                   }
-                  renderContent={() => <></>}
+                  isDrawerOpen={false}
+                  drawerInstance={undefined}
+                  setDrawerInstance={() => false}
+                  drawerActiveTab={undefined}
+                  setDrawerActiveTab={() => false}
+                  openDrawer={() => false}
+                  closeDrawer={() => false}
                 />
               </InstanceDrawerContextProvider>
             }

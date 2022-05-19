@@ -27,7 +27,6 @@ import {
 import { MASTable, MASTableProps } from "@app/common";
 import { Pagination } from "@app/modules/OpenshiftStreams/components/StreamsTable/Pagination";
 import { NoResultsFound } from "@app/modules/OpenshiftStreams/components/StreamsTable/NoResultsFound";
-import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { FormatDate } from "@rhoas/app-services-ui-components";
 import { add } from "date-fns";
 
@@ -55,6 +54,7 @@ export type StreamsTableProps = Pick<
   isOrgAdmin?: boolean;
   setOrderBy: (order: string) => void;
   orderBy: string;
+  selectedInstanceName: string | undefined;
 };
 export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   onDeleteInstance,
@@ -78,9 +78,9 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   onCreate,
   refresh,
   handleCreateInstanceModal,
+  selectedInstanceName,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  const { instanceDrawerInstance } = useInstanceDrawer();
 
   const cells = [
     { title: t("name"), transforms: [sortable] },
@@ -390,7 +390,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
           sortBy,
           hasDefaultCustomRowWrapper: true,
         }}
-        activeRow={instanceDrawerInstance?.name}
+        activeRow={selectedInstanceName}
         onRowClick={onRowClick}
         rowDataTestId="tableStreams-row"
         loggedInUser={loggedInUser}
