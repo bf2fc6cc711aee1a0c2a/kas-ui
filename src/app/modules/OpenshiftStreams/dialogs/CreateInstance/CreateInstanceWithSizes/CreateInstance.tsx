@@ -1,3 +1,4 @@
+import { useHistory } from "react-router-dom";
 import {
   CreateKafkaInstancePropsWithSizes,
   CreateKafkaInstanceWithSizes,
@@ -6,6 +7,7 @@ import {
 import {
   BaseModalProps,
   CreateInstanceProps,
+  // useBasename,
 } from "@rhoas/app-services-ui-shared";
 import { QuickStartContext } from "@patternfly/quickstarts";
 import { FunctionComponent, useCallback, useContext } from "react";
@@ -18,10 +20,15 @@ import {
 const CreateInstanceWithSizes: FunctionComponent<
   CreateInstanceProps & BaseModalProps
 > = ({ hideModal, onCreate }) => {
+  const history = useHistory();
   const fetchAvailableProvidersAndDefault = useAvailableProvidersAndDefault();
   const getKafkaSizes = useGetAvailableSizes();
   const createInstance = useCreateInstance();
   const qsContext = useContext(QuickStartContext);
+
+  const onClickKafkaOverview = () => {
+    history.push(`overview`);
+  };
 
   const onClickQuickStart = useCallback(() => {
     qsContext.setActiveQuickStart &&
@@ -58,11 +65,11 @@ const CreateInstanceWithSizes: FunctionComponent<
       onCancel={hideModal}
       getAvailableProvidersAndDefaults={getAvailableProvidersAndDefaults}
       onCreate={handleCreate}
-      onClickContactUs={() => console.log("")}
-      onClickLearnMoreAboutRegions={() => console.log("")}
-      onLearnHowToAddStreamingUnits={() => console.log("")}
-      onLearnMoreAboutSizes={() => console.log("")}
-      onClickKafkaOverview={() => console.log("")}
+      onClickContactUs={onClickKafkaOverview}
+      onClickLearnMoreAboutRegions={onClickKafkaOverview}
+      onLearnHowToAddStreamingUnits={onClickKafkaOverview}
+      onLearnMoreAboutSizes={onClickKafkaOverview}
+      onClickKafkaOverview={onClickKafkaOverview}
       getSizes={kafkaSizes}
     />
   );
