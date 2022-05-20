@@ -1,17 +1,19 @@
-import { FunctionComponent, createContext, useContext, useState } from "react";
+import { FunctionComponent, createContext, useContext } from "react";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import { KafkaInstance } from "@rhoas/app-services-ui-shared";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
+import { SupportedKafkaSize } from "@rhoas/kafka-management-sdk/dist/generated/model/supported-kafka-size";
 
 export type InstanceDrawerContextProps = {
-  isInstanceDrawerOpen: boolean;
-  instanceDrawerTab: InstanceDrawerTab;
-  setInstanceDrawerTab: (tab: InstanceDrawerTab) => void;
-  openInstanceDrawer: (tab?: InstanceDrawerTab) => void;
-  closeInstanceDrawer: () => void;
-  instanceDrawerInstance: KafkaInstance | undefined;
-  setInstanceDrawerInstance: (instance: KafkaInstance) => void;
-  setNoInstances: (noInstances: boolean) => void;
-  noInstances: boolean;
+  isDrawerOpen: boolean;
+  drawerInstance:
+    | Required<KafkaRequest & { size: Required<SupportedKafkaSize> }>
+    | undefined;
+  setDrawerInstance: (id: string) => void;
+  drawerActiveTab: InstanceDrawerTab | undefined;
+  setDrawerActiveTab: (tab: InstanceDrawerTab) => void;
+  openDrawer: (tab?: InstanceDrawerTab) => void;
+  closeDrawer: () => void;
+  tokenEndPointUrl: string;
 };
 
 export const InstanceDrawerContext = createContext<
@@ -26,47 +28,11 @@ export const useInstanceDrawer = (): InstanceDrawerContextProps => {
   return answer;
 };
 
-export type InstanceDrawerContextProviderProps = {
-  initialTab?: InstanceDrawerTab;
-  initialInstance?: KafkaInstance;
-  initialNoInstances?: boolean;
-};
-
 export const InstanceDrawerContextProvider: FunctionComponent<
-  InstanceDrawerContextProviderProps
-> = ({ initialTab, initialInstance, initialNoInstances = false, children }) => {
-  const defaultTab = InstanceDrawerTab.DETAILS;
-  const [instanceDrawerTab, setInstanceDrawerTab] = useState<
-    InstanceDrawerTab | undefined
-  >(initialTab);
-  const [instanceDrawerInstance, setInstanceDrawerInstance] = useState<
-    KafkaInstance | undefined
-  >(initialInstance);
-  const [noInstances, setNoInstances] = useState<boolean>(initialNoInstances);
+  InstanceDrawerContextProps
+> = ({ children, ...props }) => {
   return (
-    <InstanceDrawerContext.Provider
-      value={{
-        isInstanceDrawerOpen: instanceDrawerTab !== undefined,
-        instanceDrawerTab:
-          instanceDrawerTab === undefined ? defaultTab : instanceDrawerTab,
-        setInstanceDrawerTab,
-        instanceDrawerInstance,
-        setInstanceDrawerInstance,
-        setNoInstances,
-        noInstances,
-        openInstanceDrawer: (tab) => {
-          if (tab) {
-            setInstanceDrawerTab(tab);
-          } else {
-            setInstanceDrawerTab(defaultTab);
-          }
-        },
-        closeInstanceDrawer: () => {
-          setInstanceDrawerTab(undefined);
-          setInstanceDrawerInstance(undefined);
-        },
-      }}
-    >
+    <InstanceDrawerContext.Provider value={props}>
       {children}
     </InstanceDrawerContext.Provider>
   );
