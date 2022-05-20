@@ -9,6 +9,7 @@ import {
   CreateInstanceProps,
 } from "@rhoas/app-services-ui-shared";
 import { QuickStartContext } from "@patternfly/quickstarts";
+import { getModalAppendTo } from "@app/utils";
 import { FunctionComponent, useCallback, useContext } from "react";
 import {
   useGetAvailableSizes,
@@ -70,6 +71,7 @@ const CreateInstanceWithSizes: FunctionComponent<
       onLearnMoreAboutSizes={onClickKafkaOverview}
       onClickKafkaOverview={onClickKafkaOverview}
       getSizes={kafkaSizes}
+      appendTo={getModalAppendTo}
     />
   );
 };
