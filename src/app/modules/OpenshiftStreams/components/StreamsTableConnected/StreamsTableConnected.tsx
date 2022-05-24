@@ -22,7 +22,6 @@ import {
   isServiceApiError,
   MAX_POLL_INTERVAL,
 } from "@app/utils";
-import { usePageVisibility } from "@app/hooks/usePageVisibility";
 import {
   Configuration,
   DefaultApi,
@@ -59,7 +58,6 @@ export const StreamsTableConnected: VoidFunctionComponent<
   const auth = useAuth();
   const { kas } = useConfig() || {};
   const { apiBasePath: basePath } = kas || {};
-  const { isVisible } = usePageVisibility();
   const location = useLocation();
   const searchParams = useMemo(
     () => new URLSearchParams(location.search),
@@ -181,7 +179,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
       const filterQuery = getFilterQuery();
       const accessToken = await auth?.kas.getToken();
 
-      if (accessToken && isVisible) {
+      if (accessToken) {
         try {
           const apisService = new DefaultApi(
             new Configuration({
@@ -234,7 +232,6 @@ export const StreamsTableConnected: VoidFunctionComponent<
       expectedTotal,
       filteredValue,
       getFilterQuery,
-      isVisible,
       kafkaInstancesList,
       orderBy,
       page,
