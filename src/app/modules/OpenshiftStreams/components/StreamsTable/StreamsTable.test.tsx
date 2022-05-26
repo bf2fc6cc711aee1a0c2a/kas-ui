@@ -130,6 +130,7 @@ describe("<StreamsTable/>", () => {
     setFilterSelected: jest.fn(),
     orderBy: "",
     setOrderBy: jest.fn(),
+    trialDurationHours: 2,
   };
 
   it("should render translation text in English language", () => {

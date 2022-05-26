@@ -47,6 +47,8 @@ import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import { StreamsTable } from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
 import { KafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { useGetAvailableSizes } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceWithSizes/hooks";
+import { CreateKafkaInstanceWithSizesTypes } from "@rhoas/app-services-ui-components";
 
 export type StreamsTableProps = Pick<FederatedProps, "preCreateInstance">;
 
@@ -54,6 +56,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
   StreamsTableProps
 > = ({ preCreateInstance }: StreamsTableProps) => {
   const { shouldOpenCreateModal } = useFederated() || {};
+  const getKafkaSizes = useGetAvailableSizes();
 
   const auth = useAuth();
   const { kas } = useConfig() || {};
@@ -106,6 +109,32 @@ export const StreamsTableConnected: VoidFunctionComponent<
   const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
 
   const [shouldRefresh, setShouldRefresh] = useState(false);
+
+  //kafka size state
+  const [kafkaSize, setKafkaSize] =
+    useState<CreateKafkaInstanceWithSizesTypes.GetSizesData>();
+
+  const fetchKafkaSize = useCallback(async () => {
+    if (
+      !kafkaSize &&
+      kafkaInstancesList?.items &&
+      kafkaInstancesList?.items.length > 0
+    ) {
+      const { cloud_provider, region } =
+        kafkaInstancesList?.items?.find(
+          ({ instance_type }) => instance_type === "developer"
+        ) || {};
+
+      if (cloud_provider && region) {
+        const size = await getKafkaSizes(cloud_provider, region);
+        setKafkaSize(size);
+      }
+    }
+  }, [kafkaInstancesList?.items, getKafkaSizes, kafkaSize]);
+
+  useEffect(() => {
+    fetchKafkaSize();
+  }, [fetchKafkaSize]);
 
   const handleCreateInstanceModal = async () => {
     let open;
@@ -481,6 +510,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
             onCreate={onCreate}
             refresh={refreshKafkasAfterAction}
             selectedInstanceName={drawerInstance?.name}
+            trialDurationHours={kafkaSize?.trial.trialDurationHours}
           />
         </Card>
         <KafkaStatusAlerts />

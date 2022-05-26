@@ -55,6 +55,7 @@ export type StreamsTableProps = Pick<
   setOrderBy: (order: string) => void;
   orderBy: string;
   selectedInstanceName: string | undefined;
+  trialDurationHours: number | undefined;
 };
 export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   onDeleteInstance,
@@ -79,6 +80,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   refresh,
   handleCreateInstanceModal,
   selectedInstanceName,
+  trialDurationHours,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
 
@@ -173,20 +175,25 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
                 {getFormattedDate(created_at, t("ago"))}
                 <br />
                 {(instance_type === InstanceType?.developer ||
-                  instance_type === InstanceType?.eval) && (
-                  <Trans
-                    i18nKey="common.expires_in"
-                    ns={["kasTemporaryFixMe"]}
-                    components={{
-                      time: (
-                        <FormatDate
-                          date={add(new Date(created_at), { days: 2 })}
-                          format="expiration"
-                        />
-                      ),
-                    }}
-                  />
-                )}
+                  instance_type === InstanceType?.eval) &&
+                  (trialDurationHours ? (
+                    <Trans
+                      i18nKey="common.expires_in"
+                      ns={["kasTemporaryFixMe"]}
+                      components={{
+                        time: (
+                          <FormatDate
+                            date={add(new Date(created_at), {
+                              hours: trialDurationHours,
+                            })}
+                            format="expiration"
+                          />
+                        ),
+                      }}
+                    />
+                  ) : (
+                    <Skeleton />
+                  ))}
               </>
             ),
           },
@@ -203,6 +210,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
     kafkaInstanceItems,
     cells.length,
     t,
+    trialDurationHours,
   ]);
 
   const actionResolver = (rowData: IRowData) => {
