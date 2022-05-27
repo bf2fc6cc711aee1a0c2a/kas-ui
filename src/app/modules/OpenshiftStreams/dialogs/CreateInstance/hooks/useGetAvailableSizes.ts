@@ -17,7 +17,8 @@ export function useGetAvailableSizes() {
 
   return async (
     provider: string,
-    region: string
+    region: string,
+    availableSizes: string[]
   ): Promise<CreateKafkaInstanceWithSizesTypes.GetSizesData> => {
     const api = new DefaultApi(
       new Configuration({
@@ -37,9 +38,13 @@ export function useGetAvailableSizes() {
     const standardSizes = sizes?.data?.instance_types.find(
       (i) => i.id === InstanceType.standard
     )?.sizes;
-    const trialSize = (sizes?.data?.instance_types.find(
-      (i) => i.id === InstanceType.developer
-    )?.sizes || [])[0] as Required<SupportedKafkaSize>;
+    const trialSizes =
+      sizes?.data?.instance_types.find((i) => i.id === InstanceType.developer)
+        ?.sizes || [];
+    const trialSize =
+      trialSizes.length > 0
+        ? (trialSizes[trialSizes.length - 1] as Required<SupportedKafkaSize>)
+        : undefined;
     if (!(standardSizes && trialSize)) {
       throw new Error(
         `No standard sizes or trial size: ${standardSizes} ${trialSize}`
@@ -64,6 +69,7 @@ export function useGetAvailableSizes() {
             messageSize: (s.max_message_size.bytes || 0) / 1048576,
             status: s.maturity_status === "stable" ? "stable" : "preview",
             trialDurationHours: undefined,
+            isDisabled: !availableSizes.includes(`standard.${s.id}`),
           };
         }
       );
@@ -86,6 +92,7 @@ export function useGetAvailableSizes() {
         trialDurationHours: trialSize.lifespan_seconds
           ? trialSize.lifespan_seconds / 60 / 60
           : undefined,
+        isDisabled: !availableSizes.includes(`developer.${trialSize.id}`),
       },
     };
   };
