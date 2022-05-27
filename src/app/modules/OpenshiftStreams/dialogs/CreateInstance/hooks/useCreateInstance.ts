@@ -46,24 +46,43 @@ export const useCreateInstance =
         if (isServiceApiError(error)) {
           const { code } = error?.response?.data || {};
 
-          switch (code) {
-            case ErrorCodes.DUPLICATE_INSTANCE_NAME:
-              onError("name-taken");
+          switch (instanceType) {
+            case "developer":
+              switch (code) {
+                case ErrorCodes.DUPLICATE_INSTANCE_NAME:
+                  onError("name-taken");
+                  break;
+
+                // regardless of the error, let's not give too many details to trial users
+                default:
+                  onError("trial-unavailable");
+                  break;
+              }
               break;
-            case ErrorCodes.INSUFFICIENT_QUOTA:
-              onError("over-quota");
+
+            case "standard":
+              switch (code) {
+                case ErrorCodes.DUPLICATE_INSTANCE_NAME:
+                  onError("name-taken");
+                  break;
+
+                case ErrorCodes.INTERNAL_CAPACITY_ERROR:
+                  onError("region-unavailable");
+                  break;
+
+                case ErrorCodes.INSUFFICIENT_QUOTA:
+                  onError("over-quota");
+                  break;
+
+                default:
+                  console.error(
+                    "useAvailableProvidersAndDefault",
+                    "createKafka unknown error",
+                    error
+                  );
+                  onError("unknown");
+              }
               break;
-            case ErrorCodes.REACHED_MAX_LIMIT_ALLOWED_KAFKA:
-            case ErrorCodes.INSTANCE_TYPE_NOT_SUPPORTED:
-              onError("trial-unavailable");
-              break;
-            default:
-              console.error(
-                "useAvailableProvidersAndDefault",
-                "createKafka unknown error",
-                error
-              );
-              onError("unknown");
           }
         } else {
           console.error(

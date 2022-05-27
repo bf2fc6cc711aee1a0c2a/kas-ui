@@ -30,10 +30,7 @@ export const useAvailableProvidersAndDefault = () => {
   }
 
   // Function to fetch cloud Regions based on selected filter
-  const fetchRegions = async (
-    id: string,
-    instance_type: string
-  ): Promise<CreateKafkaInstanceWithSizesTypes.Regions> => {
+  const fetchRegions = async (id: string, instance_type: string) => {
     const apisService = getApi();
     const res = await apisService.getCloudProviderRegions(id);
 
@@ -46,27 +43,24 @@ export const useAvailableProvidersAndDefault = () => {
         p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
     );
 
-    return regionsForInstance.map(
-      (r): CreateKafkaInstanceWithSizesTypes.RegionInfo => {
-        const max_capacity_reached = r.capacity?.some(
-          (c) => c.available_sizes?.length === 0
-        );
+    return regionsForInstance.map((r) => {
+      const max_capacity_reached = r.capacity?.some(
+        (c) => c.available_sizes?.length === 0
+      );
 
-        return {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          id: r.id!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          displayName: r.display_name!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          isDisabled: max_capacity_reached,
-        };
-      }
-    );
+      return {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        id: r.id!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        displayName: r.display_name!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        isDisabled: max_capacity_reached,
+        capacity: r.capacity,
+      };
+    });
   };
 
-  const fetchProviders = async (
-    instance_type: string
-  ): Promise<CreateKafkaInstanceWithSizesTypes.Providers> => {
+  const fetchProviders = async (instance_type: string) => {
     try {
       const apisService = getApi();
       const res = await apisService.getCloudProviders();
@@ -74,21 +68,17 @@ export const useAvailableProvidersAndDefault = () => {
       return await Promise.all(
         allProviders
           .filter((p) => p.enabled)
-          .map(
-            async (
-              provider
-            ): Promise<CreateKafkaInstanceWithSizesTypes.ProviderInfo> => {
+          .map(async (provider) => {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const regions = await fetchRegions(provider.id!, instance_type);
+            return {
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              const regions = await fetchRegions(provider.id!, instance_type);
-              return {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                id: provider.id!,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                displayName: provider.display_name!,
-                regions,
-              };
-            }
-          )
+              id: provider.id!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              displayName: provider.display_name!,
+              regions,
+            };
+          })
       );
     } catch (e) {
       console.error("useAvailableProvidersAndDefault", "fetchProvider", e);
@@ -121,10 +111,12 @@ export const useAvailableProvidersAndDefault = () => {
     return false;
   };
 
-  return async function (): Promise<CreateKafkaInstanceWithSizesTypes.CreateKafkaInitializationData> {
+  return async function () {
     try {
       const quota = await getQuota();
-      const plan = getQuotaType(quota.data);
+      const plan = getQuotaType(
+        quota.data
+      ) as CreateKafkaInstanceWithSizesTypes.Plan;
       const instanceType = convertQuotaToInstanceType(quota.data);
       const kasQuota = quota?.data?.get(QuotaType?.kas);
 
