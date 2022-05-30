@@ -30,6 +30,10 @@ import { NoResultsFound } from "@app/modules/OpenshiftStreams/components/Streams
 import { FormatDate } from "@rhoas/app-services-ui-components";
 import { add } from "date-fns";
 
+export type KafkaRequestWithSize = KafkaRequest & {
+  size?: { trialDurationHours: number };
+};
+
 export type StreamsTableProps = Pick<
   StreamsToolbarProps,
   | "page"
@@ -50,12 +54,11 @@ export type StreamsTableProps = Pick<
   loggedInUser: string | undefined;
   expectedTotal: number;
   kafkaDataLoaded: boolean;
-  kafkaInstanceItems?: KafkaRequest[];
+  kafkaInstanceItems?: KafkaRequestWithSize[];
   isOrgAdmin?: boolean;
   setOrderBy: (order: string) => void;
   orderBy: string;
   selectedInstanceName: string | undefined;
-  trialDurationHours: number | undefined;
 };
 export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   onDeleteInstance,
@@ -80,7 +83,6 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   refresh,
   handleCreateInstanceModal,
   selectedInstanceName,
-  trialDurationHours,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
 
@@ -133,6 +135,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
       perPage,
       expectedTotal
     );
+
     if (!kafkaDataLoaded) {
       return getSkeletonForRows({
         loadingCount,
@@ -140,6 +143,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
         length: cells.length,
       });
     }
+
     kafkaInstanceItems?.forEach((row: IRowData) => {
       const {
         name,
@@ -149,9 +153,11 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
         status,
         owner,
         instance_type,
+        size,
       } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
+
       tableRow.push({
         cells: [
           {
@@ -176,7 +182,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
                 <br />
                 {(instance_type === InstanceType?.developer ||
                   instance_type === InstanceType?.eval) &&
-                  (trialDurationHours ? (
+                  (size?.trialDurationHours ? (
                     <Trans
                       i18nKey="common.expires_in"
                       ns={["kasTemporaryFixMe"]}
@@ -184,7 +190,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
                         time: (
                           <FormatDate
                             date={add(new Date(created_at), {
-                              hours: trialDurationHours,
+                              hours: size?.trialDurationHours,
                             })}
                             format="expiration"
                           />
@@ -210,7 +216,6 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
     kafkaInstanceItems,
     cells.length,
     t,
-    trialDurationHours,
   ]);
 
   const actionResolver = (rowData: IRowData) => {

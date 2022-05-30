@@ -44,11 +44,13 @@ import {
   Unauthorized,
 } from "@app/modules/OpenshiftStreams/components";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import { StreamsTable } from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
+import {
+  StreamsTable,
+  KafkaRequestWithSize,
+} from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
 import { KafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
-import { useGetAvailableSizes } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/CreateInstanceWithSizes/hooks";
-import { CreateKafkaInstanceWithSizesTypes } from "@rhoas/app-services-ui-components";
+import { useKafkaSizeMemoized } from "./useKafkaSizeMemoized";
 
 export type StreamsTableProps = Pick<FederatedProps, "preCreateInstance">;
 
@@ -56,7 +58,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
   StreamsTableProps
 > = ({ preCreateInstance }: StreamsTableProps) => {
   const { shouldOpenCreateModal } = useFederated() || {};
-  const getKafkaSizes = useGetAvailableSizes();
+  const getKafkaSizes = useKafkaSizeMemoized();
 
   const auth = useAuth();
   const { kas } = useConfig() || {};
@@ -92,6 +94,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
   >();
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [expectedTotal, setExpectedTotal] = useState<number>(3);
+  const [kafkaItems, setKafkaItems] = useState<KafkaRequestWithSize[]>();
 
   // filter and sort state
   const [orderBy, setOrderBy] = useState<string>("created_at desc");
@@ -110,31 +113,33 @@ export const StreamsTableConnected: VoidFunctionComponent<
 
   const [shouldRefresh, setShouldRefresh] = useState(false);
 
-  //kafka size state
-  const [kafkaSize, setKafkaSize] =
-    useState<CreateKafkaInstanceWithSizesTypes.GetSizesData>();
+  const kafkaSizes = useCallback(getKafkaSizes, [getKafkaSizes]);
 
-  const fetchKafkaSize = useCallback(async () => {
-    if (
-      !kafkaSize &&
-      kafkaInstancesList?.items &&
-      kafkaInstancesList?.items.length > 0
-    ) {
-      const { cloud_provider, region } =
-        kafkaInstancesList?.items?.find(
-          ({ instance_type }) => instance_type === "developer"
-        ) || {};
+  const fetchKafkaSizeAndMergeWithKafkaRequest = useCallback(
+    async (
+      kafkaItems: KafkaRequestWithSize[]
+    ): Promise<KafkaRequestWithSize[]> => {
+      const kafkaItemsWithSize: KafkaRequestWithSize[] = [...kafkaItems];
 
-      if (cloud_provider && region) {
-        const size = await getKafkaSizes(cloud_provider, region);
-        setKafkaSize(size);
+      if (kafkaItemsWithSize && kafkaItemsWithSize.length > 0) {
+        kafkaItemsWithSize?.forEach(
+          async (instance: KafkaRequest, index: number) => {
+            const { instance_type, cloud_provider, region } = instance;
+
+            if (instance_type === "developer" && cloud_provider && region) {
+              const size = await kafkaSizes(cloud_provider, region);
+              kafkaItemsWithSize[index]["size"] = {
+                trialDurationHours: size.trial.trialDurationHours!,
+              };
+            }
+          }
+        );
       }
-    }
-  }, [kafkaInstancesList?.items, getKafkaSizes, kafkaSize]);
 
-  useEffect(() => {
-    fetchKafkaSize();
-  }, [fetchKafkaSize]);
+      return kafkaItemsWithSize;
+    },
+    [kafkaSizes]
+  );
 
   const handleCreateInstanceModal = async () => {
     let open;
@@ -229,10 +234,15 @@ export const StreamsTableConnected: VoidFunctionComponent<
               orderBy,
               filterQuery
             )
-            .then((res) => {
+            .then(async (res) => {
               const kafkaInstances = res.data;
-              const kafkaItems = kafkaInstances?.items || [];
+              const kafkaItems: KafkaRequestWithSize[] =
+                kafkaInstances?.items || [];
               setKafkaInstancesList(kafkaInstances);
+
+              const kafkaItemsWithSize: KafkaRequestWithSize[] =
+                await fetchKafkaSizeAndMergeWithKafkaRequest(kafkaItems);
+              setKafkaItems(kafkaItemsWithSize);
 
               if (
                 kafkaInstancesList?.total !== undefined &&
@@ -266,6 +276,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
       page,
       perPage,
       waitingForDelete,
+      fetchKafkaSizeAndMergeWithKafkaRequest,
     ]
   );
 
@@ -499,7 +510,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
             isOrgAdmin={isOrgAdmin}
             expectedTotal={expectedTotal}
             kafkaDataLoaded={kafkaDataLoaded}
-            kafkaInstanceItems={kafkaInstancesList?.items}
+            kafkaInstanceItems={kafkaItems}
             setOrderBy={setOrderBy}
             setFilterSelected={setFilterSelected}
             setFilteredValue={onSearch}
@@ -510,7 +521,6 @@ export const StreamsTableConnected: VoidFunctionComponent<
             onCreate={onCreate}
             refresh={refreshKafkasAfterAction}
             selectedInstanceName={drawerInstance?.name}
-            trialDurationHours={kafkaSize?.trial.trialDurationHours}
           />
         </Card>
         <KafkaStatusAlerts />
