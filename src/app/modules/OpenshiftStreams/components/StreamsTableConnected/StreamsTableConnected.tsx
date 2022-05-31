@@ -44,9 +44,13 @@ import {
   Unauthorized,
 } from "@app/modules/OpenshiftStreams/components";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import { StreamsTable } from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
+import {
+  StreamsTable,
+  KafkaRequestWithSize,
+} from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
 import { KafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { useKafkaSizeMemoized } from "./useKafkaSizeMemoized";
 
 export type StreamsTableProps = Pick<FederatedProps, "preCreateInstance">;
 
@@ -54,6 +58,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
   StreamsTableProps
 > = ({ preCreateInstance }: StreamsTableProps) => {
   const { shouldOpenCreateModal } = useFederated() || {};
+  const getKafkaSizes = useKafkaSizeMemoized();
 
   const auth = useAuth();
   const { kas } = useConfig() || {};
@@ -89,6 +94,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
   >();
   const [kafkaDataLoaded, setKafkaDataLoaded] = useState(false);
   const [expectedTotal, setExpectedTotal] = useState<number>(3);
+  const [kafkaItems, setKafkaItems] = useState<KafkaRequestWithSize[]>();
 
   // filter and sort state
   const [orderBy, setOrderBy] = useState<string>("created_at desc");
@@ -106,6 +112,34 @@ export const StreamsTableConnected: VoidFunctionComponent<
   const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
 
   const [shouldRefresh, setShouldRefresh] = useState(false);
+
+  const kafkaSizes = useCallback(getKafkaSizes, [getKafkaSizes]);
+
+  const fetchKafkaSizeAndMergeWithKafkaRequest = useCallback(
+    async (
+      kafkaItems: KafkaRequestWithSize[]
+    ): Promise<KafkaRequestWithSize[]> => {
+      const kafkaItemsWithSize: KafkaRequestWithSize[] = [...kafkaItems];
+
+      if (kafkaItemsWithSize && kafkaItemsWithSize.length > 0) {
+        kafkaItemsWithSize?.forEach(
+          async (instance: KafkaRequest, index: number) => {
+            const { instance_type, cloud_provider, region } = instance;
+
+            if (instance_type === "developer" && cloud_provider && region) {
+              const size = await kafkaSizes(cloud_provider, region);
+              kafkaItemsWithSize[index]["size"] = {
+                trialDurationHours: size.trial.trialDurationHours!,
+              };
+            }
+          }
+        );
+      }
+
+      return kafkaItemsWithSize;
+    },
+    [kafkaSizes]
+  );
 
   const handleCreateInstanceModal = async () => {
     let open;
@@ -200,10 +234,15 @@ export const StreamsTableConnected: VoidFunctionComponent<
               orderBy,
               filterQuery
             )
-            .then((res) => {
+            .then(async (res) => {
               const kafkaInstances = res.data;
-              const kafkaItems = kafkaInstances?.items || [];
+              const kafkaItems: KafkaRequestWithSize[] =
+                kafkaInstances?.items || [];
               setKafkaInstancesList(kafkaInstances);
+
+              const kafkaItemsWithSize: KafkaRequestWithSize[] =
+                await fetchKafkaSizeAndMergeWithKafkaRequest(kafkaItems);
+              setKafkaItems(kafkaItemsWithSize);
 
               if (
                 kafkaInstancesList?.total !== undefined &&
@@ -237,6 +276,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
       page,
       perPage,
       waitingForDelete,
+      fetchKafkaSizeAndMergeWithKafkaRequest,
     ]
   );
 
@@ -470,7 +510,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
             isOrgAdmin={isOrgAdmin}
             expectedTotal={expectedTotal}
             kafkaDataLoaded={kafkaDataLoaded}
-            kafkaInstanceItems={kafkaInstancesList?.items}
+            kafkaInstanceItems={kafkaItems}
             setOrderBy={setOrderBy}
             setFilterSelected={setFilterSelected}
             setFilteredValue={onSearch}

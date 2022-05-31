@@ -9,6 +9,8 @@ import { SupportedKafkaSize } from "@rhoas/kafka-management-sdk/dist/generated/m
  *
  * @returns {Promise<InstanceType[]>}
  */
+export type SizesData = CreateKafkaInstanceWithSizesTypes.GetSizesData;
+
 export function useGetAvailableSizes() {
   const { kas } = useAuth();
   const {
