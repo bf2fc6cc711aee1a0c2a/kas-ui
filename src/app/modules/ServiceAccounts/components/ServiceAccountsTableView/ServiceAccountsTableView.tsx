@@ -128,7 +128,9 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
 
     const originalData: ServiceAccountListItem = rowData.originalData;
     const isUserSameAsLoggedIn =
-      originalData.owner === loggedInUser || isOrgAdmin;
+      (loggedInUser !== undefined && originalData.owner === loggedInUser) ||
+      (isOrgAdmin !== undefined && isOrgAdmin === true);
+
     let additionalProps: Partial<IAction> = {};
 
     if (!isUserSameAsLoggedIn) {
