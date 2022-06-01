@@ -107,12 +107,12 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, owner, client_id, created_at } = row;
+      const { name, created_by, client_id, created_at } = row;
       tableRow.push({
         cells: [
           name,
           client_id,
-          owner,
+          created_by,
           { title: getFormattedDate(created_at, t("ago")) },
         ],
         originalData: row,
@@ -128,7 +128,8 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
 
     const originalData: ServiceAccountListItem = rowData.originalData;
     const isUserSameAsLoggedIn =
-      (loggedInUser !== undefined && originalData.owner === loggedInUser) ||
+      (loggedInUser !== undefined &&
+        originalData.created_by === loggedInUser) ||
       (isOrgAdmin !== undefined && isOrgAdmin === true);
 
     let additionalProps: Partial<IAction> = {};
