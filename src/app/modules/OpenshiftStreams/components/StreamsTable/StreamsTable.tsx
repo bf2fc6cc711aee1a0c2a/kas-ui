@@ -229,9 +229,13 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
     ) {
       return [];
     }
+
     const isUserSameAsLoggedIn =
-      originalData.owner === loggedInUser || isOrgAdmin;
+      (loggedInUser !== undefined && originalData.owner === loggedInUser) ||
+      (isOrgAdmin !== undefined && isOrgAdmin === true);
+
     let additionalProps;
+
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
