@@ -39,13 +39,15 @@ export const useAvailableProvidersAndDefault = () => {
     }
 
     const regionsForInstance = res.data.items.filter(
-      (p) =>
-        p.enabled && p.capacity.some((c) => c.instance_type === instance_type)
+      (region) =>
+        region.enabled &&
+        region.capacity.some((c) => c.instance_type === instance_type)
     );
 
     return regionsForInstance.map((r) => {
       const max_capacity_reached = r.capacity?.some(
-        (c) => c.available_sizes?.length === 0
+        (c) =>
+          c.instance_type === instance_type && c.available_sizes?.length === 0
       );
 
       return {

@@ -1,4 +1,10 @@
-import { FunctionComponent, useCallback, useEffect, useState } from "react";
+import {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useAlert, useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import {
@@ -171,17 +177,23 @@ export const KafkaStatusAlerts: FunctionComponent = () => {
     setItems(incompleteKafkas);
   }, [addAlert, currentUserKafkas, items, t]);
 
+  const itemsRef = useRef(items.map(kafkaToStatus));
   // Redirect the user to a previous page if there are no kafka instances for a page number / size
   useEffect(() => {
-    // handle success alert for deletion
-    addAlertAfterSuccessDeletion();
-    // handle success alert for creation
-    addAlertAfterSuccessCreation();
-  }, [
-    addAlertAfterSuccessCreation,
-    addAlertAfterSuccessDeletion,
-    currentUserKafkas,
-  ]);
+    const updatedStatuses = items.map(kafkaToStatus);
+    if (JSON.stringify(itemsRef.current) !== JSON.stringify(updatedStatuses)) {
+      console.log("KafkaStatusAlerts items changes", updatedStatuses);
+      itemsRef.current = updatedStatuses;
+      // handle success alert for deletion
+      addAlertAfterSuccessDeletion();
+      // handle success alert for creation
+      addAlertAfterSuccessCreation();
+    }
+  }, [addAlertAfterSuccessCreation, addAlertAfterSuccessDeletion, items]);
 
   return <></>;
 };
+
+function kafkaToStatus(instance: KafkaRequest): string {
+  return `${instance.id}:${instance.status}`;
+}
