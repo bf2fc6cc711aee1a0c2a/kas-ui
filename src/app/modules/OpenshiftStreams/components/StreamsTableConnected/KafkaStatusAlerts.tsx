@@ -9,7 +9,7 @@ import {
 import { usePageVisibility } from "@app/hooks/usePageVisibility";
 import { InstanceStatus, MAX_POLL_INTERVAL } from "@app/utils";
 import { AlertVariant } from "@patternfly/react-core";
-import { useTimeout } from "@app/hooks/useTimeout";
+import { useInterval } from "@app/hooks/useInterval";
 
 export const KafkaStatusAlerts: FunctionComponent = () => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
@@ -53,7 +53,13 @@ export const KafkaStatusAlerts: FunctionComponent = () => {
     loggedInUser && fetchCurrentUserKafkas();
   }, [fetchCurrentUserKafkas, loggedInUser]);
 
-  useTimeout(() => fetchCurrentUserKafkas(), MAX_POLL_INTERVAL);
+  const pollKafkas = useCallback(
+    function pollKafkasCb() {
+      fetchCurrentUserKafkas();
+    },
+    [fetchCurrentUserKafkas]
+  );
+  useInterval(pollKafkas, MAX_POLL_INTERVAL);
 
   const addAlertAfterSuccessDeletion = useCallback(() => {
     const removeKafkaFromDeleted = (name: string) => {

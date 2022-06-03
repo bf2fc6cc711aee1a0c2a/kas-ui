@@ -15,7 +15,7 @@ import {
   PageSectionVariants,
 } from "@patternfly/react-core";
 import { usePagination } from "@app/common";
-import { useTimeout } from "@app/hooks/useTimeout";
+import { useInterval } from "@app/hooks/useInterval";
 import {
   ErrorCodes,
   InstanceStatus,
@@ -474,7 +474,13 @@ export const StreamsTableConnected: VoidFunctionComponent<
     openModal();
   }, [openCreateModal, shouldOpenCreateModal]);
 
-  useTimeout(() => fetchKafkas(true), MAX_POLL_INTERVAL);
+  const pollKafkas = useCallback(
+    function pollKafkasCb() {
+      fetchKafkas(true);
+    },
+    [fetchKafkas]
+  );
+  useInterval(pollKafkas, MAX_POLL_INTERVAL);
 
   if (isUserUnauthorized) {
     return <Unauthorized />;
