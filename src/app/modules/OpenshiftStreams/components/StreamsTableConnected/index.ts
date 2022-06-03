@@ -1,2 +1,2 @@
 export * from "./StreamsTableConnected";
-export { useKafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/UseKafkaStatusAlerts";
+export { useKafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/useKafkaStatusAlerts";
