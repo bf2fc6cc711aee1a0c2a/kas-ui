@@ -45,10 +45,10 @@ import {
 } from "@app/modules/OpenshiftStreams/components";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import {
-  StreamsTable,
   KafkaRequestWithSize,
+  StreamsTable,
 } from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
-import { KafkaStatusAlerts } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/KafkaStatusAlerts";
+import { useKafkaStatusAlerts } from "./useKafkaStatusAlerts";
 import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
 import { useKafkaSizeMemoized } from "./useKafkaSizeMemoized";
 
@@ -112,6 +112,10 @@ export const StreamsTableConnected: VoidFunctionComponent<
   const [waitingForDelete, setWaitingForDelete] = useState<boolean>(false);
 
   const [shouldRefresh, setShouldRefresh] = useState(false);
+
+  useKafkaStatusAlerts(
+    kafkaInstancesList?.items?.filter((i) => i.owner === loggedInUser)
+  );
 
   const kafkaSizes = useCallback(getKafkaSizes, [getKafkaSizes]);
 
@@ -529,7 +533,6 @@ export const StreamsTableConnected: VoidFunctionComponent<
             selectedInstanceName={drawerInstance?.name}
           />
         </Card>
-        <KafkaStatusAlerts />
       </PageSection>
     );
   }

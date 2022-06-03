@@ -1,199 +1,203 @@
-import {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useAlert, useAuth, useConfig } from "@rhoas/app-services-ui-shared";
-import {
-  Configuration,
-  DefaultApi,
-  KafkaRequest,
-} from "@rhoas/kafka-management-sdk";
+import { useAlert } from "@rhoas/app-services-ui-shared";
+import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import { usePageVisibility } from "@app/hooks/usePageVisibility";
-import { InstanceStatus, MAX_POLL_INTERVAL } from "@app/utils";
+import { InstanceStatus } from "@app/utils";
 import { AlertVariant } from "@patternfly/react-core";
 import { useInterval } from "@app/hooks/useInterval";
 
-export const KafkaStatusAlerts: FunctionComponent = () => {
+type AlertableInstance = { name: string; status: InstanceStatus };
+
+export function useKafkaStatusAlerts(
+  instances: KafkaRequest[] | undefined
+): void {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const { addAlert } = useAlert() || {};
-  const auth = useAuth();
-
-  const [deletedKafkas, setDeletedKafkas] = useState<string[]>([]);
-  const [currentUserKafkas, setCurrentUserKafkas] = useState<
-    KafkaRequest[] | undefined
-  >();
-  const [items, setItems] = useState<Array<KafkaRequest>>([]);
-  const [loggedInUser, setLoggedInUser] = useState<string | undefined>(
-    undefined
-  );
   const { isVisible } = usePageVisibility();
-  const { kas } = useConfig() || {};
-  const { apiBasePath: basePath } = kas || {};
+  const previousInstancesRef = useRef<KafkaRequest[]>();
+  const instancesBeingDeletedRef = useRef<KafkaRequest[]>([]);
+  const toNotifyRef = useRef<AlertableInstance[]>([]);
 
-  useEffect(() => {
-    auth.getUsername()?.then((username) => setLoggedInUser(username));
-  }, [auth]);
-
-  const fetchCurrentUserKafkas = useCallback(async () => {
-    const accessToken = await auth?.kas.getToken();
-    const filter = `owner = ${loggedInUser}`;
-    if (accessToken && isVisible) {
-      const apisService = new DefaultApi(
-        new Configuration({
-          accessToken,
-          basePath,
-        })
-      );
-      await apisService.getKafkas("", "", "", filter).then((res) => {
-        const kafkaInstances = res.data;
-        setCurrentUserKafkas(kafkaInstances.items);
+  const notifyReady = useCallback(
+    (name: string) => {
+      addAlert({
+        title: t("kafka_successfully_created"),
+        variant: AlertVariant.success,
+        description: (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t("kafka_success_message", {
+                name,
+              }),
+            }}
+          />
+        ),
+        dataTestId: "toastCreateKafka-success",
       });
-    }
-  }, [auth, basePath, isVisible, loggedInUser]);
-
-  useEffect(() => {
-    loggedInUser && fetchCurrentUserKafkas();
-  }, [fetchCurrentUserKafkas, loggedInUser]);
-
-  const pollKafkas = useCallback(
-    function pollKafkasCb() {
-      fetchCurrentUserKafkas();
     },
-    [fetchCurrentUserKafkas]
+    [addAlert, t]
   );
-  useInterval(pollKafkas, MAX_POLL_INTERVAL);
 
-  const addAlertAfterSuccessDeletion = useCallback(() => {
-    const removeKafkaFromDeleted = (name: string) => {
-      const index = deletedKafkas.findIndex((k) => k === name);
-      if (index > -1) {
-        const prev = Object.assign([], deletedKafkas);
-        prev.splice(index, 1);
-        setDeletedKafkas(prev);
-      }
-    };
-
-    if (currentUserKafkas) {
-      // filter all kafkas with status as deprovision
-      const deprovisonedKafkas: KafkaRequest[] = currentUserKafkas.filter(
-        (k) =>
-          k.status === InstanceStatus.DEPROVISION ||
-          k.status === InstanceStatus.DELETED
-      );
-
-      // filter all new kafka which is not in deleteKafka state
-      const notPresentKafkas = deprovisonedKafkas
-        .filter((k) => deletedKafkas.findIndex((dk) => dk === k.name) < 0)
-        .map((k) => k.name || "");
-      // create new array by merging old and new kafka with status as deprovion
-      const allDeletedKafkas: string[] = [
-        ...deletedKafkas,
-        ...notPresentKafkas,
-      ];
-      // update deleteKafka with new arraycurrentUserkafkaInstanceItems
-      setDeletedKafkas(allDeletedKafkas);
-
-      // add alert for deleted kafkas which are completely deleted from the response
-      allDeletedKafkas.forEach((k) => {
-        const kafkaIndex = currentUserKafkas?.findIndex(
-          (item) => item.name === k
-        );
-        if (kafkaIndex < 0) {
-          removeKafkaFromDeleted(k);
-          addAlert &&
-            addAlert({
-              title: t("kafka_successfully_deleted", { name: k }),
-              variant: AlertVariant.success,
-            });
-        }
+  const notifyDelete = useCallback(
+    (name: string) => {
+      addAlert({
+        title: t("kafka_successfully_deleted", {
+          name,
+        }),
+        variant: AlertVariant.success,
       });
-    }
-  }, [addAlert, currentUserKafkas, deletedKafkas, t]);
+    },
+    [addAlert, t]
+  );
 
-  const addAlertAfterSuccessCreation = useCallback(() => {
-    const lastItemsState: KafkaRequest[] = JSON.parse(JSON.stringify(items));
-    if (items && items.length > 0) {
-      const completedOrFailedItems = Object.assign(
-        [],
-        currentUserKafkas
-      ).filter(
-        (item: KafkaRequest) =>
-          item.status === InstanceStatus.READY ||
-          item.status === InstanceStatus.FAILED
-      );
-      lastItemsState.forEach((item: KafkaRequest) => {
-        const instances: KafkaRequest[] = completedOrFailedItems.filter(
-          (cfItem: KafkaRequest) => item.id === cfItem.id
+  const notifyFailure = useCallback(
+    (name: string) => {
+      addAlert({
+        title: t("kafka_not_created"),
+        variant: AlertVariant.danger,
+        description: (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t("kafka_failed_message", {
+                name,
+              }),
+            }}
+          />
+        ),
+        dataTestId: "toastCreateKafka-failed",
+      });
+    },
+    [addAlert, t]
+  );
+
+  /**
+   * Derive from the updated instances which instances have changed state from
+   * the previous run
+   */
+  useEffect(
+    function checkForInstanceStatusChange() {
+      if (instances) {
+        const firstData = previousInstancesRef.current === undefined;
+        const previousInstances = previousInstancesRef.current || [];
+
+        const previousIdsAndStates = previousInstances.map(
+          (i) => `${i.id}:${i.status}`
         );
-        if (instances && instances.length > 0) {
-          if (instances[0].status === InstanceStatus.READY) {
-            addAlert &&
-              addAlert({
-                title: t("kafka_successfully_created"),
-                variant: AlertVariant.success,
-                description: (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: t("kafka_success_message", {
-                        name: instances[0]?.name,
-                      }),
-                    }}
-                  />
-                ),
-                dataTestId: "toastCreateKafka-success",
-              });
-          } else if (instances[0].status === InstanceStatus.FAILED) {
-            addAlert &&
-              addAlert({
-                title: t("kafka_not_created"),
-                variant: AlertVariant.danger,
-                description: (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: t("kafka_failed_message", {
-                        name: instances[0]?.name,
-                      }),
-                    }}
-                  />
-                ),
-                dataTestId: "toastCreateKafka-failed",
-              });
+        const currentIdsAndStates = instances.map((i) => `${i.id}:${i.status}`);
+
+        // Check for changes between polled data in an unefficent but effective way.
+        // We don't stringify the whole KafkaRequest object since it's massive and
+        // we care only about an instance id and its status.
+        if (
+          JSON.stringify(previousIdsAndStates) !==
+          JSON.stringify(currentIdsAndStates)
+        ) {
+          // an helper function to get the instances that changed state, but only
+          // if we got at least one snapshot of the data. We don't want to notify
+          // again for instances already created.
+          const filterInstances = (
+            instances: KafkaRequest[],
+            desiredStatus: InstanceStatus
+          ) => {
+            return firstData
+              ? []
+              : instances.filter(
+                  (i) =>
+                    i.status === desiredStatus &&
+                    !previousInstances.find(
+                      (pi) => pi.id === i.id && i.status !== desiredStatus
+                    )
+                );
+          };
+
+          // get newly created and failed instances
+          const ready = filterInstances(instances, InstanceStatus.READY);
+          const failed = filterInstances(instances, InstanceStatus.FAILED);
+
+          // since it's possible that an instance that is being deleted will
+          // simply not be returned the next time we poll for data, we keep track
+          // of instances that are deprovisoning in a ref. We check if these
+          // instances are still in the current list of instances. If not, they
+          // have been deleted and we should notify the user. The others, we keep
+          // them in the ref
+          const [deleted, stillBeingDeleted] =
+            instancesBeingDeletedRef.current.reduce<
+              [KafkaRequest[], KafkaRequest[]]
+            >(
+              ([deleted, beingDeleted], instanceBeingDeleted) => {
+                if (
+                  instances.find((i) => i.id === instanceBeingDeleted.id) ===
+                  undefined
+                ) {
+                  // this instance has been deleted
+                  return [[...deleted, instanceBeingDeleted], beingDeleted];
+                } else {
+                  return [deleted, [...beingDeleted, instanceBeingDeleted]];
+                }
+              },
+              [[], []]
+            );
+
+          // check also for new instances being deleted
+          const newBeingDeleted = instances.filter(
+            (i) =>
+              [InstanceStatus.DELETED, InstanceStatus.DEPROVISION].includes(
+                i.status as InstanceStatus
+              ) && stillBeingDeleted.find((s) => s.id === i.id) === undefined
+          );
+
+          // recreate the deleted instances ref with the data derived before
+          instancesBeingDeletedRef.current = [
+            ...stillBeingDeleted,
+            ...newBeingDeleted,
+          ];
+
+          // update the ref of instances for which we need to notify the user
+          toNotifyRef.current = [
+            ...toNotifyRef.current,
+            ...ready.map(instanceToAlertable),
+            ...failed.map(instanceToAlertable),
+            ...deleted.map(instanceToAlertable),
+          ];
+
+          // snapshot the instances used in this run
+          previousInstancesRef.current = instances;
+        }
+      }
+    },
+    [instances]
+  );
+
+  // check every second if the browser is visible, and if so send the queued
+  // notifications
+  useInterval(
+    useCallback(
+      function sendNotificationCb() {
+        if (isVisible) {
+          while (toNotifyRef.current.length > 0) {
+            const instance = toNotifyRef.current.shift()!;
+            switch (instance.status) {
+              case InstanceStatus.READY:
+                notifyReady(instance.name);
+                break;
+              case InstanceStatus.FAILED:
+                notifyFailure(instance.name);
+                break;
+              case InstanceStatus.DEPROVISION:
+              case InstanceStatus.DELETED:
+                notifyDelete(instance.name);
+                break;
+            }
           }
         }
-      });
-    }
-    const incompleteKafkas = Object.assign(
-      [],
-      currentUserKafkas?.filter(
-        (item: KafkaRequest) =>
-          item.status === InstanceStatus.PROVISIONING ||
-          item.status === InstanceStatus.ACCEPTED
-      )
-    );
-    setItems(incompleteKafkas);
-  }, [addAlert, currentUserKafkas, items, t]);
+      },
+      [isVisible, notifyDelete, notifyFailure, notifyReady]
+    ),
+    1000
+  );
+}
 
-  const itemsRef = useRef(items.map(kafkaToStatus));
-  // Redirect the user to a previous page if there are no kafka instances for a page number / size
-  useEffect(() => {
-    const updatedStatuses = items.map(kafkaToStatus);
-    if (JSON.stringify(itemsRef.current) !== JSON.stringify(updatedStatuses)) {
-      console.log("KafkaStatusAlerts items changes", updatedStatuses);
-      itemsRef.current = updatedStatuses;
-      // handle success alert for deletion
-      addAlertAfterSuccessDeletion();
-      // handle success alert for creation
-      addAlertAfterSuccessCreation();
-    }
-  }, [addAlertAfterSuccessCreation, addAlertAfterSuccessDeletion, items]);
-
-  return <></>;
-};
-
-function kafkaToStatus(instance: KafkaRequest): string {
-  return `${instance.id}:${instance.status}`;
+function instanceToAlertable(instance: KafkaRequest): AlertableInstance {
+  return { name: instance.name!, status: instance.status as InstanceStatus };
 }
