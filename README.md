@@ -20,6 +20,8 @@ npm install
 BASE_PATH=https://api.openshift.com npm run start:dev
 ```
 
+You can then hit <https://prod.foo.redhat.com:1337/>.
+
 The dev server runs using self-signed certificates, so you'll need to accept / install them into your system in order to load the UI. In Chrome you can simply accept the warnings and it will allow you in.
 
 ## Contributing
