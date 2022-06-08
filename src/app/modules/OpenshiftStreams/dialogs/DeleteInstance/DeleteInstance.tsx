@@ -1,9 +1,8 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useState, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteModal } from "@app/common";
 import { InstanceStatus } from "@app/utils";
 import { KafkaRequest } from "@rhoas/kafka-management-sdk";
-import { TextInputProps } from "@patternfly/react-core";
 
 export type DeleteInstanceModalProps = {
   kafka: KafkaRequest;
@@ -37,7 +36,7 @@ export const DeleteInstanceModal: FunctionComponent<
     return false;
   };
 
-  const onKeyPress: TextInputProps["onKeyPress"] = (event) => {
+  const onKeyPress = (event: KeyboardEvent) => {
     if (event.key === "Enter" && !isConfirmButtonDisabled()) {
       submit();
     }
