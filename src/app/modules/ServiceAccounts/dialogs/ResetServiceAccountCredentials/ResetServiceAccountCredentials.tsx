@@ -15,7 +15,7 @@ import {
   useAuth,
   useConfig,
 } from "@rhoas/app-services-ui-shared";
-import Credentials from "@app/modules/ServiceAccounts/components/Credentials /Credentials";
+import Credentials from "@app/modules/ServiceAccounts/components/Credentials/Credentials";
 
 enum Step {
   Confirm = "Confirm",
