@@ -37,9 +37,9 @@ export function useGetAvailableSizes() {
       throw new Error(`No instance_types from backend`);
     }
 
-    const standardSizes = sizes?.data?.instance_types.find(
-      (i) => i.id === InstanceType.standard
-    )?.sizes;
+    const standardSizes =
+      sizes?.data?.instance_types.find((i) => i.id === InstanceType.standard)
+        ?.sizes || [];
     const trialSizes =
       sizes?.data?.instance_types.find((i) => i.id === InstanceType.developer)
         ?.sizes || [];
@@ -47,11 +47,6 @@ export function useGetAvailableSizes() {
       trialSizes.length > 0
         ? (trialSizes[trialSizes.length - 1] as Required<SupportedKafkaSize>)
         : undefined;
-    if (!(standardSizes && trialSize)) {
-      throw new Error(
-        `No standard sizes or trial size: ${standardSizes} ${trialSize}`
-      );
-    }
     const componentSizes =
       standardSizes.map<CreateKafkaInstanceWithSizesTypes.Size>(
         (sizeFromApi) => {
@@ -77,25 +72,29 @@ export function useGetAvailableSizes() {
       );
     return {
       standard: componentSizes,
-      trial: {
-        id: trialSize.id,
-        displayName: trialSize.display_name,
-        quota: 0,
-        ingress: (trialSize.ingress_throughput_per_sec.bytes || 0) / 1048576,
-        egress: (trialSize.egress_throughput_per_sec.bytes || 0) / 1048576,
-        storage: Math.round(
-          (trialSize.max_data_retention_size.bytes || 0) / 1073741824
-        ),
-        connections: trialSize.total_max_connections,
-        connectionRate: trialSize.max_connection_attempts_per_sec,
-        maxPartitions: trialSize.max_partitions,
-        messageSize: (trialSize.max_message_size.bytes || 0) / 1048576,
-        status: trialSize.maturity_status === "stable" ? "stable" : "preview",
-        trialDurationHours: trialSize.lifespan_seconds
-          ? trialSize.lifespan_seconds / 60 / 60
-          : undefined,
-        isDisabled: !availableSizes.includes(`developer.${trialSize.id}`),
-      },
+      trial: trialSize
+        ? {
+            id: trialSize.id,
+            displayName: trialSize.display_name,
+            quota: 0,
+            ingress:
+              (trialSize.ingress_throughput_per_sec.bytes || 0) / 1048576,
+            egress: (trialSize.egress_throughput_per_sec.bytes || 0) / 1048576,
+            storage: Math.round(
+              (trialSize.max_data_retention_size.bytes || 0) / 1073741824
+            ),
+            connections: trialSize.total_max_connections,
+            connectionRate: trialSize.max_connection_attempts_per_sec,
+            maxPartitions: trialSize.max_partitions,
+            messageSize: (trialSize.max_message_size.bytes || 0) / 1048576,
+            status:
+              trialSize.maturity_status === "stable" ? "stable" : "preview",
+            trialDurationHours: trialSize.lifespan_seconds
+              ? trialSize.lifespan_seconds / 60 / 60
+              : undefined,
+            isDisabled: !availableSizes.includes(`developer.${trialSize.id}`),
+          }
+        : (undefined as unknown as CreateKafkaInstanceWithSizesTypes.Size),
     };
   };
 }
