@@ -26,7 +26,7 @@ import {
   useConfig,
 } from "@rhoas/app-services-ui-shared";
 import { CreateForm } from "@app/modules/ServiceAccounts/dialogs/CreateServiceAccount/CreateForm";
-import Credentials from "@app/modules/ServiceAccounts/components/Credentials /Credentials";
+import Credentials from "@app/modules/ServiceAccounts/components/Credentials/Credentials";
 
 const FORM_ID = "create_service_account_form";
 
