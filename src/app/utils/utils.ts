@@ -29,6 +29,7 @@ enum InstanceStatus {
 enum InstanceType {
   eval = "eval",
   standard = "standard",
+  developer = "developer",
 }
 
 const cloudProviderOptions: KeyValueOptions[] = [
@@ -176,6 +177,19 @@ const getSkeletonForRows = ({
   return rows;
 };
 
+type SizeUnits = "MiB" | "GiB";
+
+const convertBytesToUnit = (bytes: number, unit: SizeUnits): number => {
+  switch (unit) {
+    case "MiB":
+      return bytes / 1048576;
+    case "GiB":
+      return bytes / 1073741824;
+    default:
+      return bytes;
+  }
+};
+
 export {
   accessibleRouteChangeHandler,
   cloudProviderOptions,
@@ -193,4 +207,6 @@ export {
   isMobileTablet,
   getSkeletonForRows,
   InstanceType,
+  convertBytesToUnit,
+  SizeUnits,
 };

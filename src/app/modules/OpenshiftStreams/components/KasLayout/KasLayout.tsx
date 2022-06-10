@@ -1,7 +1,3 @@
-import {
-  InstanceDrawer,
-  InstanceDrawerProps,
-} from "@app/modules/InstanceDrawer";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { isMobileTablet } from "@app/utils";
@@ -17,12 +13,7 @@ import {
   TextContent,
 } from "@patternfly/react-core";
 
-export type KasLayoutProps = Pick<InstanceDrawerProps, "tokenEndPointUrl">;
-
-export const KasLayout: FunctionComponent<KasLayoutProps> = ({
-  children,
-  tokenEndPointUrl,
-}) => {
+export const KasLayout: FunctionComponent = ({ children }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
 
@@ -46,23 +37,18 @@ export const KasLayout: FunctionComponent<KasLayoutProps> = ({
 
   return (
     <>
-      <InstanceDrawer
-        tokenEndPointUrl={tokenEndPointUrl}
-        renderContent={() => (
-          <main className="pf-c-page__main">
-            <PageSection variant={PageSectionVariants.light}>
-              <Level>
-                <LevelItem>
-                  <TextContent>
-                    <Text component="h1">{t("kafka_instances")}</Text>
-                  </TextContent>
-                </LevelItem>
-              </Level>
-            </PageSection>
-            {children}
-          </main>
-        )}
-      />
+      <main className="pf-c-page__main">
+        <PageSection variant={PageSectionVariants.light}>
+          <Level>
+            <LevelItem>
+              <TextContent>
+                <Text component="h1">{t("kafka_instances")}</Text>
+              </TextContent>
+            </LevelItem>
+          </Level>
+        </PageSection>
+        {children}
+      </main>
       <Modal
         variant={ModalVariant.small}
         title="Mobile experience"

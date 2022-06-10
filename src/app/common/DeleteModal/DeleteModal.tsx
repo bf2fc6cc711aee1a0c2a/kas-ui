@@ -1,4 +1,9 @@
-import { ReactNode, FunctionComponent, ReactElement } from "react";
+import {
+  ReactNode,
+  FunctionComponent,
+  ReactElement,
+  KeyboardEvent,
+} from "react";
 import {
   Button,
   ButtonProps,
@@ -37,10 +42,11 @@ export type NestedTextProps = Omit<TextProps, "children"> & {
   description?: string;
 };
 
-export type NestedTextInputProps = TextInputProps & {
+export type NestedTextInputProps = Omit<TextInputProps, "onKeyPress"> & {
   showTextInput: boolean;
   label: string;
   value: string | undefined;
+  onKeyPress: (e: KeyboardEvent) => void;
 };
 
 export type DeleteModalProps<T> = {

@@ -1,5 +1,5 @@
 import { FunctionComponent, MouseEvent, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   IAction,
   IRowData,
@@ -27,7 +27,12 @@ import {
 import { MASTable, MASTableProps } from "@app/common";
 import { Pagination } from "@app/modules/OpenshiftStreams/components/StreamsTable/Pagination";
 import { NoResultsFound } from "@app/modules/OpenshiftStreams/components/StreamsTable/NoResultsFound";
-import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { FormatDate } from "@rhoas/app-services-ui-components";
+import { add } from "date-fns";
+
+export type KafkaRequestWithSize = KafkaRequest & {
+  size?: { trialDurationHours: number };
+};
 
 export type StreamsTableProps = Pick<
   StreamsToolbarProps,
@@ -49,10 +54,11 @@ export type StreamsTableProps = Pick<
   loggedInUser: string | undefined;
   expectedTotal: number;
   kafkaDataLoaded: boolean;
-  kafkaInstanceItems?: KafkaRequest[];
+  kafkaInstanceItems?: KafkaRequestWithSize[];
   isOrgAdmin?: boolean;
   setOrderBy: (order: string) => void;
   orderBy: string;
+  selectedInstanceName: string | undefined;
 };
 export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   onDeleteInstance,
@@ -76,9 +82,9 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
   onCreate,
   refresh,
   handleCreateInstanceModal,
+  selectedInstanceName,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  const { instanceDrawerInstance } = useInstanceDrawer();
 
   const cells = [
     { title: t("name"), transforms: [sortable] },
@@ -129,6 +135,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
       perPage,
       expectedTotal
     );
+
     if (!kafkaDataLoaded) {
       return getSkeletonForRows({
         loadingCount,
@@ -136,6 +143,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
         length: cells.length,
       });
     }
+
     kafkaInstanceItems?.forEach((row: IRowData) => {
       const {
         name,
@@ -145,9 +153,11 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
         status,
         owner,
         instance_type,
+        size,
       } = row;
       const cloudProviderDisplayName = t(cloud_provider);
       const regionDisplayName = t(region);
+
       tableRow.push({
         cells: [
           {
@@ -170,7 +180,26 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
               <>
                 {getFormattedDate(created_at, t("ago"))}
                 <br />
-                {instance_type === InstanceType?.eval && "48 hours duration"}
+                {(instance_type === InstanceType?.developer ||
+                  instance_type === InstanceType?.eval) &&
+                  (size?.trialDurationHours ? (
+                    <Trans
+                      i18nKey="common.expires_in"
+                      ns={["kasTemporaryFixMe"]}
+                      components={{
+                        time: (
+                          <FormatDate
+                            date={add(new Date(created_at), {
+                              hours: size?.trialDurationHours,
+                            })}
+                            format="expiration"
+                          />
+                        ),
+                      }}
+                    />
+                  ) : (
+                    <Skeleton />
+                  ))}
               </>
             ),
           },
@@ -200,9 +229,13 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
     ) {
       return [];
     }
+
     const isUserSameAsLoggedIn =
-      originalData.owner === loggedInUser || isOrgAdmin;
+      (loggedInUser !== undefined && originalData.owner === loggedInUser) ||
+      (isOrgAdmin !== undefined && isOrgAdmin === true);
+
     let additionalProps;
+
     if (!isUserSameAsLoggedIn) {
       additionalProps = {
         tooltip: true,
@@ -374,7 +407,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
           sortBy,
           hasDefaultCustomRowWrapper: true,
         }}
-        activeRow={instanceDrawerInstance?.name}
+        activeRow={selectedInstanceName}
         onRowClick={onRowClick}
         rowDataTestId="tableStreams-row"
         loggedInUser={loggedInUser}
