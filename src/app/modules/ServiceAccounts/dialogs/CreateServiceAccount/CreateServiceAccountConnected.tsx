@@ -161,7 +161,7 @@ const CreateServiceAccountConnected: FunctionComponent<
       onClose={handleCreateModal}
       appendTo={getModalAppendTo}
       actions={getModalActions()}
-      ouiaId={"modal-CreateServiceAcct"}
+      ouiaId={"modal-CredentialsSuccess"}
     >
       <Body />
     </Modal>
