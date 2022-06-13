@@ -115,6 +115,7 @@ const CreateServiceAccountConnected: FunctionComponent<
           spinnerAriaValueText={t("submitting_request")}
           isLoading={isCreationInProgress}
           data-testid="modalCreateServiceAccount-buttonSubmit"
+          ouiaId={"button-create"}
         >
           {"Create"}
         </Button>,
@@ -123,6 +124,7 @@ const CreateServiceAccountConnected: FunctionComponent<
           variant="link"
           onClick={handleCreateModal}
           data-testid="modalCreateServiceAccount-buttonCancel"
+          ouiaId={"button-cancel"}
         >
           {t("cancel")}
         </Button>,
@@ -159,6 +161,7 @@ const CreateServiceAccountConnected: FunctionComponent<
       onClose={handleCreateModal}
       appendTo={getModalAppendTo}
       actions={getModalActions()}
+      ouiaId={"modal-CreateServiceAcct"}
     >
       <Body />
     </Modal>

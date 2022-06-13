@@ -159,6 +159,7 @@ export const CreateForm: FunctionComponent<CreateFormProps> = ({
           onChange={setName}
           validated={serviceAccountRequest.name.validated}
           autoFocus={true}
+          ouiaId={"text-input"}
         />
       </FormGroup>
     </Form>

@@ -17,6 +17,7 @@ import {
 export type MASTableProps = CustomRowWrapperContextProps & {
   tableProps: Omit<PFTableProps, "children"> & {
     hasDefaultCustomRowWrapper?: boolean;
+    ouiaId?: string;
   };
   tableHeaderProps?: Omit<HeaderProps, "children">;
   tableBodyProps?: Omit<TableBodyProps, "children">;
@@ -43,6 +44,7 @@ const MASTable = ({
     variant,
     className,
     hasDefaultCustomRowWrapper = false,
+    ouiaId,
     ...restProps
   } = tableProps;
 
@@ -74,6 +76,7 @@ const MASTable = ({
         actionResolver={actionResolver}
         onSort={onSort}
         sortBy={sortBy}
+        ouiaId={ouiaId}
         {...restProps}
       >
         <TableHeader {...tableHeaderProps} />

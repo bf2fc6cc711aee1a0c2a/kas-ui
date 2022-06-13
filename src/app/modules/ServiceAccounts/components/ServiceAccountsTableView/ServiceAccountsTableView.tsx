@@ -238,6 +238,7 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
           actionResolver: (rowData) => buildActionResolver(rowData),
           onSort: onSort,
           sortBy: sortBy(),
+          ouiaId: "table",
         }}
       />
       {serviceAccountItems &&
