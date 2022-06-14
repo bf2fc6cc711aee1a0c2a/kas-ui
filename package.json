@@ -44,7 +44,7 @@
     "@redhat-cloud-services/frontend-components-config": "4.6.14",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.7",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.16",
-    "@rhoas/api-mock": "0.34.3",
+    "@rhoas/api-mock": "0.34.4",
     "@rhoas/app-services-ui-components": "1.40.3",
     "@rhoas/app-services-ui-shared": "0.16.0",
     "@storybook/addon-actions": "6.5.9",
@@ -114,8 +114,8 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/account-management-sdk": "0.34.3",
-    "@rhoas/kafka-management-sdk": "0.34.3",
+    "@rhoas/account-management-sdk": "0.34.4",
+    "@rhoas/kafka-management-sdk": "0.34.4",
     "tslib": "2.4.0"
   },
   "peerDependencies": {
