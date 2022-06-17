@@ -18,6 +18,7 @@ const ServiceAccountsToolbar: FC<ServiceAccountsToolbarProps> = ({
           variant="primary"
           onClick={onCreateServiceAccount}
           data-testid={"tableServiceAccounts-buttonCreateServiceAccount"}
+          ouiaId={"button-create-account"}
         >
           {t("serviceAccount.create_service_account")}
         </Button>

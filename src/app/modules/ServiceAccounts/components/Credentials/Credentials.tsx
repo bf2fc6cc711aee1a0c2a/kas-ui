@@ -66,6 +66,7 @@ const Credentials: FunctionComponent<CredentialsProps> = ({
             isReadOnly
             className="pf-u-w-100"
             data-testid="modalCredentials-copyClientID"
+            data-ouia-component-id={"button-copy-clientID"}
             textAriaLabel={t("client_id")}
           >
             {serviceAccount?.client_id}
@@ -79,6 +80,7 @@ const Credentials: FunctionComponent<CredentialsProps> = ({
             isReadOnly
             className="pf-u-w-100"
             data-testid="modalCredentials-copyClientSecret"
+            data-ouia-component-id={"button-copy-clientSecret"}
             textAriaLabel={t("common.client_secret")}
           >
             {serviceAccount?.client_secret}
@@ -96,6 +98,7 @@ const Credentials: FunctionComponent<CredentialsProps> = ({
             onChange={confirm}
             id="check-1"
             name="check1"
+            ouiaId={"checkbox"}
           />
         </Bullseye>
         <Button
@@ -103,6 +106,7 @@ const Credentials: FunctionComponent<CredentialsProps> = ({
           isDisabled={!confirmationCheckbox}
           onClick={close}
           data-testid="modalCredentials-buttonClose"
+          ouiaId={"button-close"}
         >
           {t("close")}
         </Button>

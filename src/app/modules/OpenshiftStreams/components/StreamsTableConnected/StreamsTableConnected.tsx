@@ -506,6 +506,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
         className="mk--main-page__page-section--table pf-m-padding-on-xl"
         variant={PageSectionVariants.default}
         padding={{ default: "noPadding" }}
+        data-ouia-component-id={"page-KafkaInstances"}
       >
         <Card ouiaId="card-controlplane">
           <StreamsTable

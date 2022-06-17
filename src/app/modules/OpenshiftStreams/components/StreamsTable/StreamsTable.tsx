@@ -166,7 +166,12 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
               status !== InstanceStatus.READY ? (
                 name
               ) : (
-                <Link to={`kafkas/${row?.id}/dashboard`}>{name}</Link>
+                <Link
+                  to={`kafkas/${row?.id}/dashboard`}
+                  data-ouia-component-id={"table-link"}
+                >
+                  {name}
+                </Link>
               ),
           },
           cloudProviderDisplayName,
@@ -406,6 +411,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
           onSort,
           sortBy,
           hasDefaultCustomRowWrapper: true,
+          ouiaId: "table-kafka-instances",
         }}
         activeRow={selectedInstanceName}
         onRowClick={onRowClick}

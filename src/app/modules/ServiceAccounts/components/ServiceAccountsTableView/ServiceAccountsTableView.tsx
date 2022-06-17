@@ -150,6 +150,7 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
         title: t("common.reset_credentials"),
         id: "reset-credentials",
         ["data-testid"]: "tableServiceAccounts-actionResetCredentials",
+        ["data-ouia-component-id"]: "kebab-menu-reset-creds",
         onClick: (event) =>
           isUserSameAsLoggedIn && resetCredentials(event, originalData),
         ...additionalProps,
@@ -162,6 +163,7 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
         title: t("serviceAccount.delete_service_account"),
         id: "delete-account",
         ["data-testid"]: "tableServiceAccounts-actionDeleteAccount",
+        ["data-ouia-component-id"]: "kebab-menu-delete-sa",
         onClick: (event) =>
           isUserSameAsLoggedIn && deleteAccount(event, originalData),
         ...additionalProps,
@@ -238,6 +240,7 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
           actionResolver: (rowData) => buildActionResolver(rowData),
           onSort: onSort,
           sortBy: sortBy(),
+          ouiaId: "table",
         }}
       />
       {serviceAccountItems &&
