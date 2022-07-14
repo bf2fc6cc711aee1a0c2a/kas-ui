@@ -2,7 +2,6 @@ import { useHistory } from "react-router-dom";
 import {
   CreateKafkaInstancePropsWithSizes,
   CreateKafkaInstanceWithSizes,
-  CreateKafkaInstanceWithSizesTypes,
 } from "@rhoas/app-services-ui-components";
 import {
   BaseModalProps,

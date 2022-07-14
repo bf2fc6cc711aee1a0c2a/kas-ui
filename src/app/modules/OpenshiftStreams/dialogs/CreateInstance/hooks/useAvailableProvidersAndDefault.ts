@@ -1,4 +1,8 @@
-import { CreateKafkaInstanceWithSizesTypes } from "@rhoas/app-services-ui-components";
+import {
+  InstanceAvailability,
+  Plan,
+  Provider,
+} from "@rhoas/app-services-ui-components";
 import { useAuth, useConfig, QuotaType } from "@rhoas/app-services-ui-shared";
 import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
 import { InstanceType } from "@app/utils";
@@ -116,17 +120,13 @@ export const useAvailableProvidersAndDefault = () => {
   return async function () {
     try {
       const quota = await getQuota();
-      const plan = getQuotaType(
-        quota.data
-      ) as CreateKafkaInstanceWithSizesTypes.Plan;
+      const plan = getQuotaType(quota.data) as Plan;
       const instanceType = convertQuotaToInstanceType(quota.data);
       const kasQuota = quota?.data?.get(QuotaType?.kas);
 
       const hasTrialRunning = await fetchUserHasTrialInstance();
       const availableProviders = await fetchProviders(instanceType);
-      let defaultProvider:
-        | CreateKafkaInstanceWithSizesTypes.Provider
-        | undefined;
+      let defaultProvider: Provider | undefined;
       try {
         defaultProvider =
           availableProviders.length === 1
@@ -140,19 +140,18 @@ export const useAvailableProvidersAndDefault = () => {
         );
       }
 
-      const instanceAvailability =
-        ((): CreateKafkaInstanceWithSizesTypes.InstanceAvailability => {
-          switch (true) {
-            case kasQuota !== undefined && kasQuota.remaining > 0:
-              return "standard-available";
-            case kasQuota !== undefined && kasQuota.remaining === 0:
-              return "over-quota";
-            case hasTrialRunning:
-              return "trial-used";
-            default:
-              return "trial-available";
-          }
-        })();
+      const instanceAvailability = ((): InstanceAvailability => {
+        switch (true) {
+          case kasQuota !== undefined && kasQuota.remaining > 0:
+            return "standard-available";
+          case kasQuota !== undefined && kasQuota.remaining === 0:
+            return "over-quota";
+          case hasTrialRunning:
+            return "trial-used";
+          default:
+            return "trial-available";
+        }
+      })();
 
       return {
         defaultProvider,
