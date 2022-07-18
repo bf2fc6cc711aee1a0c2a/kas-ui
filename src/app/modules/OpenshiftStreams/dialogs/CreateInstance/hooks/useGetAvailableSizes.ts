@@ -1,5 +1,5 @@
 import { InstanceType } from "@app/utils";
-import { CreateKafkaInstanceWithSizesTypes } from "@rhoas/app-services-ui-components";
+import { GetSizesData, Size } from "@rhoas/app-services-ui-components";
 import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
 import { SupportedKafkaSize } from "@rhoas/kafka-management-sdk/dist/generated/model/supported-kafka-size";
@@ -9,7 +9,7 @@ import { SupportedKafkaSize } from "@rhoas/kafka-management-sdk/dist/generated/m
  *
  * @returns {Promise<InstanceType[]>}
  */
-export type SizesData = CreateKafkaInstanceWithSizesTypes.GetSizesData;
+export type SizesData = GetSizesData;
 
 export function useGetAvailableSizes() {
   const { kas } = useAuth();
@@ -21,7 +21,7 @@ export function useGetAvailableSizes() {
     provider: string,
     region: string,
     availableSizes: string[]
-  ): Promise<CreateKafkaInstanceWithSizesTypes.GetSizesData> => {
+  ): Promise<GetSizesData> => {
     const api = new DefaultApi(
       new Configuration({
         accessToken: kas.getToken(),
@@ -47,29 +47,26 @@ export function useGetAvailableSizes() {
       trialSizes.length > 0
         ? (trialSizes[trialSizes.length - 1] as Required<SupportedKafkaSize>)
         : undefined;
-    const componentSizes =
-      standardSizes.map<CreateKafkaInstanceWithSizesTypes.Size>(
-        (sizeFromApi) => {
-          const s = sizeFromApi as Required<SupportedKafkaSize>;
-          return {
-            id: s.id,
-            displayName: s.display_name,
-            quota: s.quota_consumed,
-            ingress: (s.ingress_throughput_per_sec.bytes || 0) / 1048576,
-            egress: (s.egress_throughput_per_sec.bytes || 0) / 1048576,
-            storage: Math.round(
-              (s.max_data_retention_size.bytes || 0) / 1073741824
-            ),
-            connections: s.total_max_connections,
-            connectionRate: s.max_connection_attempts_per_sec,
-            maxPartitions: s.max_partitions,
-            messageSize: (s.max_message_size.bytes || 0) / 1048576,
-            status: s.maturity_status === "stable" ? "stable" : "preview",
-            trialDurationHours: undefined,
-            isDisabled: !availableSizes.includes(`standard.${s.id}`),
-          };
-        }
-      );
+    const componentSizes = standardSizes.map<Size>((sizeFromApi) => {
+      const s = sizeFromApi as Required<SupportedKafkaSize>;
+      return {
+        id: s.id,
+        displayName: s.display_name,
+        quota: s.quota_consumed,
+        ingress: (s.ingress_throughput_per_sec.bytes || 0) / 1048576,
+        egress: (s.egress_throughput_per_sec.bytes || 0) / 1048576,
+        storage: Math.round(
+          (s.max_data_retention_size.bytes || 0) / 1073741824
+        ),
+        connections: s.total_max_connections,
+        connectionRate: s.max_connection_attempts_per_sec,
+        maxPartitions: s.max_partitions,
+        messageSize: (s.max_message_size.bytes || 0) / 1048576,
+        status: s.maturity_status === "stable" ? "stable" : "preview",
+        trialDurationHours: undefined,
+        isDisabled: !availableSizes.includes(`standard.${s.id}`),
+      };
+    });
     return {
       standard: componentSizes,
       trial: trialSize
@@ -94,7 +91,7 @@ export function useGetAvailableSizes() {
               : undefined,
             isDisabled: !availableSizes.includes(`developer.${trialSize.id}`),
           }
-        : (undefined as unknown as CreateKafkaInstanceWithSizesTypes.Size),
+        : (undefined as unknown as Size),
     };
   };
 }

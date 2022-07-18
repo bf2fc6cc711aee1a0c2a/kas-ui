@@ -1,8 +1,9 @@
 import { useHistory } from "react-router-dom";
 import {
+  CreateKafkaInitializationData,
   CreateKafkaInstancePropsWithSizes,
   CreateKafkaInstanceWithSizes,
-  CreateKafkaInstanceWithSizesTypes,
+  OnCreateKafka,
 } from "@rhoas/app-services-ui-components";
 import {
   BaseModalProps,
@@ -38,21 +39,20 @@ const CreateInstanceWithSizes: FunctionComponent<
       qsContext.setActiveQuickStart("getting-started");
   }, [qsContext]);
 
-  const handleCreate =
-    useCallback<CreateKafkaInstanceWithSizesTypes.OnCreateKafka>(
-      function (data, onSuccess, onError) {
-        const handleOnSuccess = () => {
-          onSuccess();
-          onCreate && onCreate();
-          hideModal();
-        };
-        createInstance(data, handleOnSuccess, onError);
-      },
-      [hideModal, onCreate, createInstance]
-    );
+  const handleCreate = useCallback<OnCreateKafka>(
+    function (data, onSuccess, onError) {
+      const handleOnSuccess = () => {
+        onSuccess();
+        onCreate && onCreate();
+        hideModal();
+      };
+      createInstance(data, handleOnSuccess, onError);
+    },
+    [hideModal, onCreate, createInstance]
+  );
 
   const getAvailableProvidersAndDefaults =
-    useCallback(async (): Promise<CreateKafkaInstanceWithSizesTypes.CreateKafkaInitializationData> => {
+    useCallback(async (): Promise<CreateKafkaInitializationData> => {
       const data = await fetchAvailableProvidersAndDefault();
       capabilitiesRef.current = data;
       return data;

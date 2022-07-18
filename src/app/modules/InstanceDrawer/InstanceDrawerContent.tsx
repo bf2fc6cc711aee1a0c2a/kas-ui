@@ -29,6 +29,11 @@ export const InstanceDrawerContent: FunctionComponent<
       : `${bootstrap_server_host}:443`;
   };
 
+  const getAdminServerUrl = () => {
+    const { admin_api_server_url } = instance;
+    return `${admin_api_server_url}/openapi`;
+  };
+
   const isKafkaPending =
     instance.status === InstanceStatus.ACCEPTED ||
     instance.status === InstanceStatus.PREPARING;
@@ -77,6 +82,7 @@ export const InstanceDrawerContent: FunctionComponent<
         >
           <ResourcesTab
             externalServer={getExternalServer()}
+            adminServerUrl={getAdminServerUrl()}
             isKafkaPending={isKafkaPending}
             tokenEndPointUrl={tokenEndPointUrl}
             instanceId={instance.id}
