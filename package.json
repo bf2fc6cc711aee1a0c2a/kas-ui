@@ -35,7 +35,7 @@
   "devDependencies": {
     "@babel/core": "7.18.9",
     "@patternfly/patternfly": "4.185.1",
-    "@patternfly/quickstarts": "1.2.2",
+    "@patternfly/quickstarts": "2.2.4",
     "@patternfly/react-charts": "6.34.1",
     "@patternfly/react-core": "4.202.16",
     "@patternfly/react-icons": "4.53.16",
@@ -120,7 +120,7 @@
   },
   "peerDependencies": {
     "@patternfly/patternfly": "4.185.1",
-    "@patternfly/quickstarts": "1.2.2",
+    "@patternfly/quickstarts": "2.2.4",
     "@patternfly/react-core": "4.202.16",
     "@patternfly/react-icons": "4.53.16",
     "@patternfly/react-table": "4.71.16",
