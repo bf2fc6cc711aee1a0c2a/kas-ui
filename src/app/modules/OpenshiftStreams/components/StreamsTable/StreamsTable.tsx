@@ -255,6 +255,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
       {
         title: t("view_details"),
         id: "view-instanceDrawerInstance",
+        disabled: false,
         ["data-testid"]: "tableStreams-actionDetails",
         onClick: (event: MouseEvent) =>
           onSelectKebabDropdownOption(
@@ -271,6 +272,7 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
       {
         title: t("view_connection_information"),
         id: "connect-instanceDrawerInstance",
+        disabled: false,
         ["data-testid"]: "tableStreams-actionConnection",
         onClick: (event: MouseEvent) =>
           onSelectKebabDropdownOption(
