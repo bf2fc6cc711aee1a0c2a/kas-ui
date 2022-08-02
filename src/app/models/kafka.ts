@@ -26,7 +26,6 @@ export const asKafkaRequestPayload = (
   return {
     name: kafkaRequest.name.value,
     region: kafkaRequest.region.value,
-    multi_az: kafkaRequest.multi_az.value,
     cloud_provider: kafkaRequest.cloud_provider.value,
   };
 };

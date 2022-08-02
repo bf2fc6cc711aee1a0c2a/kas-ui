@@ -1,34 +1,35 @@
-import { useHistory } from "react-router-dom";
+import { getModalAppendTo } from "@app/utils";
+import { QuickStartContext } from "@patternfly/quickstarts";
 import {
-  CreateKafkaInitializationData,
-  CreateKafkaInstancePropsWithSizes,
-  CreateKafkaInstanceWithSizes,
-  OnCreateKafka,
+  CreateKafkaInstance,
+  CreateKafkaInstanceServices,
 } from "@rhoas/app-services-ui-components";
 import {
   BaseModalProps,
   CreateInstanceProps,
 } from "@rhoas/app-services-ui-shared";
-import { QuickStartContext } from "@patternfly/quickstarts";
-import { getModalAppendTo } from "@app/utils";
-import { FunctionComponent, useCallback, useContext, useRef } from "react";
+import { FunctionComponent, useCallback, useContext } from "react";
+import { useHistory } from "react-router-dom";
 import {
-  useGetAvailableSizes,
+  useCheckDeveloperAvailability,
+  useCheckStandardQuota,
   useCreateInstance,
-  useAvailableProvidersAndDefault,
+  useFetchProvidersWithRegions,
+  useGetStandardSizes,
+  useGetTrialSizes,
 } from "./hooks";
-import { AsyncReturnType } from "type-fest";
 
-const CreateInstanceWithSizes: FunctionComponent<
+const CreateInstance: FunctionComponent<
   CreateInstanceProps & BaseModalProps
 > = ({ hideModal, onCreate }) => {
   const history = useHistory();
-  const fetchAvailableProvidersAndDefault = useAvailableProvidersAndDefault();
-  const getKafkaSizes = useGetAvailableSizes();
+  const checkDeveloperAvailability = useCheckDeveloperAvailability();
+  const checkStandardQuota = useCheckStandardQuota();
+  const fetchProvidersWithRegions = useFetchProvidersWithRegions();
+  const getStandardSizes = useGetStandardSizes();
+  const getTrialSizes = useGetTrialSizes();
   const createInstance = useCreateInstance();
   const qsContext = useContext(QuickStartContext);
-  const capabilitiesRef =
-    useRef<AsyncReturnType<typeof fetchAvailableProvidersAndDefault>>();
 
   const onClickKafkaOverview = () => {
     history.push(`overview`);
@@ -39,7 +40,7 @@ const CreateInstanceWithSizes: FunctionComponent<
       qsContext.setActiveQuickStart("getting-started");
   }, [qsContext]);
 
-  const handleCreate = useCallback<OnCreateKafka>(
+  const handleCreate = useCallback<CreateKafkaInstanceServices["onCreate"]>(
     function (data, onSuccess, onError) {
       const handleOnSuccess = () => {
         onSuccess();
@@ -51,52 +52,26 @@ const CreateInstanceWithSizes: FunctionComponent<
     [hideModal, onCreate, createInstance]
   );
 
-  const getAvailableProvidersAndDefaults =
-    useCallback(async (): Promise<CreateKafkaInitializationData> => {
-      const data = await fetchAvailableProvidersAndDefault();
-      capabilitiesRef.current = data;
-      return data;
-    }, [fetchAvailableProvidersAndDefault]);
-
-  const kafkaSizes = useCallback<CreateKafkaInstancePropsWithSizes["getSizes"]>(
-    (provider, region) => {
-      return new Promise((resolve, reject) => {
-        const capabilities = capabilitiesRef.current;
-        if (!capabilities) {
-          reject("Unexpected error, missing provider data");
-        } else {
-          const providerInfo = capabilities.availableProviders.find(
-            (p) => p.id === provider
-          );
-          const regionInfo = providerInfo?.regions.find((r) => r.id === region);
-          const availableSizes =
-            regionInfo?.capacity.flatMap((c) =>
-              c.available_sizes.map((s) => `${c.instance_type}.${s}`)
-            ) || [];
-          resolve(getKafkaSizes(provider, region, availableSizes));
-        }
-      });
-    },
-    [getKafkaSizes]
-  );
-
   return (
-    <CreateKafkaInstanceWithSizes
+    <CreateKafkaInstance
+      checkDeveloperAvailability={checkDeveloperAvailability}
+      checkStandardQuota={checkStandardQuota}
+      fetchProvidersWithRegions={fetchProvidersWithRegions}
+      getStandardSizes={getStandardSizes}
+      getTrialSizes={getTrialSizes}
       isModalOpen={true}
-      onClickQuickStart={onClickQuickStart}
       onCancel={hideModal}
-      getAvailableProvidersAndDefaults={getAvailableProvidersAndDefaults}
-      onCreate={handleCreate}
       onClickContactUs={onClickKafkaOverview}
-      onClickLearnMoreAboutRegions={onClickKafkaOverview}
+      onClickKafkaOverview={onClickKafkaOverview}
+      onClickQuickStart={onClickQuickStart}
+      onCreate={handleCreate}
       onLearnHowToAddStreamingUnits={onClickKafkaOverview}
       onLearnMoreAboutSizes={onClickKafkaOverview}
-      onClickKafkaOverview={onClickKafkaOverview}
-      getSizes={kafkaSizes}
+      subscriptionOptionsHref={document.location.href + "/../overview"}
       appendTo={getModalAppendTo}
     />
   );
 };
 
-export { CreateInstanceWithSizes };
-export default CreateInstanceWithSizes;
+export { CreateInstance };
+export default CreateInstance;

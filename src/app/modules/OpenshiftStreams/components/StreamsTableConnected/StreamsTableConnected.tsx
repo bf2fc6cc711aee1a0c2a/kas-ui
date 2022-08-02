@@ -1,3 +1,39 @@
+import { useKms } from "@app/api";
+import { usePagination } from "@app/common";
+import { FederatedProps, useFederated } from "@app/contexts";
+import { useInterval } from "@app/hooks/useInterval";
+import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
+import {
+  FilterType,
+  KafkaEmptyState,
+  Unauthorized,
+} from "@app/modules/OpenshiftStreams/components";
+import {
+  KafkaRequestWithSize,
+  StreamsTable,
+} from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
+import "@app/modules/styles.css";
+import {
+  ErrorCodes,
+  InstanceStatus,
+  isServiceApiError,
+  MAX_POLL_INTERVAL,
+} from "@app/utils";
+import {
+  AlertVariant,
+  Card,
+  PageSection,
+  PageSectionVariants,
+} from "@patternfly/react-core";
+import { CloudProvider } from "@rhoas/app-services-ui-components";
+import {
+  ModalType,
+  useAlert,
+  useAuth,
+  useModal,
+} from "@rhoas/app-services-ui-shared";
+import { KafkaRequest, KafkaRequestList } from "@rhoas/kafka-management-sdk";
 import {
   useCallback,
   useEffect,
@@ -6,51 +42,11 @@ import {
   useState,
   VoidFunctionComponent,
 } from "react";
-import { useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  AlertVariant,
-  Card,
-  PageSection,
-  PageSectionVariants,
-} from "@patternfly/react-core";
-import { usePagination } from "@app/common";
-import { useInterval } from "@app/hooks/useInterval";
-import {
-  ErrorCodes,
-  InstanceStatus,
-  isServiceApiError,
-  MAX_POLL_INTERVAL,
-} from "@app/utils";
-import {
-  Configuration,
-  DefaultApi,
-  KafkaRequest,
-  KafkaRequestList,
-} from "@rhoas/kafka-management-sdk";
+import { useHistory, useLocation } from "react-router-dom";
+import { useGetSizes } from "../../dialogs/CreateInstance/hooks";
 import "./StreamsTableConnected.css";
-import {
-  ModalType,
-  useAlert,
-  useAuth,
-  useConfig,
-  useModal,
-} from "@rhoas/app-services-ui-shared";
-import { FederatedProps, useFederated } from "@app/contexts";
-import "@app/modules/styles.css";
-import {
-  FilterType,
-  KafkaEmptyState,
-  Unauthorized,
-} from "@app/modules/OpenshiftStreams/components";
-import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import {
-  KafkaRequestWithSize,
-  StreamsTable,
-} from "@app/modules/OpenshiftStreams/components/StreamsTable/StreamsTable";
 import { useKafkaStatusAlerts } from "./useKafkaStatusAlerts";
-import { useInstanceDrawer } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
-import { useKafkaSizeMemoized } from "./useKafkaSizeMemoized";
 
 export type StreamsTableProps = Pick<FederatedProps, "preCreateInstance">;
 
@@ -58,11 +54,10 @@ export const StreamsTableConnected: VoidFunctionComponent<
   StreamsTableProps
 > = ({ preCreateInstance }: StreamsTableProps) => {
   const { shouldOpenCreateModal } = useFederated() || {};
-  const getKafkaSizes = useKafkaSizeMemoized();
-
   const auth = useAuth();
-  const { kas } = useConfig() || {};
-  const { apiBasePath: basePath } = kas || {};
+  const getApi = useKms();
+  const getDeveloperSizes = useGetSizes("developer");
+
   const location = useLocation();
   const searchParams = useMemo(
     () => new URLSearchParams(location.search),
@@ -117,32 +112,38 @@ export const StreamsTableConnected: VoidFunctionComponent<
     kafkaInstancesList?.items?.filter((i) => i.owner === loggedInUser)
   );
 
-  const kafkaSizes = useCallback(getKafkaSizes, [getKafkaSizes]);
-
   const fetchKafkaSizeAndMergeWithKafkaRequest = useCallback(
     async (
       kafkaItems: KafkaRequestWithSize[]
     ): Promise<KafkaRequestWithSize[]> => {
-      const kafkaItemsWithSize: KafkaRequestWithSize[] = [...kafkaItems];
+      const kafkaItemsWithSize: KafkaRequestWithSize[] = [];
 
-      if (kafkaItemsWithSize && kafkaItemsWithSize.length > 0) {
-        kafkaItemsWithSize?.forEach(
-          async (instance: KafkaRequest, index: number) => {
-            const { instance_type, cloud_provider, region } = instance;
+      await Promise.all(
+        kafkaItems?.map(async (instance: KafkaRequest) => {
+          const { instance_type, cloud_provider, region } = instance;
 
-            if (instance_type === "developer" && cloud_provider && region) {
-              const size = await kafkaSizes(cloud_provider, region);
-              kafkaItemsWithSize[index]["size"] = {
-                trialDurationHours: size.trial.trialDurationHours!,
-              };
-            }
+          let size: KafkaRequestWithSize["size"];
+
+          if (instance_type === "developer" && cloud_provider && region) {
+            const sizes = await getDeveloperSizes(
+              cloud_provider as CloudProvider,
+              region
+            );
+            size = {
+              trialDurationHours: sizes[0].trialDurationHours,
+            };
           }
-        );
-      }
+
+          kafkaItemsWithSize.push({
+            ...instance,
+            size,
+          });
+        })
+      );
 
       return kafkaItemsWithSize;
     },
-    [kafkaSizes]
+    [getDeveloperSizes]
   );
 
   const handleCreateInstanceModal = async () => {
@@ -215,63 +216,54 @@ export const StreamsTableConnected: VoidFunctionComponent<
   const fetchKafkas = useCallback(
     async (isPolling = false) => {
       const filterQuery = getFilterQuery();
-      const accessToken = await auth?.kas.getToken();
 
-      if (accessToken) {
-        try {
-          const apisService = new DefaultApi(
-            new Configuration({
-              accessToken,
-              basePath,
-            })
-          );
+      try {
+        const apisService = getApi();
 
-          if (!isPolling) {
-            setKafkaDataLoaded(false);
-          }
-          setShouldRefresh(false);
-
-          await apisService
-            .getKafkas(
-              page?.toString(),
-              perPage?.toString(),
-              orderBy,
-              filterQuery
-            )
-            .then(async (res) => {
-              const kafkaInstances = res.data;
-              const kafkaItems: KafkaRequestWithSize[] =
-                kafkaInstances?.items || [];
-              setKafkaInstancesList(kafkaInstances);
-
-              const kafkaItemsWithSize: KafkaRequestWithSize[] =
-                await fetchKafkaSizeAndMergeWithKafkaRequest(kafkaItems);
-              setKafkaItems(kafkaItemsWithSize);
-
-              if (
-                kafkaInstancesList?.total !== undefined &&
-                kafkaInstancesList.total > expectedTotal
-              ) {
-                setExpectedTotal(kafkaInstancesList.total);
-              }
-
-              if (
-                waitingForDelete &&
-                filteredValue.length < 1 &&
-                kafkaItems?.length == 0
-              ) {
-                setWaitingForDelete(false);
-              }
-            })
-            .finally(() => setKafkaDataLoaded(true));
-        } catch (error) {
-          handleServerError(error);
+        if (!isPolling) {
+          setKafkaDataLoaded(false);
         }
+        setShouldRefresh(false);
+
+        await apisService
+          .getKafkas(
+            page?.toString(),
+            perPage?.toString(),
+            orderBy,
+            filterQuery
+          )
+          .then(async (res) => {
+            const kafkaInstances = res.data;
+            const kafkaItems: KafkaRequestWithSize[] =
+              kafkaInstances?.items || [];
+            setKafkaInstancesList(kafkaInstances);
+
+            const kafkaItemsWithSize: KafkaRequestWithSize[] =
+              await fetchKafkaSizeAndMergeWithKafkaRequest(kafkaItems);
+            setKafkaItems(kafkaItemsWithSize);
+
+            if (
+              kafkaInstancesList?.total !== undefined &&
+              kafkaInstancesList.total > expectedTotal
+            ) {
+              setExpectedTotal(kafkaInstancesList.total);
+            }
+
+            if (
+              waitingForDelete &&
+              filteredValue.length < 1 &&
+              kafkaItems?.length == 0
+            ) {
+              setWaitingForDelete(false);
+            }
+          })
+          .finally(() => setKafkaDataLoaded(true));
+      } catch (error) {
+        handleServerError(error);
       }
     },
     [
-      auth,
-      basePath,
+      getApi,
       expectedTotal,
       filteredValue,
       getFilterQuery,
@@ -356,13 +348,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
     if (instance.id === undefined) {
       throw new Error("kafka instanceDrawerInstance id is not set");
     }
-    const accessToken = await auth?.kas.getToken();
-    const apisService = new DefaultApi(
-      new Configuration({
-        accessToken,
-        basePath,
-      })
-    );
+    const apisService = getApi();
     onDelete();
     hideDeleteModal();
 

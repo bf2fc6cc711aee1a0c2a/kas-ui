@@ -91,7 +91,8 @@ const DeleteServiceAccount: FunctionComponent<
       handleModalToggle={handleModalToggle}
       title={title}
       confirmButtonProps={{
-        onClick: () => deleteServiceAccount(serviceAccount),
+        onClick: () =>
+          deleteServiceAccount(serviceAccount as ServiceAccountListItem),
         label: "Delete",
         isLoading,
       }}

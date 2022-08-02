@@ -1,28 +1,24 @@
-import { FunctionComponent, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useKms } from "@app/api";
+import { isServiceApiError } from "@app/utils";
 import { AlertVariant } from "@patternfly/react-core";
 import {
   BaseModalProps,
   DeleteInstanceProps,
   useAlert,
-  useAuth,
-  useConfig,
 } from "@rhoas/app-services-ui-shared";
-import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
+import { FunctionComponent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   DeleteInstanceModal,
   DeleteInstanceModalProps,
 } from "./DeleteInstance";
-import { isServiceApiError } from "@app/utils";
 
 const DeleteInstanceConnected: FunctionComponent<
   DeleteInstanceProps & BaseModalProps
 > = ({ kafka, onDelete, hideModal }) => {
   const { addAlert } = useAlert() || {};
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  const auth = useAuth();
-  const { kas } = useConfig() || {};
-  const { apiBasePath: basePath } = kas || {};
+  const getApi = useKms();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -31,16 +27,10 @@ const DeleteInstanceConnected: FunctionComponent<
   };
 
   const deleteInstance = async () => {
-    const accessToken = await auth?.kas.getToken();
-    if (accessToken && kafka.id) {
+    if (kafka.id) {
       try {
         setIsLoading(true);
-        const apisService = new DefaultApi(
-          new Configuration({
-            accessToken,
-            basePath,
-          })
-        );
+        const apisService = getApi();
         await apisService.deleteKafkaById(kafka.id, true).then(() => {
           setIsLoading(false);
         });

@@ -1,28 +1,19 @@
-import { FC, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { OwnerSelect } from "./OwnerSelect";
-import { useGetAllUsers } from "./FilterOwners";
+import { useKms } from "@app/api";
+import { ErrorCodes, isServiceApiError } from "@app/utils/error";
 import {
+  Alert,
+  AlertVariant,
+  Button,
   Form,
   FormGroup,
-  Button,
-  AlertVariant,
-  Alert,
   Modal,
 } from "@patternfly/react-core";
-import {
-  Configuration,
-  DefaultApi,
-  KafkaRequest,
-  KafkaUpdateRequest,
-} from "@rhoas/kafka-management-sdk";
-import {
-  BaseModalProps,
-  useAlert,
-  useAuth,
-  useConfig,
-} from "@rhoas/app-services-ui-shared";
-import { ErrorCodes, isServiceApiError } from "@app/utils/error";
+import { BaseModalProps, useAlert } from "@rhoas/app-services-ui-shared";
+import { KafkaRequest, KafkaUpdateRequest } from "@rhoas/kafka-management-sdk";
+import { FC, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useGetAllUsers } from "./FilterOwners";
+import { OwnerSelect } from "./OwnerSelect";
 
 export type TransferOwnershipProps = {
   kafka: KafkaRequest;
@@ -40,10 +31,7 @@ export const TransferOwnership: FC<TransferOwnershipProps & BaseModalProps> = ({
   title,
 }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
-  const auth = useAuth();
-  const {
-    kas: { apiBasePath: basePath },
-  } = useConfig();
+  const getApi = useKms();
   const { addAlert } = useAlert() || { addAlert: () => "" };
 
   //states
@@ -57,17 +45,11 @@ export const TransferOwnership: FC<TransferOwnershipProps & BaseModalProps> = ({
   };
 
   const onSubmitTransferOwnership = async () => {
-    const accessToken = await auth?.kas.getToken();
-    if (accessToken && selection?.trim() && kafka?.id) {
+    if (selection?.trim() && kafka?.id) {
       setLoading(true);
       const kafkaUpdateRequest: KafkaUpdateRequest = { owner: selection };
 
-      const apisService = new DefaultApi(
-        new Configuration({
-          accessToken,
-          basePath,
-        })
-      );
+      const apisService = getApi();
 
       try {
         await apisService
