@@ -31,7 +31,7 @@ export const InstanceDrawerContent: FunctionComponent<
 
   const getAdminServerUrl = () => {
     const { admin_api_server_url } = instance;
-    return `${admin_api_server_url}/openapi`;
+    return admin_api_server_url ? `${admin_api_server_url}/openapi` : undefined;
   };
 
   const isKafkaPending =
