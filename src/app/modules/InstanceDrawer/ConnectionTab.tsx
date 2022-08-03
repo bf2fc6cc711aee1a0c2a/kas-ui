@@ -11,7 +11,7 @@ export type ConnectionTabProps = {
   isKafkaPending?: boolean;
   tokenEndPointUrl: string;
   instanceId: string | undefined;
-  adminServerUrl: string;
+  adminServerUrl: string | undefined;
 };
 
 export const ConnectionTab: FC<ConnectionTabProps> = ({
