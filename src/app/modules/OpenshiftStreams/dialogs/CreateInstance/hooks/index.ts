@@ -1,3 +1,2 @@
-export * from "./useAvailableProvidersAndDefault";
+export * from "./useCreateKafkaInstanceServices";
 export * from "./useCreateInstance";
-export * from "./useGetAvailableSizes";

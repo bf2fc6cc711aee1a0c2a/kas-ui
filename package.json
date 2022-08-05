@@ -45,7 +45,7 @@
     "@redhat-cloud-services/frontend-components-notifications": "3.2.9",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.24",
     "@rhoas/api-mock": "0.34.4",
-    "@rhoas/app-services-ui-components": "2.4.0",
+    "@rhoas/app-services-ui-components": "2.5.0",
     "@rhoas/app-services-ui-shared": "0.16.0",
     "@storybook/addon-actions": "6.5.10",
     "@storybook/addon-essentials": "6.5.10",
@@ -61,7 +61,6 @@
     "@types/victory": "33.1.5",
     "@typescript-eslint/eslint-plugin": "5.30.0",
     "@typescript-eslint/parser": "5.30.0",
-    "axios": "0.27.2",
     "copy-webpack-plugin": "11.0.0",
     "css-loader": "6.7.1",
     "css-minimizer-webpack-plugin": "4.0.0",
@@ -96,7 +95,7 @@
     "react-i18next": "11.17.2",
     "react-router-dom": "5.2.1",
     "regenerator-runtime": "0.13.9",
-    "rimraf": "3.0.2",
+    "rimraf": "^3.0.2",
     "style-loader": "3.3.1",
     "svg-url-loader": "7.1.1",
     "terser-webpack-plugin": "5.3.3",
@@ -114,8 +113,9 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/account-management-sdk": "0.34.4",
-    "@rhoas/kafka-management-sdk": "0.34.4",
+    "@rhoas/account-management-sdk": "0.40.0",
+    "@rhoas/kafka-management-sdk": "0.40.0",
+    "axios-simple-cache-adapter": "1.1.0",
     "tslib": "2.4.0"
   },
   "peerDependencies": {
@@ -129,7 +129,6 @@
     "@redhat-cloud-services/frontend-components-utilities": "3.2.24",
     "@rhoas/app-services-ui-components": "2.4.0",
     "@rhoas/app-services-ui-shared": "0.16.0",
-    "axios": "0.27.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-router-dom": "5.2.1",
