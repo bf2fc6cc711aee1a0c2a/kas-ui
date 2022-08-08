@@ -262,11 +262,6 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
             originalData,
             "view-instanceDrawerInstance"
           ),
-        ...additionalProps,
-        tooltipProps: {
-          position: "left",
-          content: t("no_permission_to_view_kafka"),
-        },
       } as IAction,
       {
         title: t("view_connection_information"),
@@ -278,11 +273,6 @@ export const StreamsTable: FunctionComponent<StreamsTableProps> = ({
             originalData,
             "connect-instanceDrawerInstance"
           ),
-        ...additionalProps,
-        tooltipProps: {
-          position: "left",
-          content: t("no_permission_to_connect_kafka"),
-        },
       } as IAction,
       {
         title: t("change_owner"),
