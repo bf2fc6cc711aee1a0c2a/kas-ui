@@ -1,12 +1,17 @@
-import { FunctionComponent, lazy, Suspense } from "react";
+import { FunctionComponent, lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { addHours, parseISO } from "date-fns";
 import { InstanceStatus } from "@app/utils";
 import { MASLoading } from "@app/common";
 import { Tab, Tabs, TabTitleText } from "@patternfly/react-core";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import { KafkaDetailsTab } from "@rhoas/app-services-ui-components";
+import {
+  KafkaDetailsTab,
+  KafkaDetailsTabProps,
+  MarketPlaceSubscriptions,
+} from "@rhoas/app-services-ui-components";
 import { InstanceDrawerContextProps } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { useStandardQuota } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/hooks";
 
 export const ResourcesTab = lazy(() => import("./ConnectionTab"));
 
@@ -21,6 +26,19 @@ export const InstanceDrawerContent: FunctionComponent<
   InstanceDrawerContentProps
 > = ({ instance, activeTab, setActiveTab, tokenEndPointUrl }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
+
+  const getQuota = useStandardQuota();
+
+  const [marketplaceSubscriptions, setMarketplaceSubscriptions] = useState<
+    MarketPlaceSubscriptions[]
+  >([]);
+
+  useEffect(() => {
+    (async () => {
+      const { marketplaceSubscriptions } = await getQuota();
+      setMarketplaceSubscriptions(marketplaceSubscriptions);
+    })();
+  }, [getQuota]);
 
   const getExternalServer = () => {
     const { bootstrap_server_host } = instance;
@@ -37,6 +55,20 @@ export const InstanceDrawerContent: FunctionComponent<
   const isKafkaPending =
     instance.status === InstanceStatus.ACCEPTED ||
     instance.status === InstanceStatus.PREPARING;
+
+  const marketplaceForBilling = marketplaceSubscriptions.find((ms) =>
+    ms.subscriptions.find((s) => s === instance.billing_cloud_account_id)
+  )?.marketplace;
+
+  const billing: KafkaDetailsTabProps["billing"] =
+    instance.billing_model === "prepaid"
+      ? "prepaid"
+      : marketplaceForBilling
+      ? {
+          marketplace: marketplaceForBilling,
+          subscription: instance.billing_cloud_account_id,
+        }
+      : undefined;
 
   return (
     <Suspense fallback={<MASLoading />}>
@@ -72,7 +104,7 @@ export const InstanceDrawerContent: FunctionComponent<
             instanceType={
               instance.instance_type === "standard" ? "standard" : "eval"
             }
-            isLoadingSize={false}
+            billing={billing}
           />
         </Tab>
         <Tab
