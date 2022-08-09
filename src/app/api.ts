@@ -1,11 +1,12 @@
 import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import { AppServicesApi } from "@rhoas/account-management-sdk";
-import { DefaultApi, Configuration } from "@rhoas/kafka-management-sdk";
+import { Configuration, DefaultApi } from "@rhoas/kafka-management-sdk";
 import {
   AxiosCacheRequestConfig,
   createCacheAdapter,
 } from "axios-simple-cache-adapter";
 import axios from "axios";
+import { useCallback } from "react";
 
 const adapter = createCacheAdapter({
   debug: localStorage.getItem("log-axios") !== null,
@@ -17,7 +18,7 @@ export const useKms = () => {
     kas: { apiBasePath: kasBasePath },
   } = useConfig();
 
-  return () => {
+  return useCallback(() => {
     const kmsApi = new DefaultApi(
       new Configuration({
         accessToken: auth.kas.getToken(),
@@ -31,7 +32,7 @@ export const useKms = () => {
     );
 
     return kmsApi;
-  };
+  }, [auth.kas, kasBasePath]);
 };
 
 export const useAms = () => {
@@ -40,7 +41,7 @@ export const useAms = () => {
     ams: { apiBasePath: amsBasePath },
   } = useConfig();
 
-  return () => {
+  return useCallback(() => {
     const amsApi = new AppServicesApi(
       new Configuration({
         accessToken: auth.ams.getToken(),
@@ -54,5 +55,5 @@ export const useAms = () => {
     );
 
     return amsApi;
-  };
+  }, [amsBasePath, auth.ams]);
 };

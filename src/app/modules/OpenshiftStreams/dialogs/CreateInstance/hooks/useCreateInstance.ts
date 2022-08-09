@@ -29,7 +29,7 @@ export const useCreateInstance =
         kafkaRequest.plan = data.plan + "." + data.sizeId;
         kafkaRequest.billing_model =
           data.billing === "prepaid"
-            ? "prepaid"
+            ? "standard"
             : data.billing !== undefined
             ? "marketplace"
             : null;
