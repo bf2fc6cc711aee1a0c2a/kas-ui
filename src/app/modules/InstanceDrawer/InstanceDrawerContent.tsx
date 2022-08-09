@@ -61,7 +61,7 @@ export const InstanceDrawerContent: FunctionComponent<
   )?.marketplace;
 
   const billing: KafkaDetailsTabProps["billing"] =
-    instance.billing_model === "prepaid"
+    instance.billing_model === "standard"
       ? "prepaid"
       : marketplaceForBilling
       ? {
