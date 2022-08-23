@@ -4,7 +4,7 @@ import {
   ModalType,
   useModal,
 } from "@rhoas/app-services-ui-shared";
-import { KafkaConnectionTab } from "@rhoas/app-services-ui-components";
+import { KafkaConnectionTabP1 } from "@rhoas/app-services-ui-components";
 
 export type ConnectionTabProps = {
   externalServer?: string;
@@ -30,7 +30,7 @@ export const ConnectionTab: FC<ConnectionTabProps> = ({
   const basename = getBasename && getBasename();
 
   return (
-    <KafkaConnectionTab
+    <KafkaConnectionTabP1
       isKafkaPending={isKafkaPending}
       externalServer={externalServer}
       tokenEndPointUrl={tokenEndPointUrl}
