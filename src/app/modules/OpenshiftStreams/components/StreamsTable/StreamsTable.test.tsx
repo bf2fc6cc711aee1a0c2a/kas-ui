@@ -12,6 +12,10 @@ import {
 import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import { KasModalLoader } from "@app/modals";
 import { InstanceDrawerContextProvider } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import {
+  StreamsTable,
+  StreamsTableProps,
+} from "@app/modules/OpenshiftStreams/components";
 
 const kafkaInstanceItems: KafkaRequest[] = [
   {
@@ -32,9 +36,8 @@ const kafkaInstanceItems: KafkaRequest[] = [
   },
 ];
 
-const actualSDK = jest.requireActual("@rhoas/kafka-management-sdk");
-
 jest.mock("@rhoas/kafka-management-sdk", () => {
+  const actualSDK = jest.requireActual("@rhoas/kafka-management-sdk");
   return {
     ...actualSDK,
     DefaultApi: jest.fn().mockImplementation(() => {
@@ -44,11 +47,6 @@ jest.mock("@rhoas/kafka-management-sdk", () => {
     }),
   };
 });
-
-import {
-  StreamsTable,
-  StreamsTableProps,
-} from "@app/modules/OpenshiftStreams/components";
 
 describe("<StreamsTable/>", () => {
   const setup = (
@@ -151,7 +149,7 @@ describe("<StreamsTable/>", () => {
       ?.lastChild?.lastChild?.lastChild as Element;
     userEvent.click(kebabDropdownButton);
     const classList: string[] = screen
-      .getByRole("button", { name: /Delete/i })
+      .getByRole("menuitem", { name: /Delete/i })
       .className.split(" ");
 
     //assert
