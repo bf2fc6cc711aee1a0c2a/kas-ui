@@ -1,6 +1,6 @@
-import { render, screen, act } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Tabs, Tab, TabTitleText } from "@patternfly/react-core";
+import { Tab, Tabs, TabTitleText } from "@patternfly/react-core";
 import { MASDrawer, MASDrawerProps } from "./MASDrawer";
 
 describe("<MASDrawer/>", () => {
@@ -56,9 +56,9 @@ describe("<MASDrawer/>", () => {
 
     //act
     act(() => {
-      const detailsTab = screen.getByRole("button", { name: /Details/i });
+      const detailsTab = screen.getByRole("tab", { name: /Details/i });
       userEvent.click(detailsTab);
-      const connectionTab = screen.getByRole("button", {
+      const connectionTab = screen.getByRole("tab", {
         name: /Connection/i,
       });
       userEvent.click(connectionTab);
