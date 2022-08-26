@@ -47,6 +47,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { useGetSizes } from "../../dialogs/CreateInstance/hooks";
 import "./StreamsTableConnected.css";
 import { useKafkaStatusAlerts } from "./useKafkaStatusAlerts";
+import { AxiosCacheRequestConfig } from "axios-simple-cache-adapter";
 
 export type StreamsTableProps = Pick<FederatedProps, "preCreateInstance">;
 
@@ -230,7 +231,10 @@ export const StreamsTableConnected: VoidFunctionComponent<
             page?.toString(),
             perPage?.toString(),
             orderBy,
-            filterQuery
+            filterQuery,
+            {
+              cache: isPolling ? MAX_POLL_INTERVAL : false,
+            } as AxiosCacheRequestConfig
           )
           .then(async (res) => {
             const kafkaInstances = res.data;
