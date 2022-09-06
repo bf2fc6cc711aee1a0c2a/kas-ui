@@ -70,9 +70,6 @@ export const InstanceDrawerContent: FunctionComponent<
         }
       : undefined;
 
-  console.log(instance.version);
-  console.log(instance.cloud_provider);
-
   return (
     <Suspense fallback={<MASLoading />}>
       <Tabs
