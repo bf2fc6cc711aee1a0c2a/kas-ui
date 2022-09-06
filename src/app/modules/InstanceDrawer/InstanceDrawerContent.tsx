@@ -70,6 +70,9 @@ export const InstanceDrawerContent: FunctionComponent<
         }
       : undefined;
 
+  console.log(instance.version);
+  console.log(instance.cloud_provider);
+
   return (
     <Suspense fallback={<MASLoading />}>
       <Tabs
@@ -105,6 +108,7 @@ export const InstanceDrawerContent: FunctionComponent<
               instance.instance_type === "standard" ? "standard" : "eval"
             }
             billing={billing}
+            kafkaVersion={instance.version}
           />
         </Tab>
         <Tab
