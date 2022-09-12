@@ -135,7 +135,7 @@ export const TransferOwnership: FC<TransferOwnershipProps & BaseModalProps> = ({
         </Button>,
       ]}
     >
-      <Form>
+      <Form onSubmit={(e) => e?.preventDefault()}>
         {renderAlert()}
         <FormGroup fieldId="Current-owner-name" label={t("current_owner_name")}>
           {kafka?.owner}
