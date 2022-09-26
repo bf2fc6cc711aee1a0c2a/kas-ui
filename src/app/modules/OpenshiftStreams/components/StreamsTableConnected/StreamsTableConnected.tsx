@@ -117,9 +117,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
     async (
       kafkaItems: KafkaRequestWithSize[]
     ): Promise<KafkaRequestWithSize[]> => {
-      const kafkaItemsWithSize: KafkaRequestWithSize[] = [];
-
-      await Promise.all(
+      return await Promise.all(
         kafkaItems?.map(async (instance: KafkaRequest) => {
           const { instance_type, cloud_provider, region } = instance;
 
@@ -130,19 +128,15 @@ export const StreamsTableConnected: VoidFunctionComponent<
               cloud_provider as CloudProvider,
               region
             );
+
             size = {
               trialDurationHours: sizes[0].trialDurationHours,
             };
           }
 
-          kafkaItemsWithSize.push({
-            ...instance,
-            size,
-          });
+          return { ...instance, size };
         })
       );
-
-      return kafkaItemsWithSize;
     },
     [getDeveloperSizes]
   );
