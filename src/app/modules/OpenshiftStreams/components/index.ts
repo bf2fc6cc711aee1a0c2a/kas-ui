@@ -1,4 +1,3 @@
-export * from "./StreamsTable";
 export * from "./StatusColumn";
 export * from "./StreamsToolbar";
 export * from "./TableFilters";
