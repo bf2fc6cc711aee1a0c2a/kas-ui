@@ -66,7 +66,14 @@ export const StreamsTableConnected: VoidFunctionComponent<
           if (!latestDrawerInstanceData) {
             closeDrawer();
           } else {
-            setDrawerInstance(latestDrawerInstanceData);
+            /* we have to check if there is actually some difference between
+            the previous data and the current one to avoid render loops */
+            if (
+              JSON.stringify(latestDrawerInstanceData) !==
+              JSON.stringify(drawerInstance)
+            ) {
+              setDrawerInstance(latestDrawerInstanceData);
+            }
           }
         }
         notifyForInstanceChange(
