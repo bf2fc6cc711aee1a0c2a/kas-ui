@@ -4,15 +4,13 @@ import { FederatedContext, FederatedProps } from "@app/contexts";
 import { ModalProvider } from "@rhoas/app-services-ui-components";
 import { KasModalLoader } from "@app/modals";
 import { KasLayout } from "@app/modules/OpenshiftStreams/components";
-import {
-  StreamsTableConnected,
-  StreamsTableProps,
-} from "@app/modules/OpenshiftStreams/components/StreamsTableConnected";
+import { StreamsTableProps } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected";
 import { InstanceDrawer } from "@app/modules/InstanceDrawer";
 import {
   InstanceDrawerContextProps,
   InstanceDrawerContextProvider,
 } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { StreamsTableConnectedWithAuth } from "@app/modules/OpenshiftStreams/StreamsTableConnectedWithAuth";
 // Version of OpenshiftStreams for federation
 type OpenshiftStreamsFederatedProps = StreamsTableProps &
   InstanceDrawerContextProps &
@@ -42,7 +40,9 @@ const OpenshiftStreamsFederated: FunctionComponent<
               {...drawerProps}
             >
               <KasLayout data-ouia-app-id={"TODO"}>
-                <StreamsTableConnected preCreateInstance={preCreateInstance} />
+                <StreamsTableConnectedWithAuth
+                  preCreateInstance={preCreateInstance}
+                />
               </KasLayout>
             </InstanceDrawer>
           </InstanceDrawerContextProvider>

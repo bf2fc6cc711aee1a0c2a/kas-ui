@@ -7,8 +7,8 @@ export type FederatedProps = {
   getAllUserAccounts?: () => Principal[];
 };
 
-export const FederatedContext = createContext<FederatedProps | undefined>(
-  undefined
+export const FederatedContext = createContext<FederatedProps>(
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  null!
 );
-export const useFederated = (): FederatedProps | undefined =>
-  useContext(FederatedContext);
+export const useFederated = (): FederatedProps => useContext(FederatedContext);

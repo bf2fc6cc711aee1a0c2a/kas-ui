@@ -1,17 +1,12 @@
-import { FunctionComponent, lazy, Suspense, useEffect, useState } from "react";
+import { FunctionComponent, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import { addHours, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 import { InstanceStatus } from "@app/utils";
 import { MASLoading } from "@app/common";
 import { Tab, Tabs, TabTitleText } from "@patternfly/react-core";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import {
-  KafkaDetailsTab,
-  KafkaDetailsTabProps,
-  MarketPlaceSubscriptions,
-} from "@rhoas/app-services-ui-components";
+import { KafkaDetailsTab } from "@rhoas/app-services-ui-components";
 import { InstanceDrawerContextProps } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
-import { useStandardQuota } from "@app/modules/OpenshiftStreams/dialogs/CreateInstance/hooks";
 
 export const ResourcesTab = lazy(() => import("./ConnectionTab"));
 
@@ -27,48 +22,21 @@ export const InstanceDrawerContent: FunctionComponent<
 > = ({ instance, activeTab, setActiveTab, tokenEndPointUrl }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
 
-  const getQuota = useStandardQuota();
-
-  const [marketplaceSubscriptions, setMarketplaceSubscriptions] = useState<
-    MarketPlaceSubscriptions[]
-  >([]);
-
-  useEffect(() => {
-    (async () => {
-      const { marketplaceSubscriptions } = await getQuota();
-      setMarketplaceSubscriptions(marketplaceSubscriptions);
-    })();
-  }, [getQuota]);
-
   const getExternalServer = () => {
-    const { bootstrap_server_host } = instance;
+    const { bootstrap_server_host } = instance.request;
     return bootstrap_server_host?.endsWith(":443")
       ? bootstrap_server_host
       : `${bootstrap_server_host}:443`;
   };
 
   const getAdminServerUrl = () => {
-    const { admin_api_server_url } = instance;
+    const { admin_api_server_url } = instance.request;
     return admin_api_server_url ? `${admin_api_server_url}/openapi` : undefined;
   };
 
   const isKafkaPending =
     instance.status === InstanceStatus.ACCEPTED ||
     instance.status === InstanceStatus.PREPARING;
-
-  const marketplaceForBilling = marketplaceSubscriptions.find((ms) =>
-    ms.subscriptions.find((s) => s === instance.billing_cloud_account_id)
-  )?.marketplace;
-
-  const billing: KafkaDetailsTabProps["billing"] =
-    instance.billing_model === "standard"
-      ? "prepaid"
-      : marketplaceForBilling
-      ? {
-          marketplace: marketplaceForBilling,
-          subscription: instance.billing_cloud_account_id,
-        }
-      : undefined;
 
   return (
     <Suspense fallback={<MASLoading />}>
@@ -83,29 +51,23 @@ export const InstanceDrawerContent: FunctionComponent<
           <KafkaDetailsTab
             id={instance.id}
             owner={instance.owner}
-            createdAt={parseISO(instance.created_at)}
-            updatedAt={parseISO(instance.updated_at)}
-            expiryDate={addHours(parseISO(instance.created_at), 48)}
-            size={instance.size.display_name}
-            ingress={
-              (instance.size.ingress_throughput_per_sec.bytes || 0) / 1048576
+            createdAt={parseISO(instance.createdAt)}
+            updatedAt={parseISO(instance.updatedAt)}
+            expiryDate={
+              instance.expiryDate ? parseISO(instance.expiryDate) : undefined
             }
-            egress={
-              (instance.size.egress_throughput_per_sec.bytes || 0) / 1048576
-            }
-            storage={Math.round(
-              (instance.size.max_data_retention_size.bytes || 0) / 1073741824
-            )}
-            maxPartitions={instance.size.max_partitions}
-            connections={instance.size.total_max_connections}
-            connectionRate={instance.size.max_connection_attempts_per_sec}
-            messageSize={(instance.size.max_message_size.bytes || 0) / 1048576}
+            size={instance.size}
+            ingress={instance.ingress}
+            egress={instance.egress}
+            storage={instance.storage}
+            maxPartitions={instance.maxPartitions}
+            connections={instance.connections}
+            connectionRate={instance.connectionRate}
+            messageSize={instance.messageSize}
             region={t(instance.region)}
-            instanceType={
-              instance.instance_type === "standard" ? "standard" : "eval"
-            }
-            billing={billing}
-            kafkaVersion={instance.version}
+            instanceType={instance.plan === "standard" ? "standard" : "eval"}
+            billing={instance.billing}
+            kafkaVersion={instance.request.version || ""}
           />
         </Tab>
         <Tab

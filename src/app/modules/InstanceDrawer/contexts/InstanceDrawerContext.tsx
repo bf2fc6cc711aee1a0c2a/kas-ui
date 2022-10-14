@@ -1,14 +1,11 @@
-import { FunctionComponent, createContext, useContext } from "react";
+import { createContext, FunctionComponent, useContext } from "react";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
-import { KafkaRequest } from "@rhoas/kafka-management-sdk";
-import { SupportedKafkaSize } from "@rhoas/kafka-management-sdk/dist/generated/model/supported-kafka-size";
+import { KafkaInstanceEnhanced } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/useKafkaInstances";
 
 export type InstanceDrawerContextProps = {
   isDrawerOpen: boolean;
-  drawerInstance:
-    | Required<KafkaRequest & { size: Required<SupportedKafkaSize> }>
-    | undefined;
-  setDrawerInstance: (id: string) => void;
+  drawerInstance: KafkaInstanceEnhanced | undefined;
+  setDrawerInstance: (instance: KafkaInstanceEnhanced) => void;
   drawerActiveTab: InstanceDrawerTab | undefined;
   setDrawerActiveTab: (tab: InstanceDrawerTab) => void;
   openDrawer: (tab?: InstanceDrawerTab) => void;
