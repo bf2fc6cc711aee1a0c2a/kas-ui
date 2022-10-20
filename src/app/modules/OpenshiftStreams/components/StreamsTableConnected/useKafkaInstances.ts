@@ -36,6 +36,12 @@ export function useKafkaInstances() {
         region: "region",
         createdAt: "created_at",
       };
+      type QueryableField = keyof typeof query;
+      const queryColumnMapping: { [key in QueryableField]: string } = {
+        name: "name",
+        owner: "owner",
+        status: "status",
+      };
 
       try {
         const res = await apisService.getKafkas(
@@ -48,7 +54,10 @@ export function useKafkaInstances() {
             .map(([key, values]) =>
               values
                 .map(
-                  (v) => `${uiColumnMapping[key as columns]} like %${v.trim()}%`
+                  (v) =>
+                    `${
+                      queryColumnMapping[key as QueryableField]
+                    } like %${v.trim()}%`
                 )
                 .join(" or ")
             )
