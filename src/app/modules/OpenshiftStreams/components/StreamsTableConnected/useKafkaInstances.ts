@@ -112,7 +112,7 @@ export function useEnrichedKafkaInstance() {
         provider: d.cloud_provider as CloudProvider,
         region: d.region,
         size: "1",
-        status: d.status as Status,
+        status: apiStatusToUIStatus(d.status),
         storage: 0,
         updatedAt: d.updated_at,
         request: d,
@@ -195,4 +195,17 @@ function valuesToQuery(
         : `${field} = ${v.trim()}`
     )
     .join(" or ");
+}
+
+function apiStatusToUIStatus(status: string): Status {
+  const mapping: { [key: string]: Status } = {
+    accepted: "accepted",
+    preparing: "preparing",
+    provisioning: "provisioning",
+    ready: "ready",
+    failed: "degraded",
+    deprovision: "deprovision",
+    deleting: "deleting",
+  };
+  return mapping[status] || "degraded";
 }
