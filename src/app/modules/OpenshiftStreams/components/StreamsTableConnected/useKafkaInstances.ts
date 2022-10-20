@@ -7,6 +7,7 @@ import type {
   Plan,
   Status,
 } from "@rhoas/app-services-ui-components";
+import { SimplifiedStatuses } from "@rhoas/app-services-ui-components";
 import { KafkaRequest } from "@rhoas/kafka-management-sdk";
 import { AxiosCacheRequestConfig } from "axios-simple-cache-adapter";
 import {
@@ -36,32 +37,28 @@ export function useKafkaInstances() {
         region: "region",
         createdAt: "created_at",
       };
-      type QueryableField = keyof typeof query;
-      const queryColumnMapping: { [key in QueryableField]: string } = {
-        name: "name",
-        owner: "owner",
-        status: "status",
-      };
 
       try {
+        const { name, status, owner } = query;
+
+        const querystring = [
+          valuesToQuery("name", name, "%"),
+          valuesToQuery("owner", owner, "%"),
+          valuesToQuery(
+            "status",
+            status.flatMap((s) => SimplifiedStatuses[s]),
+            "="
+          ),
+        ]
+          .filter(Boolean)
+          .map((q) => `(${q})`)
+          .join(" and ");
+
         const res = await apisService.getKafkas(
           page.toString(10),
           perPage.toString(10),
           sort ? `${uiColumnMapping[sort]} ${direction}` : undefined,
-          Object.entries(query)
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            .filter(([_, values]) => values.length > 0)
-            .map(([key, values]) =>
-              values
-                .map(
-                  (v) =>
-                    `${
-                      queryColumnMapping[key as QueryableField]
-                    } like %${v.trim()}%`
-                )
-                .join(" or ")
-            )
-            .join(" and "),
+          querystring,
           {
             cache: false,
           } as AxiosCacheRequestConfig
@@ -184,4 +181,18 @@ export function useEnrichedKafkaInstance() {
   return {
     kafkaRequestToKafkaInstance,
   };
+}
+
+function valuesToQuery(
+  field: string,
+  values: string[],
+  comparison: "%" | "="
+): string | undefined {
+  return values
+    .map((v) =>
+      comparison === "%"
+        ? `${field} like %${v.trim()}%`
+        : `${field} = ${v.trim()}`
+    )
+    .join(" or ");
 }
