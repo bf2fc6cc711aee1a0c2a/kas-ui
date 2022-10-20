@@ -45,7 +45,7 @@
     "@redhat-cloud-services/frontend-components-notifications": "3.2.12",
     "@redhat-cloud-services/frontend-components-utilities": "3.3.2",
     "@rhoas/api-mock": "0.43.0",
-    "@rhoas/app-services-ui-components": "2.13.0",
+    "@rhoas/app-services-ui-components": "2.13.2",
     "@rhoas/app-services-ui-shared": "0.16.4",
     "@storybook/addon-actions": "6.5.10",
     "@storybook/addon-essentials": "6.5.10",
