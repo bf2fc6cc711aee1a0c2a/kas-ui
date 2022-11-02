@@ -53,11 +53,14 @@ export const useStandardQuota = () => {
     );
 
     const hasTrialQuota =
-      quotaResponse.data.items?.some((q) =>
-        q.related_resources?.find(
-          (r) => r.resource_name === resourceName && r.product === developerId
-        )
-      ) || false;
+      (prepaidQuota === undefined &&
+        marketplaceQuotas === undefined &&
+        quotaResponse.data.items?.some((q) =>
+          q.related_resources?.find(
+            (r) => r.resource_name === resourceName && r.product === developerId
+          )
+        )) ||
+      false;
 
     const remainingPrepaidQuota = prepaidQuota
       ? prepaidQuota.allowed - prepaidQuota.consumed
@@ -109,12 +112,13 @@ export const useCheckStandardQuota =
               marketplaceSubscriptions,
             } = await getQuota();
 
-            if (remainingMarketplaceQuota || remainingPrepaidQuota) {
+            if (
+              remainingMarketplaceQuota !== undefined ||
+              remainingPrepaidQuota !== undefined
+            ) {
               if (
-                remainingMarketplaceQuota &&
-                remainingMarketplaceQuota === 0 &&
-                remainingPrepaidQuota &&
-                remainingPrepaidQuota === 0
+                (remainingMarketplaceQuota || 0) === 0 &&
+                (remainingPrepaidQuota || 0) === 0
               ) {
                 onOutOfQuota({
                   quota: {
