@@ -125,19 +125,25 @@ export function useKafkaStatusAlerts(): (
         ) => {
           return firstData
             ? []
-            : instances.filter(
-                (i) =>
-                  i.status === desiredStatus &&
-                  !previousInstances.find(
-                    (pi) => pi.id === i.id && i.status !== desiredStatus
-                  )
-              );
+            : instances.filter((i) => {
+                const previousState = previousInstances.find(
+                  (pi) => pi.id === i.id
+                );
+                if (!previousState) {
+                  // first time we see this instance, we'll ignore it
+                  return false;
+                } else {
+                  return (
+                    i.status === desiredStatus &&
+                    previousState.status !== desiredStatus
+                  );
+                }
+              });
         };
 
         // get newly created and failed instances
         const ready = filterInstances(instances, InstanceStatus.READY);
         const failed = filterInstances(instances, InstanceStatus.FAILED);
-
         // since it's possible that an instance that is being deleted will
         // simply not be returned the next time we poll for data, we keep track
         // of instances that are deprovisoning in a ref. We check if these
