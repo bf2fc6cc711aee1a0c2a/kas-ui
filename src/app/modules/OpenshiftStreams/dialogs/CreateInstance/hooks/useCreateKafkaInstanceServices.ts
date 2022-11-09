@@ -13,10 +13,18 @@ import {
 import { useAuth } from "@rhoas/app-services-ui-shared";
 import { CloudRegion, SupportedKafkaSize } from "@rhoas/kafka-management-sdk";
 import { useCallback } from "react";
+import { QuotaCost } from "@rhoas/account-management-sdk";
 
 const standardId = "RHOSAK" as const;
 const developerId = "RHOSAKTrial" as const;
 const resourceName = "rhosak" as const;
+
+function isStandardQuota(q: QuotaCost) {
+  return q.related_resources?.find((r) => r.billing_model === "standard");
+}
+function isMarketplaceQuota(q: QuotaCost) {
+  return q.related_resources?.find((r) => r.billing_model === "marketplace");
+}
 
 export const useStandardQuota = () => {
   const getApi = useAms();
@@ -44,13 +52,11 @@ export const useStandardQuota = () => {
       )
     );
 
-    const prepaidQuota = standardQuotas?.find((q) =>
-      q.related_resources?.find((r) => r.billing_model === "standard")
-    );
+    const prepaidQuota = standardQuotas?.find(isStandardQuota);
 
-    const marketplaceQuotas = standardQuotas?.filter((q) =>
-      q.related_resources?.find((r) => r.billing_model === "marketplace")
-    );
+    const marketplaceQuotas = standardQuotas?.some(isMarketplaceQuota)
+      ? standardQuotas?.filter(isMarketplaceQuota)
+      : undefined;
 
     const hasTrialQuota =
       (prepaidQuota === undefined &&
@@ -65,10 +71,9 @@ export const useStandardQuota = () => {
     const remainingPrepaidQuota = prepaidQuota
       ? prepaidQuota.allowed - prepaidQuota.consumed
       : undefined;
-    const remainingMarketplaceQuota = marketplaceQuotas?.reduce(
-      (agg, q) => q.allowed - q.consumed + agg,
-      0
-    );
+    const remainingMarketplaceQuota = marketplaceQuotas
+      ? marketplaceQuotas.reduce((agg, q) => q.allowed - q.consumed + agg, 0)
+      : undefined;
     const unaggregatedSubscriptions = marketplaceQuotas
       ?.filter((q) => q.cloud_accounts !== undefined)
       .flatMap((q) => q.cloud_accounts!);
