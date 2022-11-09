@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: kas-ui
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: Frontend
+    metadata:
+      name: managed-services
+    spec:
+      envName: ${ENV_NAME}
+      title: KAS UI
+      deploymentRepo: https://github.com/bf2fc6cc711aee1a0c2a/kas-ui
+      API:
+        versions:
+          - v1
+      frontend:
+        paths:
+          - /apps/managed-services
+      image: ${IMAGE}:${IMAGE_TAG}
+      navItems:
+        - title: Streams for Apache Kafka
+          expandable: true
+          routes:
+            - appId: applicationServices
+              title: Overview
+              href: /application-services/streams/overview
+            - appId: applicationServices
+              title: Kafka Instances
+              href: /application-services/streams
+            - title: Documentation
+
+              isExternal: true
+              href: https://access.redhat.com/documentation/en-us/red_hat_openshift_streams_for_apache_kafka
+      module:
+        manifestLocation: /apps/application-services/fed-mods.json
+        modules:
+          - id: application-services
+            module: ./RootApp
+            routes:
+
+              - pathname: /application-services
+              - pathname: /application-services/streams
+        moduleID: applicationServices
+parameters:
+  - name: ENV_NAME
+    required: true
+  - name: IMAGE_TAG
+    required: true
+  - name: IMAGE
+    value: quay.io/rhoas/kas-ui
+
