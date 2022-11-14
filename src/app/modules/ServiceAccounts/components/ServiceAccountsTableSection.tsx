@@ -1,13 +1,13 @@
-import { ServiceAccountListItem } from "@rhoas/kafka-management-sdk";
 import { usePagination } from "@app/common";
 import { FunctionComponent, useState } from "react";
 import { Card, PageSection, PageSectionVariants } from "@patternfly/react-core";
 import { ServiceAccountsTableView } from "@app/modules/ServiceAccounts/components/ServiceAccountsTableView";
 import { ModalType, useModal } from "@rhoas/app-services-ui-shared";
+import { ServiceAccountData } from "@rhoas/service-accounts-sdk";
 
 export type ServiceAccountTableSectionProps = {
   fetchServiceAccounts: () => Promise<void>;
-  serviceAccountItems: ServiceAccountListItem[];
+  serviceAccountItems: ServiceAccountData[];
 };
 
 export const ServiceAccountsTableSection: FunctionComponent<
@@ -24,7 +24,7 @@ export const ServiceAccountsTableSection: FunctionComponent<
 
   const { page = 1, perPage = 10 } = usePagination() || {};
 
-  const onResetCredentials = (serviceAccount: ServiceAccountListItem) => {
+  const onResetCredentials = (serviceAccount: ServiceAccountData) => {
     showResetCredentialsModal(ModalType.KasResetServiceAccountCredentials, {
       serviceAccount,
     });
@@ -36,7 +36,7 @@ export const ServiceAccountsTableSection: FunctionComponent<
     });
   };
 
-  const onDeleteServiceAccount = (serviceAccount: ServiceAccountListItem) => {
+  const onDeleteServiceAccount = (serviceAccount: ServiceAccountData) => {
     showDeleteServiceAccountModal(ModalType.KasDeleteServiceAccount, {
       serviceAccount,
       onDelete: fetchServiceAccounts,

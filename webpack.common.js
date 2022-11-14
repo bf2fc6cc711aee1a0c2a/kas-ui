@@ -177,6 +177,12 @@ module.exports = (env, argv) => {
       ],
       symlinks: false,
       cacheWithContext: false,
+      fallback: {
+        zlib: false,
+        http: false,
+        https: false,
+        stream: false,
+      },
     },
   };
 };
