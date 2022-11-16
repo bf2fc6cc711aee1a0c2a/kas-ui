@@ -1,5 +1,5 @@
 import { Validated } from "@app/models/validated";
-import { ServiceAccountRequest } from "@rhoas/kafka-management-sdk";
+import { ServiceAccountCreateRequestData } from "@rhoas/service-accounts-sdk";
 
 export type NewServiceAccountRequest = {
   name: Validated<string | undefined>;
@@ -7,7 +7,7 @@ export type NewServiceAccountRequest = {
 
 export const asServiceAccountRequest = (
   value: NewServiceAccountRequest
-): ServiceAccountRequest => {
+): ServiceAccountCreateRequestData => {
   if (value.name.value === undefined) {
     throw new Error("ServiceAccountRequest.name must not be undefined");
   }

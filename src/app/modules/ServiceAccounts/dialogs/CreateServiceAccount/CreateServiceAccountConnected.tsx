@@ -7,9 +7,9 @@ import {
 } from "@patternfly/react-core";
 import {
   Configuration,
-  SecurityApi,
-  ServiceAccount,
-} from "@rhoas/kafka-management-sdk";
+  ServiceAccountsApi,
+  ServiceAccountData,
+} from "@rhoas/service-accounts-sdk";
 import { useTranslation } from "react-i18next";
 import { getModalAppendTo, isServiceApiError } from "@app/utils";
 import {
@@ -51,7 +51,7 @@ const CreateServiceAccountConnected: FunctionComponent<
     useState<boolean>(false);
   const [step, setStep] = useState<Step>(Step.CreateServiceAccount);
   const [serviceAccountResponse, setServiceAccountResponse] = useState<
-    ServiceAccount | undefined
+    ServiceAccountData | undefined
   >();
 
   const handleServerError = (error: unknown) => {
@@ -71,7 +71,7 @@ const CreateServiceAccountConnected: FunctionComponent<
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
       try {
-        const apisService = new SecurityApi(
+        const apisService = new ServiceAccountsApi(
           new Configuration({
             accessToken,
             basePath,

@@ -43,6 +43,7 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
           })
         );
         await apisService.getServiceAccounts().then((response) => {
+          console.log(response);
           const serviceAccounts: ServiceAccountData[] = response?.data;
           const sortedServiceAccounts: ServiceAccountData[] | undefined =
             serviceAccounts?.sort((a, b) =>

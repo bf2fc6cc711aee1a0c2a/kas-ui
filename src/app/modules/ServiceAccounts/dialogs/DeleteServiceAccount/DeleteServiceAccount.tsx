@@ -5,9 +5,10 @@ import { DeleteModal } from "@app/common";
 import { isServiceApiError } from "@app/utils";
 import {
   Configuration,
-  SecurityApi,
-  ServiceAccountListItem,
-} from "@rhoas/kafka-management-sdk";
+  ServiceAccountsApi,
+  ServiceAccountData,
+} from "@rhoas/service-accounts-sdk";
+
 import {
   BaseModalProps,
   DeleteServiceAccountProps,
@@ -33,7 +34,7 @@ const DeleteServiceAccount: FunctionComponent<
   };
 
   const deleteServiceAccount = async (
-    serviceAccount: ServiceAccountListItem | undefined
+    serviceAccount: ServiceAccountData | undefined
   ) => {
     const serviceAccountId = serviceAccount?.id;
     if (serviceAccountId === undefined) {
@@ -41,7 +42,7 @@ const DeleteServiceAccount: FunctionComponent<
     }
     const accessToken = await auth?.kas.getToken();
     if (accessToken) {
-      const apisService = new SecurityApi(
+      const apisService = new ServiceAccountsApi(
         new Configuration({
           accessToken,
           basePath,
@@ -50,23 +51,18 @@ const DeleteServiceAccount: FunctionComponent<
       setIsLoading(true);
 
       try {
-        await apisService
-          .deleteServiceAccountById(serviceAccountId)
-          .then(() => {
-            handleModalToggle();
-            setIsLoading(false);
-            addAlert &&
-              addAlert({
-                title: t(
-                  "serviceAccount.service_account_successfully_deleted",
-                  {
-                    name: serviceAccount?.name,
-                  }
-                ),
-                variant: AlertVariant.success,
-              });
-            onDelete && onDelete();
-          });
+        await apisService.deleteServiceAccount(serviceAccountId).then(() => {
+          handleModalToggle();
+          setIsLoading(false);
+          addAlert &&
+            addAlert({
+              title: t("serviceAccount.service_account_successfully_deleted", {
+                name: serviceAccount?.name,
+              }),
+              variant: AlertVariant.success,
+            });
+          onDelete && onDelete();
+        });
       } catch (error) {
         let reason: string | undefined;
         if (isServiceApiError(error)) {
@@ -92,7 +88,7 @@ const DeleteServiceAccount: FunctionComponent<
       title={title}
       confirmButtonProps={{
         onClick: () =>
-          deleteServiceAccount(serviceAccount as ServiceAccountListItem),
+          deleteServiceAccount(serviceAccount as ServiceAccountData),
         label: "Delete",
         isLoading,
       }}
