@@ -68,7 +68,7 @@ const CreateServiceAccountConnected: FunctionComponent<
   };
 
   const createServiceAccount = async () => {
-    const accessToken = await auth?.kas.getToken();
+    const accessToken = await auth?.sas_ui.getToken();
     if (accessToken) {
       try {
         const apisService = new ServiceAccountsApi(

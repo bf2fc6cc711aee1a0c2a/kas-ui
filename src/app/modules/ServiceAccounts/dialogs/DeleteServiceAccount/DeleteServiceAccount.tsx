@@ -40,7 +40,7 @@ const DeleteServiceAccount: FunctionComponent<
     if (serviceAccountId === undefined) {
       throw new Error("service account id not defined");
     }
-    const accessToken = await auth?.kas.getToken();
+    const accessToken = await auth?.sas_ui.getToken();
     if (accessToken) {
       const apisService = new ServiceAccountsApi(
         new Configuration({

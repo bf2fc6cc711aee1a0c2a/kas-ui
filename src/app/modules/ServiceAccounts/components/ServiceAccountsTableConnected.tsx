@@ -33,7 +33,7 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
   };
 
   const fetchServiceAccounts = useCallback(async () => {
-    const accessToken = await auth?.kas.getToken();
+    const accessToken = await auth?.sas_ui.getToken();
     if (accessToken && config) {
       try {
         const apisService = new ServiceAccountsApi(
