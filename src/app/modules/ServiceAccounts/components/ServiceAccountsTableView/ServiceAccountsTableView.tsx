@@ -22,6 +22,7 @@ import {
 } from "./ServiceAccountsToolbar";
 import { useAuth } from "@rhoas/app-services-ui-shared";
 import { ServiceAccountData } from "@rhoas/service-accounts-sdk";
+import { format } from "date-fns";
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
@@ -107,13 +108,15 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, created_by, client_id, created_at } = row;
+      const { name, createdBy, clientId, createdAt } = row;
+
+      const dateTime = format(new Date(createdAt * 1000), "PPpp");
       tableRow.push({
         cells: [
           name,
-          client_id,
-          created_by,
-          { title: getFormattedDate(created_at, t("ago")) },
+          clientId,
+          createdBy,
+          { title: getFormattedDate(dateTime, t("ago")) },
         ],
         originalData: row,
       });

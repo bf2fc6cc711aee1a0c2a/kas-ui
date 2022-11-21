@@ -39,11 +39,10 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
         const apisService = new ServiceAccountsApi(
           new Configuration({
             accessToken,
-            basePath: config?.ams?.apiBasePath,
+            basePath: config?.sas_ui.apiBasePath,
           })
         );
         await apisService.getServiceAccounts().then((response) => {
-          console.log(response);
           const serviceAccounts: ServiceAccountData[] = response?.data;
           const sortedServiceAccounts: ServiceAccountData[] | undefined =
             serviceAccounts?.sort((a, b) =>

@@ -23,7 +23,7 @@ const DeleteServiceAccount: FunctionComponent<
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const {
-    kas: { apiBasePath: basePath },
+    sas_ui: { apiBasePath },
   } = useConfig() || { kas: {} };
   const { addAlert } = useAlert() || {};
 
@@ -45,7 +45,7 @@ const DeleteServiceAccount: FunctionComponent<
       const apisService = new ServiceAccountsApi(
         new Configuration({
           accessToken,
-          basePath,
+          basePath: apiBasePath,
         })
       );
       setIsLoading(true);

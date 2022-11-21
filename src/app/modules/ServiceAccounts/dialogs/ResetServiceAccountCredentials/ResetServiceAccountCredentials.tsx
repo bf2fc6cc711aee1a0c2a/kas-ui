@@ -30,8 +30,8 @@ const ResetServiceAccountCredentials: FunctionComponent<
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const {
-    kas: { apiBasePath: basePath },
-  } = useConfig() || { kas: {} };
+    sas_ui: { apiBasePath: basePath },
+  } = useConfig();
   const { addAlert } = useAlert() || {};
 
   const [isModalLoading, setIsModalLoading] = useState(false);

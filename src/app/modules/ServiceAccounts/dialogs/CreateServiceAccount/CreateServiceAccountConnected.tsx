@@ -41,7 +41,7 @@ const CreateServiceAccountConnected: FunctionComponent<
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const {
-    kas: { apiBasePath: basePath },
+    sas_ui: { apiBasePath: basePath },
   } = useConfig() || { kas: {} };
   const { addAlert } = useAlert() || {};
 
