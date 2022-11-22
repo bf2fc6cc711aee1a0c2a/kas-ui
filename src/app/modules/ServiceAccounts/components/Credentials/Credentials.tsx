@@ -19,10 +19,10 @@ import "@patternfly/react-styles/css/utilities/Sizing/sizing.css";
 import { useTranslation } from "react-i18next";
 import { MASEmptyState } from "@app/common";
 import "./Credentials.css";
-import { ServiceAccount } from "@rhoas/kafka-management-sdk";
+import { ServiceAccountData } from "@rhoas/service-accounts-sdk";
 
 type CredentialsProps = {
-  serviceAccount: ServiceAccount;
+  serviceAccount: ServiceAccountData;
   close: () => void;
 };
 
@@ -69,7 +69,7 @@ const Credentials: FunctionComponent<CredentialsProps> = ({
             data-ouia-component-id={"button-copy-clientID"}
             textAriaLabel={t("client_id")}
           >
-            {serviceAccount?.client_id}
+            {serviceAccount?.clientId}
           </ClipboardCopy>
         </InputGroup>
         <InputGroup className="pf-u-mt-md">
@@ -83,7 +83,7 @@ const Credentials: FunctionComponent<CredentialsProps> = ({
             data-ouia-component-id={"button-copy-clientSecret"}
             textAriaLabel={t("common.client_secret")}
           >
-            {serviceAccount?.client_secret}
+            {serviceAccount?.secret}
           </ClipboardCopy>
         </InputGroup>
         <TextContent>

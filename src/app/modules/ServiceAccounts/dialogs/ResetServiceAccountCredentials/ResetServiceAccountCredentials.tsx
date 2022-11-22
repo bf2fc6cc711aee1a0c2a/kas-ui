@@ -5,9 +5,11 @@ import { isServiceApiError } from "@app/utils";
 import { getModalAppendTo } from "@app/utils/utils";
 import {
   Configuration,
-  SecurityApi,
-  ServiceAccount,
-} from "@rhoas/kafka-management-sdk";
+  ServiceAccountData,
+  ServiceAccountsApi,
+  //SecurityApi,
+  //ServiceAccount,
+} from "@rhoas/service-accounts-sdk";
 import {
   BaseModalProps,
   ResetServiceAccountCredentialsProps,
@@ -28,14 +30,14 @@ const ResetServiceAccountCredentials: FunctionComponent<
   const { t } = useTranslation(["kasTemporaryFixMe"]);
   const auth = useAuth();
   const {
-    kas: { apiBasePath: basePath },
-  } = useConfig() || { kas: {} };
+    sas_ui: { apiBasePath: basePath },
+  } = useConfig();
   const { addAlert } = useAlert() || {};
 
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [step, setStep] = useState<Step>(Step.Confirm);
   const [resetServiceAccount, setResetServiceAccount] = useState<
-    ServiceAccount | undefined
+    ServiceAccountData | undefined
   >();
 
   const handleServerError = (error: unknown) => {
@@ -52,10 +54,10 @@ const ResetServiceAccountCredentials: FunctionComponent<
   };
 
   const resetServiceAccountCreds = async () => {
-    const accessToken = await auth?.kas.getToken();
+    const accessToken = await auth?.sas_ui.getToken();
     if (accessToken) {
       try {
-        const apisService = new SecurityApi(
+        const apisService = new ServiceAccountsApi(
           new Configuration({
             accessToken,
             basePath,
@@ -65,7 +67,7 @@ const ResetServiceAccountCredentials: FunctionComponent<
           throw new Error("id must not be undefined");
         }
         setIsModalLoading(true);
-        const response = await apisService.resetServiceAccountCreds(
+        const response = await apisService.resetServiceAccountSecret(
           serviceAccount.id
         );
         onReset && onReset();

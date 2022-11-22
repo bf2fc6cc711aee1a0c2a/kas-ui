@@ -2,10 +2,10 @@ import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import {
   Configuration,
-  SecurityApi,
-  ServiceAccountList,
-  ServiceAccountListItem,
-} from "@rhoas/kafka-management-sdk";
+  ServiceAccountsApi,
+  ServiceAccountData,
+} from "@rhoas/service-accounts-sdk";
+
 import { ErrorCodes, isServiceApiError } from "@app/utils";
 import { PageSection, PageSectionVariants } from "@patternfly/react-core";
 import { UserUnauthorized } from "@app/modules/ServiceAccounts/components/UserUnauthorized";
@@ -18,7 +18,7 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
   const config = useConfig();
 
   const [serviceAccountItems, setServiceAccountItems] = useState<
-    ServiceAccountListItem[] | undefined
+    ServiceAccountData[] | undefined
   >();
   const [isUserUnauthorized, setIsUserUnauthorized] = useState<boolean>(false);
 
@@ -33,22 +33,21 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
   };
 
   const fetchServiceAccounts = useCallback(async () => {
-    const accessToken = await auth?.kas.getToken();
+    const accessToken = await auth?.sas_ui.getToken();
     if (accessToken && config) {
       try {
-        const apisService = new SecurityApi(
+        const apisService = new ServiceAccountsApi(
           new Configuration({
             accessToken,
-            basePath: config?.ams?.apiBasePath,
+            basePath: config?.sas_ui.apiBasePath,
           })
         );
         await apisService.getServiceAccounts().then((response) => {
-          const serviceAccounts: ServiceAccountList = response?.data;
-          const items = serviceAccounts?.items || [];
-          const sortedServiceAccounts: ServiceAccountListItem[] | undefined =
-            items?.sort((a, b) =>
-              a.created_at && b.created_at
-                ? b.created_at.localeCompare(a.created_at)
+          const serviceAccounts: ServiceAccountData[] = response?.data;
+          const sortedServiceAccounts: ServiceAccountData[] | undefined =
+            serviceAccounts?.sort((a, b) =>
+              a.createdAt && b.createdAt
+                ? String(b.createdAt).localeCompare(String(a.createdAt))
                 : -1
             );
           setServiceAccountItems(sortedServiceAccounts);

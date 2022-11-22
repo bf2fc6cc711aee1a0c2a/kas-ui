@@ -128,8 +128,8 @@ export const CreateForm: FunctionComponent<CreateFormProps> = ({
         label={t("serviceAccount.short_description")}
         isRequired
         fieldId="text-input-short-description"
-        helperTextInvalid={serviceAccountRequest.name.errorMessage}
-        validated={serviceAccountRequest.name.validated}
+        helperTextInvalid={serviceAccountRequest.name}
+        //validated={serviceAccountRequest.name}
         helperText={t("common.input_filed_invalid_helper_text")}
         labelIcon={
           <Popover
@@ -157,7 +157,7 @@ export const CreateForm: FunctionComponent<CreateFormProps> = ({
           name="text-input-short-description"
           value={serviceAccountRequest.name.value}
           onChange={setName}
-          validated={serviceAccountRequest.name.validated}
+          //validated={serviceAccountRequest.name.validated}
           autoFocus={true}
           ouiaId={"text-input"}
         />

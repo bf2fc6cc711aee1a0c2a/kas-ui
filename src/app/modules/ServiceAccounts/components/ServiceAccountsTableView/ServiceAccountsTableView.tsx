@@ -16,21 +16,22 @@ import {
   getLoadingRowsCount,
   getSkeletonForRows,
 } from "@app/utils";
-import { ServiceAccountListItem } from "@rhoas/kafka-management-sdk";
 import {
   ServiceAccountsToolbar,
   ServiceAccountsToolbarProps,
 } from "./ServiceAccountsToolbar";
 import { useAuth } from "@rhoas/app-services-ui-shared";
+import { ServiceAccountData } from "@rhoas/service-accounts-sdk";
+import { format } from "date-fns";
 
 export type ServiceAccountsTableViewProps = ServiceAccountsToolbarProps & {
   expectedTotal: number;
   serviceAccountsDataLoaded?: boolean;
-  serviceAccountItems?: ServiceAccountListItem[];
+  serviceAccountItems?: ServiceAccountData[];
   orderBy?: string;
   setOrderBy?: (order: string) => void;
-  onResetCredentials?: (serviceAccount: ServiceAccountListItem) => void;
-  onDeleteServiceAccount?: (serviceAccount: ServiceAccountListItem) => void;
+  onResetCredentials?: (serviceAccount: ServiceAccountData) => void;
+  onDeleteServiceAccount?: (serviceAccount: ServiceAccountData) => void;
   onCreateServiceAccount: () => void;
   page: number;
   perPage: number;
@@ -73,7 +74,7 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
 
   const resetCredentials = (
     event: MouseEvent,
-    originalData: ServiceAccountListItem
+    originalData: ServiceAccountData
   ) => {
     onResetCredentials && onResetCredentials(originalData);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -83,7 +84,7 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
 
   const deleteAccount = (
     event: MouseEvent,
-    originalData: ServiceAccountListItem
+    originalData: ServiceAccountData
   ) => {
     onDeleteServiceAccount && onDeleteServiceAccount(originalData);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -107,13 +108,15 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
     }
 
     serviceAccountItems?.forEach((row: IRowData) => {
-      const { name, created_by, client_id, created_at } = row;
+      const { name, createdBy, clientId, createdAt } = row;
+
+      const dateTime = format(new Date(createdAt * 1000), "PPpp");
       tableRow.push({
         cells: [
           name,
-          client_id,
-          created_by,
-          { title: getFormattedDate(created_at, t("ago")) },
+          clientId,
+          createdBy,
+          { title: getFormattedDate(dateTime, t("ago")) },
         ],
         originalData: row,
       });
@@ -126,10 +129,9 @@ const ServiceAccountsTableView: FC<ServiceAccountsTableViewProps> = ({
       return [];
     }
 
-    const originalData: ServiceAccountListItem = rowData.originalData;
+    const originalData: ServiceAccountData = rowData.originalData;
     const isUserSameAsLoggedIn =
-      (loggedInUser !== undefined &&
-        originalData.created_by === loggedInUser) ||
+      (loggedInUser !== undefined && originalData.createdBy === loggedInUser) ||
       (isOrgAdmin !== undefined && isOrgAdmin === true);
 
     let additionalProps: Partial<IAction> = {};
