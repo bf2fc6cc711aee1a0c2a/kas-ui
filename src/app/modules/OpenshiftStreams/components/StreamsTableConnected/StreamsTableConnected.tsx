@@ -14,6 +14,7 @@ import { useDeleteDialog } from "./useDeleteDialog";
 import { useChangeOwnerDialog } from "./useChangeOwnerDialog";
 import { useKafkaStatusAlerts } from "./useKafkaStatusAlerts";
 import { QuickStartContext } from "@patternfly/quickstarts";
+import { InstanceStatus } from "@app/utils";
 
 export type StreamsTableProps = Pick<FederatedProps, "preCreateInstance"> & {
   currentUser: string | undefined;
@@ -44,17 +45,17 @@ export const StreamsTableConnected: VoidFunctionComponent<
   } = useInstanceDrawer();
 
   /*
-    Fetch the latest instances for the user specified query, and checks the
-    returned instances.
-
-    If we have the drawer open but the data doesn't
-    contain the instance anymore (eg. the instance got removed by someone else)
-    we close the drawer. If we have the drawer open and we found the relative
-    instance, we update the object the drawer uses to render the drawer to be
-    sure it's referring to the latest data (needed for the connection info).
-
-    This triggers also the notifications for ready/deleted instances.
-   */
+      Fetch the latest instances for the user specified query, and checks the
+      returned instances.
+  
+      If we have the drawer open but the data doesn't
+      contain the instance anymore (eg. the instance got removed by someone else)
+      we close the drawer. If we have the drawer open and we found the relative
+      instance, we update the object the drawer uses to render the drawer to be
+      sure it's referring to the latest data (needed for the connection info).
+  
+      This triggers also the notifications for ready/deleted instances.
+     */
   const getInstances: KafkaInstancesProps<KafkaInstanceEnhanced>["getInstances"] =
     useCallback(
       async (...args) => {
@@ -67,7 +68,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
             closeDrawer();
           } else {
             /* we have to check if there is actually some difference between
-            the previous data and the current one to avoid render loops */
+              the previous data and the current one to avoid render loops */
             if (
               JSON.stringify(latestDrawerInstanceData) !==
               JSON.stringify(drawerInstance)
@@ -119,6 +120,10 @@ export const StreamsTableConnected: VoidFunctionComponent<
     (window as unknown as any).insights.chrome.createCase();
   };
 
+  const canHaveInstanceLink = (KafkaInstance: KafkaInstanceEnhanced) => {
+    return KafkaInstance.status !== InstanceStatus.READY;
+  };
+
   return (
     <KafkaInstances
       isRowSelected={({ row }) => isDrawerOpen && row.id === drawerInstance?.id}
@@ -135,6 +140,7 @@ export const StreamsTableConnected: VoidFunctionComponent<
       onQuickstartGuide={onQuickstartGuide}
       canChangeOwner={isUserOwnerOrAdmin}
       canDelete={isUserOwnerOrAdmin}
+      canHaveInstanceLink={canHaveInstanceLink}
     />
   );
 };
