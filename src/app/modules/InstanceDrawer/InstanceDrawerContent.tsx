@@ -1,4 +1,4 @@
-import { FunctionComponent, lazy, Suspense } from "react";
+import { FunctionComponent, lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { parseISO } from "date-fns";
 import { InstanceStatus } from "@app/utils";
@@ -7,7 +7,12 @@ import { Tab, Tabs, TabTitleText } from "@patternfly/react-core";
 import { InstanceDrawerTab } from "@app/modules/InstanceDrawer/tabs";
 import { KafkaDetailsTab } from "@rhoas/app-services-ui-components";
 import { InstanceDrawerContextProps } from "@app/modules/InstanceDrawer/contexts/InstanceDrawerContext";
+import { useEnrichedKafkaInstance } from "@app/modules/OpenshiftStreams/components/StreamsTableConnected/useKafkaInstances";
+import { KafkaRequest, SupportedKafkaSize } from "@rhoas/kafka-management-sdk";
 
+export type KafkaRequestWithSize = KafkaRequest & {
+  size: SupportedKafkaSize;
+};
 export const ResourcesTab = lazy(() => import("./ConnectionTab"));
 
 export type InstanceDrawerContentProps = {
@@ -18,6 +23,35 @@ export type InstanceDrawerContentProps = {
 };
 
 export const InstanceDrawerContent: FunctionComponent<
+  InstanceDrawerContentProps
+> = ({ instance, ...props }) => {
+  const { kafkaRequestToKafkaInstance } = useEnrichedKafkaInstance();
+
+  const [enrichedInstance, setEnrichedInstance] = useState(
+    instance.request ? instance : undefined
+  );
+
+  useEffect(() => {
+    async function enrichInstance() {
+      const enrichedInstance = await kafkaRequestToKafkaInstance(
+        instance as unknown as KafkaRequestWithSize
+      );
+      setEnrichedInstance(enrichedInstance);
+    }
+    if (!enrichedInstance) {
+      void enrichInstance();
+    }
+  }, [enrichedInstance, instance, kafkaRequestToKafkaInstance]);
+
+  if (enrichedInstance) {
+    return (
+      <InstanceDrawerContentConnected instance={enrichedInstance} {...props} />
+    );
+  }
+
+  return <MASLoading />;
+};
+export const InstanceDrawerContentConnected: FunctionComponent<
   InstanceDrawerContentProps
 > = ({ instance, activeTab, setActiveTab, tokenEndPointUrl }) => {
   const { t } = useTranslation(["kasTemporaryFixMe"]);
