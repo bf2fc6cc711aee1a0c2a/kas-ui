@@ -42,7 +42,7 @@ objects:
             module: ./RootApp
             routes:
               - pathname: /openshift/insights/advisor
-        moduleID: ocpAdvisor
+        moduleID: applicationServices
 parameters:
   - name: ENV_NAME
     required: true
