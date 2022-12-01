@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: kas-ui
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: Frontend
+    metadata:
+      name: kas-ui
+    spec:
+      envName: ${ENV_NAME}
+      title: Kafka UI
+      deploymentRepo: https://github.com/bf2fc6cc711aee1a0c2a/kafka-ui
+      API:
+        versions:
+          - v1
+      frontend:
+        paths:
+          - /apps/rhosak-control-plane-ui
+      image: ${IMAGE}:${IMAGE_TAG}
+      navItems:
+        - title: Streams for Apache Kafka
+          expandable: true
+          routes:
+            - appId: applicationServices
+              title: Overview
+              href: /application-services/streams/overview
+              product: Streams for Apache Kafka
+            - appId: applicationServices
+              title: Kafka Instances
+              href: /application-services/streams
+              product: Streams for Apache Kafka
+            - appId: applicationServices
+              title: Documentation
+              isExternal: true
+              href: https://access.redhat.com/documentation/en-us/red_hat_openshift_streams_for_apache_kafka
+              product: Streams for Apache Kafka
+      module:
+        manifestLocation: /apps/rhosak-control-plane-ui/fed-mods.json
+        modules:
+          - id: kas-ui
+            module: ./RootApp
+            routes:
+              - pathname: /openshift/insights/advisor
+        moduleID: ocpAdvisor
+parameters:
+  - name: ENV_NAME
+    required: true
+  - name: IMAGE_TAG
+    required: true
+  - name: IMAGE
+    value: quay.io/cloudservices/kas-ui-frontend-container
