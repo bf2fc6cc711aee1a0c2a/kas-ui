@@ -6,11 +6,13 @@ import { useCallback, useEffect } from "react";
 import { FederatedProps, useFederated } from "@app/contexts";
 import { ModalType, useModal } from "@rhoas/app-services-ui-shared";
 import { KafkaInstanceEnhanced } from "./useKafkaInstances";
+import useChrome from "@redhat-cloud-services/frontend-components/useChrome";
 
 export function useCreateDialog(
   preCreateInstance: FederatedProps["preCreateInstance"] = () =>
     Promise.resolve(true)
 ) {
+  const { analytics } = useChrome();
   const { shouldOpenCreateModal } = useFederated();
   const { showModal: showCreateModal } =
     useModal<ModalType.KasCreateInstance>();
@@ -19,15 +21,25 @@ export function useCreateDialog(
   const openCreateModal: KafkaInstancesProps<KafkaInstanceEnhanced>["onCreate"] =
     useCallback(
       async (onDone) => {
+        analytics.track("RHOSAK Create Instance", { status: "prompt" });
         // Callback before opening create dialog
         // The callback can override the new state of opening
         if (await preCreateInstance(true)) {
           showCreateModal(ModalType.KasCreateInstance, {
-            onCreate: onDone,
+            onCreate: () => {
+              analytics.track("RHOSAK Create Instance", {
+                status: "success",
+              });
+              onDone();
+            },
+          });
+        } else {
+          analytics.track("RHOSAK Create Instance", {
+            status: "failure-tos-refused",
           });
         }
       },
-      [preCreateInstance, showCreateModal]
+      [analytics, preCreateInstance, showCreateModal]
     );
 
   /*
