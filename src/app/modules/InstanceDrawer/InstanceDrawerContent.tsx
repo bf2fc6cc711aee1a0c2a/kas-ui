@@ -72,6 +72,8 @@ export const InstanceDrawerContentConnected: FunctionComponent<
     instance.status === InstanceStatus.ACCEPTED ||
     instance.status === InstanceStatus.PREPARING;
 
+  const isKafkaSuspended = instance.status === InstanceStatus.SUSPENDED;
+
   return (
     <Suspense fallback={<MASLoading />}>
       <Tabs
@@ -115,6 +117,7 @@ export const InstanceDrawerContentConnected: FunctionComponent<
             isKafkaPending={isKafkaPending}
             tokenEndPointUrl={tokenEndPointUrl}
             instanceId={instance.id}
+            isKafkaSuspended={isKafkaSuspended}
           />
         </Tab>
       </Tabs>
