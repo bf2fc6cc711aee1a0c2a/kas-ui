@@ -12,6 +12,7 @@ export type ConnectionTabProps = {
   tokenEndPointUrl: string;
   instanceId: string | undefined;
   adminServerUrl: string | undefined;
+  isKafkaSuspended?: boolean;
 };
 
 export const ConnectionTab: FC<ConnectionTabProps> = ({
@@ -20,6 +21,7 @@ export const ConnectionTab: FC<ConnectionTabProps> = ({
   tokenEndPointUrl,
   instanceId,
   adminServerUrl,
+  isKafkaSuspended,
 }: ConnectionTabProps) => {
   const { showModal } = useModal<ModalType.KasCreateServiceAccount>();
 
@@ -41,6 +43,7 @@ export const ConnectionTab: FC<ConnectionTabProps> = ({
       kafkaFleetManagerUrl={
         "https://api.openshift.com/api/kafkas_mgmt/v1/openapi"
       }
+      isKafkaSuspended={isKafkaSuspended}
     />
   );
 };

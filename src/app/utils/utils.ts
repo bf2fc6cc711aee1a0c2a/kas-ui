@@ -24,6 +24,9 @@ enum InstanceStatus {
   FAILED = "failed",
   DEPROVISION = "deprovision",
   DELETED = "deleting",
+  SUSPENDED = "suspended",
+  SUSPENDING = "suspending",
+  RESUMING = "resuming",
 }
 
 enum InstanceType {
