@@ -104,6 +104,7 @@ export const InstanceDrawerContentConnected: FunctionComponent<
             instanceType={instance.plan === "standard" ? "standard" : "eval"}
             billing={instance.billing}
             kafkaVersion={instance.request.version || ""}
+            cloudProvider={instance.provider}
           />
         </Tab>
         <Tab
