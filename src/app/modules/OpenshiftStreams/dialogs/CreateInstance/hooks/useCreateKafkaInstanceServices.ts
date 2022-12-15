@@ -197,20 +197,25 @@ export const useFetchProvidersWithRegions =
             const res = await api.getCloudProviders();
             const allProviders = res?.data?.items || [];
 
-            const providers = await Promise.all(
-              allProviders
-                .filter((p) => p.enabled)
-                .map(async (provider) => {
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  const regions = await fetchRegions(provider.id!, plan);
-                  const providerInfo: CloudProviderInfo = {
-                    id: provider.id as CloudProvider,
-                    displayName: provider.display_name!,
-                    regions,
-                  };
-                  return providerInfo;
-                })
-            );
+            const providers = (
+              await Promise.all(
+                allProviders
+                  .filter((p) => p.enabled)
+                  .map(async (provider) => {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const regions = await fetchRegions(provider.id!, plan);
+                    const providerInfo: CloudProviderInfo = {
+                      id: provider.id as CloudProvider,
+                      displayName: provider.display_name!,
+                      regions,
+                    };
+                    return regions.length > 0 ? providerInfo : null;
+                  })
+              )
+            ).filter((provider) => Boolean(provider)) as CloudProviderInfo[];
+            if (providers.length === 0) {
+              throw new Error("No available providers");
+            }
             const firstProvider = providers[0];
             onAvailable({ providers, defaultProvider: firstProvider?.id });
           } catch (e) {
@@ -313,12 +318,15 @@ export const useGetTrialSizes =
         let standardSizes: StandardSizes;
         try {
           standardSizes = await getStandardSizes(provider, region);
+          if (standardSizes.length === 0) {
+            throw new Error("Couldn't load standard sizes");
+          }
         } catch (e) {
           // It can happen that the selected provider doesn't support standard instances.
           // In this case we provide a faux sample list of sizes just to make the slider happy.
           standardSizes = [
-            { id: "1", displayName: "1" },
-            { id: "2", displayName: "2" },
+            { id: "1", displayName: "1", quota: 1 },
+            { id: "2", displayName: "2", quota: 2 },
           ] as StandardSizes;
         }
         const trialSizes = await getDeveloperSizes(provider, region);
