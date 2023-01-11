@@ -41,7 +41,7 @@
     "@redhat-cloud-services/frontend-components-config": "4.6.35",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.12",
     "@redhat-cloud-services/frontend-components-utilities": "3.3.11",
-    "@rhoas/api-mock": "0.51.0",
+    "@rhoas/api-mock": "0.52.0",
     "@rhoas/app-services-ui-components": "2.18.3",
     "@rhoas/app-services-ui-shared": "0.16.6",
     "@testing-library/jest-dom": "5.16.5",
@@ -105,10 +105,10 @@
     "webpack-merge": "5.8.0"
   },
   "dependencies": {
-    "@rhoas/account-management-sdk": "0.51.0",
-    "@rhoas/kafka-management-sdk": "0.51.0",
+    "@rhoas/account-management-sdk": "0.52.0",
+    "@rhoas/kafka-management-sdk": "0.52.0",
     "axios-simple-cache-adapter": "1.2.1",
-    "@rhoas/service-accounts-sdk": "0.51.0",
+    "@rhoas/service-accounts-sdk": "0.52.0",
     "tslib": "2.4.1"
   },
   "peerDependencies": {
