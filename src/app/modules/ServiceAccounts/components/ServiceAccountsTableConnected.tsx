@@ -2,8 +2,8 @@ import { useAuth, useConfig } from "@rhoas/app-services-ui-shared";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import {
   Configuration,
-  ServiceAccountsApi,
   ServiceAccountData,
+  ServiceAccountsApi,
 } from "@rhoas/service-accounts-sdk";
 
 import { ErrorCodes, isServiceApiError } from "@app/utils";
@@ -42,16 +42,18 @@ export const ServiceAccountsTableConnected: FunctionComponent = () => {
             basePath: config?.sas_ui.apiBasePath,
           })
         );
-        await apisService.getServiceAccounts().then((response) => {
-          const serviceAccounts: ServiceAccountData[] = response?.data;
-          const sortedServiceAccounts: ServiceAccountData[] | undefined =
-            serviceAccounts?.sort((a, b) =>
-              a.createdAt && b.createdAt
-                ? String(b.createdAt).localeCompare(String(a.createdAt))
-                : -1
-            );
-          setServiceAccountItems(sortedServiceAccounts);
-        });
+        await apisService
+          .getServiceAccounts(undefined, 100)
+          .then((response) => {
+            const serviceAccounts: ServiceAccountData[] = response?.data;
+            const sortedServiceAccounts: ServiceAccountData[] | undefined =
+              serviceAccounts?.sort((a, b) =>
+                a.createdAt && b.createdAt
+                  ? String(b.createdAt).localeCompare(String(a.createdAt))
+                  : -1
+              );
+            setServiceAccountItems(sortedServiceAccounts);
+          });
       } catch (error: unknown) {
         if (error instanceof Error) {
           handleServerError(error);
