@@ -38,7 +38,7 @@
     "@patternfly/react-icons": "4.93.3",
     "@patternfly/react-table": "4.112.6",
     "@redhat-cloud-services/frontend-components": "3.9.29",
-    "@redhat-cloud-services/frontend-components-config": "4.6.38",
+    "@redhat-cloud-services/frontend-components-config": "4.6.39",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.12",
     "@redhat-cloud-services/frontend-components-utilities": "3.3.12",
     "@rhoas/api-mock": "0.52.0",
