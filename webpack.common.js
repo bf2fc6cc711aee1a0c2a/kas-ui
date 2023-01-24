@@ -165,6 +165,10 @@ module.exports = (env, argv) => {
             singleton: true,
             requiredVersion: "*",
           },
+          "@scalprum/react-core": {
+            singleton: true,
+            requiredVersion: "*",
+          },
         },
       }),
     ],
