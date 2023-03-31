@@ -30,7 +30,7 @@
     "lint": "npm-run-all lint:*"
   },
   "devDependencies": {
-    "@babel/core": "7.21.3",
+    "@babel/core": "7.21.4",
     "@patternfly/patternfly": "4.224.2",
     "@patternfly/quickstarts": "2.4.0",
     "@patternfly/react-charts": "6.94.19",
